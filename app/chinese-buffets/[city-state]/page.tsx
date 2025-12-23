@@ -4,7 +4,7 @@ import Link from 'next/link';
 import BuffetCard from '@/components/BuffetCard';
 import Map from '@/components/MapWrapper';
 import SchemaMarkup from '@/components/SchemaMarkup';
-import { getCityBySlug, getAllCitySlugs } from '@/lib/data';
+import { getCityBySlug, getAllCitySlugs, getNeighborhoodsByCity, buildNeighborhoodsFromBuffets } from '@/lib/data-instantdb';
 
 interface CityPageProps {
   params: {
@@ -13,14 +13,14 @@ interface CityPageProps {
 }
 
 export async function generateStaticParams() {
-  const citySlugs = getAllCitySlugs();
+  const citySlugs = await getAllCitySlugs();
   return citySlugs.map((slug) => ({
     'city-state': slug,
   }));
 }
 
 export async function generateMetadata({ params }: CityPageProps): Promise<Metadata> {
-  const city = getCityBySlug(params['city-state']);
+  const city = await getCityBySlug(params['city-state']);
   
   if (!city) {
     return {
@@ -34,12 +34,20 @@ export async function generateMetadata({ params }: CityPageProps): Promise<Metad
   };
 }
 
-export default function CityPage({ params }: CityPageProps) {
-  const city = getCityBySlug(params['city-state']);
+export default async function CityPage({ params }: CityPageProps) {
+  const city = await getCityBySlug(params['city-state']);
 
   if (!city) {
     notFound();
   }
+
+  // Get neighborhoods for this city (compute locally from city.buffets to avoid extra fetch)
+  const neighborhoods = buildNeighborhoodsFromBuffets(city.buffets || [], params['city-state'], city.city, city.stateAbbr);
+
+  // Get all city slugs and nearby cities
+  // NOTE: getNearbyCities is expensive (calls getCityBySlug for many cities).
+  // Temporarily skip to keep page responsive during debug.
+  const nearbyCities: Array<{ slug: string; city: string; state: string; buffetCount: number }> = [];
 
   // Sort buffets by rating (highest first)
   const sortedBuffets = [...city.buffets].sort((a, b) => 
@@ -49,16 +57,18 @@ export default function CityPage({ params }: CityPageProps) {
   // Get top 5 buffets for highlights
   const topBuffets = sortedBuffets.slice(0, 5);
 
-  // Create map markers
-  const mapMarkers = city.buffets.map(buffet => ({
-    id: buffet.id,
-    name: buffet.name,
-    lat: buffet.location.lat,
-    lng: buffet.location.lng,
-    rating: buffet.rating,
-    citySlug: params['city-state'],
-    slug: buffet.slug,
-  }));
+  // Create map markers (filter out buffets without valid location data)
+  const mapMarkers = city.buffets
+    .filter(buffet => buffet.location && typeof buffet.location.lat === 'number' && typeof buffet.location.lng === 'number')
+    .map(buffet => ({
+      id: buffet.id,
+      name: buffet.name,
+      lat: buffet.location.lat,
+      lng: buffet.location.lng,
+      rating: buffet.rating,
+      citySlug: params['city-state'],
+      slug: buffet.slug,
+    }));
 
   // Generate city-specific content
   const introContent = generateCityIntro(city);
@@ -208,6 +218,38 @@ export default function CityPage({ params }: CityPageProps) {
           </div>
         </section>
 
+        {/* Neighborhoods Section */}
+        {neighborhoods.length > 0 && (
+          <section className="bg-gray-50 py-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                Chinese Buffets by Neighborhood in {city.city}
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {neighborhoods.map((neighborhood) => (
+                  <Link
+                    key={neighborhood.slug}
+                    href={`/chinese-buffets/${params['city-state']}/neighborhoods/${neighborhood.slug}`}
+                    className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow bg-white"
+                  >
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <h3 className="font-semibold text-lg text-gray-900">
+                          {neighborhood.neighborhood}
+                        </h3>
+                        <p className="text-gray-600 text-sm mt-1">
+                          {neighborhood.buffetCount} {neighborhood.buffetCount === 1 ? 'buffet' : 'buffets'}
+                        </p>
+                      </div>
+                      <span className="text-blue-600">→</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* All Buffets Section */}
         <section className="bg-white py-8">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -256,7 +298,7 @@ export default function CityPage({ params }: CityPageProps) {
               More Chinese Buffets Nearby
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-              {getNearbyCities(city, getAllCitySlugs(), getCityBySlug).map((nearbyCity) => (
+              {nearbyCities.map((nearbyCity) => (
                 <Link
                   key={nearbyCity.slug}
                   href={`/chinese-buffets/${nearbyCity.slug}`}
@@ -289,7 +331,7 @@ export default function CityPage({ params }: CityPageProps) {
 }
 
 // Generate city-specific intro content
-function generateCityIntro(city: ReturnType<typeof getCityBySlug>) {
+function generateCityIntro(city: Awaited<ReturnType<typeof getCityBySlug>>) {
   if (!city) return [];
   
   const paragraphs = [
@@ -316,7 +358,7 @@ function generateCityIntro(city: ReturnType<typeof getCityBySlug>) {
 }
 
 // Generate city-specific FAQs
-function generateCityFAQs(city: ReturnType<typeof getCityBySlug>) {
+function generateCityFAQs(city: Awaited<ReturnType<typeof getCityBySlug>>) {
   if (!city) return [];
 
   const faqs = [];
@@ -368,20 +410,19 @@ function generateCityFAQs(city: ReturnType<typeof getCityBySlug>) {
 }
 
 // Get nearby cities (same state, or other cities with buffets)
-function getNearbyCities(
-  currentCity: ReturnType<typeof getCityBySlug>,
-  allCitySlugs: string[],
-  getCityFn: typeof getCityBySlug
-): Array<{ slug: string; city: string; state: string; buffetCount: number }> {
+async function getNearbyCities(
+  currentCity: Awaited<ReturnType<typeof getCityBySlug>>,
+  allCitySlugs: string[]
+): Promise<Array<{ slug: string; city: string; state: string; buffetCount: number }>> {
   if (!currentCity) return [];
   
   const nearby: Array<{ slug: string; city: string; state: string; buffetCount: number; isSameState: boolean }> = [];
   
   // Get other cities, prioritizing same state
-  allCitySlugs.forEach(slug => {
-    if (slug === currentCity.slug) return;
-    const city = getCityFn(slug);
-    if (!city || !city.buffets || city.buffets.length === 0) return;
+  for (const slug of allCitySlugs) {
+    if (slug === currentCity.slug) continue;
+    const city = await getCityBySlug(slug);
+    if (!city || !city.buffets || city.buffets.length === 0) continue;
     
     nearby.push({
       slug: city.slug,
@@ -390,7 +431,7 @@ function getNearbyCities(
       buffetCount: city.buffets.length,
       isSameState: city.state === currentCity.state,
     });
-  });
+  }
   
   // Sort: same state first, then by buffet count
   nearby.sort((a, b) => {

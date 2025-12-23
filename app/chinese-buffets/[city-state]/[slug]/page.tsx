@@ -14,7 +14,8 @@ import QuestionsAndAnswers from '@/components/QuestionsAndAnswers';
 import OwnerUpdates from '@/components/OwnerUpdates';
 import Menu from '@/components/Menu';
 import DetailedRatings from '@/components/DetailedRatings';
-import { getBuffetBySlug, getCityBySlug, getNearbyBuffets } from '@/lib/data';
+import CustomerInsights from '@/components/CustomerInsights';
+import { getBuffetBySlug, getCityBySlug, getNearbyBuffets } from '@/lib/data-instantdb';
 import { formatAddress, formatPhoneNumber } from '@/lib/utils';
 import { generateExpandedDescription } from '@/lib/generateDescription';
 
@@ -26,8 +27,8 @@ interface BuffetPageProps {
 }
 
 export async function generateStaticParams() {
-  const { getBuffetsByCity } = await import('@/lib/data');
-  const buffetsByCity = getBuffetsByCity();
+  const { getBuffetsByCity } = await import('@/lib/data-instantdb');
+  const buffetsByCity = await getBuffetsByCity();
   const params: Array<{ 'city-state': string; slug: string }> = [];
   
   for (const city of Object.values(buffetsByCity)) {
@@ -43,7 +44,7 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: BuffetPageProps): Promise<Metadata> {
-  const buffet = getBuffetBySlug(params['city-state'], params.slug);
+  const buffet = await getBuffetBySlug(params['city-state'], params.slug);
   
   if (!buffet) {
     return {
@@ -57,21 +58,21 @@ export async function generateMetadata({ params }: BuffetPageProps): Promise<Met
   };
 }
 
-export default function BuffetPage({ params }: BuffetPageProps) {
-  const buffet = getBuffetBySlug(params['city-state'], params.slug);
-  const city = getCityBySlug(params['city-state']);
+export default async function BuffetPage({ params }: BuffetPageProps) {
+  const buffet = await getBuffetBySlug(params['city-state'], params.slug);
+  const city = await getCityBySlug(params['city-state']);
 
   if (!buffet || !city) {
     notFound();
   }
 
   // Get nearby buffets
-  const nearbyBuffets = getNearbyBuffets(
+  const nearbyBuffets = (await getNearbyBuffets(
     buffet.location.lat,
     buffet.location.lng,
     10,
     buffet.id
-  ).slice(0, 6);
+  )).slice(0, 6);
 
   // Create map markers (this buffet + nearby)
   const mapMarkers = [
@@ -271,6 +272,25 @@ export default function BuffetPage({ params }: BuffetPageProps) {
                   </div>
                 </div>
               </section>
+
+              {/* What Our Customers Say */}
+              {buffet.what_customers_are_saying_seo && (
+                <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                  <div className="px-4 sm:px-6 pt-5 sm:pt-6 pb-4">
+                    <div className="flex items-center gap-3 mb-1">
+                      <div className="p-2 bg-pink-100 rounded-lg">
+                        <svg className="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                      </div>
+                      <h2 className="text-xl sm:text-2xl font-bold text-gray-900">What Our Customers Say</h2>
+                    </div>
+                  </div>
+                  <div className="px-4 sm:px-6 pb-5 sm:pb-6">
+                    <CustomerInsights content={buffet.what_customers_are_saying_seo} />
+                  </div>
+                </section>
+              )}
 
               {/* Image Gallery */}
               {buffet.imageUrls && buffet.imageUrls.length > 0 && (
