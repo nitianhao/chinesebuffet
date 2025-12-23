@@ -98,6 +98,8 @@ async function importData() {
             price: buffet.price,
             rating: buffet.rating,
             reviewsCount: buffet.reviewsCount,
+            primaryType: buffet.primaryType,
+            reviews: buffet.reviews,
             lat: buffet.lat,
             lng: buffet.lng,
             neighborhood: buffet.neighborhood,

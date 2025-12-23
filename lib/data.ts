@@ -53,6 +53,7 @@ export interface Buffet {
   hours: Array<{ day: string; hours: string }>;
   categories: string[];
   categoryName: string;
+  primaryType?: string | null;
   neighborhood: string | null;
   permanentlyClosed: boolean;
   temporarilyClosed: boolean;
@@ -141,6 +142,7 @@ export interface Buffet {
   }> | null;
   locatedIn?: string | null;
   plusCode?: string | null;
+  what_customers_are_saying_seo?: string | null;
 }
 
 export interface City {

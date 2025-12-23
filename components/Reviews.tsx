@@ -123,7 +123,7 @@ export default function Reviews({ reviews }: ReviewsProps) {
                     onError={(e) => {
                       // Fallback to initial if image fails
                       const parent = e.currentTarget.parentElement;
-                      if (parent) {
+                      if (parent && review.name) {
                         parent.innerHTML = `<span class="text-gray-500 text-lg font-semibold flex items-center justify-center w-full h-full">${review.name.charAt(0).toUpperCase()}</span>`;
                       }
                     }}
@@ -132,13 +132,13 @@ export default function Reviews({ reviews }: ReviewsProps) {
               ) : (
                 <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
                   <span className="text-gray-500 text-lg font-semibold">
-                    {review.name.charAt(0).toUpperCase()}
+                    {review.name ? review.name.charAt(0).toUpperCase() : '?'}
                   </span>
                 </div>
               )}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <h3 className="font-semibold text-gray-900">{review.name}</h3>
+                  <h3 className="font-semibold text-gray-900">{review.name || 'Anonymous'}</h3>
                   {review.isLocalGuide && (
                     <span className="px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-800 rounded">
                       Local Guide

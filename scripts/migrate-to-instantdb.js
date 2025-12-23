@@ -44,6 +44,8 @@ async function migrateData() {
         price: buffet.price || null,
         rating: buffet.rating || null,
         reviewsCount: buffet.reviewsCount || null,
+        primaryType: buffet.primaryType || null,
+        reviews: JSON.stringify(buffet.reviews || []),
         lat: buffet.location.lat,
         lng: buffet.location.lng,
         neighborhood: buffet.neighborhood || null,

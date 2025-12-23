@@ -219,6 +219,7 @@ function processData() {
       hours: buffet.openingHours || [],
       categories: buffet.categories || [],
       categoryName: buffet.categoryName || '',
+      primaryType: buffet.primaryType || buffet.primary_type || null,
       neighborhood: buffet.neighborhood || null,
       permanentlyClosed: buffet.permanentlyClosed || false,
       temporarilyClosed: buffet.temporarilyClosed || false,

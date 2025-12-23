@@ -202,6 +202,35 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
                     <span className="text-sm font-medium text-gray-700">{buffet.categoryName}</span>
                   </div>
                 )}
+
+                {/* Primary Type Badge */}
+                {buffet.primaryType && (
+                  <div className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-200 rounded-xl shadow-sm">
+                    <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                    </svg>
+                    <span className="text-sm font-semibold text-gray-700">
+                      {buffet.primaryType.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                    </span>
+                  </div>
+                )}
+
+                {/* Categories List */}
+                {buffet.categories && buffet.categories.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {buffet.categories.map((cat: string, idx: number) => (
+                      <span
+                        key={`${cat}-${idx}`}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200"
+                      >
+                        <svg className="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        {cat}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -313,6 +342,31 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                     {/* Contact Information */}
                     <div className="space-y-4">
+                      {/* Categories (prominent) */}
+                      {buffet.categories && buffet.categories.length > 0 && (
+                        <div className="p-4 sm:p-5 bg-indigo-50 rounded-xl border border-indigo-100">
+                          <div className="flex items-center gap-2 mb-3">
+                            <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                            <span className="font-bold text-gray-900 text-sm sm:text-base">Categories</span>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {buffet.categories.map((cat: string, idx: number) => (
+                              <span
+                                key={`${cat}-${idx}`}
+                                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white text-indigo-700 text-xs font-semibold border border-indigo-200 shadow-sm"
+                              >
+                                <svg className="w-3.5 h-3.5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                                </svg>
+                                {cat}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
                       {/* Address */}
                       <div className="p-4 sm:p-5 bg-gray-50 rounded-xl border border-gray-100">
                         <div className="flex items-start gap-3 sm:gap-4">
@@ -727,7 +781,24 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
 
               {/* Reviews */}
               {buffet.reviews && buffet.reviews.length > 0 && (
-                <Reviews reviews={buffet.reviews} />
+                <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                  <div className="px-4 sm:px-6 pt-5 sm:pt-6 pb-4">
+                    <div className="flex items-center gap-3 mb-1">
+                      <div className="p-2 bg-amber-100 rounded-lg">
+                        <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Reviews</h2>
+                        <p className="text-sm text-gray-500">{buffet.reviewsCount?.toLocaleString?.() || buffet.reviews.length} total</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="px-4 sm:px-6 pb-5 sm:pb-6">
+                    <Reviews reviews={buffet.reviews} />
+                  </div>
+                </section>
               )}
 
               {/* Web Results (External Links) */}

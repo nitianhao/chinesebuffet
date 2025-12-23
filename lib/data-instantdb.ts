@@ -85,6 +85,7 @@ function transformBuffet(buffet: any, citySlug?: string): any {
     hours: parseJsonField(buffet.hours) || [],
     categories: parseJsonField(buffet.categories) || [],
     categoryName: buffet.categoryName || '',
+    primaryType: buffet.primaryType || null,
     neighborhood: buffet.neighborhood || null,
     permanentlyClosed: buffet.permanentlyClosed || false,
     temporarilyClosed: buffet.temporarilyClosed || false,
@@ -94,6 +95,7 @@ function transformBuffet(buffet: any, citySlug?: string): any {
     citySlug: citySlug || buffet.city?.slug || '',
     description: buffet.description || null,
     subTitle: buffet.subTitle || null,
+    reviews: parseJsonField(buffet.reviews) || [],
     reviewsDistribution: parseJsonField(buffet.reviewsDistribution) || null,
     reviewsTags: parseJsonField(buffet.reviewsTags) || null,
     popularTimesHistogram: parseJsonField(buffet.popularTimesHistogram) || null,
@@ -714,6 +716,8 @@ function calculateDistance(
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 }
+
+
 
 
 

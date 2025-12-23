@@ -35,6 +35,7 @@ const _schema = i.schema({
       placeId: i.string().optional(),
       imagesCount: i.number().optional(),
       categoryName: i.string().optional(),
+      primaryType: i.string().optional(),
       // Hours stored as JSON string (Instant DB doesn't have native array of objects)
       hours: i.string().optional(), // JSON stringified array
       categories: i.string().optional(), // JSON stringified array
@@ -92,6 +93,7 @@ const _schema = i.schema({
       reviews: i.string().optional(), // JSON stringified array
       leadsEnrichment: i.string().optional(), // JSON stringified object
       claimThisBusiness: i.boolean().optional(),
+      what_customers_are_saying_seo: i.string().optional(),
     }),
   },
   links: {
