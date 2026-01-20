@@ -3,14 +3,22 @@
 import { useState } from 'react';
 
 interface ImageGalleryProps {
-  images: string[];
+  images: string[] | Array<{ photoUrl?: string; photoReference?: string; [key: string]: any }>;
   buffetName: string;
+  imagesCount?: number | null;
 }
 
-export default function ImageGallery({ images, buffetName }: ImageGalleryProps) {
+export default function ImageGallery({ images, buffetName, imagesCount }: ImageGalleryProps) {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
 
-  if (!images || images.length === 0) {
+  // Extract URLs from images (handle both string URLs and photo objects)
+  const imageUrls = images.map(img => {
+    if (typeof img === 'string') return img;
+    if (img && typeof img === 'object' && img.photoUrl) return img.photoUrl;
+    return null;
+  }).filter((url): url is string => url !== null);
+
+  if (!imageUrls || imageUrls.length === 0) {
     return null;
   }
 
@@ -26,15 +34,15 @@ export default function ImageGallery({ images, buffetName }: ImageGalleryProps) 
     if (selectedImage === null) return;
     
     if (direction === 'prev') {
-      setSelectedImage(selectedImage === 0 ? images.length - 1 : selectedImage - 1);
+      setSelectedImage(selectedImage === 0 ? imageUrls.length - 1 : selectedImage - 1);
     } else {
-      setSelectedImage(selectedImage === images.length - 1 ? 0 : selectedImage + 1);
+      setSelectedImage(selectedImage === imageUrls.length - 1 ? 0 : selectedImage + 1);
     }
   };
 
   // Show first 6 images in grid, rest can be viewed in lightbox
-  const displayImages = images.slice(0, 6);
-  const remainingCount = images.length - displayImages.length;
+  const displayImages = imageUrls.slice(0, 6);
+  const remainingCount = imageUrls.length - displayImages.length;
 
   return (
     <>
@@ -48,10 +56,15 @@ export default function ImageGallery({ images, buffetName }: ImageGalleryProps) 
                 </svg>
               </div>
               <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
-                Photos ({images.length})
+                Photos ({imagesCount && imagesCount > imageUrls.length ? imagesCount : imageUrls.length})
+                {imagesCount && imagesCount > imageUrls.length && (
+                  <span className="text-sm font-normal text-gray-600 ml-2">
+                    ({imageUrls.length} shown)
+                  </span>
+                )}
               </h2>
             </div>
-            {images.length > 6 && (
+            {imageUrls.length > 6 && (
               <button
                 onClick={() => openLightbox(0)}
                 className="px-3 py-1.5 text-blue-600 hover:text-blue-700 hover:bg-blue-50 font-semibold text-sm rounded-lg transition-colors active:scale-95"
@@ -144,7 +157,7 @@ export default function ImageGallery({ images, buffetName }: ImageGalleryProps) 
             </button>
 
             {/* Previous Button */}
-            {images.length > 1 && (
+            {imageUrls.length > 1 && (
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -170,7 +183,7 @@ export default function ImageGallery({ images, buffetName }: ImageGalleryProps) 
             )}
 
             {/* Next Button */}
-            {images.length > 1 && (
+            {imageUrls.length > 1 && (
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -197,7 +210,7 @@ export default function ImageGallery({ images, buffetName }: ImageGalleryProps) 
 
             {/* Image */}
             <img
-              src={images[selectedImage]}
+              src={imageUrls[selectedImage]}
               alt={`${buffetName} - Photo ${selectedImage + 1}`}
               className="max-w-full max-h-full object-contain"
               onClick={(e) => e.stopPropagation()}
@@ -208,7 +221,7 @@ export default function ImageGallery({ images, buffetName }: ImageGalleryProps) 
 
             {/* Image Counter */}
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white bg-black bg-opacity-50 rounded-full px-4 py-2 text-sm">
-              {selectedImage + 1} / {images.length}
+              {selectedImage + 1} / {imageUrls.length}
             </div>
           </div>
 

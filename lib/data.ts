@@ -25,6 +25,13 @@ export interface Review {
   reviewImageUrls?: string[];
   reviewContext?: Record<string, string>;
   reviewDetailedRating?: Record<string, number>;
+  visitedIn?: string | null;
+  originalLanguage?: string | null;
+  translatedLanguage?: string | null;
+  // Legacy fields for backward compatibility
+  author?: string;
+  time?: string;
+  relativeTime?: string;
 }
 
 export interface Buffet {
@@ -60,6 +67,8 @@ export interface Buffet {
   placeId: string | null;
   imagesCount: number;
   imageUrls?: string[];
+  images?: Array<{ photoUrl?: string; photoReference?: string; [key: string]: any }>;
+  imageCategories?: string[];
   citySlug?: string;
   reviews?: Review[];
   description?: string | null;
@@ -143,6 +152,226 @@ export interface Buffet {
   locatedIn?: string | null;
   plusCode?: string | null;
   what_customers_are_saying_seo?: string | null;
+  reviewSummaryParagraph1?: string | null;
+  reviewSummaryParagraph2?: string | null;
+  iconInfo?: {
+    iconMaskBaseUri?: string;
+    iconBackgroundColor?: string;
+    [key: string]: any;
+  } | null;
+  // Yelp data
+  yelpData?: {
+    yelpId?: string;
+    yelpName?: string;
+    url?: string;
+    rating?: number;
+    reviewCount?: number;
+    priceRange?: string;
+    address?: string;
+    phone?: string;
+    website?: string;
+    categories?: string[];
+    hours?: Record<string, string>;
+    photos?: string[];
+    attributes?: Record<string, boolean>;
+    reviews?: Array<{
+      text?: string;
+      rating?: number;
+      author?: string;
+      date?: string;
+    }>;
+    scrapedAt?: string;
+  } | null;
+  yelpRating?: number | null;
+  yelpReviewsCount?: number | null;
+  // TripAdvisor data
+  tripadvisorData?: {
+    tripadvisorId?: string;
+    tripadvisorName?: string;
+    url?: string;
+    rating?: number;
+    reviewCount?: number;
+    priceRange?: string;
+    address?: string;
+    phone?: string;
+    website?: string;
+    cuisines?: string[];
+    hours?: Record<string, string>;
+    photos?: string[];
+    features?: string[];
+    popularDishes?: string[];
+    reviews?: Array<{
+      text?: string;
+      rating?: number;
+      author?: string;
+      date?: string;
+      title?: string;
+    }>;
+    ranking?: number;
+    scrapedAt?: string;
+  } | null;
+  tripadvisorRating?: number | null;
+  tripadvisorReviewsCount?: number | null;
+  addressFormats?: {
+    addressDescriptor?: {
+      landmarks?: Array<{
+        name?: string;
+        placeId?: string;
+        displayName?: {
+          text?: string;
+          languageCode?: string;
+        };
+        types?: string[];
+        straightLineDistanceMeters?: number;
+        travelDistanceMeters?: number;
+        spatialRelationship?: string;
+        [key: string]: any;
+      }>;
+      areas?: Array<{
+        name?: string;
+        placeId?: string;
+        displayName?: {
+          text?: string;
+          languageCode?: string;
+        };
+        containment?: string;
+        [key: string]: any;
+      }>;
+      [key: string]: any;
+    };
+    adrFormatAddress?: string;
+    shortFormattedAddress?: string;
+    postalAddress?: {
+      [key: string]: any;
+    };
+    [key: string]: any;
+  } | null;
+  adrFormatAddress?: string | null; // HTML formatted address string (also available in addressFormats.adrFormatAddress)
+  secondaryOpeningHours?: {
+    regular?: Array<{
+      openNow?: boolean;
+      periods?: Array<{
+        open?: {
+          day?: number;
+          hour?: number;
+          minute?: number;
+        };
+        close?: {
+          day?: number;
+          hour?: number;
+          minute?: number;
+        };
+        [key: string]: any;
+      }>;
+      [key: string]: any;
+    }> | null;
+    current?: Array<{
+      openNow?: boolean;
+      periods?: Array<{
+        open?: {
+          day?: number;
+          hour?: number;
+          minute?: number;
+        };
+        close?: {
+          day?: number;
+          hour?: number;
+          minute?: number;
+        };
+        [key: string]: any;
+      }>;
+      [key: string]: any;
+    }> | null;
+    [key: string]: any;
+  } | null;
+  googleMapsLinks?: {
+    directionsUri?: string;
+    placeUri?: string;
+    writeAReviewUri?: string;
+    reviewsUri?: string;
+    photosUri?: string;
+    [key: string]: any;
+  } | null;
+  priceRange?: {
+    startPrice?: {
+      currencyCode?: string;
+      units?: string;
+      [key: string]: any;
+    };
+    endPrice?: {
+      currencyCode?: string;
+      units?: string;
+      [key: string]: any;
+    };
+    [key: string]: any;
+  } | null;
+  // Health inspection data
+  healthInspection?: {
+    // Current inspection
+    currentScore?: string | number; // "A", "B", "C" or numeric
+    currentGrade?: string;
+    inspectionDate?: string;
+    inspectorName?: string;
+    
+    // Violations
+    violations?: Array<{
+      code?: string;
+      description: string;
+      category: 'Critical' | 'General';
+      severity?: 'High' | 'Medium' | 'Low';
+      corrected?: boolean;
+      correctionDate?: string;
+    }>;
+    criticalViolationsCount?: number;
+    generalViolationsCount?: number;
+    
+    // History
+    inspectionHistory?: Array<{
+      date: string;
+      score?: string | number;
+      grade?: string;
+      violationsCount?: number;
+      criticalViolationsCount?: number;
+    }>;
+    
+    // Closures
+    closureHistory?: Array<{
+      closureDate: string;
+      reopenDate?: string;
+      reason: string;
+      duration?: number; // days
+    }>;
+    hasRecentClosure?: boolean; // within last 2 years
+    
+    // Regulatory Actions
+    regulatoryActions?: Array<{
+      date: string;
+      type: 'Fine' | 'Citation' | 'Warning' | 'Suspension' | 'License Revocation';
+      amount?: number;
+      description: string;
+    }>;
+    
+    // Metadata
+    dataSource?: string; // "NYC DOHMH", "CA Health Dept", etc.
+    lastUpdated?: string;
+    inspectionFrequency?: string; // "Annual", "Semi-annual", etc.
+    permitNumber?: string;
+    healthDepartmentUrl?: string;
+  } | null;
+  noiseLevel?: string | null; // Noise level (e.g., "quiet", "moderate", "loud")
+  goodForKids?: boolean | null; // Whether the restaurant is good for kids
+  goodForGroups?: boolean | null; // Whether the restaurant is good for groups
+  hasTv?: boolean | null; // Whether the restaurant has TV
+  healthScore?: boolean | null; // Whether the restaurant has a health score available
+  alcohol?: string | null; // Alcohol availability (e.g., "none", "beer_and_wine", "full_bar")
+  waiterService?: boolean | null; // Whether the restaurant has waiter service
+  wiFi?: string | null; // WiFi availability (e.g., "no", "free", "paid")
+  wheelchairAccessible?: boolean | null; // Whether the restaurant is wheelchair accessible
+  genderNeutralRestrooms?: boolean | null; // Whether the restaurant has gender-neutral restrooms
+  outdoorSeating?: boolean | null; // Whether the restaurant has outdoor seating
+  businessAcceptsApplePay?: boolean | null; // Whether the restaurant accepts Apple Pay
+  acceptsGooglePay?: boolean | null; // Whether the restaurant accepts Google Pay
+  openToAll?: boolean | null; // Whether the restaurant is open to all
 }
 
 export interface City {

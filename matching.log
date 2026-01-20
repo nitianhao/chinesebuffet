@@ -1,0 +1,918 @@
+/Users/michalpekarcik/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+Loading buffets from /Users/michalpekarcik/Cursor/Chinese Buffet/data/all-buffets-for-matching.json
+Loaded 5503 buffets
+
+Loaded 399 existing mappings
+
+[16/5503] (0%) Matching: Chopstix
+  Location: Green River, Wyoming
+  Searching Yelp API...
+  ✗ Yelp: Not found
+[25/5503] (0%) Matching: Kung Fu Chef King
+  Location: Stamford, Connecticut
+  Searching Yelp API...
+  ✗ Yelp: Not found
+[41/5503] (0%) Matching: Blue Willow Restaurant
+  Location: Salem, Oregon
+  Searching Yelp API...
+  ✗ Yelp: Not found
+[48/5503] (0%) Matching: TEN TEN Chinese Seafood Dim Sum Restaurant 天天渔港
+  Location: Sunrise, Florida
+  Searching Yelp API...
+  ✗ Yelp: Not found
+[62/5503] (1%) Matching: Hy-Vee Chinese
+  Location: Cedar Rapids, Iowa
+  Searching Yelp API...
+  ✗ Yelp: Not found
+[66/5503] (1%) Matching: Hy-Vee Chinese
+  Location: Cedar Rapids, Iowa
+  Searching Yelp API...
+  ✗ Yelp: Not found
+[70/5503] (1%) Matching: Chinese Cafe
+  Location: Salem, Oregon
+  Searching Yelp API...
+  ✗ Yelp: Not found
+
+============================================================
+Progress Update:
+  Processed: 70/5503 (1%)
+  Yelp matches: 63 (90%)
+  Estimated time remaining: ~90 minutes
+============================================================
+
+[77/5503] (1%) Matching: The Luxe Buffet - Seafood & Grill
+  Location: Ontario, California
+  Searching Yelp API...
+  ✗ Yelp: Not found
+[78/5503] (1%) Matching: Grand Buffet Seafood & Sushi
+  Location: Wichita Falls, Texas
+  Searching Yelp API...
+  ✗ Yelp: Not found
+[80/5503] (1%) Matching: Crazy Buffet & Grill
+  Location: West Palm Beach, Florida
+  Searching Yelp API...
+  ✗ Yelp: Not found
+
+============================================================
+Progress Update:
+  Processed: 80/5503 (1%)
+  Yelp matches: 70 (87%)
+  Estimated time remaining: ~90 minutes
+============================================================
+
+[88/5503] (1%) Matching: LINS GRAND BUFFET -McALLEN
+  Location: McAllen, Texas
+  Searching Yelp API...
+  ✗ Yelp: Not found
+[116/5503] (2%) Matching: China Buffet
+  Location: Longmont, Colorado
+  Searching Yelp API...
+  ✗ Yelp: Not found
+[128/5503] (2%) Matching: Kurai Sushi & Chinese Buffet
+  Location: Edinburg, Texas
+  Searching Yelp API...
+  ✗ Yelp: Not found
+[129/5503] (2%) Matching: Panda Buffet
+  Location: Springdale, Arkansas
+  Searching Yelp API...
+  ✗ Yelp: Not found
+[130/5503] (2%) Matching: Fairy Cafe - Hotpot Buffet
+  Location: Quincy, Massachusetts
+  Searching Yelp API...
+  ✗ Yelp: Not found
+
+============================================================
+Progress Update:
+  Processed: 130/5503 (2%)
+  Yelp matches: 115 (88%)
+  Estimated time remaining: ~89 minutes
+============================================================
+
+[134/5503] (2%) Matching: Chen's Buffet
+  Location: West Bend, Wisconsin
+  Searching Yelp API...
+  ✗ Yelp: Not found
+[137/5503] (2%) Matching: Osaka Buffet
+  Location: Spokane, Washington
+  Searching Yelp API...
+  ✗ Yelp: Not found
+[140/5503] (2%) Matching: FLAMING GRILL & BUFFET (Roslindale Location)
+  Location: Boston, Massachusetts
+  Searching Yelp API...
+  ✗ Yelp: Not found
+
+============================================================
+Progress Update:
+  Processed: 140/5503 (2%)
+  Yelp matches: 122 (87%)
+  Estimated time remaining: ~89 minutes
+============================================================
+
+[155/5503] (2%) Matching: Kin's Chinese buffet
+  Location: San Antonio, Texas
+  Searching Yelp API...
+  ✗ Yelp: Not found
+[174/5503] (3%) Matching: Lin's Garden
+  Location: Princeton, Indiana
+  Searching Yelp API...
+  ✗ Yelp: Not found
+[181/5503] (3%) Matching: Shiki Buffet - Glendale Heights
+  Location: Glendale Heights, Illinois
+  Searching Yelp API...
+  ✗ Yelp: Not found
+[186/5503] (3%) Matching: Super 6 Buffet, Inc
+  Location: Missouri City, Texas
+  Searching Yelp API...
+  ✗ Yelp: Not found
+[194/5503] (3%) Matching: Jade Buffet
+  Location: Owosso, Michigan
+  Searching Yelp API...
+  ✗ Yelp: Not found
+[200/5503] (3%) Matching: China Wall Buffet
+  Location: Concord, California
+  Searching Yelp API...
+  ✓ Found Yelp: China Wall Buffet (score: 110)
+    Match reasons: city_match, exact_name
+
+============================================================
+Progress Update:
+  Processed: 200/5503 (3%)
+  Yelp matches: 177 (88%)
+  Estimated time remaining: ~88 minutes
+============================================================
+
+[201/5503] (3%) Matching: Feast Buffet
+  Location: Orem, Utah
+  Searching Yelp API...
+  ✓ Found Yelp: Feast Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[202/5503] (3%) Matching: Buffetopia
+  Location: Humble, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: Buffetopia (score: 110)
+    Match reasons: city_match, exact_name
+[203/5503] (3%) Matching: China Garden Buffet
+  Location: Aberdeen, North Carolina
+  Searching Yelp API...
+  ✓ Found Yelp: China Garden (score: 110)
+    Match reasons: city_match, exact_name
+[204/5503] (3%) Matching: Ni's China Buffet
+  Location: Conroe, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: Ni's China Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[205/5503] (3%) Matching: Hong Kong Buffet
+  Location: Albuquerque, New Mexico
+  Searching Yelp API...
+  ✓ Found Yelp: Hong Kong Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[206/5503] (3%) Matching: China Buffet
+  Location: Charlotte, North Carolina
+  Searching Yelp API...
+  ✓ Found Yelp: China Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[207/5503] (3%) Matching: Imperial Buffet
+  Location: Normal, Illinois
+  Searching Yelp API...
+  ✓ Found Yelp: Imperial Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[208/5503] (3%) Matching: Canton Chinese Buffet
+  Location: Vancouver, Washington
+  Searching Yelp API...
+  ✓ Found Yelp: Canton Chinese Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[209/5503] (3%) Matching: Hibachi Sushi Supreme Buffet
+  Location: Brockton, Massachusetts
+  Searching Yelp API...
+  ✓ Found Yelp: Hibachi Sushi Supreme Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[210/5503] (3%) Matching: King Buffet
+  Location: Arvada, Colorado
+  Searching Yelp API...
+  ✓ Found Yelp: King Buffet (score: 110)
+    Match reasons: city_match, exact_name
+
+============================================================
+Progress Update:
+  Processed: 210/5503 (3%)
+  Yelp matches: 187 (89%)
+  Estimated time remaining: ~88 minutes
+============================================================
+
+[211/5503] (3%) Matching: Hibachi Grill Supreme Buffet Jimmy Carter
+  Location: Norcross, Georgia
+  Searching Yelp API...
+  ✓ Found Yelp: Hibachi Grill and Supreme Buffet (score: 86)
+    Match reasons: city_match
+[212/5503] (3%) Matching: Hong Kong Buffet
+  Location: Loganville, Georgia
+  Searching Yelp API...
+  ✓ Found Yelp: Hong Kong Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[213/5503] (3%) Matching: Natsumi Sushi & Seafood Buffet
+  Location: San Diego, California
+  Searching Yelp API...
+  ✓ Found Yelp: Natsumi Sushi & Seafood Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[214/5503] (3%) Matching: CJ Palace
+  Location: Sparks, Nevada
+  Searching Yelp API...
+  ✓ Found Yelp: CJ Palace (score: 110)
+    Match reasons: city_match, exact_name
+[215/5503] (3%) Matching: Mr Wok Chinese Buffet
+  Location: Waterbury, Connecticut
+  Searching Yelp API...
+  ✓ Found Yelp: Mr Wok Chinese Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[216/5503] (3%) Matching: New Hong Kong Buffet
+  Location: Jacksonville, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: New Hong Kong Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[217/5503] (3%) Matching: Flaming Chinese Buffet
+  Location: Kannapolis, North Carolina
+  Searching Yelp API...
+  ✗ Yelp: Not found
+[218/5503] (3%) Matching: Asian Pearl Buffet Hibachi Grill
+  Location: Atlanta, Georgia
+  Searching Yelp API...
+  ✓ Found Yelp: Asian Pearl Buffet Hibachi Grill (score: 110)
+    Match reasons: city_match, exact_name
+[219/5503] (3%) Matching: Grand Buffet
+  Location: Huntsville, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: Grand Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[220/5503] (3%) Matching: Fast Dragon Buffet & Carry Out
+  Location: Pekin, Illinois
+  Searching Yelp API...
+  ✓ Found Yelp: Fast Dragon Carry Out (score: 110)
+    Match reasons: city_match, exact_name
+
+============================================================
+Progress Update:
+  Processed: 220/5503 (3%)
+  Yelp matches: 196 (89%)
+  Estimated time remaining: ~88 minutes
+============================================================
+
+[221/5503] (4%) Matching: Teppanyaki Buffet
+  Location: Hollywood, Florida
+  Searching Yelp API...
+  ✓ Found Yelp: Teppanyaki Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[222/5503] (4%) Matching: King Buffet
+  Location: Renton, Washington
+  Searching Yelp API...
+  ✗ Yelp: Not found
+[223/5503] (4%) Matching: King Buffet
+  Location: Reno, Nevada
+  Searching Yelp API...
+  ✓ Found Yelp: King Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[224/5503] (4%) Matching: East Star Chinese Buffet
+  Location: Houston, Texas
+  Searching Yelp API...
+  ✗ Yelp: Not found
+[225/5503] (4%) Matching: Ultimate Buffet
+  Location: Colorado Springs, Colorado
+  Searching Yelp API...
+  ✓ Found Yelp: Ultimate Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[226/5503] (4%) Matching: Hibachi Grill & Supreme Buffet
+  Location: Aurora, Colorado
+  Searching Yelp API...
+  ✓ Found Yelp: Hibachi Grill & Buffet (score: 86)
+    Match reasons: city_match
+[227/5503] (4%) Matching: Super Hibachi Buffet & Grill
+  Location: Duluth, Georgia
+  Searching Yelp API...
+  ✓ Found Yelp: Super Hibachi Buffet (score: 91)
+    Match reasons: city_match, high_name_similarity
+[228/5503] (4%) Matching: Asia Buffet
+  Location: Lake Forest, California
+  Searching Yelp API...
+  ✓ Found Yelp: Asia Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[229/5503] (4%) Matching: Imperial Gardens
+  Location: Mason, Michigan
+  Searching Yelp API...
+  ✓ Found Yelp: Imperial Garden (score: 107)
+    Match reasons: city_match, exact_name
+[230/5503] (4%) Matching: King Buffet of Orem
+  Location: Orem, Utah
+  Searching Yelp API...
+  ✗ Yelp: Not found
+
+============================================================
+Progress Update:
+  Processed: 230/5503 (4%)
+  Yelp matches: 203 (88%)
+  Estimated time remaining: ~87 minutes
+============================================================
+
+[231/5503] (4%) Matching: Kim Sơn
+  Location: Houston, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: Kim Son (score: 96)
+    Match reasons: city_match, high_name_similarity
+[232/5503] (4%) Matching: New City Buffet and Cajun Seafood
+  Location: Riverdale, Georgia
+  Searching Yelp API...
+  ✓ Found Yelp: New City Buffet and Cajun Seafood (score: 110)
+    Match reasons: city_match, exact_name
+[233/5503] (4%) Matching: Hong Kong Buffet
+  Location: Peoria, Illinois
+  Searching Yelp API...
+  ✓ Found Yelp: Hong Kong Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[234/5503] (4%) Matching: Hibachi Buffet
+  Location: Duluth, Georgia
+  Searching Yelp API...
+  ✓ Found Yelp: Hibachi Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[235/5503] (4%) Matching: King Buffet of Salt Lake
+  Location: South Salt Lake, Utah
+  Searching Yelp API...
+  ✗ Yelp: Not found
+[236/5503] (4%) Matching: Empire Buffet
+  Location: San Pablo, California
+  Searching Yelp API...
+  ✓ Found Yelp: Empire Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[237/5503] (4%) Matching: Happy Family Chinese Buffet
+  Location: Humble, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: Happy Family Chinese Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[238/5503] (4%) Matching: Red Dragon Buffet
+  Location: Avondale, Arizona
+  Searching Yelp API...
+  ✓ Found Yelp: Red Dragon Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[239/5503] (4%) Matching: Asian Buffet
+  Location: Layton, Utah
+  Searching Yelp API...
+  ✓ Found Yelp: Asian Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[240/5503] (4%) Matching: Golden Buffet
+  Location: Hillsboro, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: Golden Buffet (score: 110)
+    Match reasons: city_match, exact_name
+
+============================================================
+Progress Update:
+  Processed: 240/5503 (4%)
+  Yelp matches: 212 (88%)
+  Estimated time remaining: ~87 minutes
+============================================================
+
+[241/5503] (4%) Matching: Hug Grill Buffet
+  Location: Hillsboro, Oregon
+  Searching Yelp API...
+  ✓ Found Yelp: Hug Grill Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[242/5503] (4%) Matching: Imperial China Buffet
+  Location: Watertown, Connecticut
+  Searching Yelp API...
+  ✓ Found Yelp: Imperial China Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[243/5503] (4%) Matching: Hokkaido Seafood Buffet
+  Location: Long Beach, California
+  Searching Yelp API...
+  ✓ Found Yelp: Hokkaido Seafood Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[244/5503] (4%) Matching: HuHot Mongolian Grill
+  Location: Westminster, Colorado
+  Searching Yelp API...
+  ✓ Found Yelp: HuHot Mongolian Grill (score: 110)
+    Match reasons: city_match, exact_name
+[245/5503] (4%) Matching: Imperial Buffet
+  Location: Berlin, Connecticut
+  Searching Yelp API...
+  ✓ Found Yelp: Imperial Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[246/5503] (4%) Matching: Super Golden Buffet
+  Location: Lawrenceville, Georgia
+  Searching Yelp API...
+  ✓ Found Yelp: Super Golden Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[247/5503] (4%) Matching: Lin Buffet
+  Location: Morton, Illinois
+  Searching Yelp API...
+  ✓ Found Yelp: Lin's Buffet (score: 85)
+    Match reasons: city_match
+[248/5503] (4%) Matching: China Buffet
+  Location: Kannapolis, North Carolina
+  Searching Yelp API...
+  ✓ Found Yelp: China Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[249/5503] (4%) Matching: Buffet Village
+  Location: Gilmer, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: Buffet Village (score: 110)
+    Match reasons: city_match, exact_name
+[250/5503] (4%) Matching: Jasmine Buffet
+  Location: Charlotte, North Carolina
+  Searching Yelp API...
+  ✓ Found Yelp: Jasmine Buffet (score: 110)
+    Match reasons: city_match, exact_name
+
+============================================================
+Progress Update:
+  Processed: 250/5503 (4%)
+  Yelp matches: 222 (88%)
+  Estimated time remaining: ~87 minutes
+============================================================
+
+[251/5503] (4%) Matching: Royal Buffet Sushi and Grill
+  Location: New Milford, Connecticut
+  Searching Yelp API...
+  ✓ Found Yelp: Royal Buffet Sushi and Grill (score: 110)
+    Match reasons: city_match, exact_name
+[252/5503] (4%) Matching: Carnival Buffet
+  Location: Salt Lake City, Utah
+  Searching Yelp API...
+  ✓ Found Yelp: carnival buffet (score: 110)
+    Match reasons: city_match, exact_name
+[253/5503] (4%) Matching: Asian Star Buffet & Hibachi Grill
+  Location: Princeton, Indiana
+  Searching Yelp API...
+  ✓ Found Yelp: Asian Star Buffet & Hibachi Grill (score: 110)
+    Match reasons: city_match, exact_name
+[254/5503] (4%) Matching: Panda Buffet
+  Location: Westminster, Colorado
+  Searching Yelp API...
+  ✓ Found Yelp: Panda Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[255/5503] (4%) Matching: Ming Dynasty
+  Location: Santa Maria, California
+  Searching Yelp API...
+  ✓ Found Yelp: Ming Dynasty (score: 110)
+    Match reasons: city_match, exact_name
+[256/5503] (4%) Matching: Happy Garden Chinese Buffet
+  Location: Oconto, Wisconsin
+  Searching Yelp API...
+  ✓ Found Yelp: Happy Garden (score: 110)
+    Match reasons: city_match, exact_name
+[257/5503] (4%) Matching: Kings Super Buffet
+  Location: Lauderhill, Florida
+  Searching Yelp API...
+  ✓ Found Yelp: King's Super Buffet (score: 106)
+    Match reasons: city_match, exact_name
+[258/5503] (4%) Matching: China Buffet
+  Location: Charlotte, North Carolina
+  Searching Yelp API...
+  ✓ Found Yelp: China Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[259/5503] (4%) Matching: Greater China Buffet
+  Location: Sparks, Nevada
+  Searching Yelp API...
+  ✓ Found Yelp: Greater China Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[260/5503] (4%) Matching: Chang's Mongolian Grill
+  Location: Beaverton, Oregon
+  Searching Yelp API...
+  ✓ Found Yelp: Changs Mongolian Grill (score: 108)
+    Match reasons: city_match, exact_name
+
+============================================================
+Progress Update:
+  Processed: 260/5503 (4%)
+  Yelp matches: 232 (89%)
+  Estimated time remaining: ~87 minutes
+============================================================
+
+[261/5503] (4%) Matching: King Buffet
+  Location: San Bernardino, California
+  Searching Yelp API...
+  ✓ Found Yelp: King Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[262/5503] (4%) Matching: New York Chinese Buffet
+  Location: Miami, Florida
+  Searching Yelp API...
+  ✓ Found Yelp: New York Chinese Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[263/5503] (4%) Matching: China Buffet
+  Location: Surprise, Arizona
+  Searching Yelp API...
+  ✓ Found Yelp: China Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[264/5503] (4%) Matching: Hong Kong Buffet
+  Location: Sturgeon Bay, Wisconsin
+  Searching Yelp API...
+  ✓ Found Yelp: Hong Kong Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[265/5503] (4%) Matching: V-star Buffet
+  Location: Santa Maria, California
+  Searching Yelp API...
+  ✓ Found Yelp: V Star Buffet (score: 93)
+    Match reasons: city_match, high_name_similarity
+[266/5503] (4%) Matching: Young Young Chinese Buffet
+  Location: Southington, Connecticut
+  Searching Yelp API...
+  ✓ Found Yelp: Young-Young Chinese Buffet (score: 91)
+    Match reasons: exact_name
+[267/5503] (4%) Matching: Old Town Hot Pot
+  Location: Aurora, Colorado
+  Searching Yelp API...
+  ✓ Found Yelp: Old Town Hot Pot (score: 110)
+    Match reasons: city_match, exact_name
+[268/5503] (4%) Matching: Crazy Buffet
+  Location: Evansville, Indiana
+  Searching Yelp API...
+  ✓ Found Yelp: Crazy Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[269/5503] (4%) Matching: China Buffet
+  Location: Decatur, Georgia
+  Searching Yelp API...
+  ✓ Found Yelp: China Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[270/5503] (4%) Matching: Hong Kong Buffet
+  Location: New London, Wisconsin
+  Searching Yelp API...
+  ✓ Found Yelp: Hong Kong Buffet (score: 110)
+    Match reasons: city_match, exact_name
+
+============================================================
+Progress Update:
+  Processed: 270/5503 (4%)
+  Yelp matches: 242 (89%)
+  Estimated time remaining: ~87 minutes
+============================================================
+
+[271/5503] (4%) Matching: Asian Buffet
+  Location: McKinney, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: Asian Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[272/5503] (4%) Matching: Panda Express
+  Location: College Station, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: Panda Express (score: 110)
+    Match reasons: city_match, exact_name
+[273/5503] (4%) Matching: China Buffet
+  Location: Methuen, Massachusetts
+  Searching Yelp API...
+  ✓ Found Yelp: China Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[274/5503] (4%) Matching: Empire Buffet
+  Location: Southbridge, Massachusetts
+  Searching Yelp API...
+  ✓ Found Yelp: Empire Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[275/5503] (4%) Matching: China Town Buffet
+  Location: Odessa, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: China Town Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[276/5503] (5%) Matching: Ten Seconds Noodle House 十秒到雲南過橋米缐
+  Location: College Station, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: Ten Seconds Noodle House (score: 93)
+    Match reasons: city_match, high_name_similarity
+[277/5503] (5%) Matching: Panda Express
+  Location: College Station, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: Panda Express (score: 110)
+    Match reasons: city_match, exact_name
+[278/5503] (5%) Matching: Sun Star Buffet
+  Location: Phoenix, Arizona
+  Searching Yelp API...
+  ✓ Found Yelp: Sun Star Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[279/5503] (5%) Matching: Mei Mei Chinese Buffet
+  Location: Dallas, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: Mei Mei Chinese Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[280/5503] (5%) Matching: Blue Sakura Shabu All You Can Eat
+  Location: Boston, Massachusetts
+  Searching Yelp API...
+  ✗ Yelp: Not found
+
+============================================================
+Progress Update:
+  Processed: 280/5503 (5%)
+  Yelp matches: 251 (89%)
+  Estimated time remaining: ~87 minutes
+============================================================
+
+[281/5503] (5%) Matching: Shun De Mom Northgate
+  Location: College Station, Texas
+  Searching Yelp API...
+  ✗ Yelp: Not found
+[282/5503] (5%) Matching: Buffet City
+  Location: Tuscaloosa, Alabama
+  Searching Yelp API...
+  ✓ Found Yelp: Buffet City (score: 110)
+    Match reasons: city_match, exact_name
+[283/5503] (5%) Matching: King Buffet
+  Location: Everett, Washington
+  Searching Yelp API...
+  ✓ Found Yelp: King Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[284/5503] (5%) Matching: China Buffet
+  Location: Port Allen, Louisiana
+  Searching Yelp API...
+  ✓ Found Yelp: China One Chinese Restaurant (score: 71)
+    Match reasons: 
+[285/5503] (5%) Matching: One Bite & Bar
+  Location: Cambridge, Massachusetts
+  Searching Yelp API...
+  ✓ Found Yelp: One Bite And Bar (score: 110)
+    Match reasons: city_match, exact_name
+[286/5503] (5%) Matching: Dragon China Buffet
+  Location: Carlsbad, New Mexico
+  Searching Yelp API...
+  ✓ Found Yelp: Dragon China Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[287/5503] (5%) Matching: King Buffet
+  Location: Port Arthur, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: King Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[288/5503] (5%) Matching: Flaming Buffet
+  Location: Dallas, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: Flaming Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[289/5503] (5%) Matching: China Buffet
+  Location: Greensboro, North Carolina
+  Searching Yelp API...
+  ✓ Found Yelp: China Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[290/5503] (5%) Matching: Cinese buffet Sushi Bar
+  Location: Houston, Texas
+  Searching Yelp API...
+  ✗ Yelp: Not found
+
+============================================================
+Progress Update:
+  Processed: 290/5503 (5%)
+  Yelp matches: 259 (89%)
+  Estimated time remaining: ~86 minutes
+============================================================
+
+[291/5503] (5%) Matching: Perris Buffet
+  Location: Perris, California
+  Searching Yelp API...
+  ✓ Found Yelp: Perris Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[292/5503] (5%) Matching: CHINA BUFFET
+  Location: Oak Grove, Missouri
+  Searching Yelp API...
+  ✓ Found Yelp: China Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[293/5503] (5%) Matching: China Ming Buffet
+  Location: Lexington, North Carolina
+  Searching Yelp API...
+  ✓ Found Yelp: China Ming Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[294/5503] (5%) Matching: China Buffet
+  Location: Greater Manchester, England
+  Searching Yelp API...
+  ✓ Found Yelp: China Buffet (score: 100)
+    Match reasons: exact_name
+[295/5503] (5%) Matching: Grand Buffet
+  Location: San Antonio, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: Grand Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[296/5503] (5%) Matching: Flaming Buffet
+  Location: Garland, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: Flaming Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[297/5503] (5%) Matching: Ginza Japanese Buffet
+  Location: North Miami Beach, Florida
+  Searching Yelp API...
+  ✓ Found Yelp: Ginza Japanese Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[298/5503] (5%) Matching: Chow Time
+  Location: Pembroke Pines, Florida
+  Searching Yelp API...
+  ✓ Found Yelp: Chow Time Grill & Buffet (score: 85)
+    Match reasons: city_match
+[299/5503] (5%) Matching: HuHot Mongolian Grill
+  Location: Sandy, Utah
+  Searching Yelp API...
+  ✓ Found Yelp: HuHot Mongolian Grill (score: 110)
+    Match reasons: city_match, exact_name
+[300/5503] (5%) Matching: China Lee Buffet
+  Location: Ocala, Florida
+  Searching Yelp API...
+  ✓ Found Yelp: China Lee Buffet (score: 110)
+    Match reasons: city_match, exact_name
+
+============================================================
+Progress Update:
+  Processed: 300/5503 (5%)
+  Yelp matches: 269 (89%)
+  Estimated time remaining: ~86 minutes
+============================================================
+
+[301/5503] (5%) Matching: Chef Cao's
+  Location: College Station, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: Chef Cao's (score: 110)
+    Match reasons: city_match, exact_name
+[302/5503] (5%) Matching: V Star Buffet
+  Location: Everett, Washington
+  Searching Yelp API...
+  ✓ Found Yelp: V Star Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[303/5503] (5%) Matching: T.Jin China Diner
+  Location: College Station, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: T Jin China Diner (score: 104)
+    Match reasons: city_match, exact_name
+[304/5503] (5%) Matching: C&C Asian Garden
+  Location: College Station, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: C&C Asian Garden (score: 110)
+    Match reasons: city_match, exact_name
+[305/5503] (5%) Matching: China King Super Buffet
+  Location: Haverhill, Massachusetts
+  Searching Yelp API...
+  ✓ Found Yelp: China King Super Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[306/5503] (5%) Matching: Sunny China Buffet
+  Location: Urbana, Illinois
+  Searching Yelp API...
+  ✓ Found Yelp: Sunny China Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[307/5503] (5%) Matching: Shanghai Garden
+  Location: Independence, Kansas
+  Searching Yelp API...
+  ✓ Found Yelp: Shanghai Garden (score: 110)
+    Match reasons: city_match, exact_name
+[308/5503] (5%) Matching: Dynasty Buffet
+  Location: Gorham, New Hampshire
+  Searching Yelp API...
+  ✗ Yelp: Not found
+[309/5503] (5%) Matching: Oishi Sushi Asian Fusion
+  Location: College Station, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: Oishi Sushi Asian Fusion (score: 110)
+    Match reasons: city_match, exact_name
+[310/5503] (5%) Matching: Ming's Buffet
+  Location: Vidor, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: Ming's Buffet (score: 110)
+    Match reasons: city_match, exact_name
+
+============================================================
+Progress Update:
+  Processed: 310/5503 (5%)
+  Yelp matches: 278 (89%)
+  Estimated time remaining: ~86 minutes
+============================================================
+
+[311/5503] (5%) Matching: Asian Buffet
+  Location: Las Cruces, New Mexico
+  Searching Yelp API...
+  ✓ Found Yelp: Asian Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[312/5503] (5%) Matching: Tin Tin Buffet
+  Location: Boston, Massachusetts
+  Searching Yelp API...
+  ✓ Found Yelp: Tin Tin Buffet Restaurant (score: 100)
+    Match reasons: exact_name
+[313/5503] (5%) Matching: Lin's Asian Buffet
+  Location: Carrollton, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: Lin's Asian Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[314/5503] (5%) Matching: Hometown Chinese Restaurant
+  Location: Bryan, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: Hometown Chinese Restaurant (score: 110)
+    Match reasons: city_match, exact_name
+[315/5503] (5%) Matching: Great Wall Plano Super Buffet
+  Location: Plano, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: Great Wall Plano Super Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[316/5503] (5%) Matching: Ye Star Chinese Buffet
+  Location: College Station, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: Ye Star Chinese Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[317/5503] (5%) Matching: China Super Buffet
+  Location: Los Lunas, New Mexico
+  Searching Yelp API...
+  ✓ Found Yelp: China Super Cafe (score: 91)
+    Match reasons: city_match, high_name_similarity
+[318/5503] (5%) Matching: Mizumi Buffet & Sushi
+  Location: North Miami Beach, Florida
+  Searching Yelp API...
+  ✓ Found Yelp: Mizumi Buffet & Sushi (score: 110)
+    Match reasons: city_match, exact_name
+[319/5503] (5%) Matching: Hibachi Buffet
+  Location: Deerfield Beach, Florida
+  Searching Yelp API...
+  ✓ Found Yelp: Hibachi Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[320/5503] (5%) Matching: Ichiban Buffet
+  Location: Springfield, Missouri
+  Searching Yelp API...
+  ✓ Found Yelp: Ichiban Buffet (score: 110)
+    Match reasons: city_match, exact_name
+
+============================================================
+Progress Update:
+  Processed: 320/5503 (5%)
+  Yelp matches: 288 (90%)
+  Estimated time remaining: ~86 minutes
+============================================================
+
+[321/5503] (5%) Matching: China Harbor Buffet
+  Location: San Antonio, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: China Harbor Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[322/5503] (5%) Matching: Grand Buffet
+  Location: Nederland, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: Grand Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[323/5503] (5%) Matching: Chef Cao's
+  Location: College Station, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: Chef Cao's (score: 110)
+    Match reasons: city_match, exact_name
+[324/5503] (5%) Matching: Lucky Village
+  Location: Houston, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: Lucky Village (score: 110)
+    Match reasons: city_match, exact_name
+[325/5503] (5%) Matching: City Buffet
+  Location: Boise, Idaho
+  Searching Yelp API...
+  ✓ Found Yelp: City Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[326/5503] (5%) Matching: Flaming Buffet
+  Location: Richardson, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: Flaming Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[327/5503] (5%) Matching: Asian King Buffet
+  Location: Springfield, Missouri
+  Searching Yelp API...
+  ✓ Found Yelp: Asian King Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[328/5503] (5%) Matching: Red Wok Buffet
+  Location: Phoenix, Arizona
+  Searching Yelp API...
+  ✓ Found Yelp: Red Wok Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[329/5503] (5%) Matching: Yummy Yummy
+  Location: Texas City, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: Yummy Yummy (score: 110)
+    Match reasons: city_match, exact_name
+[330/5503] (5%) Matching: Super China Buffet
+  Location: Greensboro, North Carolina
+  Searching Yelp API...
+  ✓ Found Yelp: Super China Buffet (score: 110)
+    Match reasons: city_match, exact_name
+
+============================================================
+Progress Update:
+  Processed: 330/5503 (5%)
+  Yelp matches: 298 (90%)
+  Estimated time remaining: ~86 minutes
+============================================================
+
+[331/5503] (6%) Matching: FRICE CHINESE RESTAURANT
+  Location: College Station, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: Frice (score: 110)
+    Match reasons: city_match, exact_name
+[332/5503] (6%) Matching: Gourmet Buffet & Grill
+  Location: Phoenix, Arizona
+  Searching Yelp API...
+  ✗ Yelp: Not found
+[333/5503] (6%) Matching: First Choice Buffet
+  Location: Niceville, Florida
+  Searching Yelp API...
+  ✓ Found Yelp: First Choice Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[334/5503] (6%) Matching: Harbor Seafood Super Buffet
+  Location: Phoenix, Arizona
+  Searching Yelp API...
+  ✓ Found Yelp: Harbor Seafood Super Buffet (score: 110)
+    Match reasons: city_match, exact_name
+[335/5503] (6%) Matching: Buffet Palace
+  Location: North Richland Hills, Texas
+  Searching Yelp API...
+  ✓ Found Yelp: Buffet Palace (score: 110)
+    Match reasons: city_match, exact_name
+[336/5503] (6%) Matching: China Harvest Buffet
+  Location: Phoenix, Arizona
+  Searching Yelp API...
+  ✓ Found Yelp: China Harvest Buffet (score: 110)
+    Match reasons: city_match, exact_name

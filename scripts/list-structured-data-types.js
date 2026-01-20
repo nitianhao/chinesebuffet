@@ -1,0 +1,141 @@
+const { init } = require('@instantdb/admin');
+const fs = require('fs');
+const path = require('path');
+const schema = require('../src/instant.schema.ts');
+
+// Load environment variables from .env.local if it exists
+try {
+  const envPath = path.join(__dirname, '../.env.local');
+  if (fs.existsSync(envPath)) {
+    const envFile = fs.readFileSync(envPath, 'utf8');
+    envFile.split('\n').forEach(line => {
+      // Skip comments and empty lines
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) {
+        return;
+      }
+      // Match key=value format
+      const match = trimmed.match(/^([^=:#\s]+)\s*=\s*(.*)$/);
+      if (match) {
+        const key = match[1].trim();
+        let value = match[2].trim();
+        // Remove quotes if present
+        if ((value.startsWith('"') && value.endsWith('"')) || 
+            (value.startsWith("'") && value.endsWith("'"))) {
+          value = value.slice(1, -1);
+        }
+        process.env[key] = value;
+      }
+    });
+  }
+} catch (error) {
+  console.warn('Warning: Could not load .env.local:', error.message);
+}
+
+async function listStructuredDataTypes() {
+  if (!process.env.INSTANT_ADMIN_TOKEN) {
+    console.error('INSTANT_ADMIN_TOKEN is required');
+    process.exit(1);
+  }
+
+  try {
+    const db = init({
+      appId: process.env.NEXT_PUBLIC_INSTANT_APP_ID || process.env.INSTANT_APP_ID || '709e0e09-3347-419b-8daa-bad6889e480d',
+      adminToken: process.env.INSTANT_ADMIN_TOKEN,
+      schema: schema.default || schema,
+    });
+
+    console.log('Fetching all structuredData records...');
+    
+    // Fetch all structuredData records
+    const result = await db.query({
+      structuredData: {
+        $: {
+          limit: 100000, // High limit to get all records
+        }
+      }
+    });
+
+    const records = result.structuredData || [];
+    console.log(`Total structuredData records: ${records.length}`);
+
+    // Collect all types
+    const typeCounts = {};
+    const typeExamples = {};
+
+    for (const record of records) {
+      const type = record.type || '(null/undefined)';
+      
+      if (!typeCounts[type]) {
+        typeCounts[type] = 0;
+        typeExamples[type] = record;
+      }
+      typeCounts[type]++;
+    }
+
+    // Sort by count (descending)
+    const sortedTypes = Object.entries(typeCounts)
+      .sort((a, b) => b[1] - a[1]);
+
+    // Build detailed information for each type
+    const typesInfo = sortedTypes.map(([type, count]) => {
+      const example = typeExamples[type];
+      let sampleKeys = [];
+      
+      if (example && example.data) {
+        try {
+          const parsedData = JSON.parse(example.data);
+          sampleKeys = Object.keys(parsedData);
+        } catch (e) {
+          // Not JSON, skip
+        }
+      }
+
+      return {
+        type,
+        count,
+        sampleKeys: sampleKeys.slice(0, 10),
+      };
+    });
+
+    const results = {
+      totalRecords: records.length,
+      recordsWithType: records.filter(r => r.type).length,
+      recordsWithoutType: records.filter(r => !r.type).length,
+      totalUniqueTypes: sortedTypes.length,
+      types: sortedTypes.map(([type]) => type),
+      typesInfo,
+      typeCounts,
+    };
+
+    console.log('\n=== Results ===');
+    console.log(`Total records: ${results.totalRecords}`);
+    console.log(`Total unique types: ${results.totalUniqueTypes}`);
+    console.log(`Records with type: ${results.recordsWithType}`);
+    console.log(`Records without type: ${results.recordsWithoutType}`);
+    console.log('\n=== Types ===');
+    sortedTypes.forEach(([type, count]) => {
+      console.log(`${type}: ${count} record(s)`);
+    });
+
+    console.log('\n=== Detailed Type Information ===');
+    typesInfo.forEach(({ type, count, sampleKeys }) => {
+      console.log(`\n${type} (${count} records):`);
+      if (sampleKeys.length > 0) {
+        console.log(`  Sample keys: ${sampleKeys.join(', ')}`);
+      }
+    });
+
+    return results;
+  } catch (error) {
+    console.error('Error querying structuredData:', error);
+    throw error;
+  }
+}
+
+listStructuredDataTypes()
+  .then(() => process.exit(0))
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });

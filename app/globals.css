@@ -31,3 +31,11 @@ body {
 @import 'leaflet.markercluster/dist/MarkerCluster.css';
 @import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 
+/* Hide placeholder on focus and ensure caret is visible */
+.search-input:focus::placeholder {
+  opacity: 0;
+}.search-input {
+  caret-color: #111827; /* gray-900 */
+  color: #111827; /* gray-900 */
+  background-color: white;
+}

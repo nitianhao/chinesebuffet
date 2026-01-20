@@ -1,0 +1,186 @@
+[
+  {
+    "name": "Great Wall Buffet",
+    "placeId": "ChIJv2z0FakAwFQRM4hJf8DRaZQ",
+    "url": "https://www.greatwallbuffet.biz/menu",
+    "originalUrl": "http://greatwall buffet.biz/menu",
+    "success": false,
+    "statusCode": 404,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "404 error - page not found",
+      "Scraping failed: 404 error - page not found"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "404 error - page not found"
+  },
+  {
+    "name": "King Buffet",
+    "placeId": "ChIJE3H7PZOhwokR8O-GxVNKaYg",
+    "url": "https://www.smorefood.com/404?utm_source=gmb&utm_medium=website",
+    "originalUrl": "https://smorefood.com/order-online/king-buffet-stamford-06905-07lk5tla/menu?utm_source=gmb&utm_medium=website",
+    "success": false,
+    "statusCode": 404,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "404 error - page not found",
+      "Scraping failed: 404 error - page not found"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "404 error - page not found"
+  },
+  {
+    "name": "P.F. Chang's",
+    "placeId": "ChIJN6G-JR0J2YgRsIuMNGmPP7U",
+    "url": "https://locations.pfchangs.com/fl/sunrise/1740-sawgrass-mills-circle.html",
+    "originalUrl": "https://locations.pfchangs.com/fl/sunrise/1740-sawgrass-mills-circle.html/menu?utm_source=google_gbp&utm_medium=organic",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Hongkong Garden",
+    "placeId": "ChIJc-esBtf_v1QRFjzH8-pnaoc",
+    "url": "http://www.hongkonggarden989.com/menu",
+    "originalUrl": "http://www.hongkonggarden989.com/menu",
+    "success": false,
+    "statusCode": 403,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: No menu-related content found in HTML - skipping record"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 167,
+    "error": "No menu-related content found in HTML - skipping record"
+  },
+  {
+    "name": "Chen's Family Dish",
+    "placeId": "ChIJ5RIiW___v1QRZju_kvnmPqg",
+    "url": "http://www.chensfamilydishsalem.com/menu",
+    "originalUrl": "http://www.chensfamilydishsalem.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "YGF Malatang",
+    "placeId": "ChIJT_AIGpMH2YgR0-mO6kMhblY",
+    "url": "http://ygfmiami.com/menu",
+    "originalUrl": "http://ygfmiami.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Golden Crown Restaurant",
+    "placeId": "ChIJXUmwVQz_v1QRtDx7ABQQvOA",
+    "url": "http://gcrownrestaurant.com/menu",
+    "originalUrl": "http://gcrownrestaurant.com/menu",
+    "success": false,
+    "statusCode": 404,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "404 error - page not found",
+      "Scraping failed: 404 error - page not found"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "404 error - page not found"
+  },
+  {
+    "name": "China Inn Restaurant",
+    "placeId": "ChIJD7AxMcvw5IcRxbRWd4pt1e8",
+    "url": "https://chinainniatogo.com/menu",
+    "originalUrl": "https://chinainniatogo.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Happy Bibimbop House",
+    "placeId": "ChIJ61nGdRL_v1QRt6SuDOXXHMM",
+    "url": "https://www.happybibimbophouse.com/menu",
+    "originalUrl": "https://www.happybibimbophouse.com/menu",
+    "success": false,
+    "statusCode": 404,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "404 error - page not found",
+      "Scraping failed: 404 error - page not found"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "404 error - page not found"
+  },
+  {
+    "name": "Oriental Chinese & Sushi Restaurant",
+    "placeId": "ChIJUV1gQOv-v1QRgoUzC_LbYYE",
+    "url": "http://www.oriental2016.com/menu",
+    "originalUrl": "http://www.oriental2016.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  }
+]

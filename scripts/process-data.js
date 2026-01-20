@@ -226,6 +226,7 @@ function processData() {
       placeId: buffet.placeId || null,
       imagesCount: buffet.imagesCount || 0,
       imageUrls: buffet.imageUrls || [],
+      images: buffet.photos || buffet.images || [], // Map photos -> images
       reviews: buffet.reviews || [],
       description: buffet.description || null,
       subTitle: buffet.subTitle || null,

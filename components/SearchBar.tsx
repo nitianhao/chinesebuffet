@@ -32,7 +32,8 @@ export default function SearchBar({ onSearch, showResults = true }: SearchBarPro
       try {
         const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
         const data = await response.json();
-        setResults(data.results || []);
+        const results = (data.results || []).filter((r: SearchResult) => r.name && r.name.trim());
+        setResults(results);
       } catch (error) {
         console.error('Search error:', error);
         setResults([]);
@@ -61,8 +62,8 @@ export default function SearchBar({ onSearch, showResults = true }: SearchBarPro
           onChange={handleInputChange}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setTimeout(() => setIsFocused(false), 200)}
-          placeholder="Search for a city or buffet..."
-          className="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder="Search for buffets, restaurants, cities or neighborhoods"
+          className="search-input w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white caret-gray-900"
         />
         <svg
           className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"

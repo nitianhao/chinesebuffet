@@ -1,0 +1,2322 @@
+Warning: Could not load .env.local: EPERM: operation not permitted, open '/Users/michalpekarcik/Cursor/Chinese Buffet/.env.local'
+🍽️  Scraping next 100 menu URLs (HTML only, no OCR/JS)...
+
+Found 100 records to scrape
+
+================================================================================
+
+[1/100] Panda Lin
+   PlaceID: ChIJe2huKDn35IcRe5CQUqc3OOk
+   URL: http://www.pandalinchineserestaurant.com/menu
+  Fetching: http://www.pandalinchineserestaurant.com/menu
+      → Redirect 1: https://www.pandalinchineserestaurant.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[2/100] Panda Garden
+   PlaceID: ChIJM1Q7P46hwokRKEnQl3PBqPo
+   URL: http://www.pandagardenstamford.com/menu
+  Fetching: http://www.pandagardenstamford.com/menu
+      → Redirect 1: https://www.pandagardenstamford.com/menu
+      → Redirect 2: https://order.pandagardenstamford.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[3/100] HuHot Mongolian Grill
+   PlaceID: ChIJv2uR-Qfx5IcRvxDuy61UXxU
+   URL: https://www.huhot.com/location/cedar-rapids-ia/menu
+  Fetching: https://www.huhot.com/location/cedar-rapids-ia/menu
+      → Redirect 1: https://www.huhot.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[4/100] Chopstick Brothers
+   PlaceID: ChIJswRe5ewBwFQRvp0OHdO6svo
+   URL: http://www.chopstickbrothers.com/menu
+  Fetching: http://www.chopstickbrothers.com/menu
+      → Redirect 1: https://www.chopstickbrothers.com/menu
+      → Redirect 2: https://www.chopstickbrothers.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[5/100] China Xpress
+   PlaceID: ChIJybYr0FOfwokRBaGgYNXCQK0
+   URL: https://www.chinaxpressct.com/menu
+  Fetching: https://www.chinaxpressct.com/menu
+      → Redirect 1: https://www.springroll.com/?utm_source=chinaxpressct.com&utm_medium=cancellation-redirect
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[6/100] Asian Chao
+   PlaceID: ChIJB5B3WQEJ2YgRP4yqqmI3-tc
+   URL: https://www.foodsystemsunlimited.com/menu
+  Fetching: https://www.foodsystemsunlimited.com/menu
+      → Redirect 1: https://www.foodsystemsunlimited.com/menu-nutritional/
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[7/100] Lotus Cafe at Boca Chica
+   PlaceID: ChIJkd-v_TSUb4YRqqfIrrbcMic
+   URL: http://www.lotuscafe.us/menu
+  Fetching: http://www.lotuscafe.us/menu
+      → Redirect 1: https://www.lotuscafe.us/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[8/100] Chen’s Family Dish Six Wok & Bar
+   PlaceID: ChIJJ1ceLlIHwFQRW3eQQ3xRH3s
+   URL: http://chensfamilydishsix.com/menu
+  Fetching: http://chensfamilydishsix.com/menu
+      → Redirect 1: https://chensfamilydishsix.com/menu
+      → Redirect 2: https://www.chensfamilydishsix.com/menu
+      → Redirect 3: https://www.chensfamilydishsix.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[9/100] Blue Willow Restaurant
+   PlaceID: ChIJ27MNSpP-v1QRmtmiH5RPess
+   URL: https://bluewillowrestaurant.shop/menu
+  Fetching: https://bluewillowrestaurant.shop/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[10/100] Bobo Chinese Take Out
+   PlaceID: ChIJV8DLTVwG2YgRdQGVADusC5c
+   URL: http://bobochinesefoodtakeout.com/menu
+  Fetching: http://bobochinesefoodtakeout.com/menu
+      → Redirect 1: https://bobochinesefoodtakeout.com/menu
+  Error: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca
+
+📊 Progress: 10/100 (10.0%)
+   ✅ Saved: 0, ⚠️  Skipped: 10, ❌ Failed: 0
+
+================================================================================
+
+[11/100] Lotus Inn
+   PlaceID: ChIJmwgQwuGTb4YRuLFJCVlhOFk
+   URL: https://www.lotusinnbrownsville.com/menu
+  Fetching: https://www.lotusinnbrownsville.com/menu
+      → Redirect 1: https://www.lotusinnbrownsville.com/
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[12/100] New China King
+   PlaceID: ChIJc1zBwtChwokRrClW5yoaRQU
+   URL: https://www.newchinaking-ct.com/menu
+  Fetching: https://www.newchinaking-ct.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[13/100] Great Wall
+   PlaceID: ChIJTRyW5eahwokRCbwGO4dLRRI
+   URL: https://greatwallchinesestamford.com/menu
+  Fetching: https://greatwallchinesestamford.com/menu
+      → Redirect 1: https://www.greatwallchinesestamford.com/menu
+      → Redirect 2: https://www.greatwallchinesestamford.com/d4q7xihz/restaurant/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[14/100] Gold Dragon Restaurant
+   PlaceID: ChIJK3IjKmoHwFQRwAcRmof1kIY
+   URL: http://www.salem-golddragon.com/menu
+  Fetching: http://www.salem-golddragon.com/menu
+      → Redirect 1: https://www.salem-golddragon.com/menu
+      → Redirect 2: https://www.salem-golddragon.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[15/100] Lum-Yuen Restaurant
+   PlaceID: ChIJZ1XbWlz-v1QRZnOpmWVaFGA
+   URL: https://www.lumyuen.com/menu
+  Fetching: https://www.lumyuen.com/menu
+      → Redirect 1: https://www.lumyuen.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[16/100] China Star
+   PlaceID: ChIJ2X56AbsI2YgRkCBKfsK1T_0
+   URL: https://www.chinastarsunrisefl.com/menu
+  Fetching: https://www.chinastarsunrisefl.com/menu
+      → Redirect 1: https://www.chinastarsunrisefl.com/19azj85h/restaurant/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[17/100] Chinn's Restaurant
+   PlaceID: ChIJw_zK8msHwFQRE3l9VjcSzCU
+   URL: https://www.chinnoregon.com/menu
+  Fetching: https://www.chinnoregon.com/menu
+      → Redirect 1: https://www.chinnoregon.com/mdotj1op/restaurant/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[18/100] Chopsticks King
+   PlaceID: ChIJX3_HQOqhwokR_KUslraYDjc
+   URL: https://www.chopsticksct.com/menu
+  Fetching: https://www.chopsticksct.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[19/100] Pho & Chinese
+   PlaceID: ChIJD04fn4eWb4YRT0Oxo89QzfU
+   URL: http://phonchinese.weebly.com/menu
+  Fetching: http://phonchinese.weebly.com/menu
+      → Redirect 1: https://phonchinese.weebly.com/menu
+      → Redirect 2: https://phonchinese.weebly.com/menu.html
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[20/100] Chef Wong Chinese Restaurant
+   PlaceID: ChIJ_bnxiB7x5IcRBqfRLMGaUIQ
+   URL: https://www.chefwongchinese.com/menu
+  Fetching: https://www.chefwongchinese.com/menu
+      → Redirect 1: https://order.chefwongchinese.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+📊 Progress: 20/100 (20.0%)
+   ✅ Saved: 0, ⚠️  Skipped: 20, ❌ Failed: 0
+
+================================================================================
+
+[21/100] China King
+   PlaceID: ChIJnRZBJQL55IcRTp-dabMmB5g
+   URL: https://www.smorefood.com/order-online/china-king-cedar-rapids-52404-tjsev5ea/menu?utm_source=gmb&utm_medium=website
+  Fetching: https://www.smorefood.com/order-online/china-king-cedar-rapids-52404-tjsev5ea/menu?utm_source=gmb&utm_medium=website
+      → Redirect 1: https://www.smorefood.com/404?utm_source=gmb&utm_medium=website
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[22/100] China Pavilion
+   PlaceID: ChIJnc1ls_qhwokR-yIs9NvnZOM
+   URL: http://www.chinapavilionstamfordct.com/menu
+  Fetching: http://www.chinapavilionstamfordct.com/menu
+      → Redirect 1: https://www.chinapavilionstamfordct.com/menu
+      → Redirect 2: https://www.chinapavilionstamfordct.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[23/100] Toa Toa Chinese Restaurant
+   PlaceID: ChIJ7Tr812IH2YgRXYP1lFYbi1Q
+   URL: http://www.toatoadimsum.com/menu
+  Fetching: http://www.toatoadimsum.com/menu
+      → Redirect 1: https://www.toatoadimsum.com/menu
+      → Redirect 2: https://www.toatoadimsum.com/locked
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[24/100] Chinese Cafe
+   PlaceID: ChIJ35ZnTwz_v1QREAYDiLpw564
+   URL: http://www.salemcenter.com/stores/chinese-cafe/menu
+  Fetching: http://www.salemcenter.com/stores/chinese-cafe/menu
+      → Redirect 1: https://www.salemcenter.com/stores/chinese-cafe/menu
+      → Redirect 2: https://www.salemcenter.com/stores/chinese-cafe/menu/
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[25/100] Buffet City
+   PlaceID: ChIJx1f6kVqguokRe0GkDcNsLlU
+   URL: http://www.buffetcitychesapeake.com/menu
+  Fetching: http://www.buffetcitychesapeake.com/menu
+      → Redirect 1: http://buffetcitychesapeake.com/menu
+      → Redirect 2: https://buffetcitychesapeake.com/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[26/100] Ma Ma China
+   PlaceID: ChIJczDCk-vjwIcRIiYym7Ha8Yw
+   URL: https://etapthru.com/restaurant.php/menu?id=7666
+  Fetching: https://etapthru.com/restaurant.php/menu?id=7666
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[27/100] Volcano Sushi & Asian Bistro
+   PlaceID: ChIJuVQvajmYuokRmt-JluA61hk
+   URL: http://www.volcanosushinorfolkva.com/menu
+  Fetching: http://www.volcanosushinorfolkva.com/menu
+      → Redirect 1: https://www.volcanosushinorfolkva.com/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[28/100] The Luxe Buffet - Seafood & Grill
+   PlaceID: ChIJF0rPS3g1w4ARjsqsZAlIKCo
+   URL: http://www.theluxebuffet.net/menu
+  Fetching: http://www.theluxebuffet.net/menu
+      → Redirect 1: http://www.theluxebuffet.net/menu.html
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[29/100] Crazy Buffet & Grill
+   PlaceID: ChIJvZeyAhzW2IgRN59o3rC7ciM
+   URL: http://crazybuffetgrill.com/menu
+  Fetching: http://crazybuffetgrill.com/menu
+      → Redirect 1: https://crazybuffetgrill.com/menu
+      → Redirect 2: https://crazybuffetgrill.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[30/100] Sohao Buffet
+   PlaceID: ChIJvUA-UQBvv4cRIKSOiNimAKU
+   URL: http://sohaobuffet.com/menu
+  Fetching: http://sohaobuffet.com/menu
+      → Redirect 1: https://sohaobuffet.com/menu
+      → Redirect 2: https://www.sohaobuffet.com/menu
+      → Redirect 3: https://www.sohaobuffet.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+📊 Progress: 30/100 (30.0%)
+   ✅ Saved: 0, ⚠️  Skipped: 30, ❌ Failed: 0
+
+================================================================================
+
+[31/100] China Sea Buffet
+   PlaceID: ChIJrzoNS5CnZYYRe6mhUZsyx4g
+   URL: https://www.chinaseabuffetmcallen.com/menu
+  Fetching: https://www.chinaseabuffetmcallen.com/menu
+      → Redirect 1: https://www.chinaseabuffetmcallen.com/
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[32/100] Crazy Buffet
+   PlaceID: ChIJDSwnXfOH3YgRAX7CUVG7poo
+   URL: http://mycrazybuffet.com/menu
+  Fetching: http://mycrazybuffet.com/menu
+      → Redirect 1: https://mycrazybuffet.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[33/100] Dragon Empire Chinese Buffet
+   PlaceID: ChIJ6wVIamrrwIcRLQIGzguW24s
+   URL: https://www.dragonempirebuffetkc.com/menu
+  Fetching: https://www.dragonempirebuffetkc.com/menu
+      → Redirect 1: https://www.dragonempirebuffetkc.com/
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[34/100] LINS GRAND BUFFET -McALLEN
+   PlaceID: ChIJsxtfCCahZYYREv99pZjOVtk
+   URL: http://www.linsrestaurant.com/menu
+  Fetching: http://www.linsrestaurant.com/menu
+      → Redirect 1: https://www.linsrestaurant.com/menu
+      → Redirect 2: https://linsrestaurant.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[35/100] King Sun Buffet
+   PlaceID: ChIJU0azYrN5j4ARLTkhs8blumA
+   URL: https://kingsunbuffet.site/menu
+  Fetching: https://kingsunbuffet.site/menu
+      → Redirect 1: https://kingsunbuffet.setrush.netmenu/
+  Error: getaddrinfo ENOTFOUND kingsunbuffet.setrush.netmenu
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: getaddrinfo ENOTFOUND kingsunbuffet.setrush.netmenu
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: getaddrinfo ENOTFOUND kingsunbuffet.setrush.netmenu
+
+[36/100] Number One China Buffet
+   PlaceID: ChIJ0Z1LpaatFIgRmpm28h7SoP0
+   URL: https://www.no1chinabuffet.com/menu
+  Fetching: https://www.no1chinabuffet.com/menu
+      → Redirect 1: https://www.no1chinabuffet.com/4q5rcs97/restaurant/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[37/100] Mandarin Buffet
+   PlaceID: ChIJe0ctlupx44kRSZh6ee9oUpQ
+   URL: http://www.mandarinbuffetma.com/menu
+  Fetching: http://www.mandarinbuffetma.com/menu
+      → Redirect 1: https://www.mandarinbuffetma.com/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[38/100] Umi Hotpot Sushi & Seafood Buffet
+   PlaceID: ChIJ80D8ZAArw4ARpP0Jy_vOr-Q
+   URL: http://www.umibuffet.com/menu
+  Fetching: http://www.umibuffet.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[39/100] No.1 Asia Buffet
+   PlaceID: ChIJn_cy0oNNw4ARm14v5RRckN4
+   URL: https://no1asiabuffet.shop/menu
+  Fetching: https://no1asiabuffet.shop/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[40/100] Dragon House Chinese Eatery
+   PlaceID: ChIJi6XIzKezFIgRYvQuId_Xc3Y
+   URL: http://mydragonhouse.com/menu
+  Fetching: http://mydragonhouse.com/menu
+      → Redirect 1: https://mydragonhouse.com/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+📊 Progress: 40/100 (40.0%)
+   ✅ Saved: 0, ⚠️  Skipped: 40, ❌ Failed: 0
+
+================================================================================
+
+[41/100] Tong Fu
+   PlaceID: ChIJ0wv0j8OK6IkRnE0Y3fGnoqA
+   URL: http://tongfuriverhead.com/menu
+  Fetching: http://tongfuriverhead.com/menu
+      → Redirect 1: https://tongfuriverhead.com/menu
+  Error: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca
+
+[42/100] Elite Buffet
+   PlaceID: ChIJCYuM38xW2YARaAxSIn6bMes
+   URL: https://elitebuffet.shop/menu
+  Fetching: https://elitebuffet.shop/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[43/100] Tasty Buffet & Grill
+   PlaceID: ChIJiSfmUZ8tw4AR9Y1kAK0JL30
+   URL: https://tastybuffetgrill.shop/menu
+  Fetching: https://tastybuffetgrill.shop/menu
+      → Redirect 1: https://tasty-buffet-grill.menu-world.com/menu
+  Content type: HTML
+  HTTP Status: 403
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[44/100] Lucky Star Buffet
+   PlaceID: ChIJ_wUMSSO3FIgRoz7353HswOg
+   URL: http://www.luckystarindy.com/menu
+  Fetching: http://www.luckystarindy.com/menu
+      → Redirect 1: https://www.luckystarindy.com/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[45/100] HuHot Mongolian Grill
+   PlaceID: ChIJ86kwb0EgnlQRUUXwR7XBub4
+   URL: https://www.huhot.com/location/spokane-wa/menu
+  Fetching: https://www.huhot.com/location/spokane-wa/menu
+      → Redirect 1: https://www.huhot.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[46/100] China Buffet
+   PlaceID: ChIJRfvvoMyvFIgRSo2-VjVaQI4
+   URL: http://www.chinabuffetwestfieldin.com/menu?utm_source=gmb&utm_medium=website
+  Fetching: http://www.chinabuffetwestfieldin.com/menu?utm_source=gmb&utm_medium=website
+      → Redirect 1: https://www.chinabuffetwestfieldin.com/menu?utm_source=gmb&utm_medium=website
+      → Redirect 2: https://www.chinabuffetwestfieldin.com/imlxey89/restaurant/menu?utm_source=gmb&utm_medium=website
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[47/100] Hong Kong King buffet
+   PlaceID: ChIJg4sNegVFAYgRzhBD1F2jo-U
+   URL: https://www.newhongkongkingbuffet.com/menu
+  Fetching: https://www.newhongkongkingbuffet.com/menu
+      → Redirect 1: https://newhongkongkingbuffet.com/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[48/100] Lin's Buffet
+   PlaceID: ChIJc2z9ur6Wb4YRYZxhBDCBSRI
+   URL: https://linsbuffet2988.kwickmenu.com/menu
+  Fetching: https://linsbuffet2988.kwickmenu.com/menu
+      → Redirect 1: https://kwickmenu.com/
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[49/100] HuHot Mongolian Grill
+   PlaceID: ChIJ2Vk6E8D7AogRuL-pNGzMJtw
+   URL: https://www.huhot.com/location/green-bay-wi/menu
+  Fetching: https://www.huhot.com/location/green-bay-wi/menu
+      → Redirect 1: https://www.huhot.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[50/100] China Buffet
+   PlaceID: ChIJuZ9SzFJTF4gR_qd7Q6RPJPg
+   URL: https://www.chinabuffetmi.com/menu
+  Fetching: https://www.chinabuffetmi.com/menu
+      → Redirect 1: https://www.chinabuffetmi.com/0gcy5tla/restaurant/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+📊 Progress: 50/100 (50.0%)
+   ✅ Saved: 0, ⚠️  Skipped: 50, ❌ Failed: 0
+
+================================================================================
+
+[51/100] OEC Super Buffet
+   PlaceID: ChIJFxdMz5rpFogRZ5F0YSikAP8
+   URL: https://oecsuperbuffet.shop/menu
+  Fetching: https://oecsuperbuffet.shop/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[52/100] China City Super Buffet
+   PlaceID: ChIJpZbymDQawYcReMPszs9TmH0
+   URL: https://www.chinacitysuperbuffet.com/menu
+  Fetching: https://www.chinacitysuperbuffet.com/menu
+      → Redirect 1: https://www.chinacitysuperbuffet.com/
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[53/100] EAT Asian Super Buffet
+   PlaceID: ChIJ_aWdkUNf1oARDW4-MDWQT18
+   URL: https://smorefood.com/order-online/eat-asian-super-buffet-yuma-85365-k2csfbyu/menu?utm_source=gmb&utm_medium=website
+  Fetching: https://smorefood.com/order-online/eat-asian-super-buffet-yuma-85365-k2csfbyu/menu?utm_source=gmb&utm_medium=website
+      → Redirect 1: https://www.smorefood.com/order-online/eat-asian-super-buffet-yuma-85365-k2csfbyu/menu?utm_source=gmb&utm_medium=website
+      → Redirect 2: https://www.smorefood.com/404?utm_source=gmb&utm_medium=website
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[54/100] Luck Star Buffet
+   PlaceID: ChIJgyususdJO4gRgjS5t2Y_Iuo
+   URL: https://luckstarbuffet.space/menu
+  Fetching: https://luckstarbuffet.space/menu
+      → Redirect 1: https://www.luckstarbuffet.space/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[55/100] Asian Buffet
+   PlaceID: ChIJ2yevBmxYwIcRu6NKyMQePJ4
+   URL: https://asianbuffetmotogo.com/menu
+  Fetching: https://asianbuffetmotogo.com/menu
+      → Redirect 1: https://www.asianbuffetmotogo.com/menu
+      → Redirect 2: https://www.asianbuffetmotogo.com/y1wmunsx/restaurant/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[56/100] Fairy Cafe - Hotpot Buffet
+   PlaceID: ChIJV_sIQ6F844kRWfqfpOa0Hpo
+   URL: https://www.fairycafequincy.com/menu
+  Fetching: https://www.fairycafequincy.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[57/100] King's Buffet
+   PlaceID: ChIJKa3Bsj7JwoARn1wFlYqtbfU
+   URL: https://kings-buffet.shop/menu
+  Fetching: https://kings-buffet.shop/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[58/100] Golden Buffet
+   PlaceID: ChIJoUtXur6XJIgRLDW5GmRsgB4
+   URL: http://www.goldenbuffetonline.com/menu
+  Fetching: http://www.goldenbuffetonline.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[59/100] Osaka Buffet
+   PlaceID: ChIJX46uugMcnlQRuHFy51tnbCI
+   URL: https://www.osakabuffet-spokane.com/menu
+  Fetching: https://www.osakabuffet-spokane.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Extracted HTML text: 2 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[60/100] Grand China Buffet
+   PlaceID: ChIJxVOO0r2gZYYRNlzfl2YnodE
+   URL: https://www.grandchinapharr.com/menu
+  Fetching: https://www.grandchinapharr.com/menu
+      → Redirect 1: https://www.grandchinapharr.com/
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+📊 Progress: 60/100 (60.0%)
+   ✅ Saved: 0, ⚠️  Skipped: 60, ❌ Failed: 0
+
+================================================================================
+
+[61/100] Lin's Grand Buffet
+   PlaceID: ChIJRx-B1X4PK4cR34zpKvlJ9OY
+   URL: https://www.linsrestaurant.com/menu
+  Fetching: https://www.linsrestaurant.com/menu
+      → Redirect 1: https://linsrestaurant.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[62/100] Choice Hibachi Buffet
+   PlaceID: ChIJQ2u3fGbasokR2AW66smTT60
+   URL: http://choicehibachibuffetva.com/menu
+  Fetching: http://choicehibachibuffetva.com/menu
+      → Redirect 1: https://choicehibachibuffetva.com/menu
+  Error: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca
+
+[63/100] Hibachi Grill Supreme Buffet
+   PlaceID: ChIJF-RUGRfSFogRk36EYs4r6sk
+   URL: http://www.hibachibuffetofmishawaka.com/menu
+  Fetching: http://www.hibachibuffetofmishawaka.com/menu
+      → Redirect 1: https://www.hibachibuffetofmishawaka.com/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[64/100] China buffet
+   PlaceID: ChIJIZKPPCxpwYcRRh6TsiQAQgc
+   URL: https://www.chinabuffetinodessa.com/menu
+  Fetching: https://www.chinabuffetinodessa.com/menu
+      → Redirect 1: https://www.chinabuffetinodessa.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[65/100] Best Buffet
+   PlaceID: ChIJD1GG0lX43YcRGtGdsvfz1XY
+   URL: http://best-buffet.poi.place/menu
+  Fetching: http://best-buffet.poi.place/menu
+      → Redirect 1: https://best-buffet.poi.place/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[66/100] China Star Buffet
+   PlaceID: ChIJc9rwb2W4QIYRneVK2roYYAE
+   URL: https://www.chinastarbuffet.com/menu
+  Fetching: https://www.chinastarbuffet.com/menu
+      → Redirect 1: https://www.chinastarbuffet.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[67/100] Kin's Chinese buffet
+   PlaceID: ChIJ4TFp1QxZXIYRwfVV0wodjeY
+   URL: https://rebrand.ly/kin-chinese/menu
+  Fetching: https://rebrand.ly/kin-chinese/menu
+  Content type: HTML
+  HTTP Status: 403
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[68/100] China Great Buffet
+   PlaceID: ChIJhzXQ_7TQwoARHgpmUiqNZKQ
+   URL: http://www.chinagreatbuffet.com/menu
+  Fetching: http://www.chinagreatbuffet.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[69/100] LINS GRAND BUFFET- YUMA
+   PlaceID: ChIJo16bp_P11oARY_SWzhbfq8Q
+   URL: https://www.linsrestaurant.com/menu
+  Fetching: https://www.linsrestaurant.com/menu
+      → Redirect 1: https://linsrestaurant.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[70/100] Teppanyaki Grill Supreme Buffet
+   PlaceID: ChIJFxIp7Doo3YARg3HbadS6Irw
+   URL: http://teppanyaki-grill-supreme-buffet.cafes-guide.com/menu
+  Fetching: http://teppanyaki-grill-supreme-buffet.cafes-guide.com/menu
+      → Redirect 1: https://teppanyaki-grill-supreme-buffet.cafes-guide.com/menu
+      → Redirect 2: https://teppanyaki-grill-supreme-buffet.cafes-guide.com/
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+📊 Progress: 70/100 (70.0%)
+   ✅ Saved: 0, ⚠️  Skipped: 70, ❌ Failed: 0
+
+================================================================================
+
+[71/100] China King Buffet
+   PlaceID: ChIJT1gnrDI1t4kRXa1r2o-2wrk
+   URL: https://www.chinakingbuffettappahannock.com/menu
+  Fetching: https://www.chinakingbuffettappahannock.com/menu
+      → Redirect 1: https://www.chinakingbuffettappahannock.com/mfkp1opc/restaurant/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[72/100] Super Golden Buffet
+   PlaceID: ChIJL3aEeAB19YgR1vPqry4Kv6U
+   URL: http://supergoldenbuffets.com/menu
+  Fetching: http://supergoldenbuffets.com/menu
+      → Redirect 1: https://www.supergoldenbuffets.com/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[73/100] King Buffet
+   PlaceID: ChIJwYXF5b9FE4cRaf-t0HNko44
+   URL: https://kingbuffetcolorado.com/menu/menu
+  Fetching: https://kingbuffetcolorado.com/menu/menu
+      → Redirect 1: https://kingbuffetcolorado.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[74/100] Tin Tin Buffet
+   PlaceID: ChIJkWsioqCYlVQROK1F9MdhUxk
+   URL: https://tintinbuffetportland.com/menu
+  Fetching: https://tintinbuffetportland.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[75/100] Super King Buffet
+   PlaceID: ChIJAVsEMiOglVQRntoHl-nJQtc
+   URL: https://www.superkingbuffetor.com/menu
+  Fetching: https://www.superkingbuffetor.com/menu
+      → Redirect 1: https://www.superkingbuffetor.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[76/100] Asian King Chinese & Sushi Buffet
+   PlaceID: ChIJPw5J1D4lWYgRpKApo0GN1Wo
+   URL: http://hisgracebuffet.com/menu
+  Fetching: http://hisgracebuffet.com/menu
+      → Redirect 1: https://hisgracebuffet.com/menu
+      → Redirect 2: https://www.hisgracebuffet.com/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[77/100] Dragon Palace King Buffet
+   PlaceID: ChIJvTmeS0LF7IARqe6Wl5U6LzE
+   URL: https://www.travelpaso.com/listing/dragon-palace-king-buffet/718/menu
+  Fetching: https://www.travelpaso.com/listing/dragon-palace-king-buffet/718/menu
+      → Redirect 1: https://www.travelpaso.com/listing/dragon-palace-king-buffet/718/menu/
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[78/100] Jin's Buffet
+   PlaceID: ChIJLYg2XS7JVogRP5V_sFJ6j28
+   URL: http://www.jinsbuffetlincolntonnc.com/menu
+  Fetching: http://www.jinsbuffetlincolntonnc.com/menu
+      → Redirect 1: https://www.jinsbuffetlincolntonnc.com/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[79/100] China Buffet
+   PlaceID: ChIJ0ZG11acA_ocRhKe6pwNhDow
+   URL: http://chinabuffetave.com/menu
+  Fetching: http://chinabuffetave.com/menu
+      → Redirect 1: https://chinabuffetave.com/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[80/100] Feast Buffet
+   PlaceID: ChIJvdObvbJCkFQRYQGoSIqcIS8
+   URL: http://www.feastbuffetrenton.com/menu
+  Fetching: http://www.feastbuffetrenton.com/menu
+  Content type: HTML
+  HTTP Status: 202
+  Extracted HTML text: 0 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+📊 Progress: 80/100 (80.0%)
+   ✅ Saved: 0, ⚠️  Skipped: 80, ❌ Failed: 0
+
+================================================================================
+
+[81/100] King Super Buffet
+   PlaceID: ChIJvf5d4twp2YgRnZIxXspqTp8
+   URL: https://flkingsuperbuffet.com/menu
+  Fetching: https://flkingsuperbuffet.com/menu
+      → Redirect 1: https://www.flkingsuperbuffet.com/menu
+  Error: socket hang up
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: socket hang up
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: socket hang up
+
+[82/100] KIOKU SUPREME BUFFET
+   PlaceID: ChIJ0ej6JZQ_R4YRIuF75ISuWfc
+   URL: http://www.kiokubuffettx.com/menu
+  Fetching: http://www.kiokubuffettx.com/menu
+      → Redirect 1: https://www.kiokubuffettx.com/menu
+      → Redirect 2: https://www.kiokubuffettx.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[83/100] Grand Buffet
+   PlaceID: ChIJBdV4KwQrbogRbBdFK6YI0LQ
+   URL: http://evansvillegrandbuffet.com/menu
+  Fetching: http://evansvillegrandbuffet.com/menu
+      → Redirect 1: https://evansvillegrandbuffet.com/menu
+  Error: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca
+
+[84/100] Mizumi Buffet
+   PlaceID: ChIJbZBqWZQvVUARNaREXvx05kU
+   URL: https://www.mizumi-buffet.com/menu?utm_source=GoogleMyBusiness&utm_medium=Website%20Button&utm_campaign=2021
+  Fetching: https://www.mizumi-buffet.com/menu?utm_source=GoogleMyBusiness&utm_medium=Website%20Button&utm_campaign=2021
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[85/100] Peking Chinese Super Buffet
+   PlaceID: ChIJ1wPRFm2k8IgRuWN8zZm1MPk
+   URL: https://www.pekingchinesesuperbuffetga.com/menu
+  Fetching: https://www.pekingchinesesuperbuffetga.com/menu
+      → Redirect 1: https://www.pekingchinesesuperbuffetga.com/l366lw01/restaurant/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[86/100] East Buffet
+   PlaceID: ChIJ0XQatbo-R4YRtDvtKAroqzQ
+   URL: http://eastbuffetatconroe.com/menu
+  Fetching: http://eastbuffetatconroe.com/menu
+      → Redirect 1: http://eastbuffetatconroe.com/menu/
+      → Redirect 2: https://www.spicebachelorette.com/blog
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[87/100] King Buffet
+   PlaceID: ChIJAZ6pL_2LUocRpBBblfkm6gg
+   URL: https://utahkingbuffetss.com/menu
+  Fetching: https://utahkingbuffetss.com/menu
+      → Redirect 1: https://www.utahkingbuffetss.com/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[88/100] China Wall Buffet
+   PlaceID: ChIJu7cgZ9dmhYAR3Y4_lUe1GBM
+   URL: https://chinawallbuffet.shop/menu
+  Fetching: https://chinawallbuffet.shop/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[89/100] Ni's China Buffet
+   PlaceID: ChIJc8SSRXQ5R4YRMenokRGHJFo
+   URL: https://www.nischinabuffet.com/menu
+  Fetching: https://www.nischinabuffet.com/menu
+      → Redirect 1: https://www.nischinabuffet.com/w065u2jd/restaurant/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[90/100] China Buffet
+   PlaceID: ChIJidDwuSUcVIgRsZ3QeUkp-oQ
+   URL: https://china-buffet.shop/menu
+  Fetching: https://china-buffet.shop/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+📊 Progress: 90/100 (90.0%)
+   ✅ Saved: 0, ⚠️  Skipped: 90, ❌ Failed: 0
+
+================================================================================
+
+[91/100] King Buffet
+   PlaceID: ChIJFb2Xw3aHa4cRVlFb4Lxsus4
+   URL: https://kingbuffetco.com/menu
+  Fetching: https://kingbuffetco.com/menu
+      → Redirect 1: https://www.kingbuffetco.com/menu
+      → Redirect 2: https://www.kingbuffetco.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[92/100] Hibachi Grill Supreme Buffet Jimmy Carter
+   PlaceID: ChIJF8AaTpSm9YgRvpPZfmMwMKQ
+   URL: https://hibachigrillsupremebuffetjimmycarter.shop/menu
+  Fetching: https://hibachigrillsupremebuffetjimmycarter.shop/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[93/100] Hong Kong Buffet
+   PlaceID: ChIJEXw-oSPG9YgRXT31asuR02Y
+   URL: https://www.hongkongbuffet-ga.com/menu
+  Fetching: https://www.hongkongbuffet-ga.com/menu
+      → Redirect 1: https://www.hongkongbuffet-ga.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[94/100] Natsumi Sushi & Seafood Buffet
+   PlaceID: ChIJp5Tx4VL_24ARNOlqbKLTVdo
+   URL: http://natsumibuffet.com/menu
+  Fetching: http://natsumibuffet.com/menu
+      → Redirect 1: https://natsumibuffet.com/menu
+      → Redirect 2: https://www.natsumibuffet.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[95/100] CJ Palace
+   PlaceID: ChIJQW9eIgA5mYARxkpWrtuBisM
+   URL: http://www.cjpalace.com/menu
+  Fetching: http://www.cjpalace.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[96/100] New Hong Kong Buffet
+   PlaceID: ChIJe2Jnzcs9SIYR6tAjRi1JKHI
+   URL: http://txnewhongkongbuffet.com/menu
+  Fetching: http://txnewhongkongbuffet.com/menu
+      → Redirect 1: https://txnewhongkongbuffet.com/menu
+  Error: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca
+
+[97/100] Flaming Chinese Buffet
+   PlaceID: ChIJVZzvaTgPVIgRw2YWgKxCQX4
+   URL: https://flamingchinesebuffet.shop/menu
+  Fetching: https://flamingchinesebuffet.shop/menu
+      → Redirect 1: https://flaming-chinese-buffet.menufyy.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[98/100] Grand Buffet
+   PlaceID: ChIJX-LJAyUGR4YRCwS6qqcl2eU
+   URL: https://www.grandbuffettx.com/menu
+  Fetching: https://www.grandbuffettx.com/menu
+      → Redirect 1: https://grandbuffettx.com/menu
+      → Redirect 2: https://grandbuffettx.com/menu-1
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[99/100] Fast Dragon Buffet & Carry Out
+   PlaceID: ChIJNYadVOT1CogREIej8AfUgqI
+   URL: https://www.fastdragonbuffet.net/menu
+  Fetching: https://www.fastdragonbuffet.net/menu
+      → Redirect 1: https://www.fastdragonbuffet.net/f45kwg3n/restaurant/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+[100/100] Teppanyaki Buffet
+   PlaceID: ChIJW9fAsxup2YgRjKKZzBHcrt0
+   URL: http://www.teppanyakibuffet.net/menu
+  Fetching: http://www.teppanyakibuffet.net/menu
+      → Redirect 1: https://www.teppanyakibuffet.net/menu
+  Content type: HTML
+  HTTP Status: 200
+  Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+📊 Progress: 100/100 (100.0%)
+   ✅ Saved: 0, ⚠️  Skipped: 100, ❌ Failed: 0
+
+================================================================================
+
+
+================================================================================
+📊 SCRAPING SUMMARY
+================================================================================
+
+Total Processed: 100
+✅ Successfully Saved: 0
+⚠️  Skipped: 100
+❌ Failed: 0
+
+================================================================================
+📋 DETAILED RESULTS
+================================================================================
+
+1. Panda Lin
+   URL: http://www.pandalinchineserestaurant.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+2. Panda Garden
+   URL: http://www.pandagardenstamford.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+3. HuHot Mongolian Grill
+   URL: https://www.huhot.com/location/cedar-rapids-ia/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+4. Chopstick Brothers
+   URL: http://www.chopstickbrothers.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+5. China Xpress
+   URL: https://www.chinaxpressct.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+6. Asian Chao
+   URL: https://www.foodsystemsunlimited.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+7. Lotus Cafe at Boca Chica
+   URL: http://www.lotuscafe.us/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+8. Chen’s Family Dish Six Wok & Bar
+   URL: http://chensfamilydishsix.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+9. Blue Willow Restaurant
+   URL: https://bluewillowrestaurant.shop/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+10. Bobo Chinese Take Out
+   URL: http://bobochinesefoodtakeout.com/menu
+   Status Code: N/A
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca
+   Error: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca
+
+11. Lotus Inn
+   URL: https://www.lotusinnbrownsville.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+12. New China King
+   URL: https://www.newchinaking-ct.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+13. Great Wall
+   URL: https://greatwallchinesestamford.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+14. Gold Dragon Restaurant
+   URL: http://www.salem-golddragon.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+15. Lum-Yuen Restaurant
+   URL: https://www.lumyuen.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+16. China Star
+   URL: https://www.chinastarsunrisefl.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+17. Chinn's Restaurant
+   URL: https://www.chinnoregon.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+18. Chopsticks King
+   URL: https://www.chopsticksct.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+19. Pho & Chinese
+   URL: http://phonchinese.weebly.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+20. Chef Wong Chinese Restaurant
+   URL: https://www.chefwongchinese.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+21. China King
+   URL: https://www.smorefood.com/order-online/china-king-cedar-rapids-52404-tjsev5ea/menu?utm_source=gmb&utm_medium=website
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+22. China Pavilion
+   URL: http://www.chinapavilionstamfordct.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+23. Toa Toa Chinese Restaurant
+   URL: http://www.toatoadimsum.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+24. Chinese Cafe
+   URL: http://www.salemcenter.com/stores/chinese-cafe/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+25. Buffet City
+   URL: http://www.buffetcitychesapeake.com/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+26. Ma Ma China
+   URL: https://etapthru.com/restaurant.php/menu?id=7666
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+27. Volcano Sushi & Asian Bistro
+   URL: http://www.volcanosushinorfolkva.com/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+28. The Luxe Buffet - Seafood & Grill
+   URL: http://www.theluxebuffet.net/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+29. Crazy Buffet & Grill
+   URL: http://crazybuffetgrill.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+30. Sohao Buffet
+   URL: http://sohaobuffet.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+31. China Sea Buffet
+   URL: https://www.chinaseabuffetmcallen.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+32. Crazy Buffet
+   URL: http://mycrazybuffet.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+33. Dragon Empire Chinese Buffet
+   URL: https://www.dragonempirebuffetkc.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+34. LINS GRAND BUFFET -McALLEN
+   URL: http://www.linsrestaurant.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+35. King Sun Buffet
+   URL: https://kingsunbuffet.site/menu
+   Status Code: N/A
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: getaddrinfo ENOTFOUND kingsunbuffet.setrush.netmenu
+   Error: getaddrinfo ENOTFOUND kingsunbuffet.setrush.netmenu
+
+36. Number One China Buffet
+   URL: https://www.no1chinabuffet.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+37. Mandarin Buffet
+   URL: http://www.mandarinbuffetma.com/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+38. Umi Hotpot Sushi & Seafood Buffet
+   URL: http://www.umibuffet.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+39. No.1 Asia Buffet
+   URL: https://no1asiabuffet.shop/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+40. Dragon House Chinese Eatery
+   URL: http://mydragonhouse.com/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+41. Tong Fu
+   URL: http://tongfuriverhead.com/menu
+   Status Code: N/A
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca
+   Error: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca
+
+42. Elite Buffet
+   URL: https://elitebuffet.shop/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+43. Tasty Buffet & Grill
+   URL: https://tastybuffetgrill.shop/menu
+   Status Code: 403
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+44. Lucky Star Buffet
+   URL: http://www.luckystarindy.com/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+45. HuHot Mongolian Grill
+   URL: https://www.huhot.com/location/spokane-wa/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+46. China Buffet
+   URL: http://www.chinabuffetwestfieldin.com/menu?utm_source=gmb&utm_medium=website
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+47. Hong Kong King buffet
+   URL: https://www.newhongkongkingbuffet.com/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+48. Lin's Buffet
+   URL: https://linsbuffet2988.kwickmenu.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+49. HuHot Mongolian Grill
+   URL: https://www.huhot.com/location/green-bay-wi/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+50. China Buffet
+   URL: https://www.chinabuffetmi.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+51. OEC Super Buffet
+   URL: https://oecsuperbuffet.shop/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+52. China City Super Buffet
+   URL: https://www.chinacitysuperbuffet.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+53. EAT Asian Super Buffet
+   URL: https://smorefood.com/order-online/eat-asian-super-buffet-yuma-85365-k2csfbyu/menu?utm_source=gmb&utm_medium=website
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+54. Luck Star Buffet
+   URL: https://luckstarbuffet.space/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+55. Asian Buffet
+   URL: https://asianbuffetmotogo.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+56. Fairy Cafe - Hotpot Buffet
+   URL: https://www.fairycafequincy.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+57. King's Buffet
+   URL: https://kings-buffet.shop/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+58. Golden Buffet
+   URL: http://www.goldenbuffetonline.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+59. Osaka Buffet
+   URL: https://www.osakabuffet-spokane.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+60. Grand China Buffet
+   URL: https://www.grandchinapharr.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+61. Lin's Grand Buffet
+   URL: https://www.linsrestaurant.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+62. Choice Hibachi Buffet
+   URL: http://choicehibachibuffetva.com/menu
+   Status Code: N/A
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca
+   Error: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca
+
+63. Hibachi Grill Supreme Buffet
+   URL: http://www.hibachibuffetofmishawaka.com/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+64. China buffet
+   URL: https://www.chinabuffetinodessa.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+65. Best Buffet
+   URL: http://best-buffet.poi.place/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+66. China Star Buffet
+   URL: https://www.chinastarbuffet.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+67. Kin's Chinese buffet
+   URL: https://rebrand.ly/kin-chinese/menu
+   Status Code: 403
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+68. China Great Buffet
+   URL: http://www.chinagreatbuffet.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+69. LINS GRAND BUFFET- YUMA
+   URL: https://www.linsrestaurant.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+70. Teppanyaki Grill Supreme Buffet
+   URL: http://teppanyaki-grill-supreme-buffet.cafes-guide.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+71. China King Buffet
+   URL: https://www.chinakingbuffettappahannock.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+72. Super Golden Buffet
+   URL: http://supergoldenbuffets.com/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+73. King Buffet
+   URL: https://kingbuffetcolorado.com/menu/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+74. Tin Tin Buffet
+   URL: https://tintinbuffetportland.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+75. Super King Buffet
+   URL: https://www.superkingbuffetor.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+76. Asian King Chinese & Sushi Buffet
+   URL: http://hisgracebuffet.com/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+77. Dragon Palace King Buffet
+   URL: https://www.travelpaso.com/listing/dragon-palace-king-buffet/718/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+78. Jin's Buffet
+   URL: http://www.jinsbuffetlincolntonnc.com/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+79. China Buffet
+   URL: http://chinabuffetave.com/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+80. Feast Buffet
+   URL: http://www.feastbuffetrenton.com/menu
+   Status Code: 202
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+81. King Super Buffet
+   URL: https://flkingsuperbuffet.com/menu
+   Status Code: N/A
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: socket hang up
+   Error: socket hang up
+
+82. KIOKU SUPREME BUFFET
+   URL: http://www.kiokubuffettx.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+83. Grand Buffet
+   URL: http://evansvillegrandbuffet.com/menu
+   Status Code: N/A
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca
+   Error: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca
+
+84. Mizumi Buffet
+   URL: https://www.mizumi-buffet.com/menu?utm_source=GoogleMyBusiness&utm_medium=Website%20Button&utm_campaign=2021
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+85. Peking Chinese Super Buffet
+   URL: https://www.pekingchinesesuperbuffetga.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+86. East Buffet
+   URL: http://eastbuffetatconroe.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+87. King Buffet
+   URL: https://utahkingbuffetss.com/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+88. China Wall Buffet
+   URL: https://chinawallbuffet.shop/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+89. Ni's China Buffet
+   URL: https://www.nischinabuffet.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+90. China Buffet
+   URL: https://china-buffet.shop/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+91. King Buffet
+   URL: https://kingbuffetco.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+92. Hibachi Grill Supreme Buffet Jimmy Carter
+   URL: https://hibachigrillsupremebuffetjimmycarter.shop/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+93. Hong Kong Buffet
+   URL: https://www.hongkongbuffet-ga.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+94. Natsumi Sushi & Seafood Buffet
+   URL: http://natsumibuffet.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+95. CJ Palace
+   URL: http://www.cjpalace.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+96. New Hong Kong Buffet
+   URL: http://txnewhongkongbuffet.com/menu
+   Status Code: N/A
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca
+   Error: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca
+
+97. Flaming Chinese Buffet
+   URL: https://flamingchinesebuffet.shop/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+98. Grand Buffet
+   URL: https://www.grandbuffettx.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+99. Fast Dragon Buffet & Carry Out
+   URL: https://www.fastdragonbuffet.net/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+100. Teppanyaki Buffet
+   URL: http://www.teppanyakibuffet.net/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+   Error: Page requires JavaScript rendering - skipping (OCR/JS disabled)
+
+
+💾 Results saved to: /Users/michalpekarcik/Cursor/Chinese Buffet/scraped-100-simple-results.json

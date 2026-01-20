@@ -1,0 +1,26 @@
+HIGH-LEVEL CATEGORY GROUPINGS
+==============================
+
+Other (332 categories)
+Retail & Shopping (131 categories)
+Healthcare & Medical (91 categories)
+Recreation & Entertainment (80 categories)
+Food & Dining (74 categories)
+Transportation & Automotive (61 categories)
+Professional Services (59 categories)
+Government & Public Services (38 categories)
+Utilities & Infrastructure (28 categories)
+Education (27 categories)
+Home & Garden (24 categories)
+Social & Community (21 categories)
+Financial Services (18 categories)
+Communications & Technology (18 categories)
+Industrial & Manufacturing (16 categories)
+Religious & Spiritual (11 categories)
+Accommodation & Lodging (9 categories)
+Arts & Culture (9 categories)
+Personal Care & Beauty (8 categories)
+Sports & Fitness (4 categories)
+
+TOTAL CATEGORIES: 1059
+HIGH-LEVEL GROUPS: 20

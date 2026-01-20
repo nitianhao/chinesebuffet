@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getAllCitySlugs, getCityBySlug, getAllBuffets } from '@/lib/data';
+import { searchAll } from '@/lib/data-instantdb';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -9,44 +9,9 @@ export async function GET(request: Request) {
     return NextResponse.json({ results: [] });
   }
 
-  const searchTerm = query.toLowerCase();
-  const citySlugs = getAllCitySlugs();
-  const buffets = getAllBuffets();
-  const matches: Array<{ type: 'city' | 'buffet'; slug: string; name: string; citySlug?: string }> = [];
+  // Use the fast search function that searches restaurant names, cities, and neighborhoods
+  const results = await searchAll(query, 20);
 
-  // Search cities
-  citySlugs.forEach(slug => {
-    const city = getCityBySlug(slug);
-    if (!city) return;
-
-    if (
-      city.city.toLowerCase().includes(searchTerm) ||
-      city.state.toLowerCase().includes(searchTerm) ||
-      slug.toLowerCase().includes(searchTerm)
-    ) {
-      matches.push({
-        type: 'city',
-        slug: slug,
-        name: `${city.city}, ${city.state}`,
-      });
-    }
-  });
-
-  // Search buffets
-  buffets.forEach(buffet => {
-    if (
-      buffet.name.toLowerCase().includes(searchTerm) ||
-      buffet.address.city.toLowerCase().includes(searchTerm)
-    ) {
-      matches.push({
-        type: 'buffet',
-        slug: buffet.slug,
-        name: buffet.name,
-        citySlug: buffet.citySlug,
-      });
-    }
-  });
-
-  return NextResponse.json({ results: matches.slice(0, 10) });
+  return NextResponse.json({ results });
 }
 

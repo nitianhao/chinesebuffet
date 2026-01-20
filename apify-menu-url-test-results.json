@@ -1,0 +1,117 @@
+[
+  {
+    "actorId": "tri_angle/yelp-scraper",
+    "actorInfo": {
+      "name": "yelp-scraper",
+      "username": "tri_angle",
+      "pricing": "Not specified",
+      "stats": {
+        "totalBuilds": 166,
+        "totalRuns": 216527,
+        "totalUsers": 4847,
+        "totalUsers7Days": 29,
+        "totalUsers30Days": 95,
+        "totalUsers90Days": 287,
+        "lastRunStartedAt": "2025-12-30T12:08:29.157Z",
+        "totalMetamorphs": 1,
+        "publicActorRunStats30Days": {
+          "ABORTED": 31,
+          "FAILED": 2,
+          "SUCCEEDED": 6397,
+          "TIMED-OUT": 14,
+          "TOTAL": 6445
+        },
+        "actorReviewCount": 4,
+        "actorReviewRating": 4.525376883346073,
+        "bookmarkCount": 60
+      },
+      "description": "Free Yelp web scraper to extract data from Yelp. Fast Yelp review scraper, but also gets business details and ratings without using the Yelp API."
+    },
+    "testRecords": [],
+    "successCount": 0,
+    "menuUrlFoundCount": 0,
+    "errors": [],
+    "runId": "PIwFIm6OnO1qT8hRa",
+    "cost": null,
+    "duration": "12.18s",
+    "itemsCount": 0,
+    "computeUnits": 0.01283888888888889,
+    "estimatedCost": 0.0003209722222222222
+  },
+  {
+    "actorId": "web_wanderer/yelp-scraper",
+    "actorInfo": {
+      "name": "yelp-scraper",
+      "username": "web_wanderer",
+      "pricing": "Not specified",
+      "stats": {
+        "totalBuilds": 183,
+        "totalRuns": 2006,
+        "totalUsers": 127,
+        "totalUsers7Days": 5,
+        "totalUsers30Days": 14,
+        "totalUsers90Days": 38,
+        "lastRunStartedAt": "2025-12-30T12:08:39.960Z",
+        "publicActorRunStats30Days": {
+          "ABORTED": 5,
+          "FAILED": 3,
+          "SUCCEEDED": 754,
+          "TIMED-OUT": 1,
+          "TOTAL": 763
+        },
+        "actorReviewCount": 2,
+        "actorReviewRating": 3.135249260158175,
+        "bookmarkCount": 3
+      },
+      "description": "Scrape Yelp: Full business info including phone number, address, website, reviews, hidden feedback, and more — all in one scrape."
+    },
+    "testRecords": [],
+    "successCount": 0,
+    "menuUrlFoundCount": 0,
+    "errors": [],
+    "runId": "UV0KS3ex9uMqxOKnA",
+    "cost": null,
+    "duration": "7.46s",
+    "itemsCount": 0,
+    "computeUnits": 0.0009556944444444445,
+    "estimatedCost": 0.000023892361111111114
+  },
+  {
+    "actorId": "igview-owner/yelp-business-data-scraper",
+    "actorInfo": {
+      "name": "yelp-business-data-scraper",
+      "username": "igview-owner",
+      "pricing": "Not specified",
+      "stats": {
+        "totalBuilds": 24,
+        "totalRuns": 113,
+        "totalUsers": 16,
+        "totalUsers7Days": 2,
+        "totalUsers30Days": 6,
+        "totalUsers90Days": 12,
+        "lastRunStartedAt": "2025-12-30T12:08:50.753Z",
+        "actorReviewCount": 0,
+        "actorReviewRating": 0,
+        "bookmarkCount": 0,
+        "publicActorRunStats30Days": {
+          "ABORTED": 0,
+          "FAILED": 0,
+          "SUCCEEDED": 49,
+          "TIMED-OUT": 0,
+          "TOTAL": 49
+        }
+      },
+      "description": "Turn Yelp business URLs into ready‑to‑use lead lists. This scraper extracts contact details, location, ratings and website links from Yelp business pages for agencies, local SEO and outreach."
+    },
+    "testRecords": [],
+    "successCount": 0,
+    "menuUrlFoundCount": 0,
+    "errors": [],
+    "runId": "Wckh4hfNr0S79xgW0",
+    "cost": null,
+    "duration": "3.20s",
+    "itemsCount": 1,
+    "computeUnits": 0.0001890277777777778,
+    "estimatedCost": 0.000004725694444444445
+  }
+]

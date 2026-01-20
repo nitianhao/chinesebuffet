@@ -1,0 +1,15 @@
+{
+  "summary": {
+    "totalMatches": 20,
+    "highConfidence": 0,
+    "mediumConfidence": 0,
+    "lowConfidence": 20,
+    "matchesByState": {
+      "NY": 20
+    }
+  },
+  "sampleMatches": {
+    "high": [],
+    "medium": []
+  }
+}

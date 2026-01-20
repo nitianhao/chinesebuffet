@@ -1,0 +1,2641 @@
+🍽️  Scraping first 100 menu URLs (HTML + JavaScript support, no OCR)...
+
+Found 100 records to scrape
+
+================================================================================
+
+[1/100] Great Wall Buffet
+   PlaceID: ChIJv2z0FakAwFQRM4hJf8DRaZQ
+   URL: https://www.greatwallbuffet.biz/menu
+  Fetching: https://www.greatwallbuffet.biz/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[2/100] King Buffet
+   PlaceID: ChIJE3H7PZOhwokR8O-GxVNKaYg
+   URL: https://www.smorefood.com/404?utm_source=gmb&utm_medium=website
+  Fetching: https://www.smorefood.com/404?utm_source=gmb&utm_medium=website
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[3/100] P.F. Chang's
+   PlaceID: ChIJN6G-JR0J2YgRsIuMNGmPP7U
+   URL: https://locations.pfchangs.com/fl/sunrise/1740-sawgrass-mills-circle.html
+  Fetching: https://locations.pfchangs.com/fl/sunrise/1740-sawgrass-mills-circle.html
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 41 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[4/100] Hongkong Garden
+   PlaceID: ChIJc-esBtf_v1QRFjzH8-pnaoc
+   URL: http://www.hongkonggarden989.com/menu
+  Fetching: http://www.hongkonggarden989.com/menu
+      → Redirect 1: https://order.mealkeyway.com/customer/release/index/menu?mid=7858664242654e734973624f336e2f654e72545057673d3d#/main
+  Content type: HTML
+  HTTP Status: 403
+  Extracted HTML text: 167 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[5/100] Chen's Family Dish
+   PlaceID: ChIJ5RIiW___v1QRZju_kvnmPqg
+   URL: http://www.chensfamilydishsalem.com/menu
+  Fetching: http://www.chensfamilydishsalem.com/menu
+      → Redirect 1: https://www.chensfamilydishsalem.com/menu
+      → Redirect 2: https://www.chensfamilydishsalem.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 114 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[6/100] YGF Malatang
+   PlaceID: ChIJT_AIGpMH2YgR0-mO6kMhblY
+   URL: http://ygfmiami.com/menu
+  Fetching: http://ygfmiami.com/menu
+      → Redirect 1: https://ygfmiami.com/menu
+      → Redirect 2: https://www.ygfmiami.com/menu
+      → Redirect 3: https://www.ygfmiami.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 148 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[7/100] Golden Crown Restaurant
+   PlaceID: ChIJXUmwVQz_v1QRtDx7ABQQvOA
+   URL: http://gcrownrestaurant.com/menu
+  Fetching: http://gcrownrestaurant.com/menu
+      → Redirect 1: https://www.gcrownrestaurant.com/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[8/100] China Inn Restaurant
+   PlaceID: ChIJD7AxMcvw5IcRxbRWd4pt1e8
+   URL: https://chinainniatogo.com/menu
+  Fetching: https://chinainniatogo.com/menu
+      → Redirect 1: https://www.chinainniatogo.com/menu
+      → Redirect 2: https://www.chinainniatogo.com/8sj3l32e/restaurant/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 15686 characters
+  ✓ Menu content detected in HTML
+  Extracted 15686 characters total
+  Menu already exists for placeId ChIJD7AxMcvw5IcRxbRWd4pt1e8, skipping...
+   ⚠️  Skipped: already_exists
+
+[9/100] Happy Bibimbop House
+   PlaceID: ChIJ61nGdRL_v1QRt6SuDOXXHMM
+   URL: https://www.happybibimbophouse.com/menu
+  Fetching: https://www.happybibimbophouse.com/menu
+      → Redirect 1: https://happybibimbophouse.com/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[10/100] Oriental Chinese & Sushi Restaurant
+   PlaceID: ChIJUV1gQOv-v1QRgoUzC_LbYYE
+   URL: http://www.oriental2016.com/menu
+  Fetching: http://www.oriental2016.com/menu
+      → Redirect 1: https://www.oriental2016.com/menu
+      → Redirect 2: https://www.oriental2016.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 4 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+📊 Progress: 10/100 (10.0%)
+   ✅ Saved: 0, ⚠️  Skipped: 10, ❌ Failed: 0
+
+================================================================================
+
+[11/100] Panda Lin
+   PlaceID: ChIJe2huKDn35IcRe5CQUqc3OOk
+   URL: http://www.pandalinchineserestaurant.com/menu
+  Fetching: http://www.pandalinchineserestaurant.com/menu
+      → Redirect 1: https://www.pandalinchineserestaurant.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 17282 characters
+  ✓ Menu content detected in HTML
+  Extracted 17282 characters total
+  Menu already exists for placeId ChIJe2huKDn35IcRe5CQUqc3OOk, skipping...
+   ⚠️  Skipped: already_exists
+
+[12/100] Panda Garden
+   PlaceID: ChIJM1Q7P46hwokRKEnQl3PBqPo
+   URL: http://www.pandagardenstamford.com/menu
+  Fetching: http://www.pandagardenstamford.com/menu
+      → Redirect 1: https://www.pandagardenstamford.com/menu
+      → Redirect 2: https://order.pandagardenstamford.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 19113 characters
+  ✓ Menu content detected in HTML
+  Extracted 19113 characters total
+  Menu already exists for placeId ChIJM1Q7P46hwokRKEnQl3PBqPo, skipping...
+   ⚠️  Skipped: already_exists
+
+[13/100] HuHot Mongolian Grill
+   PlaceID: ChIJv2uR-Qfx5IcRvxDuy61UXxU
+   URL: https://www.huhot.com/location/cedar-rapids-ia/menu
+  Fetching: https://www.huhot.com/location/cedar-rapids-ia/menu
+      → Redirect 1: https://www.huhot.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 2438 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[14/100] Chopstick Brothers
+   PlaceID: ChIJswRe5ewBwFQRvp0OHdO6svo
+   URL: http://www.chopstickbrothers.com/menu
+  Fetching: http://www.chopstickbrothers.com/menu
+      → Redirect 1: https://www.chopstickbrothers.com/menu
+      → Redirect 2: https://www.chopstickbrothers.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 139 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[15/100] China Xpress
+   PlaceID: ChIJybYr0FOfwokRBaGgYNXCQK0
+   URL: https://www.chinaxpressct.com/menu
+  Fetching: https://www.chinaxpressct.com/menu
+      → Redirect 1: https://www.springroll.com/?utm_source=chinaxpressct.com&utm_medium=cancellation-redirect
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 561 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[16/100] Asian Chao
+   PlaceID: ChIJB5B3WQEJ2YgRP4yqqmI3-tc
+   URL: https://www.foodsystemsunlimited.com/menu
+  Fetching: https://www.foodsystemsunlimited.com/menu
+      → Redirect 1: https://www.foodsystemsunlimited.com/menu-nutritional/
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 106 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[17/100] Lotus Cafe at Boca Chica
+   PlaceID: ChIJkd-v_TSUb4YRqqfIrrbcMic
+   URL: http://www.lotuscafe.us/menu
+  Fetching: http://www.lotuscafe.us/menu
+      → Redirect 1: https://www.lotuscafe.us/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[18/100] Chen’s Family Dish Six Wok & Bar
+   PlaceID: ChIJJ1ceLlIHwFQRW3eQQ3xRH3s
+   URL: http://chensfamilydishsix.com/menu
+  Fetching: http://chensfamilydishsix.com/menu
+      → Redirect 1: https://chensfamilydishsix.com/menu
+      → Redirect 2: https://www.chensfamilydishsix.com/menu
+      → Redirect 3: https://www.chensfamilydishsix.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 163 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[19/100] Blue Willow Restaurant
+   PlaceID: ChIJ27MNSpP-v1QRmtmiH5RPess
+   URL: https://bluewillowrestaurant.shop/menu
+  Fetching: https://bluewillowrestaurant.shop/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 1562 characters
+  ✓ Menu content detected in HTML
+  Extracted 1562 characters total
+  ✓ Saved menu to database (ID: c03ddec5-afa6-4ecc-acb5-74547396dcbc)
+   ✅ Saved to database
+      - Items: 3
+      - Categories: 1
+
+[20/100] Bobo Chinese Take Out
+   PlaceID: ChIJV8DLTVwG2YgRdQGVADusC5c
+   URL: http://bobochinesefoodtakeout.com/menu
+  Fetching: http://bobochinesefoodtakeout.com/menu
+      → Redirect 1: https://bobochinesefoodtakeout.com/menu
+  HTTP fetch failed, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 19 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+📊 Progress: 20/100 (20.0%)
+   ✅ Saved: 1, ⚠️  Skipped: 19, ❌ Failed: 0
+
+================================================================================
+
+[21/100] Lotus Inn
+   PlaceID: ChIJmwgQwuGTb4YRuLFJCVlhOFk
+   URL: https://www.lotusinnbrownsville.com/menu
+  Fetching: https://www.lotusinnbrownsville.com/menu
+      → Redirect 1: https://www.lotusinnbrownsville.com/
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 686 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[22/100] New China King
+   PlaceID: ChIJc1zBwtChwokRrClW5yoaRQU
+   URL: https://www.newchinaking-ct.com/menu
+  Fetching: https://www.newchinaking-ct.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 24439 characters
+  ✓ Menu content detected in HTML
+  Extracted 24439 characters total
+  ✓ Saved menu to database (ID: 6b9eb0ec-b134-4cb7-a4d9-e0044af29771)
+   ✅ Saved to database
+      - Items: 362
+      - Categories: 6
+
+[23/100] Great Wall
+   PlaceID: ChIJTRyW5eahwokRCbwGO4dLRRI
+   URL: https://greatwallchinesestamford.com/menu
+  Fetching: https://greatwallchinesestamford.com/menu
+      → Redirect 1: https://www.greatwallchinesestamford.com/menu
+      → Redirect 2: https://www.greatwallchinesestamford.com/d4q7xihz/restaurant/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 9189 characters
+  ✓ Menu content detected in HTML
+  Extracted 9189 characters total
+  ✓ Saved menu to database (ID: 1582c7f8-13d3-4abd-a8ff-352e3e2384ba)
+   ✅ Saved to database
+      - Items: 5
+      - Categories: 1
+
+[24/100] Gold Dragon Restaurant
+   PlaceID: ChIJK3IjKmoHwFQRwAcRmof1kIY
+   URL: http://www.salem-golddragon.com/menu
+  Fetching: http://www.salem-golddragon.com/menu
+      → Redirect 1: https://www.salem-golddragon.com/menu
+      → Redirect 2: https://www.salem-golddragon.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 108 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[25/100] Lum-Yuen Restaurant
+   PlaceID: ChIJZ1XbWlz-v1QRZnOpmWVaFGA
+   URL: https://www.lumyuen.com/menu
+  Fetching: https://www.lumyuen.com/menu
+      → Redirect 1: https://www.lumyuen.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 96 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[26/100] China Star
+   PlaceID: ChIJ2X56AbsI2YgRkCBKfsK1T_0
+   URL: https://www.chinastarsunrisefl.com/menu
+  Fetching: https://www.chinastarsunrisefl.com/menu
+      → Redirect 1: https://www.chinastarsunrisefl.com/19azj85h/restaurant/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 21607 characters
+  ✓ Menu content detected in HTML
+  Extracted 21607 characters total
+  ✓ Saved menu to database (ID: abc727d2-f972-4a8c-93f4-cb8c347097ba)
+   ✅ Saved to database
+      - Items: 8
+      - Categories: 1
+
+[27/100] Chinn's Restaurant
+   PlaceID: ChIJw_zK8msHwFQRE3l9VjcSzCU
+   URL: https://www.chinnoregon.com/menu
+  Fetching: https://www.chinnoregon.com/menu
+      → Redirect 1: https://www.chinnoregon.com/mdotj1op/restaurant/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 12956 characters
+  ✓ Menu content detected in HTML
+  Extracted 12956 characters total
+  ✓ Saved menu to database (ID: 57c94ea6-4f5b-43b8-8bf5-bea4c0b5ea54)
+   ✅ Saved to database
+      - Items: 35
+      - Categories: 1
+
+[28/100] Chopsticks King
+   PlaceID: ChIJX3_HQOqhwokR_KUslraYDjc
+   URL: https://www.chopsticksct.com/menu
+  Fetching: https://www.chopsticksct.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 17097 characters
+  ✓ Menu content detected in HTML
+  Extracted 17097 characters total
+  ✓ Saved menu to database (ID: 73f720a0-44f9-4519-a4a0-4b1c5562b79b)
+   ✅ Saved to database
+      - Items: 179
+      - Categories: 2
+
+[29/100] Pho & Chinese
+   PlaceID: ChIJD04fn4eWb4YRT0Oxo89QzfU
+   URL: http://phonchinese.weebly.com/menu
+  Fetching: http://phonchinese.weebly.com/menu
+      → Redirect 1: https://phonchinese.weebly.com/menu
+      → Redirect 2: https://phonchinese.weebly.com/menu.html
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 28 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[30/100] Chef Wong Chinese Restaurant
+   PlaceID: ChIJ_bnxiB7x5IcRBqfRLMGaUIQ
+   URL: https://www.chefwongchinese.com/menu
+  Fetching: https://www.chefwongchinese.com/menu
+      → Redirect 1: https://order.chefwongchinese.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 14231 characters
+  ✓ Menu content detected in HTML
+  Extracted 14231 characters total
+  ✓ Saved menu to database (ID: 4774dd5c-4289-4432-9ab4-0af6e91c7d1d)
+   ✅ Saved to database
+      - Items: 15
+      - Categories: 1
+
+📊 Progress: 30/100 (30.0%)
+   ✅ Saved: 7, ⚠️  Skipped: 23, ❌ Failed: 0
+
+================================================================================
+
+[31/100] China King
+   PlaceID: ChIJnRZBJQL55IcRTp-dabMmB5g
+   URL: https://www.smorefood.com/order-online/china-king-cedar-rapids-52404-tjsev5ea/menu?utm_source=gmb&utm_medium=website
+  Fetching: https://www.smorefood.com/order-online/china-king-cedar-rapids-52404-tjsev5ea/menu?utm_source=gmb&utm_medium=website
+      → Redirect 1: https://www.smorefood.com/404?utm_source=gmb&utm_medium=website
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[32/100] China Pavilion
+   PlaceID: ChIJnc1ls_qhwokR-yIs9NvnZOM
+   URL: http://www.chinapavilionstamfordct.com/menu
+  Fetching: http://www.chinapavilionstamfordct.com/menu
+      → Redirect 1: https://www.chinapavilionstamfordct.com/menu
+      → Redirect 2: https://www.chinapavilionstamfordct.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 190 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[33/100] Toa Toa Chinese Restaurant
+   PlaceID: ChIJ7Tr812IH2YgRXYP1lFYbi1Q
+   URL: http://www.toatoadimsum.com/menu
+  Fetching: http://www.toatoadimsum.com/menu
+      → Redirect 1: https://www.toatoadimsum.com/menu
+      → Redirect 2: https://www.toatoadimsum.com/locked
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 246 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[34/100] Chinese Cafe
+   PlaceID: ChIJ35ZnTwz_v1QREAYDiLpw564
+   URL: http://www.salemcenter.com/stores/chinese-cafe/menu
+  Fetching: http://www.salemcenter.com/stores/chinese-cafe/menu
+      → Redirect 1: https://www.salemcenter.com/stores/chinese-cafe/menu
+      → Redirect 2: https://www.salemcenter.com/stores/chinese-cafe/menu/
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[35/100] Buffet City
+   PlaceID: ChIJx1f6kVqguokRe0GkDcNsLlU
+   URL: http://www.buffetcitychesapeake.com/menu
+  Fetching: http://www.buffetcitychesapeake.com/menu
+      → Redirect 1: http://buffetcitychesapeake.com/menu
+      → Redirect 2: https://buffetcitychesapeake.com/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[36/100] Ma Ma China
+   PlaceID: ChIJczDCk-vjwIcRIiYym7Ha8Yw
+   URL: https://etapthru.com/restaurant.php/menu?id=7666
+  Fetching: https://etapthru.com/restaurant.php/menu?id=7666
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 7252 characters
+  ✓ Menu content detected in HTML
+  Extracted 7252 characters total
+  ✓ Saved menu to database (ID: a5f0e3aa-59c5-4447-bf27-a0602bdea47c)
+   ✅ Saved to database
+      - Items: 11
+      - Categories: 2
+
+[37/100] Volcano Sushi & Asian Bistro
+   PlaceID: ChIJuVQvajmYuokRmt-JluA61hk
+   URL: http://www.volcanosushinorfolkva.com/menu
+  Fetching: http://www.volcanosushinorfolkva.com/menu
+      → Redirect 1: https://www.volcanosushinorfolkva.com/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[38/100] The Luxe Buffet - Seafood & Grill
+   PlaceID: ChIJF0rPS3g1w4ARjsqsZAlIKCo
+   URL: http://www.theluxebuffet.net/menu
+  Fetching: http://www.theluxebuffet.net/menu
+      → Redirect 1: http://www.theluxebuffet.net/menu.html
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 1765 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[39/100] Crazy Buffet & Grill
+   PlaceID: ChIJvZeyAhzW2IgRN59o3rC7ciM
+   URL: http://crazybuffetgrill.com/menu
+  Fetching: http://crazybuffetgrill.com/menu
+      → Redirect 1: https://crazybuffetgrill.com/menu
+      → Redirect 2: https://crazybuffetgrill.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 7206 characters
+  ✓ Menu content detected in HTML
+  Extracted 7206 characters total
+  ⚠️  Validation failed - not saving to database:
+     - Text appears to be garbled (likely OCR errors or JavaScript rendering issues)
+   ⚠️  Skipped: validation_failed
+      - Text appears to be garbled (likely OCR errors or JavaScript rendering issues)
+
+[40/100] Sohao Buffet
+   PlaceID: ChIJvUA-UQBvv4cRIKSOiNimAKU
+   URL: http://sohaobuffet.com/menu
+  Fetching: http://sohaobuffet.com/menu
+      → Redirect 1: https://sohaobuffet.com/menu
+      → Redirect 2: https://www.sohaobuffet.com/menu
+      → Redirect 3: https://www.sohaobuffet.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 102 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+📊 Progress: 40/100 (40.0%)
+   ✅ Saved: 8, ⚠️  Skipped: 32, ❌ Failed: 0
+
+================================================================================
+
+[41/100] China Sea Buffet
+   PlaceID: ChIJrzoNS5CnZYYRe6mhUZsyx4g
+   URL: https://www.chinaseabuffetmcallen.com/menu
+  Fetching: https://www.chinaseabuffetmcallen.com/menu
+      → Redirect 1: https://www.chinaseabuffetmcallen.com/
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 851 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[42/100] Crazy Buffet
+   PlaceID: ChIJDSwnXfOH3YgRAX7CUVG7poo
+   URL: http://mycrazybuffet.com/menu
+  Fetching: http://mycrazybuffet.com/menu
+      → Redirect 1: https://mycrazybuffet.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 503 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[43/100] Dragon Empire Chinese Buffet
+   PlaceID: ChIJ6wVIamrrwIcRLQIGzguW24s
+   URL: https://www.dragonempirebuffetkc.com/menu
+  Fetching: https://www.dragonempirebuffetkc.com/menu
+      → Redirect 1: https://www.dragonempirebuffetkc.com/
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 612 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[44/100] LINS GRAND BUFFET -McALLEN
+   PlaceID: ChIJsxtfCCahZYYREv99pZjOVtk
+   URL: http://www.linsrestaurant.com/menu
+  Fetching: http://www.linsrestaurant.com/menu
+      → Redirect 1: https://www.linsrestaurant.com/menu
+      → Redirect 2: https://linsrestaurant.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 99 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[45/100] King Sun Buffet
+   PlaceID: ChIJU0azYrN5j4ARLTkhs8blumA
+   URL: https://kingsunbuffet.site/menu
+  Fetching: https://kingsunbuffet.site/menu
+      → Redirect 1: https://kingsunbuffet.setrush.netmenu/
+  HTTP fetch failed, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  Error: getaddrinfo ENOTFOUND kingsunbuffet.setrush.netmenu
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: getaddrinfo ENOTFOUND kingsunbuffet.setrush.netmenu
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: getaddrinfo ENOTFOUND kingsunbuffet.setrush.netmenu
+
+[46/100] Number One China Buffet
+   PlaceID: ChIJ0Z1LpaatFIgRmpm28h7SoP0
+   URL: https://www.no1chinabuffet.com/menu
+  Fetching: https://www.no1chinabuffet.com/menu
+      → Redirect 1: https://www.no1chinabuffet.com/4q5rcs97/restaurant/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 15005 characters
+  ✓ Menu content detected in HTML
+  Extracted 15005 characters total
+  ✓ Saved menu to database (ID: 4bd19764-4f6f-4528-a222-3f573d5b535b)
+   ✅ Saved to database
+      - Items: 13
+      - Categories: 1
+
+[47/100] Mandarin Buffet
+   PlaceID: ChIJe0ctlupx44kRSZh6ee9oUpQ
+   URL: http://www.mandarinbuffetma.com/menu
+  Fetching: http://www.mandarinbuffetma.com/menu
+      → Redirect 1: https://www.mandarinbuffetma.com/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[48/100] Umi Hotpot Sushi & Seafood Buffet
+   PlaceID: ChIJ80D8ZAArw4ARpP0Jy_vOr-Q
+   URL: http://www.umibuffet.com/menu
+  Fetching: http://www.umibuffet.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 8206 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[49/100] No.1 Asia Buffet
+   PlaceID: ChIJn_cy0oNNw4ARm14v5RRckN4
+   URL: https://no1asiabuffet.shop/menu
+  Fetching: https://no1asiabuffet.shop/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 1279 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[50/100] Dragon House Chinese Eatery
+   PlaceID: ChIJi6XIzKezFIgRYvQuId_Xc3Y
+   URL: http://mydragonhouse.com/menu
+  Fetching: http://mydragonhouse.com/menu
+      → Redirect 1: https://mydragonhouse.com/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+📊 Progress: 50/100 (50.0%)
+   ✅ Saved: 9, ⚠️  Skipped: 41, ❌ Failed: 0
+
+================================================================================
+
+[51/100] Tong Fu
+   PlaceID: ChIJ0wv0j8OK6IkRnE0Y3fGnoqA
+   URL: http://tongfuriverhead.com/menu
+  Fetching: http://tongfuriverhead.com/menu
+      → Redirect 1: https://tongfuriverhead.com/menu
+  HTTP fetch failed, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 19 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[52/100] Elite Buffet
+   PlaceID: ChIJCYuM38xW2YARaAxSIn6bMes
+   URL: https://elitebuffet.shop/menu
+  Fetching: https://elitebuffet.shop/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 0 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[53/100] Tasty Buffet & Grill
+   PlaceID: ChIJiSfmUZ8tw4AR9Y1kAK0JL30
+   URL: https://tastybuffetgrill.shop/menu
+  Fetching: https://tastybuffetgrill.shop/menu
+      → Redirect 1: https://tasty-buffet-grill.menu-world.com/menu
+  Content type: HTML
+  HTTP Status: 403
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 69 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[54/100] Lucky Star Buffet
+   PlaceID: ChIJ_wUMSSO3FIgRoz7353HswOg
+   URL: http://www.luckystarindy.com/menu
+  Fetching: http://www.luckystarindy.com/menu
+      → Redirect 1: https://www.luckystarindy.com/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[55/100] HuHot Mongolian Grill
+   PlaceID: ChIJ86kwb0EgnlQRUUXwR7XBub4
+   URL: https://www.huhot.com/location/spokane-wa/menu
+  Fetching: https://www.huhot.com/location/spokane-wa/menu
+      → Redirect 1: https://www.huhot.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 2438 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[56/100] China Buffet
+   PlaceID: ChIJRfvvoMyvFIgRSo2-VjVaQI4
+   URL: http://www.chinabuffetwestfieldin.com/menu?utm_source=gmb&utm_medium=website
+  Fetching: http://www.chinabuffetwestfieldin.com/menu?utm_source=gmb&utm_medium=website
+      → Redirect 1: https://www.chinabuffetwestfieldin.com/menu?utm_source=gmb&utm_medium=website
+      → Redirect 2: https://www.chinabuffetwestfieldin.com/imlxey89/restaurant/menu?utm_source=gmb&utm_medium=website
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 13634 characters
+  ✓ Menu content detected in HTML
+  Extracted 13634 characters total
+  ✓ Saved menu to database (ID: d98b28e3-340f-4ecf-b1b3-231d24017143)
+   ✅ Saved to database
+      - Items: 136
+      - Categories: 1
+
+[57/100] Hong Kong King buffet
+   PlaceID: ChIJg4sNegVFAYgRzhBD1F2jo-U
+   URL: https://www.newhongkongkingbuffet.com/menu
+  Fetching: https://www.newhongkongkingbuffet.com/menu
+      → Redirect 1: https://newhongkongkingbuffet.com/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[58/100] Lin's Buffet
+   PlaceID: ChIJc2z9ur6Wb4YRYZxhBDCBSRI
+   URL: https://linsbuffet2988.kwickmenu.com/menu
+  Fetching: https://linsbuffet2988.kwickmenu.com/menu
+      → Redirect 1: https://kwickmenu.com/
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 452 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[59/100] HuHot Mongolian Grill
+   PlaceID: ChIJ2Vk6E8D7AogRuL-pNGzMJtw
+   URL: https://www.huhot.com/location/green-bay-wi/menu
+  Fetching: https://www.huhot.com/location/green-bay-wi/menu
+      → Redirect 1: https://www.huhot.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 2438 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[60/100] China Buffet
+   PlaceID: ChIJuZ9SzFJTF4gR_qd7Q6RPJPg
+   URL: https://www.chinabuffetmi.com/menu
+  Fetching: https://www.chinabuffetmi.com/menu
+      → Redirect 1: https://www.chinabuffetmi.com/0gcy5tla/restaurant/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 12643 characters
+  ✓ Menu content detected in HTML
+  Extracted 12643 characters total
+  ✓ Saved menu to database (ID: c2505136-e1e3-411c-a0d7-0b4c3bb3219e)
+   ✅ Saved to database
+      - Items: 7
+      - Categories: 1
+
+📊 Progress: 60/100 (60.0%)
+   ✅ Saved: 11, ⚠️  Skipped: 49, ❌ Failed: 0
+
+================================================================================
+
+[61/100] OEC Super Buffet
+   PlaceID: ChIJFxdMz5rpFogRZ5F0YSikAP8
+   URL: https://oecsuperbuffet.shop/menu
+  Fetching: https://oecsuperbuffet.shop/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 0 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[62/100] China City Super Buffet
+   PlaceID: ChIJpZbymDQawYcReMPszs9TmH0
+   URL: https://www.chinacitysuperbuffet.com/menu
+  Fetching: https://www.chinacitysuperbuffet.com/menu
+      → Redirect 1: https://www.chinacitysuperbuffet.com/
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 479 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[63/100] EAT Asian Super Buffet
+   PlaceID: ChIJ_aWdkUNf1oARDW4-MDWQT18
+   URL: https://smorefood.com/order-online/eat-asian-super-buffet-yuma-85365-k2csfbyu/menu?utm_source=gmb&utm_medium=website
+  Fetching: https://smorefood.com/order-online/eat-asian-super-buffet-yuma-85365-k2csfbyu/menu?utm_source=gmb&utm_medium=website
+      → Redirect 1: https://www.smorefood.com/order-online/eat-asian-super-buffet-yuma-85365-k2csfbyu/menu?utm_source=gmb&utm_medium=website
+      → Redirect 2: https://www.smorefood.com/404?utm_source=gmb&utm_medium=website
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[64/100] Luck Star Buffet
+   PlaceID: ChIJgyususdJO4gRgjS5t2Y_Iuo
+   URL: https://luckstarbuffet.space/menu
+  Fetching: https://luckstarbuffet.space/menu
+      → Redirect 1: https://www.luckstarbuffet.space/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[65/100] Asian Buffet
+   PlaceID: ChIJ2yevBmxYwIcRu6NKyMQePJ4
+   URL: https://asianbuffetmotogo.com/menu
+  Fetching: https://asianbuffetmotogo.com/menu
+      → Redirect 1: https://www.asianbuffetmotogo.com/menu
+      → Redirect 2: https://www.asianbuffetmotogo.com/y1wmunsx/restaurant/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 7514 characters
+  ✓ Menu content detected in HTML
+  Extracted 7514 characters total
+  ⚠️  Validation failed - not saving to database:
+     - Content does not appear to be menu-related
+     - Only 1 valid menu item(s) found (need at least 2)
+   ⚠️  Skipped: validation_failed
+      - Content does not appear to be menu-related
+      - Only 1 valid menu item(s) found (need at least 2)
+
+[66/100] Fairy Cafe - Hotpot Buffet
+   PlaceID: ChIJV_sIQ6F844kRWfqfpOa0Hpo
+   URL: https://www.fairycafequincy.com/menu
+  Fetching: https://www.fairycafequincy.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 10847 characters
+  ✓ Menu content detected in HTML
+  Extracted 10847 characters total
+  ✓ Saved menu to database (ID: 576d1184-31d7-4b89-aa83-d79218281103)
+   ✅ Saved to database
+      - Items: 115
+      - Categories: 1
+
+[67/100] King's Buffet
+   PlaceID: ChIJKa3Bsj7JwoARn1wFlYqtbfU
+   URL: https://kings-buffet.shop/menu
+  Fetching: https://kings-buffet.shop/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 0 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[68/100] Golden Buffet
+   PlaceID: ChIJoUtXur6XJIgRLDW5GmRsgB4
+   URL: http://www.goldenbuffetonline.com/menu
+  Fetching: http://www.goldenbuffetonline.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ⚠️  Puppeteer failed: net::ERR_BLOCKED_BY_CLIENT at http://www.goldenbuffetonline.com/menu, using original HTML
+  Extracted HTML text: 8005 characters
+  ✓ Menu content detected in HTML
+  Extracted 8005 characters total
+  ✓ Saved menu to database (ID: 9e25988a-6281-4fe1-bb8a-f108853c5aaa)
+   ✅ Saved to database
+      - Items: 186
+      - Categories: 11
+
+[69/100] Osaka Buffet
+   PlaceID: ChIJX46uugMcnlQRuHFy51tnbCI
+   URL: https://www.osakabuffet-spokane.com/menu
+  Fetching: https://www.osakabuffet-spokane.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 0 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[70/100] Grand China Buffet
+   PlaceID: ChIJxVOO0r2gZYYRNlzfl2YnodE
+   URL: https://www.grandchinapharr.com/menu
+  Fetching: https://www.grandchinapharr.com/menu
+      → Redirect 1: https://www.grandchinapharr.com/
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 500 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+📊 Progress: 70/100 (70.0%)
+   ✅ Saved: 13, ⚠️  Skipped: 57, ❌ Failed: 0
+
+================================================================================
+
+[71/100] Lin's Grand Buffet
+   PlaceID: ChIJRx-B1X4PK4cR34zpKvlJ9OY
+   URL: https://www.linsrestaurant.com/menu
+  Fetching: https://www.linsrestaurant.com/menu
+      → Redirect 1: https://linsrestaurant.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 99 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[72/100] Choice Hibachi Buffet
+   PlaceID: ChIJQ2u3fGbasokR2AW66smTT60
+   URL: http://choicehibachibuffetva.com/menu
+  Fetching: http://choicehibachibuffetva.com/menu
+      → Redirect 1: https://choicehibachibuffetva.com/menu
+  HTTP fetch failed, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 19 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[73/100] Hibachi Grill Supreme Buffet
+   PlaceID: ChIJF-RUGRfSFogRk36EYs4r6sk
+   URL: http://www.hibachibuffetofmishawaka.com/menu
+  Fetching: http://www.hibachibuffetofmishawaka.com/menu
+      → Redirect 1: https://www.hibachibuffetofmishawaka.com/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[74/100] China buffet
+   PlaceID: ChIJIZKPPCxpwYcRRh6TsiQAQgc
+   URL: https://www.chinabuffetinodessa.com/menu
+  Fetching: https://www.chinabuffetinodessa.com/menu
+      → Redirect 1: https://www.chinabuffetinodessa.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 139 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[75/100] Best Buffet
+   PlaceID: ChIJD1GG0lX43YcRGtGdsvfz1XY
+   URL: http://best-buffet.poi.place/menu
+  Fetching: http://best-buffet.poi.place/menu
+      → Redirect 1: https://best-buffet.poi.place/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[76/100] China Star Buffet
+   PlaceID: ChIJc9rwb2W4QIYRneVK2roYYAE
+   URL: https://www.chinastarbuffet.com/menu
+  Fetching: https://www.chinastarbuffet.com/menu
+      → Redirect 1: https://www.chinastarbuffet.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 85 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[77/100] Kin's Chinese buffet
+   PlaceID: ChIJ4TFp1QxZXIYRwfVV0wodjeY
+   URL: https://rebrand.ly/kin-chinese/menu
+  Fetching: https://rebrand.ly/kin-chinese/menu
+  Content type: HTML
+  HTTP Status: 403
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 1226 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[78/100] China Great Buffet
+   PlaceID: ChIJhzXQ_7TQwoARHgpmUiqNZKQ
+   URL: http://www.chinagreatbuffet.com/menu
+  Fetching: http://www.chinagreatbuffet.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 0 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[79/100] LINS GRAND BUFFET- YUMA
+   PlaceID: ChIJo16bp_P11oARY_SWzhbfq8Q
+   URL: https://www.linsrestaurant.com/menu
+  Fetching: https://www.linsrestaurant.com/menu
+      → Redirect 1: https://linsrestaurant.com/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 99 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[80/100] Teppanyaki Grill Supreme Buffet
+   PlaceID: ChIJFxIp7Doo3YARg3HbadS6Irw
+   URL: http://teppanyaki-grill-supreme-buffet.cafes-guide.com/menu
+  Fetching: http://teppanyaki-grill-supreme-buffet.cafes-guide.com/menu
+      → Redirect 1: https://teppanyaki-grill-supreme-buffet.cafes-guide.com/menu
+      → Redirect 2: https://teppanyaki-grill-supreme-buffet.cafes-guide.com/
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 97 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+📊 Progress: 80/100 (80.0%)
+   ✅ Saved: 13, ⚠️  Skipped: 67, ❌ Failed: 0
+
+================================================================================
+
+[81/100] China King Buffet
+   PlaceID: ChIJT1gnrDI1t4kRXa1r2o-2wrk
+   URL: https://www.chinakingbuffettappahannock.com/menu
+  Fetching: https://www.chinakingbuffettappahannock.com/menu
+      → Redirect 1: https://www.chinakingbuffettappahannock.com/mfkp1opc/restaurant/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 16853 characters
+  ✓ Menu content detected in HTML
+  Extracted 16853 characters total
+  ✓ Saved menu to database (ID: 029ae7e3-06f4-4e08-8c0b-92f0f84888f1)
+   ✅ Saved to database
+      - Items: 152
+      - Categories: 1
+
+[82/100] Super Golden Buffet
+   PlaceID: ChIJL3aEeAB19YgR1vPqry4Kv6U
+   URL: http://supergoldenbuffets.com/menu
+  Fetching: http://supergoldenbuffets.com/menu
+      → Redirect 1: https://www.supergoldenbuffets.com/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[83/100] King Buffet
+   PlaceID: ChIJwYXF5b9FE4cRaf-t0HNko44
+   URL: https://kingbuffetcolorado.com/menu/menu
+  Fetching: https://kingbuffetcolorado.com/menu/menu
+      → Redirect 1: https://kingbuffetcolorado.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 2857 characters
+  ✓ Menu content detected in HTML
+  Extracted 2857 characters total
+  ✓ Saved menu to database (ID: d5c00c11-bfee-4dfe-9fc4-1a172ac99ad5)
+   ✅ Saved to database
+      - Items: 9
+      - Categories: 1
+
+[84/100] Tin Tin Buffet
+   PlaceID: ChIJkWsioqCYlVQROK1F9MdhUxk
+   URL: https://tintinbuffetportland.com/menu
+  Fetching: https://tintinbuffetportland.com/menu
+      → Redirect 1: http://click-v4.expmnclick.com/click?i=B*aZEAwmfLc_0
+  Content type: HTML
+  HTTP Status: 200
+  Extracted HTML text: 0 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[85/100] Super King Buffet
+   PlaceID: ChIJAVsEMiOglVQRntoHl-nJQtc
+   URL: https://www.superkingbuffetor.com/menu
+  Fetching: https://www.superkingbuffetor.com/menu
+      → Redirect 1: https://www.superkingbuffetor.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 106 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[86/100] Asian King Chinese & Sushi Buffet
+   PlaceID: ChIJPw5J1D4lWYgRpKApo0GN1Wo
+   URL: http://hisgracebuffet.com/menu
+  Fetching: http://hisgracebuffet.com/menu
+      → Redirect 1: https://hisgracebuffet.com/menu
+      → Redirect 2: https://www.hisgracebuffet.com/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[87/100] Dragon Palace King Buffet
+   PlaceID: ChIJvTmeS0LF7IARqe6Wl5U6LzE
+   URL: https://www.travelpaso.com/listing/dragon-palace-king-buffet/718/menu
+  Fetching: https://www.travelpaso.com/listing/dragon-palace-king-buffet/718/menu
+      → Redirect 1: https://www.travelpaso.com/listing/dragon-palace-king-buffet/718/menu/
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[88/100] Jin's Buffet
+   PlaceID: ChIJLYg2XS7JVogRP5V_sFJ6j28
+   URL: http://www.jinsbuffetlincolntonnc.com/menu
+  Fetching: http://www.jinsbuffetlincolntonnc.com/menu
+      → Redirect 1: https://www.jinsbuffetlincolntonnc.com/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[89/100] China Buffet
+   PlaceID: ChIJ0ZG11acA_ocRhKe6pwNhDow
+   URL: http://chinabuffetave.com/menu
+  Fetching: http://chinabuffetave.com/menu
+      → Redirect 1: https://chinabuffetave.com/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[90/100] Feast Buffet
+   PlaceID: ChIJvdObvbJCkFQRYQGoSIqcIS8
+   URL: http://www.feastbuffetrenton.com/menu
+  Fetching: http://www.feastbuffetrenton.com/menu
+  Content type: HTML
+  HTTP Status: 202
+  Extracted HTML text: 0 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+📊 Progress: 90/100 (90.0%)
+   ✅ Saved: 15, ⚠️  Skipped: 75, ❌ Failed: 0
+
+================================================================================
+
+[91/100] King Super Buffet
+   PlaceID: ChIJvf5d4twp2YgRnZIxXspqTp8
+   URL: https://flkingsuperbuffet.com/menu
+  Fetching: https://flkingsuperbuffet.com/menu
+      → Redirect 1: https://www.flkingsuperbuffet.com/menu
+  HTTP fetch failed, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  Error: socket hang up
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: socket hang up
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: socket hang up
+
+[92/100] KIOKU SUPREME BUFFET
+   PlaceID: ChIJ0ej6JZQ_R4YRIuF75ISuWfc
+   URL: http://www.kiokubuffettx.com/menu
+  Fetching: http://www.kiokubuffettx.com/menu
+      → Redirect 1: https://www.kiokubuffettx.com/menu
+      → Redirect 2: https://www.kiokubuffettx.com/menu/
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 97 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[93/100] Grand Buffet
+   PlaceID: ChIJBdV4KwQrbogRbBdFK6YI0LQ
+   URL: http://evansvillegrandbuffet.com/menu
+  Fetching: http://evansvillegrandbuffet.com/menu
+      → Redirect 1: https://evansvillegrandbuffet.com/menu
+  HTTP fetch failed, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 19 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[94/100] Mizumi Buffet
+   PlaceID: ChIJbZBqWZQvVUARNaREXvx05kU
+   URL: https://www.mizumi-buffet.com/menu?utm_source=GoogleMyBusiness&utm_medium=Website%20Button&utm_campaign=2021
+  Fetching: https://www.mizumi-buffet.com/menu?utm_source=GoogleMyBusiness&utm_medium=Website%20Button&utm_campaign=2021
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 41 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[95/100] Peking Chinese Super Buffet
+   PlaceID: ChIJ1wPRFm2k8IgRuWN8zZm1MPk
+   URL: https://www.pekingchinesesuperbuffetga.com/menu
+  Fetching: https://www.pekingchinesesuperbuffetga.com/menu
+      → Redirect 1: https://www.pekingchinesesuperbuffetga.com/l366lw01/restaurant/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 11781 characters
+  ✓ Menu content detected in HTML
+  Extracted 11781 characters total
+  ✓ Saved menu to database (ID: 4bf3f392-d71d-49e1-9f76-927ccbfa7adb)
+   ✅ Saved to database
+      - Items: 116
+      - Categories: 3
+
+[96/100] East Buffet
+   PlaceID: ChIJ0XQatbo-R4YRtDvtKAroqzQ
+   URL: http://eastbuffetatconroe.com/menu
+  Fetching: http://eastbuffetatconroe.com/menu
+      → Redirect 1: http://eastbuffetatconroe.com/menu/
+      → Redirect 2: https://www.spicebachelorette.com/blog
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 12 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[97/100] King Buffet
+   PlaceID: ChIJAZ6pL_2LUocRpBBblfkm6gg
+   URL: https://utahkingbuffetss.com/menu
+  Fetching: https://utahkingbuffetss.com/menu
+      → Redirect 1: https://www.utahkingbuffetss.com/menu
+  Content type: HTML
+  HTTP Status: 404
+  Error: 404 error - page not found
+  ⚠️  Validation failed - not saving to database:
+     - 404 error - page not found
+     - Scraping failed: 404 error - page not found
+   ⚠️  Skipped: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+
+[98/100] China Wall Buffet
+   PlaceID: ChIJu7cgZ9dmhYAR3Y4_lUe1GBM
+   URL: https://chinawallbuffet.shop/menu
+  Fetching: https://chinawallbuffet.shop/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 1440 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+[99/100] Ni's China Buffet
+   PlaceID: ChIJc8SSRXQ5R4YRMenokRGHJFo
+   URL: https://www.nischinabuffet.com/menu
+  Fetching: https://www.nischinabuffet.com/menu
+      → Redirect 1: https://www.nischinabuffet.com/w065u2jd/restaurant/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 10669 characters
+  ✓ Menu content detected in HTML
+  Extracted 10669 characters total
+  ✓ Saved menu to database (ID: c0b453bf-5cca-432b-9251-9000c0b48b85)
+   ✅ Saved to database
+      - Items: 4
+      - Categories: 1
+
+[100/100] China Buffet
+   PlaceID: ChIJidDwuSUcVIgRsZ3QeUkp-oQ
+   URL: https://china-buffet.shop/menu
+  Fetching: https://china-buffet.shop/menu
+  Content type: HTML
+  HTTP Status: 200
+  Page appears to require JavaScript, trying Puppeteer...
+  Using Puppeteer to fetch JavaScript-rendered content...
+  ✓ Puppeteer fetch successful
+  Extracted HTML text: 0 characters
+  Error: No menu-related content found in HTML - skipping record
+  ⚠️  Validation failed - not saving to database:
+     - Scraping failed: No menu-related content found in HTML - skipping record
+   ⚠️  Skipped: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+
+📊 Progress: 100/100 (100.0%)
+   ✅ Saved: 17, ⚠️  Skipped: 83, ❌ Failed: 0
+
+================================================================================
+
+
+================================================================================
+📊 SCRAPING SUMMARY
+================================================================================
+
+Total Processed: 100
+✅ Successfully Saved: 17
+⚠️  Skipped: 83
+❌ Failed: 0
+
+================================================================================
+📋 DETAILED RESULTS
+================================================================================
+
+1. Great Wall Buffet
+   URL: https://www.greatwallbuffet.biz/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+2. King Buffet
+   URL: https://www.smorefood.com/404?utm_source=gmb&utm_medium=website
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+3. P.F. Chang's
+   URL: https://locations.pfchangs.com/fl/sunrise/1740-sawgrass-mills-circle.html
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+4. Hongkong Garden
+   URL: http://www.hongkonggarden989.com/menu
+   Status Code: 403
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+5. Chen's Family Dish
+   URL: http://www.chensfamilydishsalem.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+6. YGF Malatang
+   URL: http://ygfmiami.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+7. Golden Crown Restaurant
+   URL: http://gcrownrestaurant.com/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+8. China Inn Restaurant
+   URL: https://chinainniatogo.com/menu
+   Status Code: 200
+   Scraping: ✅ Success
+   Database: ⚠️  Skipped
+   Skip Reason: already_exists
+
+9. Happy Bibimbop House
+   URL: https://www.happybibimbophouse.com/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+10. Oriental Chinese & Sushi Restaurant
+   URL: http://www.oriental2016.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+11. Panda Lin
+   URL: http://www.pandalinchineserestaurant.com/menu
+   Status Code: 200
+   Scraping: ✅ Success
+   Database: ⚠️  Skipped
+   Skip Reason: already_exists
+
+12. Panda Garden
+   URL: http://www.pandagardenstamford.com/menu
+   Status Code: 200
+   Scraping: ✅ Success
+   Database: ⚠️  Skipped
+   Skip Reason: already_exists
+
+13. HuHot Mongolian Grill
+   URL: https://www.huhot.com/location/cedar-rapids-ia/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+14. Chopstick Brothers
+   URL: http://www.chopstickbrothers.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+15. China Xpress
+   URL: https://www.chinaxpressct.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+16. Asian Chao
+   URL: https://www.foodsystemsunlimited.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+17. Lotus Cafe at Boca Chica
+   URL: http://www.lotuscafe.us/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+18. Chen’s Family Dish Six Wok & Bar
+   URL: http://chensfamilydishsix.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+19. Blue Willow Restaurant
+   URL: https://bluewillowrestaurant.shop/menu
+   Status Code: 200
+   Scraping: ✅ Success
+   Database: ✅ Saved
+   Items: 3
+   Categories: 1
+   Text Length: 1562 characters
+
+20. Bobo Chinese Take Out
+   URL: http://bobochinesefoodtakeout.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+21. Lotus Inn
+   URL: https://www.lotusinnbrownsville.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+22. New China King
+   URL: https://www.newchinaking-ct.com/menu
+   Status Code: 200
+   Scraping: ✅ Success
+   Database: ✅ Saved
+   Items: 362
+   Categories: 6
+   Text Length: 24439 characters
+
+23. Great Wall
+   URL: https://greatwallchinesestamford.com/menu
+   Status Code: 200
+   Scraping: ✅ Success
+   Database: ✅ Saved
+   Items: 5
+   Categories: 1
+   Text Length: 9189 characters
+
+24. Gold Dragon Restaurant
+   URL: http://www.salem-golddragon.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+25. Lum-Yuen Restaurant
+   URL: https://www.lumyuen.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+26. China Star
+   URL: https://www.chinastarsunrisefl.com/menu
+   Status Code: 200
+   Scraping: ✅ Success
+   Database: ✅ Saved
+   Items: 8
+   Categories: 1
+   Text Length: 21607 characters
+
+27. Chinn's Restaurant
+   URL: https://www.chinnoregon.com/menu
+   Status Code: 200
+   Scraping: ✅ Success
+   Database: ✅ Saved
+   Items: 35
+   Categories: 1
+   Text Length: 12956 characters
+
+28. Chopsticks King
+   URL: https://www.chopsticksct.com/menu
+   Status Code: 200
+   Scraping: ✅ Success
+   Database: ✅ Saved
+   Items: 179
+   Categories: 2
+   Text Length: 17097 characters
+
+29. Pho & Chinese
+   URL: http://phonchinese.weebly.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+30. Chef Wong Chinese Restaurant
+   URL: https://www.chefwongchinese.com/menu
+   Status Code: 200
+   Scraping: ✅ Success
+   Database: ✅ Saved
+   Items: 15
+   Categories: 1
+   Text Length: 14231 characters
+
+31. China King
+   URL: https://www.smorefood.com/order-online/china-king-cedar-rapids-52404-tjsev5ea/menu?utm_source=gmb&utm_medium=website
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+32. China Pavilion
+   URL: http://www.chinapavilionstamfordct.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+33. Toa Toa Chinese Restaurant
+   URL: http://www.toatoadimsum.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+34. Chinese Cafe
+   URL: http://www.salemcenter.com/stores/chinese-cafe/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+35. Buffet City
+   URL: http://www.buffetcitychesapeake.com/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+36. Ma Ma China
+   URL: https://etapthru.com/restaurant.php/menu?id=7666
+   Status Code: 200
+   Scraping: ✅ Success
+   Database: ✅ Saved
+   Items: 11
+   Categories: 2
+   Text Length: 7252 characters
+
+37. Volcano Sushi & Asian Bistro
+   URL: http://www.volcanosushinorfolkva.com/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+38. The Luxe Buffet - Seafood & Grill
+   URL: http://www.theluxebuffet.net/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+39. Crazy Buffet & Grill
+   URL: http://crazybuffetgrill.com/menu
+   Status Code: 200
+   Scraping: ✅ Success
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Text appears to be garbled (likely OCR errors or JavaScript rendering issues)
+
+40. Sohao Buffet
+   URL: http://sohaobuffet.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+41. China Sea Buffet
+   URL: https://www.chinaseabuffetmcallen.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+42. Crazy Buffet
+   URL: http://mycrazybuffet.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+43. Dragon Empire Chinese Buffet
+   URL: https://www.dragonempirebuffetkc.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+44. LINS GRAND BUFFET -McALLEN
+   URL: http://www.linsrestaurant.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+45. King Sun Buffet
+   URL: https://kingsunbuffet.site/menu
+   Status Code: N/A
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: getaddrinfo ENOTFOUND kingsunbuffet.setrush.netmenu
+   Error: getaddrinfo ENOTFOUND kingsunbuffet.setrush.netmenu
+
+46. Number One China Buffet
+   URL: https://www.no1chinabuffet.com/menu
+   Status Code: 200
+   Scraping: ✅ Success
+   Database: ✅ Saved
+   Items: 13
+   Categories: 1
+   Text Length: 15005 characters
+
+47. Mandarin Buffet
+   URL: http://www.mandarinbuffetma.com/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+48. Umi Hotpot Sushi & Seafood Buffet
+   URL: http://www.umibuffet.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+49. No.1 Asia Buffet
+   URL: https://no1asiabuffet.shop/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+50. Dragon House Chinese Eatery
+   URL: http://mydragonhouse.com/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+51. Tong Fu
+   URL: http://tongfuriverhead.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+52. Elite Buffet
+   URL: https://elitebuffet.shop/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+53. Tasty Buffet & Grill
+   URL: https://tastybuffetgrill.shop/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+54. Lucky Star Buffet
+   URL: http://www.luckystarindy.com/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+55. HuHot Mongolian Grill
+   URL: https://www.huhot.com/location/spokane-wa/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+56. China Buffet
+   URL: http://www.chinabuffetwestfieldin.com/menu?utm_source=gmb&utm_medium=website
+   Status Code: 200
+   Scraping: ✅ Success
+   Database: ✅ Saved
+   Items: 136
+   Categories: 1
+   Text Length: 13634 characters
+
+57. Hong Kong King buffet
+   URL: https://www.newhongkongkingbuffet.com/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+58. Lin's Buffet
+   URL: https://linsbuffet2988.kwickmenu.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+59. HuHot Mongolian Grill
+   URL: https://www.huhot.com/location/green-bay-wi/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+60. China Buffet
+   URL: https://www.chinabuffetmi.com/menu
+   Status Code: 200
+   Scraping: ✅ Success
+   Database: ✅ Saved
+   Items: 7
+   Categories: 1
+   Text Length: 12643 characters
+
+61. OEC Super Buffet
+   URL: https://oecsuperbuffet.shop/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+62. China City Super Buffet
+   URL: https://www.chinacitysuperbuffet.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+63. EAT Asian Super Buffet
+   URL: https://smorefood.com/order-online/eat-asian-super-buffet-yuma-85365-k2csfbyu/menu?utm_source=gmb&utm_medium=website
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+64. Luck Star Buffet
+   URL: https://luckstarbuffet.space/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+65. Asian Buffet
+   URL: https://asianbuffetmotogo.com/menu
+   Status Code: 200
+   Scraping: ✅ Success
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Content does not appear to be menu-related
+      - Only 1 valid menu item(s) found (need at least 2)
+
+66. Fairy Cafe - Hotpot Buffet
+   URL: https://www.fairycafequincy.com/menu
+   Status Code: 200
+   Scraping: ✅ Success
+   Database: ✅ Saved
+   Items: 115
+   Categories: 1
+   Text Length: 10847 characters
+
+67. King's Buffet
+   URL: https://kings-buffet.shop/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+68. Golden Buffet
+   URL: http://www.goldenbuffetonline.com/menu
+   Status Code: 200
+   Scraping: ✅ Success
+   Database: ✅ Saved
+   Items: 186
+   Categories: 11
+   Text Length: 8005 characters
+
+69. Osaka Buffet
+   URL: https://www.osakabuffet-spokane.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+70. Grand China Buffet
+   URL: https://www.grandchinapharr.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+71. Lin's Grand Buffet
+   URL: https://www.linsrestaurant.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+72. Choice Hibachi Buffet
+   URL: http://choicehibachibuffetva.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+73. Hibachi Grill Supreme Buffet
+   URL: http://www.hibachibuffetofmishawaka.com/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+74. China buffet
+   URL: https://www.chinabuffetinodessa.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+75. Best Buffet
+   URL: http://best-buffet.poi.place/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+76. China Star Buffet
+   URL: https://www.chinastarbuffet.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+77. Kin's Chinese buffet
+   URL: https://rebrand.ly/kin-chinese/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+78. China Great Buffet
+   URL: http://www.chinagreatbuffet.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+79. LINS GRAND BUFFET- YUMA
+   URL: https://www.linsrestaurant.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+80. Teppanyaki Grill Supreme Buffet
+   URL: http://teppanyaki-grill-supreme-buffet.cafes-guide.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+81. China King Buffet
+   URL: https://www.chinakingbuffettappahannock.com/menu
+   Status Code: 200
+   Scraping: ✅ Success
+   Database: ✅ Saved
+   Items: 152
+   Categories: 1
+   Text Length: 16853 characters
+
+82. Super Golden Buffet
+   URL: http://supergoldenbuffets.com/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+83. King Buffet
+   URL: https://kingbuffetcolorado.com/menu/menu
+   Status Code: 200
+   Scraping: ✅ Success
+   Database: ✅ Saved
+   Items: 9
+   Categories: 1
+   Text Length: 2857 characters
+
+84. Tin Tin Buffet
+   URL: https://tintinbuffetportland.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+85. Super King Buffet
+   URL: https://www.superkingbuffetor.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+86. Asian King Chinese & Sushi Buffet
+   URL: http://hisgracebuffet.com/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+87. Dragon Palace King Buffet
+   URL: https://www.travelpaso.com/listing/dragon-palace-king-buffet/718/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+88. Jin's Buffet
+   URL: http://www.jinsbuffetlincolntonnc.com/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+89. China Buffet
+   URL: http://chinabuffetave.com/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+90. Feast Buffet
+   URL: http://www.feastbuffetrenton.com/menu
+   Status Code: 202
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+91. King Super Buffet
+   URL: https://flkingsuperbuffet.com/menu
+   Status Code: N/A
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: socket hang up
+   Error: socket hang up
+
+92. KIOKU SUPREME BUFFET
+   URL: http://www.kiokubuffettx.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+93. Grand Buffet
+   URL: http://evansvillegrandbuffet.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+94. Mizumi Buffet
+   URL: https://www.mizumi-buffet.com/menu?utm_source=GoogleMyBusiness&utm_medium=Website%20Button&utm_campaign=2021
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+95. Peking Chinese Super Buffet
+   URL: https://www.pekingchinesesuperbuffetga.com/menu
+   Status Code: 200
+   Scraping: ✅ Success
+   Database: ✅ Saved
+   Items: 116
+   Categories: 3
+   Text Length: 11781 characters
+
+96. East Buffet
+   URL: http://eastbuffetatconroe.com/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+97. King Buffet
+   URL: https://utahkingbuffetss.com/menu
+   Status Code: 404
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - 404 error - page not found
+      - Scraping failed: 404 error - page not found
+   Error: 404 error - page not found
+
+98. China Wall Buffet
+   URL: https://chinawallbuffet.shop/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+99. Ni's China Buffet
+   URL: https://www.nischinabuffet.com/menu
+   Status Code: 200
+   Scraping: ✅ Success
+   Database: ✅ Saved
+   Items: 4
+   Categories: 1
+   Text Length: 10669 characters
+
+100. China Buffet
+   URL: https://china-buffet.shop/menu
+   Status Code: 200
+   Scraping: ❌ Failed
+   Database: ⚠️  Skipped
+   Skip Reason: validation_failed
+      - Scraping failed: No menu-related content found in HTML - skipping record
+   Error: No menu-related content found in HTML - skipping record
+
+
+💾 Results saved to: /Users/michalpekarcik/Cursor/Chinese Buffet/scraped-100-with-js-results.json

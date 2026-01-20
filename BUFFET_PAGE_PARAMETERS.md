@@ -122,3 +122,20 @@
 - Nearby buffets are dynamically calculated based on location
 - Map markers include both the current buffet and nearby buffets
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -19,6 +19,14 @@ const rules = {
       update: "false",
     },
   },
+  menus: {
+    allow: {
+      view: "true",
+      create: "false",
+      delete: "false",
+      update: "false",
+    },
+  },
 } satisfies InstantRules;
 
 export default rules;

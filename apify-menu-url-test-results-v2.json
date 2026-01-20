@@ -1,0 +1,1121 @@
+[
+  {
+    "actorId": "tri_angle/yelp-scraper",
+    "formats": [
+      {
+        "formatName": "directUrls (array)",
+        "input": {
+          "directUrls": [
+            "https://www.yelp.com/biz/kings-buffet-vacaville",
+            "https://www.yelp.com/biz/dragon-house-chinese-eatery-fishers"
+          ]
+        },
+        "success": true,
+        "itemsCount": 2,
+        "menuUrlFound": false,
+        "menuFields": [],
+        "errors": [],
+        "runId": "3uhXsZYTd8HkjWenx",
+        "duration": "146.19s",
+        "computeUnits": 0.16135,
+        "sampleItem": {
+          "directUrl": "https://www.yelp.com/biz/kings-buffet-vacaville",
+          "bizId": "L7yD75ulqF7Q8KV0UZM5JQ",
+          "name": "King's Buffet",
+          "alternateNames": [],
+          "since": "",
+          "amenitiesAndMore": [
+            "Offers take-out",
+            "Takes reservations",
+            "Offers delivery",
+            "Limited vegetarian options",
+            "Accepts credit cards",
+            "Accepts Android Pay",
+            "Accepts Apple Pay",
+            "Casual",
+            "Moderate noise",
+            "Casual dress",
+            "Good for groups",
+            "Good for kids",
+            "Good for Lunch, Dinner",
+            "Private lot parking, Validated parking",
+            "Waiter service",
+            "Dogs allowed",
+            "TV",
+            "Outdoor seating",
+            "Offers catering",
+            "Wi-Fi",
+            "Alcohol",
+            "Bike parking"
+          ],
+          "operationHours": [
+            {
+              "hours": [
+                "Closed"
+              ],
+              "regularHours": [
+                "Closed"
+              ],
+              "regularHoursRaw": [],
+              "hasSpecialHours": false,
+              "dayOfWeekShort": "Mon"
+            },
+            {
+              "hours": [
+                "11:00 AM - 9:00 PM"
+              ],
+              "regularHours": [
+                "11:00 AM - 9:00 PM"
+              ],
+              "regularHoursRaw": [
+                [
+                  2100,
+                  2700
+                ]
+              ],
+              "hasSpecialHours": false,
+              "dayOfWeekShort": "Tue"
+            },
+            {
+              "hours": [
+                "11:00 AM - 9:00 PM"
+              ],
+              "regularHours": [
+                "11:00 AM - 9:00 PM"
+              ],
+              "regularHoursRaw": [
+                [
+                  3540,
+                  4140
+                ]
+              ],
+              "hasSpecialHours": false,
+              "dayOfWeekShort": "Wed"
+            },
+            {
+              "hours": [
+                "11:00 AM - 9:00 PM"
+              ],
+              "regularHours": [
+                "11:00 AM - 9:00 PM"
+              ],
+              "regularHoursRaw": [
+                [
+                  4980,
+                  5580
+                ]
+              ],
+              "hasSpecialHours": false,
+              "dayOfWeekShort": "Thu"
+            },
+            {
+              "hours": [
+                "11:00 AM - 9:00 PM"
+              ],
+              "regularHours": [
+                "11:00 AM - 9:00 PM"
+              ],
+              "regularHoursRaw": [
+                [
+                  6420,
+                  7020
+                ]
+              ],
+              "hasSpecialHours": false,
+              "dayOfWeekShort": "Fri"
+            },
+            {
+              "hours": [
+                "11:00 AM - 9:00 PM"
+              ],
+              "regularHours": [
+                "11:00 AM - 9:00 PM"
+              ],
+              "regularHoursRaw": [
+                [
+                  7860,
+                  8460
+                ]
+              ],
+              "hasSpecialHours": false,
+              "dayOfWeekShort": "Sat"
+            },
+            {
+              "hours": [
+                "11:00 AM - 9:00 PM"
+              ],
+              "regularHours": [
+                "11:00 AM - 9:00 PM"
+              ],
+              "regularHoursRaw": [
+                [
+                  9300,
+                  9900
+                ]
+              ],
+              "hasSpecialHours": false,
+              "dayOfWeekShort": "Sun"
+            }
+          ],
+          "upcomingSpecialHours": [],
+          "verified": false,
+          "website": "https://kingsbuffet.shop",
+          "images": [
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/3H7DVFxgQdud57bxheVa-A/o.jpg",
+              "alt": "King's Buffet - food - Chinese Near Me - Vacaville, California"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/SoxCXr7YgXP-Xh59DK_AcA/o.jpg",
+              "alt": "King's Buffet - salads, interior, salad - Chinese Near Me - Vacaville, California"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/_Y7H33mW1oZHf1Jf7PSB2A/o.jpg",
+              "alt": "King's Buffet - paella, food - Chinese Near Me - Vacaville, California"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/5HGJwFKl-mit934m_BUXtA/o.jpg",
+              "alt": "King's Buffet - shows storefront, outside - Chinese Near Me - Vacaville, California"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/m9vuXHVRvaF0WzRxizZOoQ/o.jpg",
+              "alt": "King's Buffet - oysters, interior, oysters and mussels, mussels, shellfish - Chinese Near Me - Vacaville, California"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/PktyOFdtbvS1yDosHCOiBA/o.jpg",
+              "alt": "King's Buffet - sushi and sashimi, food - Chinese Near Me - Vacaville, California"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/SnmrX_nkD0_bmhpS7PO-Aw/o.jpg",
+              "alt": "King's Buffet - oysters and mussels, food, mussels, shellfish, oysters - Chinese Near Me - Vacaville, California"
+            },
+            {
+              "link": "https://image.mux.com/1WmfXF7XX00od02tpK342LqFFIxUkVOI01RhWxrCVgXkZE/thumbnail.jpg?height=720&time=0",
+              "alt": "King's Buffet - Chinese Near Me - Vacaville, California"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/UcOL6lPkJArLHtzFhTmFyw/o.jpg",
+              "alt": "King's Buffet - ramen, noodle soup, food, noodles, ramen and noodles, noodle dish - Chinese Near Me - Vacaville, California"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/bhQlIypa89wm-nshmGwgmQ/o.jpg",
+              "alt": "King's Buffet - mussels, oysters, shellfish, food, oysters and mussels - Chinese Near Me - Vacaville, California"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/XirEmpi4TZDlHCzzejLuVA/o.jpg",
+              "alt": "King's Buffet - a variety of food items - chicken wings and fried chicken, interior - Chinese Near Me - Vacaville, California"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/lzPFZMUgPYReD8Z2m1spRA/o.jpg",
+              "alt": "King's Buffet - a variety of seafood items - oysters and mussels, interior, mussels, shellfish, oysters - Chinese Near Me - Vacaville, California"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/TOVHXmZhcaVE44rOgpoltQ/o.jpg",
+              "alt": "King's Buffet - food - Chinese Near Me - Vacaville, California"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/cwX_uAtZv-eK_5ZVcXiqWA/o.jpg",
+              "alt": "King's Buffet - food, ramen, noodle dish, noodles, noodle soup, ramen and noodles - Chinese Near Me - Vacaville, California"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/B0tHdEwNH6uqgSSjTFDsgQ/o.jpg",
+              "alt": "King's Buffet - food, salad, salads - Chinese Near Me - Vacaville, California"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/ddAOOYVLquuA49Hjg7iXMA/o.jpg",
+              "alt": "King's Buffet - a variety of food items - bbq ribs, ribs, interior - Chinese Near Me - Vacaville, California"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/8BFaohe6qM-29YRWMZZTog/o.jpg",
+              "alt": "King's Buffet - food - Chinese Near Me - Vacaville, California"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/6-1G0f3xzpNiGAMbArIz-Q/o.jpg",
+              "alt": "King's Buffet - shellfish, food, oysters, oysters and mussels, mussels - Chinese Near Me - Vacaville, California"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/Y21ABaVu-nfkfKRuLT9POQ/o.jpg",
+              "alt": "King's Buffet - shellfish, oysters, mussels, oysters and mussels, food - Chinese Near Me - Vacaville, California"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/eWuO3heZqqTWGdJHGmlCUQ/o.jpg",
+              "alt": "King's Buffet - a parking lot with cars parked in front of it - shows storefront, outside, sushi and sashimi - Chinese Near Me - Vacaville, California"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/27cp8TDfr1csIVy_dpATIw/o.jpg",
+              "alt": "King's Buffet - food - Chinese Near Me - Vacaville, California"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/QTxVFJ44PF1onncB5AI6cA/o.jpg",
+              "alt": "King's Buffet - oysters and mussels, shellfish, mussels, oysters, food - Chinese Near Me - Vacaville, California"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/VCu117S5rgc3RmjIY2EIzg/o.jpg",
+              "alt": "King's Buffet - pancakes, food - Chinese Near Me - Vacaville, California"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/p6eAA6sszESE1Ff-Ck8wNQ/o.jpg",
+              "alt": "King's Buffet - a variety of food items - Chinese Near Me - Vacaville, California"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/T3poYhYmsEooCxr8UHFjdA/o.jpg",
+              "alt": "King's Buffet - a variety of food items - salads, interior - Chinese Near Me - Vacaville, California"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/tmj7nS8hM-um0tXHxs8FLQ/o.jpg",
+              "alt": "King's Buffet - food - Chinese Near Me - Vacaville, California"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/N48kf8E9iylEK1VH-iIn7w/o.jpg",
+              "alt": "King's Buffet - food, mussels, shellfish, oysters and mussels, oysters - Chinese Near Me - Vacaville, California"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/MxLHaT2qX4zHgD3hwHhcfg/o.jpg",
+              "alt": "King's Buffet - a variety of pastries on trays - shellfish, oysters and mussels, food, oysters, mussels - Chinese Near Me - Vacaville, California"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/hh0sNE2KiOJgKtPIJjdjOA/o.jpg",
+              "alt": "King's Buffet - ramen and noodles, food - Chinese Near Me - Vacaville, California"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/TQh0I7YwoFufNsTO0e_Ykg/o.jpg",
+              "alt": "King's Buffet - food, dessert - Chinese Near Me - Vacaville, California"
+            }
+          ],
+          "address": {
+            "addressLine1": "601 Orange Dr",
+            "addressLine2": "",
+            "addressLine3": "",
+            "city": "Vacaville",
+            "regionCode": "CA",
+            "postalCode": "95687",
+            "country": "US"
+          },
+          "type": "Restaurants",
+          "primaryPhoto": "https://s3-media0.fl.yelpcdn.com/bphoto/3H7DVFxgQdud57bxheVa-A/l.jpg",
+          "priceRange": "$11-30",
+          "cuisine": "Chinese",
+          "categories": [
+            "Restaurants",
+            "Chinese",
+            "Sushi Bars",
+            "Buffets"
+          ],
+          "aggregatedRating": 2.2,
+          "reviewCount": 332,
+          "phone": "(707) 448-8808",
+          "advertiser": false,
+          "businessHighlights": [],
+          "aboutTheBusiness": {
+            "specialties": null,
+            "history": null,
+            "yearEstablished": null
+          },
+          "scrapeFinishedAt": "2025-12-30T12:16:03.778Z"
+        },
+        "estimatedCost": 0.00403375,
+        "menuUrlCount": 0
+      },
+      {
+        "formatName": "directUrls (objects)",
+        "input": {
+          "directUrls": [
+            {
+              "url": "https://www.yelp.com/biz/kings-buffet-vacaville"
+            },
+            {
+              "url": "https://www.yelp.com/biz/dragon-house-chinese-eatery-fishers"
+            }
+          ]
+        },
+        "success": false,
+        "itemsCount": 0,
+        "menuUrlFound": false,
+        "menuFields": [],
+        "errors": [
+          "Input is not valid: Values in input.directUrls at positions [0,1] must match regular expression \"^(|(https?:\\/\\/)?www.yelp.[a-z]+(\\/.*)?)$\""
+        ],
+        "runId": null,
+        "duration": null,
+        "computeUnits": null,
+        "sampleItem": null
+      },
+      {
+        "formatName": "startUrls",
+        "input": {
+          "startUrls": [
+            {
+              "url": "https://www.yelp.com/biz/kings-buffet-vacaville"
+            },
+            {
+              "url": "https://www.yelp.com/biz/dragon-house-chinese-eatery-fishers"
+            }
+          ]
+        },
+        "success": false,
+        "itemsCount": 0,
+        "menuUrlFound": false,
+        "menuFields": [],
+        "errors": [],
+        "runId": "dhn7wZoCU5yhnpWhx",
+        "duration": "4.57s",
+        "computeUnits": 0.004532222222222222,
+        "sampleItem": null,
+        "estimatedCost": 0.00011330555555555557
+      },
+      {
+        "formatName": "searchTerms + locations",
+        "input": {
+          "searchTerms": [
+            "King's Buffet",
+            "Dragon House Chinese Eatery"
+          ],
+          "locations": [
+            "Vacaville, California",
+            "Fishers, Indiana"
+          ],
+          "searchLimit": 2
+        },
+        "success": true,
+        "itemsCount": 7,
+        "menuUrlFound": false,
+        "menuFields": [],
+        "errors": [],
+        "runId": "Pg8h6KCrrykl3Fq89",
+        "duration": "239.47s",
+        "computeUnits": 0.26541,
+        "sampleItem": {
+          "directUrl": "https://www.yelp.com/biz/dragon-house-chinese-eatery-fishers",
+          "bizId": "fSx8zLSP_LBtIm_mfQRbTQ",
+          "name": "Dragon House Chinese Eatery",
+          "alternateNames": [],
+          "since": "",
+          "amenitiesAndMore": [
+            "Offers delivery",
+            "Offers take-out",
+            "Takes reservations",
+            "Many vegetarian options",
+            "Accepts credit cards",
+            "Accepts Apple Pay",
+            "Casual",
+            "Moderate noise",
+            "Good for groups",
+            "Good for kids",
+            "Good for Lunch, Dinner",
+            "Free Wi-Fi",
+            "Dogs allowed",
+            "TV",
+            "Outdoor seating",
+            "Offers catering",
+            "Alcohol",
+            "Bike parking"
+          ],
+          "operationHours": [
+            {
+              "hours": [
+                "11:00 AM - 9:30 PM"
+              ],
+              "regularHours": [
+                "11:00 AM - 9:30 PM"
+              ],
+              "regularHoursRaw": [
+                [
+                  660,
+                  1290
+                ]
+              ],
+              "hasSpecialHours": false,
+              "dayOfWeekShort": "Mon"
+            },
+            {
+              "hours": [
+                "Closed"
+              ],
+              "regularHours": [
+                "Closed"
+              ],
+              "regularHoursRaw": [],
+              "hasSpecialHours": false,
+              "dayOfWeekShort": "Tue"
+            },
+            {
+              "hours": [
+                "11:00 AM - 9:30 PM"
+              ],
+              "regularHours": [
+                "11:00 AM - 9:30 PM"
+              ],
+              "regularHoursRaw": [
+                [
+                  3540,
+                  4170
+                ]
+              ],
+              "hasSpecialHours": false,
+              "dayOfWeekShort": "Wed"
+            },
+            {
+              "hours": [
+                "11:00 AM - 10:00 PM"
+              ],
+              "regularHours": [
+                "11:00 AM - 10:00 PM"
+              ],
+              "regularHoursRaw": [
+                [
+                  4980,
+                  5640
+                ]
+              ],
+              "hasSpecialHours": false,
+              "dayOfWeekShort": "Thu"
+            },
+            {
+              "hours": [
+                "11:00 AM - 10:00 PM"
+              ],
+              "regularHours": [
+                "11:00 AM - 10:00 PM"
+              ],
+              "regularHoursRaw": [
+                [
+                  6420,
+                  7080
+                ]
+              ],
+              "hasSpecialHours": false,
+              "dayOfWeekShort": "Fri"
+            },
+            {
+              "hours": [
+                "12:00 PM - 10:00 PM"
+              ],
+              "regularHours": [
+                "12:00 PM - 10:00 PM"
+              ],
+              "regularHoursRaw": [
+                [
+                  7920,
+                  8520
+                ]
+              ],
+              "hasSpecialHours": false,
+              "dayOfWeekShort": "Sat"
+            },
+            {
+              "hours": [
+                "12:00 PM - 9:00 PM"
+              ],
+              "regularHours": [
+                "12:00 PM - 9:00 PM"
+              ],
+              "regularHoursRaw": [
+                [
+                  9360,
+                  9900
+                ]
+              ],
+              "hasSpecialHours": false,
+              "dayOfWeekShort": "Sun"
+            }
+          ],
+          "upcomingSpecialHours": [],
+          "claimed": true,
+          "verified": true,
+          "website": "http://www.dragonhousein.com",
+          "images": [
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/am2zE_AvIG9gYCgBDopSLQ/o.jpg",
+              "alt": "Dragon House Chinese Eatery - a bowl of dumplings - food - Chinese Near Me - Fishers, Indiana"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/--2aS1MR1smlf4dJ3QC6Ig/o.jpg",
+              "alt": "Dragon House Chinese Eatery - The buffet - interior - Chinese Near Me - Fishers, Indiana"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/NgGyWugm_dswyPd9bDhUAg/o.jpg",
+              "alt": "Dragon House Chinese Eatery - beef with pea pod - food, ribs - Chinese Near Me - Fishers, Indiana"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/TRqs-fxvfLalGGEzorpHuQ/o.jpg",
+              "alt": "Dragon House Chinese Eatery - interior - Chinese Near Me - Fishers, Indiana"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/_lM4svvFXknyszbhKbnhqg/o.jpg",
+              "alt": "Dragon House Chinese Eatery - The buffet is awesome it has a mic to yell back to the kitchen what's needed.  Very reasonable too! - interior - Chinese Near Me - Fishers, Indiana"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/rdvX1BklBhAQ-ZPOve4usg/o.jpg",
+              "alt": "Dragon House Chinese Eatery - A little bit of everything as you can see. This is trip one.  I'll be back for another plate after this.  Soooo good! - food, salads - Chinese Near Me - Fishers, Indiana"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/Cp-lYBD5E99Z-zBDMaswEA/o.jpg",
+              "alt": "Dragon House Chinese Eatery - green bean party tray - food - Chinese Near Me - Fishers, Indiana"
+            },
+            {
+              "link": "https://image.mux.com/jWVgTpVaU6NHJluZeHL8LMwmSGs1ezpwJg7VHQ9xYEw/thumbnail.jpg?height=720&time=0",
+              "alt": "Dragon House Chinese Eatery - Here's a video rundown of the choices on a Saturday night. - Chinese Near Me - Fishers, Indiana"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/8V06923c2KTEXnoS6W54BA/o.jpg",
+              "alt": "Dragon House Chinese Eatery - Buffet - food - Chinese Near Me - Fishers, Indiana"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/J1b-0IrZHWXpGiC8IcYtIg/o.jpg",
+              "alt": "Dragon House Chinese Eatery - chicken and broccoli - food - Chinese Near Me - Fishers, Indiana"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/QRJq_2FpEtp6sCSHU8W1PQ/o.jpg",
+              "alt": "Dragon House Chinese Eatery - broccoli with garlic sauce party tray - salads, salad, food - Chinese Near Me - Fishers, Indiana"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/Vp9fQHUb5D8z5hJmRc4QIQ/o.jpg",
+              "alt": "Dragon House Chinese Eatery - Beef with Vegetable Dinner Combination Fired Shrimp Fried Rice Fried Scallop - food - Chinese Near Me - Fishers, Indiana"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/nnTcLd7oDbttU7K3Oa5fiA/o.jpg",
+              "alt": "Dragon House Chinese Eatery - interior - Chinese Near Me - Fishers, Indiana"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/dSVtSq-_YV8w34EKEaSY8w/o.jpg",
+              "alt": "Dragon House Chinese Eatery - food, ramen and noodles - Chinese Near Me - Fishers, Indiana"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/s2SoY_FC44kcxvaeGW3vqw/o.jpg",
+              "alt": "Dragon House Chinese Eatery - Chicken Broccoli Dinner Combination - food - Chinese Near Me - Fishers, Indiana"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/Hl1A-N2RM75oQ42XfwAtcA/o.jpg",
+              "alt": "Dragon House Chinese Eatery - noodle soup, ramen and noodles, noodle dish, noodles, food, ramen - Chinese Near Me - Fishers, Indiana"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/5gLj8z0SdGqf5tRAN0m7Pg/o.jpg",
+              "alt": "Dragon House Chinese Eatery - Crab Rangoon - shellfish, food, rangoon, crab, crab rangoon - Chinese Near Me - Fishers, Indiana"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/W-GzjodVgUk7gFHKgNVvHg/o.jpg",
+              "alt": "Dragon House Chinese Eatery - food - Chinese Near Me - Fishers, Indiana"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/hRZUBAucE0n-DJSi-TnWnQ/o.jpg",
+              "alt": "Dragon House Chinese Eatery - food - Chinese Near Me - Fishers, Indiana"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/m7VkrtsBQhSasiJ4Sn2iRA/o.jpg",
+              "alt": "Dragon House Chinese Eatery - food - Chinese Near Me - Fishers, Indiana"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/r1YLYZFg0TqdFiLt6baynw/o.jpg",
+              "alt": "Dragon House Chinese Eatery - chicken wings and fried chicken, food - Chinese Near Me - Fishers, Indiana"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/8anMoMghrZnlk4y4u7522g/o.jpg",
+              "alt": "Dragon House Chinese Eatery - , donuts - Chinese Near Me - Fishers, Indiana"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/2BDrQxMJN_tQeJpW6BTSHA/o.jpg",
+              "alt": "Dragon House Chinese Eatery - chicken wings and fried chicken, food - Chinese Near Me - Fishers, Indiana"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/5gE7NYH79AOjnKojJ2VDuA/o.jpg",
+              "alt": "Dragon House Chinese Eatery - food - Chinese Near Me - Fishers, Indiana"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/FGhUSkb6FcDl_b9lZS24Mw/o.jpg",
+              "alt": "Dragon House Chinese Eatery - noodle soup, ramen, ramen and noodles, noodle dish, noodles, food - Chinese Near Me - Fishers, Indiana"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/NTbev1Ep6cIMNDIwK1BE4A/o.jpg",
+              "alt": "Dragon House Chinese Eatery - noodles, ramen, ramen and noodles, noodle dish, food, noodle soup - Chinese Near Me - Fishers, Indiana"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/qObuYWkHfybnf7ydm5JBCQ/o.jpg",
+              "alt": "Dragon House Chinese Eatery - noodles, ramen and noodles, noodle dish, noodle soup, food, ramen - Chinese Near Me - Fishers, Indiana"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/oMwHxUBk8rKqM5sj8jtfBw/o.jpg",
+              "alt": "Dragon House Chinese Eatery - food - Chinese Near Me - Fishers, Indiana"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/5MHlPxyyvf0AgfV5k3i1vg/o.jpg",
+              "alt": "Dragon House Chinese Eatery - ramen and noodles, food - Chinese Near Me - Fishers, Indiana"
+            },
+            {
+              "link": "https://s3-media0.fl.yelpcdn.com/bphoto/luy-TVaTCQhdUFzcORvNBg/o.jpg",
+              "alt": "Dragon House Chinese Eatery - salads, food, salad - Chinese Near Me - Fishers, Indiana"
+            }
+          ],
+          "address": {
+            "addressLine1": "7260 Fishers Crossing Dr",
+            "addressLine2": "",
+            "addressLine3": "",
+            "city": "Fishers",
+            "regionCode": "IN",
+            "postalCode": "46038",
+            "country": "US"
+          },
+          "type": "Restaurants",
+          "primaryPhoto": "https://s3-media0.fl.yelpcdn.com/bphoto/am2zE_AvIG9gYCgBDopSLQ/l.jpg",
+          "priceRange": "Under $10",
+          "cuisine": "Chinese",
+          "categories": [
+            "Restaurants",
+            "Chinese",
+            "Asian Fusion"
+          ],
+          "aggregatedRating": 3.1,
+          "reviewCount": 169,
+          "phone": "(317) 594-8663",
+          "advertiser": false,
+          "businessHighlights": [],
+          "aboutTheBusiness": {
+            "specialties": null,
+            "history": null,
+            "yearEstablished": null
+          },
+          "scrapeFinishedAt": "2025-12-30T12:18:35.626Z"
+        },
+        "estimatedCost": 0.00663525,
+        "menuUrlCount": 0
+      },
+      {
+        "formatName": "urls (array)",
+        "input": {
+          "urls": [
+            "https://www.yelp.com/biz/kings-buffet-vacaville",
+            "https://www.yelp.com/biz/dragon-house-chinese-eatery-fishers"
+          ]
+        },
+        "success": false,
+        "itemsCount": 0,
+        "menuUrlFound": false,
+        "menuFields": [],
+        "errors": [],
+        "runId": "N5T2lvsJLCTVJ3LK6",
+        "duration": "3.32s",
+        "computeUnits": 0.0031044444444444444,
+        "sampleItem": null,
+        "estimatedCost": 0.0000776111111111111
+      }
+    ],
+    "bestFormat": {
+      "formatName": "directUrls (array)",
+      "input": {
+        "directUrls": [
+          "https://www.yelp.com/biz/kings-buffet-vacaville",
+          "https://www.yelp.com/biz/dragon-house-chinese-eatery-fishers"
+        ]
+      },
+      "success": true,
+      "itemsCount": 2,
+      "menuUrlFound": false,
+      "menuFields": [],
+      "errors": [],
+      "runId": "3uhXsZYTd8HkjWenx",
+      "duration": "146.19s",
+      "computeUnits": 0.16135,
+      "sampleItem": {
+        "directUrl": "https://www.yelp.com/biz/kings-buffet-vacaville",
+        "bizId": "L7yD75ulqF7Q8KV0UZM5JQ",
+        "name": "King's Buffet",
+        "alternateNames": [],
+        "since": "",
+        "amenitiesAndMore": [
+          "Offers take-out",
+          "Takes reservations",
+          "Offers delivery",
+          "Limited vegetarian options",
+          "Accepts credit cards",
+          "Accepts Android Pay",
+          "Accepts Apple Pay",
+          "Casual",
+          "Moderate noise",
+          "Casual dress",
+          "Good for groups",
+          "Good for kids",
+          "Good for Lunch, Dinner",
+          "Private lot parking, Validated parking",
+          "Waiter service",
+          "Dogs allowed",
+          "TV",
+          "Outdoor seating",
+          "Offers catering",
+          "Wi-Fi",
+          "Alcohol",
+          "Bike parking"
+        ],
+        "operationHours": [
+          {
+            "hours": [
+              "Closed"
+            ],
+            "regularHours": [
+              "Closed"
+            ],
+            "regularHoursRaw": [],
+            "hasSpecialHours": false,
+            "dayOfWeekShort": "Mon"
+          },
+          {
+            "hours": [
+              "11:00 AM - 9:00 PM"
+            ],
+            "regularHours": [
+              "11:00 AM - 9:00 PM"
+            ],
+            "regularHoursRaw": [
+              [
+                2100,
+                2700
+              ]
+            ],
+            "hasSpecialHours": false,
+            "dayOfWeekShort": "Tue"
+          },
+          {
+            "hours": [
+              "11:00 AM - 9:00 PM"
+            ],
+            "regularHours": [
+              "11:00 AM - 9:00 PM"
+            ],
+            "regularHoursRaw": [
+              [
+                3540,
+                4140
+              ]
+            ],
+            "hasSpecialHours": false,
+            "dayOfWeekShort": "Wed"
+          },
+          {
+            "hours": [
+              "11:00 AM - 9:00 PM"
+            ],
+            "regularHours": [
+              "11:00 AM - 9:00 PM"
+            ],
+            "regularHoursRaw": [
+              [
+                4980,
+                5580
+              ]
+            ],
+            "hasSpecialHours": false,
+            "dayOfWeekShort": "Thu"
+          },
+          {
+            "hours": [
+              "11:00 AM - 9:00 PM"
+            ],
+            "regularHours": [
+              "11:00 AM - 9:00 PM"
+            ],
+            "regularHoursRaw": [
+              [
+                6420,
+                7020
+              ]
+            ],
+            "hasSpecialHours": false,
+            "dayOfWeekShort": "Fri"
+          },
+          {
+            "hours": [
+              "11:00 AM - 9:00 PM"
+            ],
+            "regularHours": [
+              "11:00 AM - 9:00 PM"
+            ],
+            "regularHoursRaw": [
+              [
+                7860,
+                8460
+              ]
+            ],
+            "hasSpecialHours": false,
+            "dayOfWeekShort": "Sat"
+          },
+          {
+            "hours": [
+              "11:00 AM - 9:00 PM"
+            ],
+            "regularHours": [
+              "11:00 AM - 9:00 PM"
+            ],
+            "regularHoursRaw": [
+              [
+                9300,
+                9900
+              ]
+            ],
+            "hasSpecialHours": false,
+            "dayOfWeekShort": "Sun"
+          }
+        ],
+        "upcomingSpecialHours": [],
+        "verified": false,
+        "website": "https://kingsbuffet.shop",
+        "images": [
+          {
+            "link": "https://s3-media0.fl.yelpcdn.com/bphoto/3H7DVFxgQdud57bxheVa-A/o.jpg",
+            "alt": "King's Buffet - food - Chinese Near Me - Vacaville, California"
+          },
+          {
+            "link": "https://s3-media0.fl.yelpcdn.com/bphoto/SoxCXr7YgXP-Xh59DK_AcA/o.jpg",
+            "alt": "King's Buffet - salads, interior, salad - Chinese Near Me - Vacaville, California"
+          },
+          {
+            "link": "https://s3-media0.fl.yelpcdn.com/bphoto/_Y7H33mW1oZHf1Jf7PSB2A/o.jpg",
+            "alt": "King's Buffet - paella, food - Chinese Near Me - Vacaville, California"
+          },
+          {
+            "link": "https://s3-media0.fl.yelpcdn.com/bphoto/5HGJwFKl-mit934m_BUXtA/o.jpg",
+            "alt": "King's Buffet - shows storefront, outside - Chinese Near Me - Vacaville, California"
+          },
+          {
+            "link": "https://s3-media0.fl.yelpcdn.com/bphoto/m9vuXHVRvaF0WzRxizZOoQ/o.jpg",
+            "alt": "King's Buffet - oysters, interior, oysters and mussels, mussels, shellfish - Chinese Near Me - Vacaville, California"
+          },
+          {
+            "link": "https://s3-media0.fl.yelpcdn.com/bphoto/PktyOFdtbvS1yDosHCOiBA/o.jpg",
+            "alt": "King's Buffet - sushi and sashimi, food - Chinese Near Me - Vacaville, California"
+          },
+          {
+            "link": "https://s3-media0.fl.yelpcdn.com/bphoto/SnmrX_nkD0_bmhpS7PO-Aw/o.jpg",
+            "alt": "King's Buffet - oysters and mussels, food, mussels, shellfish, oysters - Chinese Near Me - Vacaville, California"
+          },
+          {
+            "link": "https://image.mux.com/1WmfXF7XX00od02tpK342LqFFIxUkVOI01RhWxrCVgXkZE/thumbnail.jpg?height=720&time=0",
+            "alt": "King's Buffet - Chinese Near Me - Vacaville, California"
+          },
+          {
+            "link": "https://s3-media0.fl.yelpcdn.com/bphoto/UcOL6lPkJArLHtzFhTmFyw/o.jpg",
+            "alt": "King's Buffet - ramen, noodle soup, food, noodles, ramen and noodles, noodle dish - Chinese Near Me - Vacaville, California"
+          },
+          {
+            "link": "https://s3-media0.fl.yelpcdn.com/bphoto/bhQlIypa89wm-nshmGwgmQ/o.jpg",
+            "alt": "King's Buffet - mussels, oysters, shellfish, food, oysters and mussels - Chinese Near Me - Vacaville, California"
+          },
+          {
+            "link": "https://s3-media0.fl.yelpcdn.com/bphoto/XirEmpi4TZDlHCzzejLuVA/o.jpg",
+            "alt": "King's Buffet - a variety of food items - chicken wings and fried chicken, interior - Chinese Near Me - Vacaville, California"
+          },
+          {
+            "link": "https://s3-media0.fl.yelpcdn.com/bphoto/lzPFZMUgPYReD8Z2m1spRA/o.jpg",
+            "alt": "King's Buffet - a variety of seafood items - oysters and mussels, interior, mussels, shellfish, oysters - Chinese Near Me - Vacaville, California"
+          },
+          {
+            "link": "https://s3-media0.fl.yelpcdn.com/bphoto/TOVHXmZhcaVE44rOgpoltQ/o.jpg",
+            "alt": "King's Buffet - food - Chinese Near Me - Vacaville, California"
+          },
+          {
+            "link": "https://s3-media0.fl.yelpcdn.com/bphoto/cwX_uAtZv-eK_5ZVcXiqWA/o.jpg",
+            "alt": "King's Buffet - food, ramen, noodle dish, noodles, noodle soup, ramen and noodles - Chinese Near Me - Vacaville, California"
+          },
+          {
+            "link": "https://s3-media0.fl.yelpcdn.com/bphoto/B0tHdEwNH6uqgSSjTFDsgQ/o.jpg",
+            "alt": "King's Buffet - food, salad, salads - Chinese Near Me - Vacaville, California"
+          },
+          {
+            "link": "https://s3-media0.fl.yelpcdn.com/bphoto/ddAOOYVLquuA49Hjg7iXMA/o.jpg",
+            "alt": "King's Buffet - a variety of food items - bbq ribs, ribs, interior - Chinese Near Me - Vacaville, California"
+          },
+          {
+            "link": "https://s3-media0.fl.yelpcdn.com/bphoto/8BFaohe6qM-29YRWMZZTog/o.jpg",
+            "alt": "King's Buffet - food - Chinese Near Me - Vacaville, California"
+          },
+          {
+            "link": "https://s3-media0.fl.yelpcdn.com/bphoto/6-1G0f3xzpNiGAMbArIz-Q/o.jpg",
+            "alt": "King's Buffet - shellfish, food, oysters, oysters and mussels, mussels - Chinese Near Me - Vacaville, California"
+          },
+          {
+            "link": "https://s3-media0.fl.yelpcdn.com/bphoto/Y21ABaVu-nfkfKRuLT9POQ/o.jpg",
+            "alt": "King's Buffet - shellfish, oysters, mussels, oysters and mussels, food - Chinese Near Me - Vacaville, California"
+          },
+          {
+            "link": "https://s3-media0.fl.yelpcdn.com/bphoto/eWuO3heZqqTWGdJHGmlCUQ/o.jpg",
+            "alt": "King's Buffet - a parking lot with cars parked in front of it - shows storefront, outside, sushi and sashimi - Chinese Near Me - Vacaville, California"
+          },
+          {
+            "link": "https://s3-media0.fl.yelpcdn.com/bphoto/27cp8TDfr1csIVy_dpATIw/o.jpg",
+            "alt": "King's Buffet - food - Chinese Near Me - Vacaville, California"
+          },
+          {
+            "link": "https://s3-media0.fl.yelpcdn.com/bphoto/QTxVFJ44PF1onncB5AI6cA/o.jpg",
+            "alt": "King's Buffet - oysters and mussels, shellfish, mussels, oysters, food - Chinese Near Me - Vacaville, California"
+          },
+          {
+            "link": "https://s3-media0.fl.yelpcdn.com/bphoto/VCu117S5rgc3RmjIY2EIzg/o.jpg",
+            "alt": "King's Buffet - pancakes, food - Chinese Near Me - Vacaville, California"
+          },
+          {
+            "link": "https://s3-media0.fl.yelpcdn.com/bphoto/p6eAA6sszESE1Ff-Ck8wNQ/o.jpg",
+            "alt": "King's Buffet - a variety of food items - Chinese Near Me - Vacaville, California"
+          },
+          {
+            "link": "https://s3-media0.fl.yelpcdn.com/bphoto/T3poYhYmsEooCxr8UHFjdA/o.jpg",
+            "alt": "King's Buffet - a variety of food items - salads, interior - Chinese Near Me - Vacaville, California"
+          },
+          {
+            "link": "https://s3-media0.fl.yelpcdn.com/bphoto/tmj7nS8hM-um0tXHxs8FLQ/o.jpg",
+            "alt": "King's Buffet - food - Chinese Near Me - Vacaville, California"
+          },
+          {
+            "link": "https://s3-media0.fl.yelpcdn.com/bphoto/N48kf8E9iylEK1VH-iIn7w/o.jpg",
+            "alt": "King's Buffet - food, mussels, shellfish, oysters and mussels, oysters - Chinese Near Me - Vacaville, California"
+          },
+          {
+            "link": "https://s3-media0.fl.yelpcdn.com/bphoto/MxLHaT2qX4zHgD3hwHhcfg/o.jpg",
+            "alt": "King's Buffet - a variety of pastries on trays - shellfish, oysters and mussels, food, oysters, mussels - Chinese Near Me - Vacaville, California"
+          },
+          {
+            "link": "https://s3-media0.fl.yelpcdn.com/bphoto/hh0sNE2KiOJgKtPIJjdjOA/o.jpg",
+            "alt": "King's Buffet - ramen and noodles, food - Chinese Near Me - Vacaville, California"
+          },
+          {
+            "link": "https://s3-media0.fl.yelpcdn.com/bphoto/TQh0I7YwoFufNsTO0e_Ykg/o.jpg",
+            "alt": "King's Buffet - food, dessert - Chinese Near Me - Vacaville, California"
+          }
+        ],
+        "address": {
+          "addressLine1": "601 Orange Dr",
+          "addressLine2": "",
+          "addressLine3": "",
+          "city": "Vacaville",
+          "regionCode": "CA",
+          "postalCode": "95687",
+          "country": "US"
+        },
+        "type": "Restaurants",
+        "primaryPhoto": "https://s3-media0.fl.yelpcdn.com/bphoto/3H7DVFxgQdud57bxheVa-A/l.jpg",
+        "priceRange": "$11-30",
+        "cuisine": "Chinese",
+        "categories": [
+          "Restaurants",
+          "Chinese",
+          "Sushi Bars",
+          "Buffets"
+        ],
+        "aggregatedRating": 2.2,
+        "reviewCount": 332,
+        "phone": "(707) 448-8808",
+        "advertiser": false,
+        "businessHighlights": [],
+        "aboutTheBusiness": {
+          "specialties": null,
+          "history": null,
+          "yearEstablished": null
+        },
+        "scrapeFinishedAt": "2025-12-30T12:16:03.778Z"
+      },
+      "estimatedCost": 0.00403375,
+      "menuUrlCount": 0
+    }
+  },
+  {
+    "actorId": "web_wanderer/yelp-scraper",
+    "formats": [
+      {
+        "formatName": "urls (array)",
+        "input": {
+          "urls": [
+            "https://www.yelp.com/biz/kings-buffet-vacaville",
+            "https://www.yelp.com/biz/dragon-house-chinese-eatery-fishers"
+          ]
+        },
+        "success": false,
+        "itemsCount": 0,
+        "menuUrlFound": false,
+        "menuFields": [],
+        "errors": [],
+        "runId": "bFQT58anJWvkMTnLc",
+        "duration": "3.21s",
+        "computeUnits": 0.0003780555555555556,
+        "sampleItem": null,
+        "estimatedCost": 0.00000945138888888889
+      },
+      {
+        "formatName": "startUrls",
+        "input": {
+          "startUrls": [
+            {
+              "url": "https://www.yelp.com/biz/kings-buffet-vacaville"
+            },
+            {
+              "url": "https://www.yelp.com/biz/dragon-house-chinese-eatery-fishers"
+            }
+          ]
+        },
+        "success": false,
+        "itemsCount": 0,
+        "menuUrlFound": false,
+        "menuFields": [],
+        "errors": [],
+        "runId": "Te0agWQDHE5V4j5Gc",
+        "duration": "3.76s",
+        "computeUnits": 0.00044930555555555555,
+        "sampleItem": null,
+        "estimatedCost": 0.000011232638888888888
+      },
+      {
+        "formatName": "businessUrls",
+        "input": {
+          "businessUrls": [
+            "https://www.yelp.com/biz/kings-buffet-vacaville",
+            "https://www.yelp.com/biz/dragon-house-chinese-eatery-fishers"
+          ]
+        },
+        "success": false,
+        "itemsCount": 0,
+        "menuUrlFound": false,
+        "menuFields": [],
+        "errors": [],
+        "runId": "DHgZNQ2hOmF77pUnh",
+        "duration": "2.99s",
+        "computeUnits": 0.00034180555555555554,
+        "sampleItem": null,
+        "estimatedCost": 0.000008545138888888888
+      },
+      {
+        "formatName": "yelpUrls",
+        "input": {
+          "yelpUrls": [
+            "https://www.yelp.com/biz/kings-buffet-vacaville",
+            "https://www.yelp.com/biz/dragon-house-chinese-eatery-fishers"
+          ]
+        },
+        "success": false,
+        "itemsCount": 0,
+        "menuUrlFound": false,
+        "menuFields": [],
+        "errors": [],
+        "runId": "fkwmrUMqZpJZCA28n",
+        "duration": "3.45s",
+        "computeUnits": 0.0003423611111111111,
+        "sampleItem": null,
+        "estimatedCost": 0.000008559027777777778
+      },
+      {
+        "formatName": "directUrls",
+        "input": {
+          "directUrls": [
+            "https://www.yelp.com/biz/kings-buffet-vacaville",
+            "https://www.yelp.com/biz/dragon-house-chinese-eatery-fishers"
+          ]
+        },
+        "success": false,
+        "itemsCount": 0,
+        "menuUrlFound": false,
+        "menuFields": [],
+        "errors": [],
+        "runId": "dMIy1vllPLBxa3bkm",
+        "duration": "3.77s",
+        "computeUnits": 0.00044416666666666666,
+        "sampleItem": null,
+        "estimatedCost": 0.000011104166666666666
+      }
+    ],
+    "bestFormat": null
+  }
+]

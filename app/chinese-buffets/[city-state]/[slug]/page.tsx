@@ -1,23 +1,16 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
-import BuffetCard from '@/components/BuffetCard';
-import Map from '@/components/MapWrapper';
-import SchemaMarkup from '@/components/SchemaMarkup';
-import Reviews from '@/components/Reviews';
-import ImageGallery from '@/components/ImageGallery';
-import ReviewsDistribution from '@/components/ReviewsDistribution';
-import ReviewsTags from '@/components/ReviewsTags';
-import PopularTimes from '@/components/PopularTimes';
-import ServiceOptions from '@/components/ServiceOptions';
-import QuestionsAndAnswers from '@/components/QuestionsAndAnswers';
-import OwnerUpdates from '@/components/OwnerUpdates';
-import Menu from '@/components/Menu';
-import DetailedRatings from '@/components/DetailedRatings';
-import CustomerInsights from '@/components/CustomerInsights';
-import { getBuffetBySlug, getCityBySlug, getNearbyBuffets } from '@/lib/data-instantdb';
-import { formatAddress, formatPhoneNumber } from '@/lib/utils';
-import { generateExpandedDescription } from '@/lib/generateDescription';
+import { getBuffetNameBySlug } from '@/lib/data-instantdb';
+import Accessibility from '@/components/Accessibility';
+import Amenities from '@/components/Amenities';
+import Atmosphere from '@/components/Atmosphere';
+import FoodOptions from '@/components/FoodOptions';
+import Parking from '@/components/Parking';
+import Payment from '@/components/Payment';
+import ServiceOptionsSection from '@/components/ServiceOptionsSection';
+import FoodAndDrink from '@/components/FoodAndDrink';
+import Highlights from '@/components/Highlights';
+import Planning from '@/components/Planning';
 
 interface BuffetPageProps {
   params: {
@@ -26,25 +19,8 @@ interface BuffetPageProps {
   };
 }
 
-export async function generateStaticParams() {
-  const { getBuffetsByCity } = await import('@/lib/data-instantdb');
-  const buffetsByCity = await getBuffetsByCity();
-  const params: Array<{ 'city-state': string; slug: string }> = [];
-  
-  for (const city of Object.values(buffetsByCity)) {
-    for (const buffet of city.buffets) {
-      params.push({
-        'city-state': city.slug,
-        slug: buffet.slug,
-      });
-    }
-  }
-  
-  return params;
-}
-
 export async function generateMetadata({ params }: BuffetPageProps): Promise<Metadata> {
-  const buffet = await getBuffetBySlug(params['city-state'], params.slug);
+  const buffet = await getBuffetNameBySlug(params['city-state'], params.slug);
   
   if (!buffet) {
     return {
@@ -53,810 +29,616 @@ export async function generateMetadata({ params }: BuffetPageProps): Promise<Met
   }
 
   return {
-    title: `${buffet.name} - Chinese Buffet in ${buffet.address.city}, ${buffet.address.state}`,
-    description: `${buffet.name} is a Chinese buffet in ${buffet.address.city}, ${buffet.address.state}. ${buffet.rating > 0 ? `Rated ${buffet.rating.toFixed(1)} stars` : ''} ${buffet.reviewsCount > 0 ? `with ${buffet.reviewsCount.toLocaleString()} reviews` : ''}. Find hours, prices, and location information.`,
+    title: buffet.name,
+    description: buffet.name,
   };
 }
 
-export default async function BuffetPage({ params }: BuffetPageProps) {
-  const buffet = await getBuffetBySlug(params['city-state'], params.slug);
-  const city = await getCityBySlug(params['city-state']);
+const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-  if (!buffet || !city) {
+function formatTime(time: string): string {
+  if (!time) return '';
+  const clean = time.replace(':', '');
+  if (clean.length !== 4) return time;
+  const hours = parseInt(clean.slice(0, 2), 10);
+  const minutes = clean.slice(2);
+  const period = hours >= 12 ? 'PM' : 'AM';
+  const normalizedHours = hours % 12 || 12;
+  return `${normalizedHours}:${minutes} ${period}`;
+}
+
+function formatHoursList(raw: any): Array<{ day: string; ranges: string }> {
+  if (!raw) return [];
+
+  if (Array.isArray(raw) && raw.length > 0 && raw[0]?.day && raw[0]?.hours) {
+    return raw
+      .map((item: any) => ({
+        day: String(item.day),
+        ranges: String(item.hours),
+      }))
+      .filter((item: any) => item.day && item.ranges);
+  }
+
+  if (Array.isArray(raw) && raw.length > 0 && Array.isArray(raw[0]?.open)) {
+    const byDay: Record<string, string[]> = {};
+    raw[0].open.forEach((entry: any) => {
+      const dayIndex = Number(entry.day);
+      const day = dayNames[dayIndex] || String(entry.day);
+      const start = formatTime(String(entry.start || ''));
+      const end = formatTime(String(entry.end || ''));
+      if (!byDay[day]) byDay[day] = [];
+      if (start && end) {
+        byDay[day].push(`${start} - ${end}`);
+      }
+    });
+    return Object.entries(byDay).map(([day, ranges]) => ({
+      day,
+      ranges: ranges.join(', '),
+    }));
+  }
+
+  if (typeof raw === 'object' && !Array.isArray(raw)) {
+    return Object.entries(raw)
+      .filter(([, value]) => typeof value === 'string')
+      .map(([day, ranges]) => ({
+        day,
+        ranges: String(ranges),
+      }));
+  }
+
+  return [];
+}
+
+function summarizePopularTimes(raw: any): string | null {
+  if (!raw) return null;
+  if (Array.isArray(raw)) {
+    return `Popular times available (${raw.length} day${raw.length === 1 ? '' : 's'})`;
+  }
+  if (typeof raw === 'object') {
+    const days = Object.keys(raw).length;
+    return `Popular times available (${days} day${days === 1 ? '' : 's'})`;
+  }
+  return 'Popular times available';
+}
+
+function normalizePopularTimes(raw: any): Array<{ day: string; entries: Array<{ hour: number; occupancyPercent: number }> }> {
+  if (!raw || typeof raw !== 'object') return [];
+
+  const dayOrder = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+  const dayLabels: Record<string, string> = {
+    Su: 'Sun',
+    Mo: 'Mon',
+    Tu: 'Tue',
+    We: 'Wed',
+    Th: 'Thu',
+    Fr: 'Fri',
+    Sa: 'Sat',
+  };
+
+  return dayOrder
+    .map((day) => ({
+      day: dayLabels[day] || day,
+      entries: Array.isArray(raw[day]) ? raw[day] : [],
+    }))
+    .filter((item) => item.entries.length > 0);
+}
+
+export default async function BuffetPage({ params }: BuffetPageProps) {
+  const buffet = await getBuffetNameBySlug(params['city-state'], params.slug);
+
+  if (!buffet) {
     notFound();
   }
 
-  // Get nearby buffets
-  const nearbyBuffets = (await getNearbyBuffets(
-    buffet.location.lat,
-    buffet.location.lng,
-    10,
-    buffet.id
-  )).slice(0, 6);
+  const regularHours = formatHoursList(buffet.hours?.hours);
+  const secondaryHours = formatHoursList(buffet.hours?.secondaryOpeningHours);
+  const popularTimesSummary = summarizePopularTimes(buffet.hours?.popularTimesHistogram);
+  const popularTimes = normalizePopularTimes(buffet.hours?.popularTimesHistogram);
 
-  // Create map markers (this buffet + nearby)
-  const mapMarkers = [
-    {
-      id: buffet.id,
-      name: buffet.name,
-      lat: buffet.location.lat,
-      lng: buffet.location.lng,
-      rating: buffet.rating,
-      citySlug: params['city-state'],
-      slug: buffet.slug,
-    },
-    ...nearbyBuffets.map(b => ({
-      id: b.id,
-      name: b.name,
-      lat: b.location.lat,
-      lng: b.location.lng,
-      rating: b.rating,
-      citySlug: b.citySlug || params['city-state'],
-      slug: b.slug,
-    })),
-  ];
+  // Parse orderBy - array of {name, orderUrl} objects
+  const orderByItems: Array<{ name: string; url?: string }> = [];
+  
+  if (buffet.contactInfo?.orderBy) {
+    const extractUrl = (item: any): string | undefined => {
+      return item.orderUrl || item.url || item.link || item.href;
+    };
+    
+    if (typeof buffet.contactInfo.orderBy === 'string') {
+      try {
+        const parsed = JSON.parse(buffet.contactInfo.orderBy);
+        if (Array.isArray(parsed)) {
+          orderByItems.push(...parsed.map((item: any) => ({
+            name: item.name || item.title || item.service || '',
+            url: extractUrl(item)
+          })).filter((item: any) => item.name));
+        } else if (typeof parsed === 'object' && parsed !== null) {
+          orderByItems.push(...Object.entries(parsed).map(([key, value]: [string, any]) => ({
+            name: key,
+            url: typeof value === 'string' && value.startsWith('http') ? value : extractUrl(value)
+          })).filter((item: any) => item.name));
+        }
+      } catch {
+        orderByItems.push({ name: buffet.contactInfo.orderBy });
+      }
+    } else if (Array.isArray(buffet.contactInfo.orderBy)) {
+      orderByItems.push(...buffet.contactInfo.orderBy.map((item: any) => ({
+        name: item.name || item.title || item.service || '',
+        url: extractUrl(item)
+      })).filter((item: any) => item.name));
+    } else if (typeof buffet.contactInfo.orderBy === 'object' && buffet.contactInfo.orderBy !== null) {
+      orderByItems.push(...Object.entries(buffet.contactInfo.orderBy).map(([key, value]: [string, any]) => ({
+        name: key,
+        url: typeof value === 'string' && value.startsWith('http') ? value : extractUrl(value)
+      })).filter((item: any) => item.name));
+    }
+  }
+  
+  const validOrderByItems = orderByItems.filter(item => item.name && item.name.trim() !== '');
 
   return (
-      <>
-        <SchemaMarkup type="buffet" data={buffet} citySlug={params['city-state']} />
-      
-      <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <header className="bg-white border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Breadcrumbs */}
-            <div className="pt-5 pb-4">
-              <nav className="flex items-center gap-2 text-sm">
-                <Link 
-                  href="/" 
-                  className="text-gray-500 hover:text-gray-900 transition-colors inline-flex items-center gap-1.5 group"
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-4xl font-bold mb-4">{buffet.name}</h1>
+      {buffet.categories && buffet.categories.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-4">
+          {buffet.categories.map((category: string, index: number) => (
+            <span
+              key={index}
+              className="px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-sm"
+            >
+              {category}
+            </span>
+          ))}
+        </div>
+      )}
+      <div className="flex flex-wrap items-center gap-4 mb-4">
+        {buffet.address && (
+          <div className="text-gray-700">
+            {buffet.address}
+          </div>
+        )}
+        {buffet.rating && (
+          <div className="flex items-center gap-1">
+            <svg className="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20">
+              <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+            </svg>
+            <span className="text-gray-900 font-semibold">{buffet.rating.toFixed(1)}</span>
+          </div>
+        )}
+        {buffet.price && (
+          <div className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+            {buffet.price}
+          </div>
+        )}
+      </div>
+      {buffet.description && (
+        <div className="text-gray-700 mb-4">
+          {buffet.description}
+        </div>
+      )}
+      {(buffet.images && buffet.images.length > 0) || buffet.imageCount > 0 ? (
+        <div className="mb-6">
+          <div className="flex items-center gap-3 mb-3">
+            <h2 className="text-2xl font-bold">Photos</h2>
+            {buffet.imageCount > 0 && (
+              <span className="text-sm text-gray-600">({buffet.imageCount} photos)</span>
+            )}
+          </div>
+          {buffet.imageCategories && buffet.imageCategories.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-3">
+              {buffet.imageCategories.map((category: string, index: number) => (
+                <span
+                  key={index}
+                  className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs"
                 >
-                  <svg className="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                  </svg>
-                  <span className="font-medium">Home</span>
-                </Link>
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-                <Link 
-                  href={`/chinese-buffets/${params['city-state']}`}
-                  className="text-gray-500 hover:text-gray-900 transition-colors truncate font-medium"
-                >
-                  {city.city}, {city.state}
-                </Link>
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-                <span className="text-gray-900 font-semibold truncate">{buffet.name}</span>
-              </nav>
+                  {category}
+                </span>
+              ))}
             </div>
-
-            {/* Hero Section */}
-            <div className="pb-8">
-              <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-6 leading-tight tracking-tight">
-                {buffet.name}
-              </h1>
-              
-              {/* Key Info Cards */}
-              <div className="flex flex-wrap items-center gap-3">
-                {/* Rating Card */}
-                {buffet.rating > 0 && (
-                  <div className="flex items-center gap-3 px-4 py-2.5 bg-gradient-to-br from-yellow-50 to-orange-50 border border-yellow-200 rounded-xl shadow-sm">
-                    <div className="flex items-center gap-0.5">
-                      {[...Array(5)].map((_, i) => (
-                        <svg
-                          key={i}
-                          className={`w-5 h-5 ${
-                            i < Math.floor(buffet.rating)
-                              ? 'text-yellow-500 fill-yellow-500'
-                              : i < buffet.rating
-                              ? 'text-yellow-500 fill-yellow-500 opacity-60'
-                              : 'text-gray-300'
-                          }`}
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                      ))}
+          )}
+          {buffet.images && buffet.images.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {buffet.images.map((imageUrl: string, index: number) => (
+                <img
+                  key={index}
+                  src={imageUrl}
+                  alt={`${buffet.name} image ${index + 1}`}
+                  className="w-full h-48 object-cover rounded-lg"
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-gray-500 text-sm">
+              Images available but not loaded
+            </div>
+          )}
+        </div>
+      ) : null}
+      {buffet.hours && (
+        <div className="mb-4">
+          <h2 className="text-2xl font-bold mb-3">Opening Hours</h2>
+          <div className="space-y-4">
+            {regularHours.length > 0 && (
+              <div>
+                <h3 className="font-semibold mb-2">Regular Hours</h3>
+                <div className="space-y-1 text-gray-700">
+                  {regularHours.map((item) => (
+                    <div key={item.day} className="flex gap-3">
+                      <div className="w-16 font-medium">{item.day}</div>
+                      <div>{item.ranges}</div>
                     </div>
-                    <div className="flex items-baseline gap-1.5">
-                      <span className="text-2xl font-bold text-gray-900">{buffet.rating.toFixed(1)}</span>
-                      {buffet.reviewsCount > 0 && (
-                        <span className="text-sm text-gray-600 font-medium">
-                          ({buffet.reviewsCount.toLocaleString()})
+                  ))}
+                </div>
+              </div>
+            )}
+            {popularTimesSummary && (
+              <div>
+                <h3 className="font-semibold mb-2">Popular Times</h3>
+                {popularTimes.length > 0 ? (
+                  <div className="space-y-3">
+                    {popularTimes.map((day) => (
+                      <div key={day.day}>
+                        <div className="text-sm font-medium text-gray-700 mb-1">{day.day}</div>
+                        <div className="flex items-end gap-1 h-12">
+                          {day.entries.map((entry, idx) => (
+                            <div
+                              key={`${day.day}-${idx}`}
+                              className="w-2 bg-blue-500 rounded-sm"
+                              style={{ height: `${Math.max(2, Math.min(100, entry.occupancyPercent))}%` }}
+                              title={`${entry.hour}:00 - ${entry.occupancyPercent}%`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-gray-700">{popularTimesSummary}</div>
+                )}
+              </div>
+            )}
+            {secondaryHours.length > 0 && (
+              <div>
+                <h3 className="font-semibold mb-2">Secondary Hours</h3>
+                <div className="space-y-1 text-gray-700">
+                  {secondaryHours.map((item) => (
+                    <div key={item.day} className="flex gap-3">
+                      <div className="w-16 font-medium">{item.day}</div>
+                      <div>{item.ranges}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      {buffet.contactInfo && (buffet.contactInfo.phone || buffet.contactInfo.menuUrl || buffet.contactInfo.orderBy) && (
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold mb-4">Contact Information</h2>
+          <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {buffet.contactInfo.phone && (
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                    <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-sm text-gray-500 mb-1">Phone</div>
+                    <a 
+                      href={`tel:${buffet.contactInfo.phone}`} 
+                      className="text-lg font-medium text-blue-600 hover:text-blue-800 hover:underline"
+                    >
+                      {buffet.contactInfo.phone}
+                    </a>
+                  </div>
+                </div>
+              )}
+              {buffet.contactInfo.menuUrl && (
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                    <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-sm text-gray-500 mb-1">Menu</div>
+                    <a 
+                      href={typeof buffet.contactInfo.menuUrl === 'string' ? buffet.contactInfo.menuUrl : '#'} 
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-lg font-medium text-green-600 hover:text-green-800 hover:underline inline-flex items-center gap-1"
+                    >
+                      View Menu
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                    </a>
+                  </div>
+                </div>
+              )}
+              {validOrderByItems.length > 0 && (
+                <div className="md:col-span-2">
+                  <div className="text-sm text-gray-500 mb-3">Order Online</div>
+                  <div className="flex flex-wrap gap-2">
+                    {validOrderByItems.map((item, index) => {
+                      // Ensure URL is a string and valid
+                      const urlString = typeof item.url === 'string' ? item.url : '';
+                      const isValidUrl = urlString && (urlString.startsWith('http://') || urlString.startsWith('https://'));
+                      
+                      return isValidUrl ? (
+                        <a
+                          key={index}
+                          href={urlString}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium text-sm cursor-pointer"
+                        >
+                          {item.name}
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                        </a>
+                      ) : (
+                        <span
+                          key={index}
+                          className="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium text-sm"
+                        >
+                          {item.name}
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Accessibility Section */}
+      {buffet.accessibility && (Array.isArray(buffet.accessibility) ? buffet.accessibility.length > 0 : Object.keys(buffet.accessibility).length > 0) && (
+        <Accessibility data={buffet.accessibility} />
+      )}
+      
+      {/* Amenities Section */}
+      {buffet.amenities && typeof buffet.amenities === 'object' && (
+        <Amenities data={buffet.amenities} />
+      )}
+
+      {/* Atmosphere Section */}
+      {buffet.amenities && buffet.amenities.atmosphere && (
+        <Atmosphere data={buffet.amenities.atmosphere} />
+      )}
+
+      {/* Food Options Section */}
+      {buffet.amenities && buffet.amenities['food options'] && (
+        <FoodOptions data={buffet.amenities['food options']} />
+      )}
+
+      {/* Parking Section */}
+      {buffet.amenities && buffet.amenities.parking && (
+        <Parking data={buffet.amenities.parking} />
+      )}
+
+      {/* Payment Section */}
+      {buffet.amenities && buffet.amenities.payments && (
+        <Payment data={buffet.amenities.payments} />
+      )}
+
+      {/* Service Options Section */}
+      {buffet.amenities && buffet.amenities['service options'] && (
+        <ServiceOptionsSection data={buffet.amenities['service options']} />
+      )}
+
+      {/* Food & Drink Section */}
+      {buffet.amenities && buffet.amenities['food and drink'] && (
+        <FoodAndDrink data={buffet.amenities['food and drink']} />
+      )}
+
+      {/* Highlights Section */}
+      {buffet.amenities && buffet.amenities.highlights && (
+        <Highlights data={buffet.amenities.highlights} />
+      )}
+
+      {/* Planning Section */}
+      {buffet.amenities && buffet.amenities.planning && (
+        <Planning data={buffet.amenities.planning} />
+      )}
+      
+      {/* Reviews Section */}
+      {(buffet.reviewsCount || buffet.reviewsDistribution || buffet.reviewsTags || (buffet.reviews && buffet.reviews.length > 0)) && (
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold mb-4">
+            Reviews {buffet.reviewsCount ? `(${buffet.reviewsCount})` : buffet.reviews?.length ? `(${buffet.reviews.length})` : ''}
+          </h2>
+          
+          {/* Reviews Distribution */}
+          {buffet.reviewsDistribution && (
+            <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm mb-6">
+              <h3 className="text-lg font-semibold mb-4">Rating Distribution</h3>
+              <div className="space-y-2">
+                {[5, 4, 3, 2, 1].map((stars) => {
+                  const starNames: { [key: number]: string } = { 5: 'fiveStar', 4: 'fourStar', 3: 'threeStar', 2: 'twoStar', 1: 'oneStar' };
+                  const count = buffet.reviewsDistribution?.[starNames[stars]] || 
+                                buffet.reviewsDistribution?.[stars] || 
+                                buffet.reviewsDistribution?.[String(stars)] || 0;
+                  const total = Object.values(buffet.reviewsDistribution || {}).reduce((a: number, b: any) => a + (Number(b) || 0), 0);
+                  const percentage = total > 0 ? (count / total) * 100 : 0;
+                  return (
+                    <div key={stars} className="flex items-center gap-3">
+                      <div className="flex items-center gap-1 w-16">
+                        <span className="text-sm font-medium">{stars}</span>
+                        <svg className="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20">
+                          <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                        </svg>
+                      </div>
+                      <div className="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-yellow-400 rounded-full transition-all"
+                          style={{ width: `${percentage}%` }}
+                        />
+                      </div>
+                      <div className="w-12 text-sm text-gray-600 text-right">{count}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+          
+          {/* Reviews Tags */}
+          {buffet.reviewsTags && buffet.reviewsTags.length > 0 && (
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold mb-3">What People Say</h3>
+              <div className="flex flex-wrap gap-2">
+                {buffet.reviewsTags.map((tag: any, index: number) => (
+                  <span
+                    key={index}
+                    className="px-3 py-1.5 bg-blue-100 text-blue-800 rounded-full text-sm flex items-center gap-1"
+                  >
+                    {tag.title || tag}
+                    {tag.count && (
+                      <span className="text-xs text-blue-600 bg-blue-200 rounded-full px-1.5 py-0.5 ml-1">
+                        {tag.count}
+                      </span>
+                    )}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {/* Individual Reviews */}
+          {buffet.reviews && buffet.reviews.length > 0 && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Recent Reviews</h3>
+              {buffet.reviews.map((review: any, index: number) => (
+                <div key={review.reviewId || index} className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      {review.reviewerPhotoUrl && (
+                        <img
+                          src={review.reviewerPhotoUrl}
+                          alt={review.name || 'Reviewer'}
+                          className="w-10 h-10 rounded-full"
+                        />
+                      )}
+                      <div>
+                        <div className="font-semibold text-gray-900">{review.name || review.author || 'Anonymous'}</div>
+                        {review.reviewerNumberOfReviews && (
+                          <div className="text-sm text-gray-500">{review.reviewerNumberOfReviews} reviews</div>
+                        )}
+                        {review.isLocalGuide && (
+                          <div className="text-xs text-blue-600 font-medium">Local Guide</div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center">
+                        {[...Array(5)].map((_, i) => (
+                          <svg
+                            key={i}
+                            className={`w-5 h-5 ${i < (review.stars || review.rating || 0) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                            viewBox="0 0 20 20"
+                          >
+                            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                          </svg>
+                        ))}
+                      </div>
+                      {(review.rating || review.stars) && (
+                        <span className="text-gray-700 font-medium">
+                          {review.rating || review.stars}
                         </span>
                       )}
                     </div>
                   </div>
-                )}
-
-                {/* Price Card */}
-                {buffet.price && (
-                  <div className="flex items-center gap-2.5 px-4 py-2.5 bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-xl shadow-sm">
-                    <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span className="text-lg font-bold text-gray-900">{buffet.price}</span>
-                  </div>
-                )}
-
-                {/* Location Card */}
-                {buffet.neighborhood && (
-                  <div className="flex items-center gap-2.5 px-4 py-2.5 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl shadow-sm">
-                    <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    <span className="text-sm font-semibold text-gray-700">{buffet.neighborhood}</span>
-                  </div>
-                )}
-
-                {/* Category Badge */}
-                {buffet.categoryName && (
-                  <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-xl">
-                    <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                    </svg>
-                    <span className="text-sm font-medium text-gray-700">{buffet.categoryName}</span>
-                  </div>
-                )}
-
-                {/* Primary Type Badge */}
-                {buffet.primaryType && (
-                  <div className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-200 rounded-xl shadow-sm">
-                    <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                    </svg>
-                    <span className="text-sm font-semibold text-gray-700">
-                      {buffet.primaryType.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-                    </span>
-                  </div>
-                )}
-
-                {/* Categories List */}
-                {buffet.categories && buffet.categories.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
-                    {buffet.categories.map((cat: string, idx: number) => (
-                      <span
-                        key={`${cat}-${idx}`}
-                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200"
-                      >
-                        <svg className="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
-                        {cat}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* Main Content */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-          <div className="space-y-4 sm:space-y-6">
-              {/* Map */}
-              <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="px-4 sm:px-6 pt-5 sm:pt-6 pb-4">
-                  <div className="flex items-center gap-3 mb-1">
-                    <div className="p-2 bg-blue-100 rounded-lg">
-                      <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                    </div>
-                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Location</h2>
-                  </div>
-                </div>
-                <div className="px-4 sm:px-6 pb-4 sm:pb-6">
-                  <div className="rounded-xl overflow-hidden border border-gray-200 mb-4">
-                    <Map
-                      markers={mapMarkers}
-                      center={[buffet.location.lat, buffet.location.lng]}
-                      zoom={14}
-                      height="300px"
-                      showClusters={false}
-                    />
-                  </div>
-                  <a
-                    href={`https://www.google.com/maps/dir/?api=1&destination=${buffet.location.lat},${buffet.location.lng}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all active:scale-95"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                    </svg>
-                    <span>Get Directions</span>
-                  </a>
-                </div>
-              </section>
-
-              {/* Description */}
-              <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="px-4 sm:px-6 pt-5 sm:pt-6 pb-4">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-purple-100 rounded-lg">
-                      <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </div>
-                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900">About {buffet.name}</h2>
-                  </div>
-                </div>
-                <div className="px-4 sm:px-6 pb-5 sm:pb-6">
-                  {buffet.subTitle && (
-                    <p className="text-base sm:text-lg text-gray-600 mb-4 font-medium italic border-l-4 border-purple-200 pl-4">
-                      {buffet.subTitle}
-                    </p>
+                  {review.text && (
+                    <p className="text-gray-700 mb-3">{review.text}</p>
                   )}
-                  <div className="prose prose-sm sm:prose-base text-gray-700 max-w-none">
-                    <p className="text-gray-700 leading-relaxed text-base sm:text-lg">
-                      {generateExpandedDescription(buffet)}
-                    </p>
-                  </div>
-                </div>
-              </section>
-
-              {/* What Our Customers Say */}
-              {buffet.what_customers_are_saying_seo && (
-                <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                  <div className="px-4 sm:px-6 pt-5 sm:pt-6 pb-4">
-                    <div className="flex items-center gap-3 mb-1">
-                      <div className="p-2 bg-pink-100 rounded-lg">
-                        <svg className="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  {review.textTranslated && review.textTranslated !== review.text && (
+                    <p className="text-gray-500 text-sm italic mb-3">{review.textTranslated}</p>
+                  )}
+                  <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                    {review.publishAt && (
+                      <span>{new Date(review.publishAt).toLocaleDateString()}</span>
+                    )}
+                    {review.relativeTime && (
+                      <span>{review.relativeTime}</span>
+                    )}
+                    {review.visitedIn && (
+                      <span>Visited in {review.visitedIn}</span>
+                    )}
+                    {review.likesCount && review.likesCount > 0 && (
+                      <span className="flex items-center gap-1">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
                         </svg>
-                      </div>
-                      <h2 className="text-xl sm:text-2xl font-bold text-gray-900">What Our Customers Say</h2>
-                    </div>
-                  </div>
-                  <div className="px-4 sm:px-6 pb-5 sm:pb-6">
-                    <CustomerInsights content={buffet.what_customers_are_saying_seo} />
-                  </div>
-                </section>
-              )}
-
-              {/* Image Gallery */}
-              {buffet.imageUrls && buffet.imageUrls.length > 0 && (
-                <ImageGallery images={buffet.imageUrls} buffetName={buffet.name} />
-              )}
-
-              {/* Contact Information & Hours */}
-              <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="px-4 sm:px-6 pt-5 sm:pt-6 pb-4">
-                  <div className="flex items-center gap-3 mb-1">
-                    <div className="p-2 bg-indigo-100 rounded-lg">
-                      <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                      </svg>
-                    </div>
-                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Contact & Hours</h2>
-                  </div>
-                </div>
-                <div className="px-4 sm:px-6 pb-5 sm:pb-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-                    {/* Contact Information */}
-                    <div className="space-y-4">
-                      {/* Categories (prominent) */}
-                      {buffet.categories && buffet.categories.length > 0 && (
-                        <div className="p-4 sm:p-5 bg-indigo-50 rounded-xl border border-indigo-100">
-                          <div className="flex items-center gap-2 mb-3">
-                            <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 6h16M4 12h16M4 18h16" />
-                            </svg>
-                            <span className="font-bold text-gray-900 text-sm sm:text-base">Categories</span>
-                          </div>
-                          <div className="flex flex-wrap gap-2">
-                            {buffet.categories.map((cat: string, idx: number) => (
-                              <span
-                                key={`${cat}-${idx}`}
-                                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white text-indigo-700 text-xs font-semibold border border-indigo-200 shadow-sm"
-                              >
-                                <svg className="w-3.5 h-3.5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                                </svg>
-                                {cat}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Address */}
-                      <div className="p-4 sm:p-5 bg-gray-50 rounded-xl border border-gray-100">
-                        <div className="flex items-start gap-3 sm:gap-4">
-                          <div className="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-blue-100 flex items-center justify-center">
-                            <svg className="w-6 h-6 sm:w-7 sm:h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <span className="font-bold text-gray-900 block mb-2 text-sm sm:text-base">Address</span>
-                            <p className="text-gray-700 text-base sm:text-lg mb-2 leading-relaxed">
-                              {formatAddress(buffet.address)}
-                            </p>
-                            {buffet.locatedIn && (
-                              <p className="text-sm text-gray-500 mb-1.5">
-                                {buffet.locatedIn}
-                              </p>
-                            )}
-                            {buffet.plusCode && (
-                              <p className="text-xs text-gray-400 mb-3">
-                                Plus Code: {buffet.plusCode}
-                              </p>
-                            )}
-                            <a
-                              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(formatAddress(buffet.address))}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl text-sm sm:text-base transition-colors active:scale-95 min-h-[44px] shadow-sm"
-                            >
-                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                              </svg>
-                              <span>View on Maps</span>
-                            </a>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Phone */}
-                      {buffet.phone && (
-                        <a
-                          href={`tel:${buffet.phoneUnformatted || buffet.phone.replace(/\D/g, '')}`}
-                          className="flex items-center gap-4 p-4 sm:p-5 bg-gray-50 rounded-xl border border-gray-100 hover:bg-green-50 hover:border-green-200 transition-all active:scale-[0.98] min-h-[72px]"
-                        >
-                          <div className="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-green-100 flex items-center justify-center">
-                            <svg className="w-6 h-6 sm:w-7 sm:h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                            </svg>
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <span className="font-bold text-gray-900 block mb-1 text-sm sm:text-base">Phone</span>
-                            <p className="text-lg sm:text-xl font-bold text-gray-900">{formatPhoneNumber(buffet.phone)}</p>
-                          </div>
-                          <svg className="w-6 h-6 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                          </svg>
-                        </a>
-                      )}
-
-                      {/* Email */}
-                      {buffet.email && (
-                        <a
-                          href={`mailto:${buffet.email}`}
-                          className="flex items-center gap-4 p-4 sm:p-5 bg-gray-50 rounded-xl border border-gray-100 hover:bg-purple-50 hover:border-purple-200 transition-all active:scale-[0.98] min-h-[72px]"
-                        >
-                          <div className="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-purple-100 flex items-center justify-center">
-                            <svg className="w-6 h-6 sm:w-7 sm:h-7 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                            </svg>
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <span className="font-bold text-gray-900 block mb-1 text-sm sm:text-base">Email</span>
-                            <p className="text-base sm:text-lg font-semibold text-gray-700 truncate">{buffet.email}</p>
-                          </div>
-                          <svg className="w-6 h-6 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                          </svg>
-                        </a>
-                      )}
-
-                      {/* Website */}
-                      {buffet.website && (
-                        <a
-                          href={buffet.website.startsWith('http') ? buffet.website : `https://${buffet.website}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-4 p-4 sm:p-5 bg-gray-50 rounded-xl border border-gray-100 hover:bg-orange-50 hover:border-orange-200 transition-all active:scale-[0.98] min-h-[72px]"
-                        >
-                          <div className="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-orange-100 flex items-center justify-center">
-                            <svg className="w-6 h-6 sm:w-7 sm:h-7 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                            </svg>
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <span className="font-bold text-gray-900 block mb-1 text-sm sm:text-base">Website</span>
-                            <p className="text-base sm:text-lg font-semibold text-gray-700 truncate">{buffet.website.replace(/^https?:\/\//, '')}</p>
-                          </div>
-                          <svg className="w-6 h-6 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                          </svg>
-                        </a>
-                      )}
-
-                      {/* Table Reservations */}
-                      {(buffet.reserveTableUrl || (buffet.tableReservationLinks && buffet.tableReservationLinks.length > 0)) && (
-                        <div className="p-4 sm:p-5 bg-gray-50 rounded-xl border border-gray-100">
-                          <div className="flex items-start gap-3 sm:gap-4 mb-4">
-                            <div className="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-pink-100 flex items-center justify-center">
-                              <svg className="w-6 h-6 sm:w-7 sm:h-7 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                              </svg>
-                            </div>
-                            <div className="flex-1">
-                              <span className="font-bold text-gray-900 block mb-3 text-sm sm:text-base">Reserve a Table</span>
-                              <div className="space-y-2.5">
-                                {buffet.reserveTableUrl && (
-                                  <a 
-                                    href={buffet.reserveTableUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center justify-center gap-2 px-5 py-3.5 bg-pink-600 hover:bg-pink-700 text-white font-semibold rounded-xl text-base transition-colors active:scale-95 w-full sm:w-auto min-h-[48px] shadow-sm"
-                                  >
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                    </svg>
-                                    <span>Book Table</span>
-                                  </a>
-                                )}
-                                {buffet.tableReservationLinks && buffet.tableReservationLinks.length > 0 && (
-                                  <div className="flex flex-wrap gap-2">
-                                    {buffet.tableReservationLinks.map((link, index) => (
-                                      <a
-                                        key={index}
-                                        href={link.url || '#'}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-white border-2 border-pink-200 hover:bg-pink-50 hover:border-pink-300 text-pink-700 font-semibold rounded-xl text-sm sm:text-base transition-all active:scale-95 min-h-[44px]"
-                                      >
-                                        {link.name || 'Reserve'}
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                        </svg>
-                                      </a>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Order Online */}
-                      {(buffet.orderBy && buffet.orderBy.length > 0) || buffet.googleFoodUrl ? (
-                        <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
-                          <div className="flex items-start gap-3 mb-3">
-                            <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center">
-                              <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                              </svg>
-                            </div>
-                            <div className="flex-1">
-                              <span className="font-bold text-gray-900 block mb-2 text-sm">Order Online</span>
-                              <div className="space-y-2">
-                                {buffet.orderBy && buffet.orderBy.length > 0 && (
-                                  <div className="flex flex-wrap gap-2">
-                                    {buffet.orderBy.map((order, index) => (
-                                      <a
-                                        key={index}
-                                        href={order.orderUrl || '#'}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-flex items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg text-sm transition-colors active:scale-95 shadow-sm"
-                                      >
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                                        </svg>
-                                        <span>{order.name || 'Order'}</span>
-                                      </a>
-                                    ))}
-                                  </div>
-                                )}
-                                {buffet.googleFoodUrl && (
-                                  <a 
-                                    href={buffet.googleFoodUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-white border-2 border-red-300 hover:bg-red-50 text-red-700 font-semibold rounded-lg text-sm transition-colors active:scale-95 w-full sm:w-auto justify-center"
-                                  >
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                                    </svg>
-                                    <span>Google Food</span>
-                                  </a>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ) : null}
-
-                      {/* Related Links */}
-                      {buffet.webResults && buffet.webResults.length > 0 && (
-                        <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
-                          <div className="flex items-start gap-3 mb-3">
-                            <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center">
-                              <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                              </svg>
-                            </div>
-                            <div className="flex-1">
-                              <span className="font-bold text-gray-900 block mb-2 text-sm">Order Online & Menu</span>
-                              <div className="space-y-2">
-                                {buffet.webResults.map((result, index) => {
-                                  const getIcon = (url: string) => {
-                                    const lowerUrl = url.toLowerCase();
-                                    if (lowerUrl.includes('facebook')) {
-                                      return (
-                                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                                        </svg>
-                                      );
-                                    }
-                                    if (lowerUrl.includes('doordash') || lowerUrl.includes('uber') || lowerUrl.includes('grubhub')) {
-                                      return (
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                                        </svg>
-                                      );
-                                    }
-                                    return (
-                                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                      </svg>
-                                    );
-                                  };
-                                  
-                                  return (
-                                    <a
-                                      key={index}
-                                      href={result.url || '#'}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="flex items-center gap-3 p-3 bg-white hover:bg-indigo-50 border border-gray-200 hover:border-indigo-300 rounded-lg transition-all active:scale-[0.98]"
-                                    >
-                                      <span className="text-indigo-600 flex-shrink-0">{getIcon(result.url || '')}</span>
-                                      <span className="flex-1 font-medium text-gray-900 text-sm truncate">{result.title || 'External Link'}</span>
-                                      <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                                      </svg>
-                                    </a>
-                                  );
-                                })}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Hours */}
-                    {buffet.hours && buffet.hours.length > 0 && (
-                      <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
-                        <div className="flex items-center gap-3 mb-4">
-                          <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center">
-                            <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                          </div>
-                          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Hours of Operation</h2>
-                        </div>
-                        <div className="space-y-2">
-                          {buffet.hours.map((hour, index) => (
-                            <div key={index} className="flex justify-between items-center py-3 px-3 bg-white rounded-lg border border-gray-100">
-                              <span className="font-semibold text-gray-900 text-base">{hour.day}</span>
-                              <span className="text-gray-700 font-medium text-base">{hour.hours}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
+                        {review.likesCount}
+                      </span>
                     )}
                   </div>
+                  {review.responseFromOwnerText && (
+                    <div className="mt-4 pt-4 border-t border-gray-200">
+                      <div className="text-sm font-semibold text-gray-700 mb-1">Owner Response</div>
+                      <p className="text-gray-600 text-sm">{review.responseFromOwnerText}</p>
+                      {review.responseFromOwnerDate && (
+                        <div className="text-xs text-gray-500 mt-1">
+                          {new Date(review.responseFromOwnerDate).toLocaleDateString()}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {review.reviewImageUrls && Array.isArray(review.reviewImageUrls) && review.reviewImageUrls.length > 0 && (
+                    <div className="mt-4 flex gap-2 overflow-x-auto">
+                      {review.reviewImageUrls.map((imgUrl: string, imgIndex: number) => (
+                        <img
+                          key={imgIndex}
+                          src={imgUrl}
+                          alt={`Review image ${imgIndex + 1}`}
+                          className="w-20 h-20 object-cover rounded"
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
-              </section>
-
-              {/* Popular Times */}
-              {buffet.popularTimesHistogram && (
-                <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                  <div className="px-4 sm:px-6 pt-5 sm:pt-6 pb-4">
-                    <div className="flex items-center gap-3 mb-1">
-                      <div className="p-2 bg-rose-100 rounded-lg">
-                        <svg className="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      </div>
-                      <h2 className="text-xl sm:text-2xl font-bold text-gray-900">When is it busy?</h2>
-                    </div>
-                  </div>
-                  <div className="px-4 sm:px-6 pb-5 sm:pb-6">
-                    <PopularTimes
-                      histogram={buffet.popularTimesHistogram}
-                      liveText={buffet.popularTimesLiveText}
-                      livePercent={buffet.popularTimesLivePercent}
-                    />
-                  </div>
-                </section>
-              )}
-
-              {/* Service Options */}
-              {buffet.additionalInfo && (
-                <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                  <div className="px-4 sm:px-6 pt-5 sm:pt-6 pb-4">
-                    <div className="flex items-center gap-3 mb-1">
-                      <div className="p-2 bg-teal-100 rounded-lg">
-                        <svg className="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                        </svg>
-                      </div>
-                      <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Service Options & Amenities</h2>
-                    </div>
-                  </div>
-                  <div className="px-4 sm:px-6 pb-5 sm:pb-6">
-                    <ServiceOptions additionalInfo={buffet.additionalInfo} />
-                  </div>
-                </section>
-              )}
-
-              {/* Owner Updates */}
-              {buffet.ownerUpdates && buffet.ownerUpdates.length > 0 && (
-                <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                  <div className="px-4 sm:px-6 pt-5 sm:pt-6 pb-4">
-                    <div className="flex items-center gap-3 mb-1">
-                      <div className="p-2 bg-cyan-100 rounded-lg">
-                        <svg className="w-5 h-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                        </svg>
-                      </div>
-                      <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Updates from Business</h2>
-                    </div>
-                  </div>
-                  <div className="px-4 sm:px-6 pb-5 sm:pb-6">
-                    <OwnerUpdates updates={buffet.ownerUpdates} />
-                  </div>
-                </section>
-              )}
-
-              {/* Questions & Answers */}
-              {buffet.questionsAndAnswers && Array.isArray(buffet.questionsAndAnswers) && buffet.questionsAndAnswers.length > 0 && (
-                <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                  <div className="px-4 sm:px-6 pt-5 sm:pt-6 pb-4">
-                    <div className="flex items-center gap-3 mb-1">
-                      <div className="p-2 bg-violet-100 rounded-lg">
-                        <svg className="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      </div>
-                      <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Questions & Answers</h2>
-                    </div>
-                  </div>
-                  <div className="px-4 sm:px-6 pb-5 sm:pb-6">
-                    <QuestionsAndAnswers qna={buffet.questionsAndAnswers} />
-                  </div>
-                </section>
-              )}
-
-              {/* Menu */}
-              {buffet.menu && (
-                <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                  <div className="px-4 sm:px-6 pt-5 sm:pt-6 pb-4">
-                    <div className="flex items-center gap-3 mb-1">
-                      <div className="p-2 bg-emerald-100 rounded-lg">
-                        <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                        </svg>
-                      </div>
-                      <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Menu</h2>
-                    </div>
-                  </div>
-                  <div className="px-4 sm:px-6 pb-5 sm:pb-6">
-                    <Menu menu={buffet.menu} />
-                  </div>
-                </section>
-              )}
-
-              {/* Reviews Distribution */}
-              {buffet.reviewsDistribution && buffet.reviewsCount > 0 && (
-                <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                  <div className="px-4 sm:px-6 pt-5 sm:pt-6 pb-4">
-                    <div className="flex items-center gap-3 mb-1">
-                      <div className="p-2 bg-yellow-100 rounded-lg">
-                        <svg className="w-5 h-5 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
-                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                      </div>
-                      <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Rating Distribution</h2>
-                    </div>
-                  </div>
-                  <div className="px-4 sm:px-6 pb-5 sm:pb-6">
-                    <ReviewsDistribution 
-                      distribution={buffet.reviewsDistribution} 
-                      totalReviews={buffet.reviewsCount}
-                    />
-                  </div>
-                </section>
-              )}
-
-              {/* Detailed Ratings (Food/Service/Atmosphere) */}
-              {buffet.reviews && buffet.reviews.length > 0 && (
-                <DetailedRatings reviews={buffet.reviews} />
-              )}
-
-              {/* Reviews */}
-              {buffet.reviews && buffet.reviews.length > 0 && (
-                <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                  <div className="px-4 sm:px-6 pt-5 sm:pt-6 pb-4">
-                    <div className="flex items-center gap-3 mb-1">
-                      <div className="p-2 bg-amber-100 rounded-lg">
-                        <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                        </svg>
-                      </div>
-                      <div>
-                        <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Reviews</h2>
-                        <p className="text-sm text-gray-500">{buffet.reviewsCount?.toLocaleString?.() || buffet.reviews.length} total</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="px-4 sm:px-6 pb-5 sm:pb-6">
-                    <Reviews reviews={buffet.reviews} />
-                  </div>
-                </section>
-              )}
-
-              {/* Web Results (External Links) */}
-          </div>
-
-          {/* Nearby Buffets */}
-          {nearbyBuffets.length > 0 && (
-            <section className="mt-6 sm:mt-8">
-              <div className="flex items-center gap-3 mb-5 sm:mb-6">
-                <div className="p-2 bg-slate-100 rounded-lg">
-                  <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                </div>
-                <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
-                  Other Chinese Buffets Nearby
-                </h2>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                {nearbyBuffets.map((nearbyBuffet) => (
-                  <BuffetCard
-                    key={nearbyBuffet.id}
-                    buffet={nearbyBuffet}
-                    citySlug={nearbyBuffet.citySlug || params['city-state']}
-                    showDistance={true}
-                    distance={calculateDistance(
-                      buffet.location.lat,
-                      buffet.location.lng,
-                      nearbyBuffet.location.lat,
-                      nearbyBuffet.location.lng
-                    )}
-                  />
-                ))}
-              </div>
-            </section>
+              ))}
+            </div>
           )}
         </div>
-      </div>
-    </>
+      )}
+      
+      {/* Related Buffets Section */}
+      {buffet.webResults && buffet.webResults.length > 0 && (
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold mb-4">Related Buffets</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {buffet.webResults.map((result: any, index: number) => (
+              <a
+                key={index}
+                href={result.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-white rounded-lg border border-gray-200 p-5 shadow-sm hover:shadow-md transition-shadow hover:border-blue-300"
+              >
+                <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">{result.title}</h3>
+                {result.description && (
+                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">{result.description}</p>
+                )}
+                {result.displayedUrl && (
+                  <div className="flex items-center gap-1 text-xs text-blue-600 mt-auto">
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                    <span className="truncate">{result.displayedUrl.replace(/https?:\/\//, '').split('/')[0]}</span>
+                  </div>
+                )}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
-
-function calculateDistance(
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number
-): number {
-  const R = 3959; // Earth's radius in miles
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(lat1 * Math.PI / 180) *
-    Math.cos(lat2 * Math.PI / 180) *
-    Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-}
-

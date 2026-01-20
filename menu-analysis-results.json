@@ -1,0 +1,230 @@
+[
+  {
+    "url": "http://greatwallbuffet.biz/menu",
+    "originalUrl": "http://greatwall buffet.biz/menu",
+    "placeId": "ChIJv2z0FakAwFQRM4hJf8DRaZQ",
+    "name": "Great Wall Buffet",
+    "success": true,
+    "error": null,
+    "analysis": {
+      "statusCode": 404,
+      "contentType": "text/html; charset=utf-8",
+      "htmlLength": 10736,
+      "finalUrl": "https://www.greatwallbuffet.biz/menu",
+      "menuContent": {
+        "hasMenuContent": true,
+        "confidence": 50,
+        "details": {
+          "hasMenuSelector": true,
+          "menuSelectorText": "Great Wall Buffet\n            \n                \n                    Toggle navigation\n                    \n                    \n                    \n                \n            \n            \n        ",
+          "keywordMatches": 3,
+          "hasPrices": false,
+          "hasLists": true,
+          "listItemCount": 21,
+          "bodyTextLength": 2583,
+          "title": "",
+          "h1Text": " ): oops sorry something went wrong!"
+        }
+      },
+      "menuImages": {
+        "found": true,
+        "count": 1,
+        "images": [
+          {
+            "url": "http://greatwallbuffet.biz/cross.png",
+            "alt": "Not Found",
+            "isMenuRelated": false
+          }
+        ]
+      },
+      "javascript": {
+        "hasJavaScript": true,
+        "scriptCount": 5,
+        "inlineScripts": 3,
+        "externalScripts": 2,
+        "frameworks": {
+          "react": false,
+          "vue": false,
+          "angular": false,
+          "jquery": true,
+          "nextjs": false,
+          "gatsby": false
+        },
+        "hasDynamicContent": true,
+        "hasDataAttributes": true,
+        "likelyRequiresJS": true
+      },
+      "summary": {
+        "hasMenuInHTML": true,
+        "hasMenuInImage": false,
+        "requiresJavaScript": true,
+        "canScrape": true
+      }
+    }
+  },
+  {
+    "url": "https://smorefood.com/order-online/king-buffet-stamford-06905-07lk5tla/menu?utm_source=gmb&utm_medium=website",
+    "originalUrl": "https://smorefood.com/order-online/king-buffet-stamford-06905-07lk5tla/menu?utm_source=gmb&utm_medium=website",
+    "placeId": "ChIJE3H7PZOhwokR8O-GxVNKaYg",
+    "name": "King Buffet",
+    "success": true,
+    "error": null,
+    "analysis": {
+      "statusCode": 404,
+      "contentType": "text/html; charset=utf-8",
+      "htmlLength": 9725,
+      "finalUrl": "https://www.smorefood.com/404?utm_source=gmb&utm_medium=website",
+      "menuContent": {
+        "hasMenuContent": false,
+        "confidence": 0,
+        "details": {
+          "hasMenuSelector": false,
+          "menuSelectorText": "",
+          "keywordMatches": 1,
+          "hasPrices": false,
+          "hasLists": false,
+          "listItemCount": 0,
+          "bodyTextLength": 87,
+          "title": "",
+          "h1Text": "404"
+        }
+      },
+      "menuImages": {
+        "found": false,
+        "count": 0,
+        "images": []
+      },
+      "javascript": {
+        "hasJavaScript": true,
+        "scriptCount": 21,
+        "inlineScripts": 6,
+        "externalScripts": 15,
+        "frameworks": {
+          "react": true,
+          "vue": false,
+          "angular": false,
+          "jquery": false,
+          "nextjs": true,
+          "gatsby": false
+        },
+        "hasDynamicContent": false,
+        "hasDataAttributes": true,
+        "likelyRequiresJS": true
+      },
+      "summary": {
+        "hasMenuInHTML": false,
+        "hasMenuInImage": false,
+        "requiresJavaScript": true
+      }
+    }
+  },
+  {
+    "url": "https://locations.pfchangs.com/fl/sunrise/1740-sawgrass-mills-circle.html/menu?utm_source=google_gbp&utm_medium=organic",
+    "originalUrl": "https://locations.pfchangs.com/fl/sunrise/1740-sawgrass-mills-circle.html/menu?utm_source=google_gbp&utm_medium=organic",
+    "placeId": "ChIJN6G-JR0J2YgRsIuMNGmPP7U",
+    "name": "P.F. Chang's",
+    "success": true,
+    "error": null,
+    "analysis": {
+      "statusCode": 200,
+      "contentType": "text/html;charset=UTF-8",
+      "htmlLength": 264915,
+      "finalUrl": "https://locations.pfchangs.com/fl/sunrise/1740-sawgrass-mills-circle.html",
+      "menuContent": {
+        "hasMenuContent": true,
+        "confidence": 100,
+        "details": {
+          "hasMenuSelector": true,
+          "menuSelectorText": "Catering\n                    Gift cards\n                    Events\n                   Careers\n                      Offers",
+          "keywordMatches": 19,
+          "hasPrices": true,
+          "hasLists": true,
+          "listItemCount": 62,
+          "bodyTextLength": 46424,
+          "title": "p.f. chang's sunrise | 1740 sawgrass mills circle, sunrise, fl | asian & chinese food restaurant",
+          "h1Text": "\n                p.f. chang's \n                sunrise            "
+        }
+      },
+      "menuImages": {
+        "found": true,
+        "count": 10,
+        "images": [
+          {
+            "url": "https://dyn.mktgcdn.com/p/6xP_erGeDRbeJPxbmFfOqdB6X0kH1BngAWxz0qc4Lus/format=webp,height=295,width=295?california-roll",
+            "alt": "California Roll*",
+            "isMenuRelated": true
+          },
+          {
+            "url": "https://dyn.mktgcdn.com/p/6X30DUmzyRjK55PgkcXDErMVB1XHTmjSEkJqEtO5Cks/format=webp,height=295,width=295",
+            "alt": "Chang's Chicken Lettuce Wraps",
+            "isMenuRelated": true
+          },
+          {
+            "url": "https://dyn.mktgcdn.com/p/yktk50kX2IsBXn7i-lrbBRfziG8OntMMdp9fi63wRA4/format=webp,height=295,width=295",
+            "alt": "Crab Wontons | 6 Count",
+            "isMenuRelated": true
+          },
+          {
+            "url": "https://dyn.mktgcdn.com/p/IvNB26RUi4-DRnkcD5_DWkhQnK5iEUUO8nKkILQXQ_A/format=webp,height=295,width=295",
+            "alt": "Pork Dumplings | 6 Count",
+            "isMenuRelated": true
+          },
+          {
+            "url": "https://dyn.mktgcdn.com/p/2DMw6uQdQyL4CWT8-guf-c5Xr07DjlAGBe2GWnEk5ZI/format=webp,height=295,width=295",
+            "alt": "Pork Egg Rolls | 2 Count",
+            "isMenuRelated": true
+          },
+          {
+            "url": "https://dyn.mktgcdn.com/p/7nWJFS26Cio3K9uEVIkiSkTDUIgiqcnwTuxbLH1wF90/format=webp,height=295,width=295",
+            "alt": "Vegetable Spring Rolls | 3 Count",
+            "isMenuRelated": true
+          },
+          {
+            "url": "https://dyn.mktgcdn.com/p/Xhw7MpJkElHrly_iT6NMTq94LsHh9THb7w_psfBcIKU/format=webp,height=295,width=295",
+            "alt": "Chang's Spicy Chicken",
+            "isMenuRelated": true
+          },
+          {
+            "url": "https://dyn.mktgcdn.com/p/tzC5sxZsXMmQ0zzIDVpjRtv2r8uNoCdNdlyirQHwLpo/format=webp,height=295,width=295",
+            "alt": "Crispy Honey Shrimp",
+            "isMenuRelated": true
+          },
+          {
+            "url": "https://dyn.mktgcdn.com/p/L5dl60DL4FbOLBQ1UQrRYz20068SWd_cKKaotk989zc/format=webp,height=295,width=295",
+            "alt": "Kung Pao Chicken",
+            "isMenuRelated": true
+          },
+          {
+            "url": "https://dyn.mktgcdn.com/p/9-XT5LvxFHBi3hwiO9qjnwdxjy7EWyfOrQ-3Wzqhj3k/format=webp,height=295,width=295",
+            "alt": "Ma Po Tofu",
+            "isMenuRelated": true
+          }
+        ],
+        "likelyMenuInImage": true
+      },
+      "javascript": {
+        "hasJavaScript": true,
+        "scriptCount": 21,
+        "inlineScripts": 17,
+        "externalScripts": 4,
+        "frameworks": {
+          "react": false,
+          "vue": false,
+          "angular": false,
+          "jquery": true,
+          "nextjs": false,
+          "gatsby": false
+        },
+        "hasDynamicContent": false,
+        "hasDataAttributes": true,
+        "likelyRequiresJS": true
+      },
+      "summary": {
+        "hasMenuInHTML": true,
+        "hasMenuInImage": true,
+        "requiresJavaScript": true,
+        "canScrape": true
+      }
+    }
+  }
+]

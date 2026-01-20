@@ -56,6 +56,8 @@ async function migrateData() {
         categoryName: buffet.categoryName || '',
         hours: JSON.stringify(buffet.hours || []),
         categories: JSON.stringify(buffet.categories || []),
+        images: JSON.stringify(buffet.images || []), // Map photos -> images
+        imageCategories: JSON.stringify(buffet.imageCategories || []),
         citySlug: city.slug, // For linking
       });
     });

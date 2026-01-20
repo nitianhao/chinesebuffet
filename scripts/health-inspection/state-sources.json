@@ -1,0 +1,193 @@
+{
+  "sources": {
+    "NY": {
+      "state": "New York",
+      "cities": ["New York City"],
+      "dataSource": "NYC DOHMH (Department of Health and Mental Hygiene)",
+      "type": "api",
+      "apiType": "socrata",
+      "endpoint": "https://data.cityofnewyork.us/resource/43nn-pn8j.json",
+      "documentation": "https://data.cityofnewyork.us/Health/DOHMH-New-York-City-Restaurant-Inspection-Results/43nn-pn8j",
+      "authentication": {
+        "required": false,
+        "appToken": "optional",
+        "rateLimit": "1000 requests/hour"
+      },
+      "dataFormat": {
+        "scoreField": "score",
+        "gradeField": "grade",
+        "inspectionDateField": "inspection_date",
+        "violationsField": "violation_code",
+        "violationDescriptionField": "violation_description",
+        "criticalFlagField": "critical_flag"
+      },
+      "updateFrequency": "Daily",
+      "notes": "NYC uses A/B/C grading system. Data available via Socrata Open Data API."
+    },
+    "TX": {
+      "state": "Texas",
+      "cities": ["Houston", "Dallas", "Austin"],
+      "dataSource": "Texas Department of State Health Services / Local Health Departments",
+      "type": "mixed",
+      "apiType": "varies_by_city",
+      "endpoints": {
+        "Houston": {
+          "type": "api",
+          "endpoint": "https://www.houstontx.gov/health/FoodService/index.html",
+          "scrapingRequired": true,
+          "notes": "Houston Health Department publishes inspection data online, may require scraping"
+        },
+        "Dallas": {
+          "type": "api",
+          "endpoint": "https://www.dallascounty.org/departments/dchhs/food-safety.php",
+          "scrapingRequired": true,
+          "notes": "Dallas County Health Department - inspection data available online"
+        },
+        "Austin": {
+          "type": "api",
+          "endpoint": "https://www.austintexas.gov/department/environmental-health-services",
+          "scrapingRequired": true,
+          "notes": "Austin Environmental Health Services - inspection data searchable online"
+        }
+      },
+      "updateFrequency": "Varies by city",
+      "notes": "Texas uses numeric scoring system. Each city/county manages its own data."
+    },
+    "AZ": {
+      "state": "Arizona",
+      "cities": ["Phoenix"],
+      "dataSource": "Maricopa County Environmental Services",
+      "type": "scraping",
+      "endpoint": "https://www.maricopa.gov/EnvSvc/Food/InspectionSearch.aspx",
+      "scrapingRequired": true,
+      "updateFrequency": "Weekly",
+      "notes": "Maricopa County (Phoenix) provides searchable inspection database. Uses letter grades (A/B/C)."
+    },
+    "CA": {
+      "state": "California",
+      "cities": ["Los Angeles", "San Francisco", "San Diego", "Stockton"],
+      "dataSource": "County Health Departments",
+      "type": "mixed",
+      "apiType": "varies_by_county",
+      "endpoints": {
+        "Los Angeles": {
+          "type": "api",
+          "endpoint": "https://www.publichealth.lacounty.gov/rating/",
+          "scrapingRequired": true,
+          "notes": "LA County uses letter grade system (A/B/C). Data searchable online."
+        },
+        "San Francisco": {
+          "type": "api",
+          "endpoint": "https://data.sfgov.org/Health-and-Social-Services/Restaurant-Scores-LIVES-Standard/d27x-ftsz",
+          "apiType": "socrata",
+          "notes": "SF Open Data portal - Socrata API available"
+        },
+        "San Diego": {
+          "type": "scraping",
+          "endpoint": "https://www.sandiegocounty.gov/content/sdc/deh/food/inspections.html",
+          "scrapingRequired": true,
+          "notes": "San Diego County Environmental Health - inspection search available"
+        },
+        "Stockton": {
+          "type": "scraping",
+          "endpoint": "https://www.sjgov.org/department/ehs/food",
+          "scrapingRequired": true,
+          "notes": "San Joaquin County Environmental Health - covers Stockton area"
+        }
+      },
+      "updateFrequency": "Varies by county",
+      "notes": "California uses letter grade system. Each county manages inspections independently."
+    },
+    "FL": {
+      "state": "Florida",
+      "cities": ["Orlando"],
+      "dataSource": "Florida Department of Business and Professional Regulation",
+      "type": "api",
+      "endpoint": "https://www.myfloridalicense.com/CheckLicense2/",
+      "scrapingRequired": true,
+      "updateFrequency": "Weekly",
+      "notes": "Florida DBPR manages restaurant inspections. Uses inspection reports with violations. May require scraping."
+    },
+    "IN": {
+      "state": "Indiana",
+      "cities": ["Indianapolis"],
+      "dataSource": "Marion County Health Department",
+      "type": "scraping",
+      "endpoint": "https://www.mchd.com/environmental-health/food-safety/",
+      "scrapingRequired": true,
+      "updateFrequency": "Monthly",
+      "notes": "Marion County (Indianapolis) provides inspection reports. May require scraping."
+    },
+    "NE": {
+      "state": "Nebraska",
+      "cities": ["Omaha"],
+      "dataSource": "Douglas County Health Department",
+      "type": "scraping",
+      "endpoint": "https://www.douglascountyhealth.com/food-safety",
+      "scrapingRequired": true,
+      "updateFrequency": "Monthly",
+      "notes": "Douglas County (Omaha) manages food inspections. Inspection data searchable online."
+    }
+  },
+  "generalNotes": {
+    "scoringSystems": {
+      "letterGrade": ["NY", "AZ", "CA"],
+      "numeric": ["TX"],
+      "passFail": ["Some counties"]
+    },
+    "commonFields": {
+      "inspectionDate": "Date of inspection",
+      "score": "Numeric or letter grade",
+      "violations": "List of violations found",
+      "criticalViolations": "Critical violations count",
+      "establishmentName": "Restaurant name",
+      "address": "Restaurant address",
+      "permitNumber": "Health permit/license number"
+    },
+    "matchingStrategy": {
+      "primary": "Name + Address",
+      "secondary": "Phone number",
+      "fuzzy": "Levenshtein distance for name variations"
+    },
+    "dataUpdateRecommendations": {
+      "highPriorityStates": "Weekly",
+      "mediumPriorityStates": "Monthly",
+      "lowPriorityStates": "Quarterly"
+    }
+  },
+  "thirdPartyOptions": {
+    "HDScores": {
+      "description": "Aggregates health inspection data from multiple jurisdictions",
+      "type": "commercial",
+      "apiAvailable": true,
+      "notes": "May require subscription"
+    },
+    "Foodspark": {
+      "description": "Restaurant inspection data scraping service",
+      "type": "commercial",
+      "apiAvailable": true,
+      "notes": "Commercial scraping service"
+    },
+    "Yelp Partnership": {
+      "description": "Yelp partners with Hazel Analytics for health scores",
+      "type": "partnership",
+      "notes": "Not directly accessible, but shows data availability"
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

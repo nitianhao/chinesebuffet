@@ -1,0 +1,399 @@
+Checking 261 menu1 URLs...
+(Skipping 4242 records that already have menu1_check or no menu1 URL)
+Estimated time: ~7 minutes
+
+[1/261] China Garden Restaurant
+   URL: https://www.facebook.com/China-Garden-Restaurant-115629328459796/menu
+   Result: OK (OK: 1, NOK: 0)
+
+[2/261] Yami Grill Hibachi & Sushi Buffet
+   URL: http://fujigrillsushibuffetdayton.com/menu
+   Result: OK (OK: 2, NOK: 0)
+
+[3/261] Number One China Buffet
+   URL: https://www.no1chinabuffet.com/menu
+   Result: OK (OK: 3, NOK: 0)
+
+[4/261] Yum Buffet & Grill
+   URL: https://yumbuffetgrill.com/menu
+   Result: OK (OK: 4, NOK: 0)
+
+[5/261] China Star
+   URL: http://chinastarbuffet.com/menu
+   Result: OK (OK: 5, NOK: 0)
+
+[6/261] Grand Buffet
+   URL: http://evansvillegrandbuffet.com/menu
+   Result: OK (OK: 6, NOK: 0)
+
+[7/261] Lucky Buffet
+   URL: https://order.online/business/lucky-buffet-101443/menu
+   Result: NOK (OK: 6, NOK: 1)
+
+[8/261] 38TH BUFFET
+   URL: https://38thbuffetindy.com/menu
+   Result: NOK (OK: 6, NOK: 2)
+
+  Timeout checking https://www.facebook.com/China-Garden-Restaurant-115629328459796/menu
+[9/261] China Wok Buffet
+   URL: http://chinawokbuffetnc.com/menu
+   Result: NOK (OK: 6, NOK: 3)
+
+[10/261] Flaming Grill Supreme Buffet
+   URL: https://flaminggrillsupreme.com/menu
+   Result: NOK (OK: 6, NOK: 4)
+
+💾 Progress saved (10/261 processed)
+
+  Timeout checking https://www.no1chinabuffet.com/menu
+⏱️  Progress: 10/261 (3.8%) | Elapsed: 13s | Est. remaining: ~5.4 min
+
+[11/261] Tang Flavor Chinese Food Square
+   URL: https://www.tangflavorsyracuse.com/menu
+   Result: OK (OK: 7, NOK: 4)
+
+  Timeout checking https://yumbuffetgrill.com/menu
+[12/261] Ichiban Chinese Buffet Sushi & Hibachi
+   URL: https://ichibanbuffetnc.com/menu
+   Result: OK (OK: 8, NOK: 4)
+
+[13/261] HuHot Mongolian Grill
+   URL: https://www.huhot.com/location/columbia-mo/menu
+  Timeout checking http://evansvillegrandbuffet.com/menu
+   Result: OK (OK: 9, NOK: 4)
+
+[14/261] Asian Pearl Buffet Hibachi Grill
+   URL: http://www.asianpearlbuffet.com/menu
+   Result: NOK (OK: 9, NOK: 5)
+
+  Timeout checking https://order.online/business/lucky-buffet-101443/menu
+[15/261] Chow Time Grill & Buffet
+   URL: http://chowtimebuffet-tallahassee.com/menu
+   Result: OK (OK: 10, NOK: 5)
+
+  Timeout checking https://38thbuffetindy.com/menu
+[16/261] EAT Asian Super Buffet
+   URL: https://smorefood.com/order-online/eat-asian-super-buffet-yuma-85365-k2csfbyu/menu?utm_source=gmb&utm_medium=website
+   Result: OK (OK: 11, NOK: 5)
+
+  Timeout checking http://chinawokbuffetnc.com/menu
+[17/261] Chinese Buffet
+   URL: https://www.chinabuffetkcks.com/menu
+   Result: OK (OK: 12, NOK: 5)
+
+[18/261] Zhang's Buffet
+   URL: https://zhangsbuffet.shop/menu
+  Timeout checking https://www.tangflavorsyracuse.com/menu
+   Result: OK (OK: 13, NOK: 5)
+
+[19/261] Saki Endless Sushi and Hibachi Grill Eatery
+   URL: https://www.sakisushitampa.com/menu
+   Result: OK (OK: 14, NOK: 5)
+
+[20/261] Lotus Garden Of Greenwood
+   URL: http://www.lotusgreenwoodsouth.com/menu
+  Timeout checking https://www.huhot.com/location/columbia-mo/menu
+   Result: OK (OK: 15, NOK: 5)
+
+💾 Progress saved (20/261 processed)
+
+  Timeout checking http://www.asianpearlbuffet.com/menu
+⏱️  Progress: 20/261 (7.7%) | Elapsed: 27s | Est. remaining: ~5.6 min
+
+[21/261] Pagoda Buffet
+   URL: https://sites.google.com/view/pagodabuffet/menu/menu?authuser=0
+   Result: NOK (OK: 15, NOK: 6)
+
+[22/261] Mr Wok Chinese Buffet
+   URL: https://mrwokchinesebuffet.com/menu
+   Result: NOK (OK: 15, NOK: 7)
+
+  Timeout checking https://smorefood.com/order-online/eat-asian-super-buffet-yuma-85365-k2csfbyu/menu?utm_source=gmb&utm_medium=website
+[23/261] Super Seafood Buffet
+   URL: http://www.super-seafood-buffet.com/menu
+   Result: NOK (OK: 15, NOK: 8)
+
+  Timeout checking https://www.chinabuffetkcks.com/menu
+[24/261] Flaming Buffet
+   URL: https://flaminbuffetbeltline.com/menu
+   Result: NOK (OK: 15, NOK: 9)
+
+  Timeout checking https://zhangsbuffet.shop/menu
+[25/261] HuHot Mongolian Grill
+   URL: https://www.huhot.com/location/topeka-ks/menu
+   Result: OK (OK: 16, NOK: 9)
+
+  Timeout checking https://www.sakisushitampa.com/menu
+[26/261] No 1 China Buffet
+   URL: https://no1chinabuffettogo.com/menu
+   Result: NOK (OK: 16, NOK: 10)
+
+  Timeout checking http://www.lotusgreenwoodsouth.com/menu
+[27/261] HuHot Mongolian Grill
+   URL: https://www.huhot.com/location/billings-mt/menu
+   Result: OK (OK: 17, NOK: 10)
+
+  Timeout checking https://sites.google.com/view/pagodabuffet/menu/menu?authuser=0
+[28/261] World Buffet
+   URL: https://worldbuffetmad.com/menu
+   Result: OK (OK: 18, NOK: 10)
+
+[29/261] Hong Kong Buffet
+   URL: https://www.hongkongbuffetabq.com/menu
+   Result: NOK (OK: 18, NOK: 11)
+
+  Timeout checking http://www.super-seafood-buffet.com/menu
+[30/261] Tokyo and Mandarin
+   URL: https://www.doordash.com/store/tokyo-mandarin-knoxville-634344/en-US/menu
+   Result: NOK (OK: 18, NOK: 12)
+
+💾 Progress saved (30/261 processed)
+
+⏱️  Progress: 30/261 (11.5%) | Elapsed: 43s | Est. remaining: ~5.4 min
+
+[31/261] HuHot Mongolian Grill
+   URL: https://www.huhot.com/location/fargo-nd/menu
+   Result: OK (OK: 19, NOK: 12)
+
+[32/261] Golden Phoenix West
+   URL: https://www.goldenphoenixwestbillings.com/menu
+  Timeout checking https://www.huhot.com/location/topeka-ks/menu
+   Result: OK (OK: 20, NOK: 12)
+
+  Timeout checking https://no1chinabuffettogo.com/menu
+[33/261] Hibachi Buffet
+   URL: https://hibachichinese.net/menu
+   Result: OK (OK: 21, NOK: 12)
+
+  Timeout checking https://www.huhot.com/location/billings-mt/menu
+[34/261] Lim's Chinese Restaurant
+   URL: https://www.limschinesebuffet.com/menu
+  Timeout checking https://worldbuffetmad.com/menu
+   Result: OK (OK: 22, NOK: 12)
+
+[35/261] El Palacio Buffet
+   URL: https://www.elpalaciobuffetorlando.com/menu
+  Timeout checking https://www.hongkongbuffetabq.com/menu
+   Result: NOK (OK: 22, NOK: 13)
+
+[36/261] Millennium Buffet
+   URL: http://millenniumbuffettogo.com/menu
+  Error checking http://millenniumbuffettogo.com/menu: getaddrinfo ENOTFOUND millenniumbuffettogo.com
+   Result: NOK (OK: 22, NOK: 14)
+
+[37/261] New China Buffet Macon
+   URL: http://www.imenuicoupon.com/new-china-buffet-macon.html/menu
+   Result: NOK (OK: 22, NOK: 15)
+
+  Timeout checking https://www.huhot.com/location/fargo-nd/menu
+[38/261] Win Buffet
+   URL: https://www.facebook.com/winbuffetdtx/menu/menu
+   Result: NOK (OK: 22, NOK: 16)
+
+  Timeout checking https://www.goldenphoenixwestbillings.com/menu
+[39/261] Golden Palace
+   URL: http://www.goldenpalacepittsburgh.com/menu
+   Result: OK (OK: 23, NOK: 16)
+
+[40/261] Sushi Villa Buffet Chinese & Japanese Grill
+   URL: https://sushi-villa-buffet.shop/menu
+   Result: OK (OK: 24, NOK: 16)
+
+💾 Progress saved (40/261 processed)
+
+⏱️  Progress: 40/261 (15.3%) | Elapsed: 59s | Est. remaining: ~5.5 min
+
+[41/261] Daily Buffet & Grill
+   URL: http://www.dailybuffetandgrill.com/menu
+   Result: NOK (OK: 24, NOK: 17)
+
+  Timeout checking https://www.limschinesebuffet.com/menu
+[42/261] Zhang Fei Hotpot
+   URL: http://www.zhangfeihotpot.com/menu
+  Timeout checking https://www.elpalaciobuffetorlando.com/menu
+   Result: OK (OK: 25, NOK: 17)
+
+[43/261] Peking Kitchen
+   URL: https://www.supermenu.net/r.jsp/menu?id=32008
+   Result: NOK (OK: 25, NOK: 18)
+
+  Timeout checking http://www.imenuicoupon.com/new-china-buffet-macon.html/menu
+[44/261] New China Grill & Buffett
+   URL: https://newchinagrillbuffet.kwickmenu.com/menu
+   Result: OK (OK: 26, NOK: 18)
+
+[45/261] Hong Kong Buffet
+   URL: https://hongkongbuffetohtogo.com/menu
+  Timeout checking https://www.facebook.com/winbuffetdtx/menu/menu
+   Result: NOK (OK: 26, NOK: 19)
+
+[46/261] Meteor Buffet
+   URL: http://www.meteorbuffethuntsville.com/menu
+  Timeout checking http://www.goldenpalacepittsburgh.com/menu
+   Result: OK (OK: 27, NOK: 19)
+
+  Timeout checking https://sushi-villa-buffet.shop/menu
+[47/261] NYC Buffet
+   URL: https://nycbuffettogo.com/menu
+  Error checking https://nycbuffettogo.com/menu: getaddrinfo ENOTFOUND nycbuffettogo.com
+   Result: NOK (OK: 27, NOK: 20)
+
+  Timeout checking http://www.dailybuffetandgrill.com/menu
+[48/261] HuHot Mongolian Grill
+   URL: https://www.huhot.com/location/lincoln-ne/menu
+   Result: OK (OK: 28, NOK: 20)
+
+[49/261] Asian Star Buffet
+   URL: http://www.asianstardfw.com/menu
+   Result: NOK (OK: 28, NOK: 21)
+
+  Timeout checking http://www.zhangfeihotpot.com/menu
+[50/261] Buffet City
+   URL: https://www.buffetscity.com/menu
+  Timeout checking https://www.supermenu.net/r.jsp/menu?id=32008
+   Result: NOK (OK: 28, NOK: 22)
+
+💾 Progress saved (50/261 processed)
+
+⏱️  Progress: 50/261 (19.2%) | Elapsed: 73s | Est. remaining: ~5.3 min
+
+[51/261] LINS GRAND BUFFET -McALLEN
+   URL: http://www.linsrestaurant.com/menu
+   Result: OK (OK: 29, NOK: 22)
+
+  Timeout checking https://newchinagrillbuffet.kwickmenu.com/menu
+[52/261] No.1 Asia Buffet
+   URL: https://no1asiabuffet.shop/menu
+  Timeout checking https://hongkongbuffetohtogo.com/menu
+   Result: OK (OK: 30, NOK: 22)
+
+[53/261] China Harbor
+   URL: https://www.chinaharbor801.com/menu
+  Timeout checking http://www.meteorbuffethuntsville.com/menu
+   Result: OK (OK: 31, NOK: 22)
+
+[54/261] Golden Buffet
+   URL: https://goldenbuffetchineserestaurant.godaddysites.com/menu
+   Result: OK (OK: 32, NOK: 22)
+
+[55/261] China Harbor
+   URL: http://www.chinaharborarlington.com/menu
+   Result: NOK (OK: 32, NOK: 23)
+
+[56/261] Asian King Buffet
+   URL: https://www.asiankingbuffetspringfield.com/menu
+  Timeout checking https://www.huhot.com/location/lincoln-ne/menu
+   Result: OK (OK: 33, NOK: 23)
+
+  Timeout checking http://www.asianstardfw.com/menu
+[57/261] Man Wah
+   URL: http://manwahlakewood.com/menu
+   Result: OK (OK: 34, NOK: 23)
+
+[58/261] Tampa China Buffet
+   URL: https://orlchinabuffettampa.kwickmenu.com/menu
+  Timeout checking https://www.buffetscity.com/menu
+   Result: OK (OK: 35, NOK: 23)
+
+  Timeout checking http://www.linsrestaurant.com/menu
+[59/261] Hibachi Supreme Buffet
+   URL: http://www.hibachisupremebuffetok.com/menu
+   Result: OK (OK: 36, NOK: 23)
+
+[60/261] China Buffet II
+   URL: https://orderchinabuffet.com/menu
+  Timeout checking https://no1asiabuffet.shop/menu
+   Result: OK (OK: 37, NOK: 23)
+
+💾 Progress saved (60/261 processed)
+
+⏱️  Progress: 60/261 (23.0%) | Elapsed: 87s | Est. remaining: ~4.7 min
+
+[61/261] Hibachi Grill & Supreme Buffet
+   URL: http://www.hibachijc.com/menu
+  Timeout checking https://www.chinaharbor801.com/menu
+   Result: NOK (OK: 37, NOK: 24)
+
+[62/261] China Wok Buffet
+   URL: http://chinawok71107.com/menu
+   Result: NOK (OK: 37, NOK: 25)
+
+[63/261] China King Buffet
+   URL: https://www.chinabuffetclarksville.com/menu
+  Timeout checking http://www.chinaharborarlington.com/menu
+   Result: OK (OK: 38, NOK: 25)
+
+  Timeout checking https://www.asiankingbuffetspringfield.com/menu
+[64/261] Dragon Seafood Restaurant & Grill
+   URL: http://www.dragonak.com/menu
+   Result: OK (OK: 39, NOK: 25)
+
+  Timeout checking http://manwahlakewood.com/menu
+[65/261] Hula's Chinese Bar-B-Q
+   URL: https://hulasbbq.com/menu
+  Timeout checking https://orlchinabuffettampa.kwickmenu.com/menu
+   Result: NOK (OK: 39, NOK: 26)
+
+  Timeout checking http://www.hibachisupremebuffetok.com/menu
+[66/261] Ling's Buffet
+   URL: http://lingsbuffetusa.com/menu
+   Result: OK (OK: 40, NOK: 26)
+
+[67/261] Royal Buffet
+   URL: https://www.royalbuffetfargo.com/menu
+  Timeout checking https://orderchinabuffet.com/menu
+   Result: OK (OK: 41, NOK: 26)
+
+[68/261] Swadist
+   URL: https://swadistmeal.com/menu
+  Timeout checking http://www.hibachijc.com/menu
+   Result: OK (OK: 42, NOK: 26)
+
+  Timeout checking http://chinawok71107.com/menu
+[69/261] No.1 China Buffet
+   URL: http://no1chinabuffettampa.com/menu
+   Result: OK (OK: 43, NOK: 26)
+
+  Timeout checking https://www.chinabuffetclarksville.com/menu
+[70/261] Panda Buffet
+   URL: https://pandabuffet.shop/menu
+   Result: OK (OK: 44, NOK: 26)
+
+💾 Progress saved (70/261 processed)
+
+  Timeout checking http://www.dragonak.com/menu
+⏱️  Progress: 70/261 (26.8%) | Elapsed: 102s | Est. remaining: ~4.8 min
+
+[71/261] Golden buffet
+   URL: http://www.goldenbuffetlafayette.com/menu
+   Result: NOK (OK: 44, NOK: 27)
+
+[72/261] Lin's Asian Buffet
+   URL: https://linsasianbuffet.shop/menu
+  Timeout checking https://hulasbbq.com/menu
+   Result: OK (OK: 45, NOK: 27)
+
+  Timeout checking http://lingsbuffetusa.com/menu
+[73/261] osaka hibachi & sushi buffet
+   URL: https://osakagrillsushi.com/menu
+   Result: NOK (OK: 45, NOK: 28)
+
+  Timeout checking https://www.royalbuffetfargo.com/menu
+[74/261] Buffet King
+   URL: https://buffet-king-restaurant.shop/menu
+   Result: OK (OK: 46, NOK: 28)
+
+[75/261] Tin Tin Buffet
+   URL: http://www.tintinasianbuffetnc.com/menu
+   Result: NOK (OK: 46, NOK: 29)
+
+  Timeout checking http://no1chinabuffettampa.com/menu
+[76/261] Mr Stirfry
+   URL: http://www.mr-stirfry.com/menu
+   Result: OK (OK: 47, NOK: 29)
+
+  Timeout checking https://pandabuffet.shop/menu
+[77/261] LINS GRAND BUFFET- YUMA
+   URL: https://www.linsrestaurant.com/menu
+   Result: OK (OK: 48, NOK: 29)
+

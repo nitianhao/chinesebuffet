@@ -1,0 +1,232 @@
+[
+  {
+    "name": "Great Wall Buffet",
+    "placeId": "ChIJv2z0FakAwFQRM4hJf8DRaZQ",
+    "url": "https://www.greatwallbuffet.biz/menu",
+    "originalUrl": "http://greatwall buffet.biz/menu",
+    "result": {
+      "success": false,
+      "contentType": "HTML",
+      "rawText": "",
+      "structuredData": null,
+      "errorMessage": "404 error - page not found",
+      "statusCode": 404
+    }
+  },
+  {
+    "name": "P.F. Chang's",
+    "placeId": "ChIJN6G-JR0J2YgRsIuMNGmPP7U",
+    "url": "https://locations.pfchangs.com/fl/sunrise/1740-sawgrass-mills-circle.html",
+    "originalUrl": "https://locations.pfchangs.com/fl/sunrise/1740-sawgrass-mills-circle.html/menu?utm_source=google_gbp&utm_medium=organic",
+    "result": {
+      "success": true,
+      "contentType": "HTML",
+      "rawText": "Catering Gift cards Events Careers Offers\n\nrs    4 Ae No   8    I we  )   p  8      oa  E NE Nes i oN A   BW e    tyes pr Ne 0 Soe , ha J od IE   Sor   _ 4 ,   Jp   Ni (ee ee Ce     a   FRAG   Es - 3 h    NTS - i 4   J2   i   R LE 4 LB ELOY)      P RX   Ws a   oo INE Ne AN pl High me Pal SAN EN Ber Vv i 4 Cay s   om   I     PTR gE ys - oF a, bcial aS Gi Ca eo   rel Dalit oa. Cae Sig ool     SEE SN   -h HN BE ny   T 7  ? pa)       a  I    e J a    RY a pr ai N  ., Pl a F      a Ee aE, oh THR g $9. va - 1 oT TT Li   MBE 5 iJ        JAHN a   34   4rd bs (D) Coie a MS 8  BTNNGE Nay BE REST   7 be L  ) YN   A 5  i     f EX       CREEL   4       dN F ARAN V  yn J NO   iy",
+      "structuredData": {
+        "categories": [
+          {
+            "name": "Menu Items",
+            "items": [
+              {
+                "name": "Catering Gift cards Events Careers Offers",
+                "description": null,
+                "price": null,
+                "priceNumber": null
+              },
+              {
+                "name": "4 Ae No",
+                "description": null,
+                "price": null,
+                "priceNumber": null
+              },
+              {
+                "name": "E NE Nes i o N A",
+                "description": null,
+                "price": null,
+                "priceNumber": null
+              },
+              {
+                "name": "tyes pr Ne 0 Soe , ha J od IE",
+                "description": null,
+                "price": null,
+                "priceNumber": null
+              }
+            ]
+          },
+          {
+            "name": "_ 4 ,",
+            "items": [
+              {
+                "name": "Ni (ee ee Ce",
+                "description": null,
+                "price": null,
+                "priceNumber": null
+              }
+            ]
+          },
+          {
+            "name": "P RX",
+            "items": [
+              {
+                "name": "PTR g E ys - o F a, bcial a S Gi Ca eo",
+                "description": "rel Dalit oa. Cae Sig ool",
+                "price": null,
+                "priceNumber": null
+              }
+            ]
+          },
+          {
+            "name": "SEE SN",
+            "items": [
+              {
+                "name": "-h HN BE ny",
+                "description": null,
+                "price": null,
+                "priceNumber": null
+              },
+              {
+                "name": "RY a pr ai N",
+                "description": null,
+                "price": null,
+                "priceNumber": null
+              },
+              {
+                "name": "., Pl a F",
+                "description": "a Ee a E, oh THR g  va - 1 o T TT Li",
+                "price": "$9.",
+                "priceNumber": 9
+              },
+              {
+                "name": "BTNNGE Nay BE REST",
+                "description": null,
+                "price": null,
+                "priceNumber": null
+              }
+            ]
+          },
+          {
+            "name": "CREEL",
+            "items": [
+              {
+                "name": "yn J NO",
+                "description": null,
+                "price": null,
+                "priceNumber": null
+              }
+            ]
+          }
+        ],
+        "items": [
+          {
+            "name": "Catering Gift cards Events Careers Offers",
+            "description": null,
+            "price": null,
+            "priceNumber": null
+          },
+          {
+            "name": "4 Ae No",
+            "description": null,
+            "price": null,
+            "priceNumber": null
+          },
+          {
+            "name": "E NE Nes i o N A",
+            "description": null,
+            "price": null,
+            "priceNumber": null
+          },
+          {
+            "name": "tyes pr Ne 0 Soe , ha J od IE",
+            "description": null,
+            "price": null,
+            "priceNumber": null
+          },
+          {
+            "name": "Ni (ee ee Ce",
+            "description": null,
+            "price": null,
+            "priceNumber": null
+          },
+          {
+            "name": "PTR g E ys - o F a, bcial a S Gi Ca eo",
+            "description": "rel Dalit oa. Cae Sig ool",
+            "price": null,
+            "priceNumber": null
+          },
+          {
+            "name": "-h HN BE ny",
+            "description": null,
+            "price": null,
+            "priceNumber": null
+          },
+          {
+            "name": "RY a pr ai N",
+            "description": null,
+            "price": null,
+            "priceNumber": null
+          },
+          {
+            "name": "., Pl a F",
+            "description": "a Ee a E, oh THR g  va - 1 o T TT Li",
+            "price": "$9.",
+            "priceNumber": 9
+          },
+          {
+            "name": "BTNNGE Nay BE REST",
+            "description": null,
+            "price": null,
+            "priceNumber": null
+          },
+          {
+            "name": "yn J NO",
+            "description": null,
+            "price": null,
+            "priceNumber": null
+          }
+        ],
+        "metadata": {
+          "sourceUrl": "https://locations.pfchangs.com/fl/sunrise/1740-sawgrass-mills-circle.html",
+          "extractedAt": "2025-12-31T11:15:57.064Z",
+          "parsingStatus": "SUCCESS",
+          "totalCategories": 5,
+          "totalItems": 11,
+          "imagesProcessed": 5,
+          "imagesSuccessful": 1
+        }
+      },
+      "processedImages": [
+        {
+          "url": "https://www.pfchangs.com/images/default-source/logos/pfchangs_logo_white.png",
+          "textLength": 0,
+          "success": false,
+          "error": "No text extracted"
+        },
+        {
+          "url": "https://assets.locations.pfchangs.com/images/profile.png",
+          "textLength": 0,
+          "success": false,
+          "error": "No text extracted"
+        },
+        {
+          "url": "https://www.pfchangs.com/ResourcePackages/PFC/assets/dist/images/profile.png",
+          "textLength": 0,
+          "success": false,
+          "error": "No text extracted"
+        },
+        {
+          "url": "https://assets.locations.pfchangs.com/images/hero-image.webp",
+          "textLength": 630,
+          "success": true
+        },
+        {
+          "url": "https://dyn.mktgcdn.com/p/8t3P32zKnXcbLagiK913cOdfADSNP59W_4aTyUxoQZE/width=270,height=45",
+          "textLength": 0,
+          "success": false,
+          "error": "No text extracted"
+        }
+      ],
+      "errorMessage": null,
+      "statusCode": 200
+    }
+  }
+]

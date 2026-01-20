@@ -1,0 +1,30 @@
+{
+  "ignore_dirs": [
+    "Example JSON",
+    "Research",
+    "scripts",
+    "data",
+    "chinese-buffets",
+    ".cursor",
+    "node_modules",
+    ".next"
+  ]
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

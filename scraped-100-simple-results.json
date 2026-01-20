@@ -1,0 +1,1821 @@
+[
+  {
+    "name": "Panda Lin",
+    "placeId": "ChIJe2huKDn35IcRe5CQUqc3OOk",
+    "url": "http://www.pandalinchineserestaurant.com/menu",
+    "originalUrl": "http://www.pandalinchineserestaurant.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Panda Garden",
+    "placeId": "ChIJM1Q7P46hwokRKEnQl3PBqPo",
+    "url": "http://www.pandagardenstamford.com/menu",
+    "originalUrl": "http://www.pandagardenstamford.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "HuHot Mongolian Grill",
+    "placeId": "ChIJv2uR-Qfx5IcRvxDuy61UXxU",
+    "url": "https://www.huhot.com/location/cedar-rapids-ia/menu",
+    "originalUrl": "https://www.huhot.com/location/cedar-rapids-ia/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Chopstick Brothers",
+    "placeId": "ChIJswRe5ewBwFQRvp0OHdO6svo",
+    "url": "http://www.chopstickbrothers.com/menu",
+    "originalUrl": "http://www.chopstickbrothers.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "China Xpress",
+    "placeId": "ChIJybYr0FOfwokRBaGgYNXCQK0",
+    "url": "https://www.chinaxpressct.com/menu",
+    "originalUrl": "https://www.chinaxpressct.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Asian Chao",
+    "placeId": "ChIJB5B3WQEJ2YgRP4yqqmI3-tc",
+    "url": "https://www.foodsystemsunlimited.com/menu",
+    "originalUrl": "https://www.foodsystemsunlimited.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Lotus Cafe at Boca Chica",
+    "placeId": "ChIJkd-v_TSUb4YRqqfIrrbcMic",
+    "url": "http://www.lotuscafe.us/menu",
+    "originalUrl": "http://www.lotuscafe.us/menu",
+    "success": false,
+    "statusCode": 404,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "404 error - page not found",
+      "Scraping failed: 404 error - page not found"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "404 error - page not found"
+  },
+  {
+    "name": "Chen’s Family Dish Six Wok & Bar",
+    "placeId": "ChIJJ1ceLlIHwFQRW3eQQ3xRH3s",
+    "url": "http://chensfamilydishsix.com/menu",
+    "originalUrl": "http://chensfamilydishsix.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Blue Willow Restaurant",
+    "placeId": "ChIJ27MNSpP-v1QRmtmiH5RPess",
+    "url": "https://bluewillowrestaurant.shop/menu",
+    "originalUrl": "https://bluewillowrestaurant.shop/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Bobo Chinese Take Out",
+    "placeId": "ChIJV8DLTVwG2YgRdQGVADusC5c",
+    "url": "http://bobochinesefoodtakeout.com/menu",
+    "originalUrl": "http://bobochinesefoodtakeout.com/menu",
+    "success": false,
+    "statusCode": null,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca"
+  },
+  {
+    "name": "Lotus Inn",
+    "placeId": "ChIJmwgQwuGTb4YRuLFJCVlhOFk",
+    "url": "https://www.lotusinnbrownsville.com/menu",
+    "originalUrl": "https://www.lotusinnbrownsville.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "New China King",
+    "placeId": "ChIJc1zBwtChwokRrClW5yoaRQU",
+    "url": "https://www.newchinaking-ct.com/menu",
+    "originalUrl": "https://www.newchinaking-ct.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Great Wall",
+    "placeId": "ChIJTRyW5eahwokRCbwGO4dLRRI",
+    "url": "https://greatwallchinesestamford.com/menu",
+    "originalUrl": "https://greatwallchinesestamford.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Gold Dragon Restaurant",
+    "placeId": "ChIJK3IjKmoHwFQRwAcRmof1kIY",
+    "url": "http://www.salem-golddragon.com/menu",
+    "originalUrl": "http://www.salem-golddragon.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Lum-Yuen Restaurant",
+    "placeId": "ChIJZ1XbWlz-v1QRZnOpmWVaFGA",
+    "url": "https://www.lumyuen.com/menu",
+    "originalUrl": "https://www.lumyuen.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "China Star",
+    "placeId": "ChIJ2X56AbsI2YgRkCBKfsK1T_0",
+    "url": "https://www.chinastarsunrisefl.com/menu",
+    "originalUrl": "https://www.chinastarsunrisefl.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Chinn's Restaurant",
+    "placeId": "ChIJw_zK8msHwFQRE3l9VjcSzCU",
+    "url": "https://www.chinnoregon.com/menu",
+    "originalUrl": "https://www.chinnoregon.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Chopsticks King",
+    "placeId": "ChIJX3_HQOqhwokR_KUslraYDjc",
+    "url": "https://www.chopsticksct.com/menu",
+    "originalUrl": "https://www.chopsticksct.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Pho & Chinese",
+    "placeId": "ChIJD04fn4eWb4YRT0Oxo89QzfU",
+    "url": "http://phonchinese.weebly.com/menu",
+    "originalUrl": "http://phonchinese.weebly.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Chef Wong Chinese Restaurant",
+    "placeId": "ChIJ_bnxiB7x5IcRBqfRLMGaUIQ",
+    "url": "https://www.chefwongchinese.com/menu",
+    "originalUrl": "https://www.chefwongchinese.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "China King",
+    "placeId": "ChIJnRZBJQL55IcRTp-dabMmB5g",
+    "url": "https://www.smorefood.com/order-online/china-king-cedar-rapids-52404-tjsev5ea/menu?utm_source=gmb&utm_medium=website",
+    "originalUrl": "https://www.smorefood.com/order-online/china-king-cedar-rapids-52404-tjsev5ea/menu?utm_source=gmb&utm_medium=website",
+    "success": false,
+    "statusCode": 404,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "404 error - page not found",
+      "Scraping failed: 404 error - page not found"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "404 error - page not found"
+  },
+  {
+    "name": "China Pavilion",
+    "placeId": "ChIJnc1ls_qhwokR-yIs9NvnZOM",
+    "url": "http://www.chinapavilionstamfordct.com/menu",
+    "originalUrl": "http://www.chinapavilionstamfordct.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Toa Toa Chinese Restaurant",
+    "placeId": "ChIJ7Tr812IH2YgRXYP1lFYbi1Q",
+    "url": "http://www.toatoadimsum.com/menu",
+    "originalUrl": "http://www.toatoadimsum.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Chinese Cafe",
+    "placeId": "ChIJ35ZnTwz_v1QREAYDiLpw564",
+    "url": "http://www.salemcenter.com/stores/chinese-cafe/menu",
+    "originalUrl": "http://www.salemcenter.com/stores/chinese-cafe/menu",
+    "success": false,
+    "statusCode": 404,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "404 error - page not found",
+      "Scraping failed: 404 error - page not found"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "404 error - page not found"
+  },
+  {
+    "name": "Buffet City",
+    "placeId": "ChIJx1f6kVqguokRe0GkDcNsLlU",
+    "url": "http://www.buffetcitychesapeake.com/menu",
+    "originalUrl": "http://www.buffetcitychesapeake.com/menu",
+    "success": false,
+    "statusCode": 404,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "404 error - page not found",
+      "Scraping failed: 404 error - page not found"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "404 error - page not found"
+  },
+  {
+    "name": "Ma Ma China",
+    "placeId": "ChIJczDCk-vjwIcRIiYym7Ha8Yw",
+    "url": "https://etapthru.com/restaurant.php/menu?id=7666",
+    "originalUrl": "https://etapthru.com/restaurant.php/menu?id=7666",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Volcano Sushi & Asian Bistro",
+    "placeId": "ChIJuVQvajmYuokRmt-JluA61hk",
+    "url": "http://www.volcanosushinorfolkva.com/menu",
+    "originalUrl": "http://www.volcanosushinorfolkva.com/menu",
+    "success": false,
+    "statusCode": 404,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "404 error - page not found",
+      "Scraping failed: 404 error - page not found"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "404 error - page not found"
+  },
+  {
+    "name": "The Luxe Buffet - Seafood & Grill",
+    "placeId": "ChIJF0rPS3g1w4ARjsqsZAlIKCo",
+    "url": "http://www.theluxebuffet.net/menu",
+    "originalUrl": "http://www.theluxebuffet.net/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Crazy Buffet & Grill",
+    "placeId": "ChIJvZeyAhzW2IgRN59o3rC7ciM",
+    "url": "http://crazybuffetgrill.com/menu",
+    "originalUrl": "http://crazybuffetgrill.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Sohao Buffet",
+    "placeId": "ChIJvUA-UQBvv4cRIKSOiNimAKU",
+    "url": "http://sohaobuffet.com/menu",
+    "originalUrl": "http://sohaobuffet.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "China Sea Buffet",
+    "placeId": "ChIJrzoNS5CnZYYRe6mhUZsyx4g",
+    "url": "https://www.chinaseabuffetmcallen.com/menu",
+    "originalUrl": "https://www.chinaseabuffetmcallen.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Crazy Buffet",
+    "placeId": "ChIJDSwnXfOH3YgRAX7CUVG7poo",
+    "url": "http://mycrazybuffet.com/menu",
+    "originalUrl": "http://mycrazybuffet.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Dragon Empire Chinese Buffet",
+    "placeId": "ChIJ6wVIamrrwIcRLQIGzguW24s",
+    "url": "https://www.dragonempirebuffetkc.com/menu",
+    "originalUrl": "https://www.dragonempirebuffetkc.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "LINS GRAND BUFFET -McALLEN",
+    "placeId": "ChIJsxtfCCahZYYREv99pZjOVtk",
+    "url": "http://www.linsrestaurant.com/menu",
+    "originalUrl": "http://www.linsrestaurant.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "King Sun Buffet",
+    "placeId": "ChIJU0azYrN5j4ARLTkhs8blumA",
+    "url": "https://kingsunbuffet.site/menu",
+    "originalUrl": "https://kingsunbuffet.site/menu",
+    "success": false,
+    "statusCode": null,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: getaddrinfo ENOTFOUND kingsunbuffet.setrush.netmenu"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "getaddrinfo ENOTFOUND kingsunbuffet.setrush.netmenu"
+  },
+  {
+    "name": "Number One China Buffet",
+    "placeId": "ChIJ0Z1LpaatFIgRmpm28h7SoP0",
+    "url": "https://www.no1chinabuffet.com/menu",
+    "originalUrl": "https://www.no1chinabuffet.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Mandarin Buffet",
+    "placeId": "ChIJe0ctlupx44kRSZh6ee9oUpQ",
+    "url": "http://www.mandarinbuffetma.com/menu",
+    "originalUrl": "http://www.mandarinbuffetma.com/menu",
+    "success": false,
+    "statusCode": 404,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "404 error - page not found",
+      "Scraping failed: 404 error - page not found"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "404 error - page not found"
+  },
+  {
+    "name": "Umi Hotpot Sushi & Seafood Buffet",
+    "placeId": "ChIJ80D8ZAArw4ARpP0Jy_vOr-Q",
+    "url": "http://www.umibuffet.com/menu",
+    "originalUrl": "http://www.umibuffet.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "No.1 Asia Buffet",
+    "placeId": "ChIJn_cy0oNNw4ARm14v5RRckN4",
+    "url": "https://no1asiabuffet.shop/menu",
+    "originalUrl": "https://no1asiabuffet.shop/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Dragon House Chinese Eatery",
+    "placeId": "ChIJi6XIzKezFIgRYvQuId_Xc3Y",
+    "url": "http://mydragonhouse.com/menu",
+    "originalUrl": "http://mydragonhouse.com/menu",
+    "success": false,
+    "statusCode": 404,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "404 error - page not found",
+      "Scraping failed: 404 error - page not found"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "404 error - page not found"
+  },
+  {
+    "name": "Tong Fu",
+    "placeId": "ChIJ0wv0j8OK6IkRnE0Y3fGnoqA",
+    "url": "http://tongfuriverhead.com/menu",
+    "originalUrl": "http://tongfuriverhead.com/menu",
+    "success": false,
+    "statusCode": null,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca"
+  },
+  {
+    "name": "Elite Buffet",
+    "placeId": "ChIJCYuM38xW2YARaAxSIn6bMes",
+    "url": "https://elitebuffet.shop/menu",
+    "originalUrl": "https://elitebuffet.shop/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Tasty Buffet & Grill",
+    "placeId": "ChIJiSfmUZ8tw4AR9Y1kAK0JL30",
+    "url": "https://tastybuffetgrill.shop/menu",
+    "originalUrl": "https://tastybuffetgrill.shop/menu",
+    "success": false,
+    "statusCode": 403,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Lucky Star Buffet",
+    "placeId": "ChIJ_wUMSSO3FIgRoz7353HswOg",
+    "url": "http://www.luckystarindy.com/menu",
+    "originalUrl": "http://www.luckystarindy.com/menu",
+    "success": false,
+    "statusCode": 404,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "404 error - page not found",
+      "Scraping failed: 404 error - page not found"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "404 error - page not found"
+  },
+  {
+    "name": "HuHot Mongolian Grill",
+    "placeId": "ChIJ86kwb0EgnlQRUUXwR7XBub4",
+    "url": "https://www.huhot.com/location/spokane-wa/menu",
+    "originalUrl": "https://www.huhot.com/location/spokane-wa/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "China Buffet",
+    "placeId": "ChIJRfvvoMyvFIgRSo2-VjVaQI4",
+    "url": "http://www.chinabuffetwestfieldin.com/menu?utm_source=gmb&utm_medium=website",
+    "originalUrl": "http://www.chinabuffetwestfieldin.com/menu?utm_source=gmb&utm_medium=website",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Hong Kong King buffet",
+    "placeId": "ChIJg4sNegVFAYgRzhBD1F2jo-U",
+    "url": "https://www.newhongkongkingbuffet.com/menu",
+    "originalUrl": "https://www.newhongkongkingbuffet.com/menu",
+    "success": false,
+    "statusCode": 404,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "404 error - page not found",
+      "Scraping failed: 404 error - page not found"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "404 error - page not found"
+  },
+  {
+    "name": "Lin's Buffet",
+    "placeId": "ChIJc2z9ur6Wb4YRYZxhBDCBSRI",
+    "url": "https://linsbuffet2988.kwickmenu.com/menu",
+    "originalUrl": "https://linsbuffet2988.kwickmenu.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "HuHot Mongolian Grill",
+    "placeId": "ChIJ2Vk6E8D7AogRuL-pNGzMJtw",
+    "url": "https://www.huhot.com/location/green-bay-wi/menu",
+    "originalUrl": "https://www.huhot.com/location/green-bay-wi/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "China Buffet",
+    "placeId": "ChIJuZ9SzFJTF4gR_qd7Q6RPJPg",
+    "url": "https://www.chinabuffetmi.com/menu",
+    "originalUrl": "https://www.chinabuffetmi.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "OEC Super Buffet",
+    "placeId": "ChIJFxdMz5rpFogRZ5F0YSikAP8",
+    "url": "https://oecsuperbuffet.shop/menu",
+    "originalUrl": "https://oecsuperbuffet.shop/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "China City Super Buffet",
+    "placeId": "ChIJpZbymDQawYcReMPszs9TmH0",
+    "url": "https://www.chinacitysuperbuffet.com/menu",
+    "originalUrl": "https://www.chinacitysuperbuffet.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "EAT Asian Super Buffet",
+    "placeId": "ChIJ_aWdkUNf1oARDW4-MDWQT18",
+    "url": "https://smorefood.com/order-online/eat-asian-super-buffet-yuma-85365-k2csfbyu/menu?utm_source=gmb&utm_medium=website",
+    "originalUrl": "https://smorefood.com/order-online/eat-asian-super-buffet-yuma-85365-k2csfbyu/menu?utm_source=gmb&utm_medium=website",
+    "success": false,
+    "statusCode": 404,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "404 error - page not found",
+      "Scraping failed: 404 error - page not found"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "404 error - page not found"
+  },
+  {
+    "name": "Luck Star Buffet",
+    "placeId": "ChIJgyususdJO4gRgjS5t2Y_Iuo",
+    "url": "https://luckstarbuffet.space/menu",
+    "originalUrl": "https://luckstarbuffet.space/menu",
+    "success": false,
+    "statusCode": 404,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "404 error - page not found",
+      "Scraping failed: 404 error - page not found"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "404 error - page not found"
+  },
+  {
+    "name": "Asian Buffet",
+    "placeId": "ChIJ2yevBmxYwIcRu6NKyMQePJ4",
+    "url": "https://asianbuffetmotogo.com/menu",
+    "originalUrl": "https://asianbuffetmotogo.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Fairy Cafe - Hotpot Buffet",
+    "placeId": "ChIJV_sIQ6F844kRWfqfpOa0Hpo",
+    "url": "https://www.fairycafequincy.com/menu",
+    "originalUrl": "https://www.fairycafequincy.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "King's Buffet",
+    "placeId": "ChIJKa3Bsj7JwoARn1wFlYqtbfU",
+    "url": "https://kings-buffet.shop/menu",
+    "originalUrl": "https://kings-buffet.shop/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Golden Buffet",
+    "placeId": "ChIJoUtXur6XJIgRLDW5GmRsgB4",
+    "url": "http://www.goldenbuffetonline.com/menu",
+    "originalUrl": "http://www.goldenbuffetonline.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Osaka Buffet",
+    "placeId": "ChIJX46uugMcnlQRuHFy51tnbCI",
+    "url": "https://www.osakabuffet-spokane.com/menu",
+    "originalUrl": "https://www.osakabuffet-spokane.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: No menu-related content found in HTML - skipping record"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 2,
+    "error": "No menu-related content found in HTML - skipping record"
+  },
+  {
+    "name": "Grand China Buffet",
+    "placeId": "ChIJxVOO0r2gZYYRNlzfl2YnodE",
+    "url": "https://www.grandchinapharr.com/menu",
+    "originalUrl": "https://www.grandchinapharr.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Lin's Grand Buffet",
+    "placeId": "ChIJRx-B1X4PK4cR34zpKvlJ9OY",
+    "url": "https://www.linsrestaurant.com/menu",
+    "originalUrl": "https://www.linsrestaurant.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Choice Hibachi Buffet",
+    "placeId": "ChIJQ2u3fGbasokR2AW66smTT60",
+    "url": "http://choicehibachibuffetva.com/menu",
+    "originalUrl": "http://choicehibachibuffetva.com/menu",
+    "success": false,
+    "statusCode": null,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca"
+  },
+  {
+    "name": "Hibachi Grill Supreme Buffet",
+    "placeId": "ChIJF-RUGRfSFogRk36EYs4r6sk",
+    "url": "http://www.hibachibuffetofmishawaka.com/menu",
+    "originalUrl": "http://www.hibachibuffetofmishawaka.com/menu",
+    "success": false,
+    "statusCode": 404,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "404 error - page not found",
+      "Scraping failed: 404 error - page not found"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "404 error - page not found"
+  },
+  {
+    "name": "China buffet",
+    "placeId": "ChIJIZKPPCxpwYcRRh6TsiQAQgc",
+    "url": "https://www.chinabuffetinodessa.com/menu",
+    "originalUrl": "https://www.chinabuffetinodessa.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Best Buffet",
+    "placeId": "ChIJD1GG0lX43YcRGtGdsvfz1XY",
+    "url": "http://best-buffet.poi.place/menu",
+    "originalUrl": "http://best-buffet.poi.place/menu",
+    "success": false,
+    "statusCode": 404,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "404 error - page not found",
+      "Scraping failed: 404 error - page not found"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "404 error - page not found"
+  },
+  {
+    "name": "China Star Buffet",
+    "placeId": "ChIJc9rwb2W4QIYRneVK2roYYAE",
+    "url": "https://www.chinastarbuffet.com/menu",
+    "originalUrl": "https://www.chinastarbuffet.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Kin's Chinese buffet",
+    "placeId": "ChIJ4TFp1QxZXIYRwfVV0wodjeY",
+    "url": "https://rebrand.ly/kin-chinese/menu",
+    "originalUrl": "https://rebrand.ly/kin-chinese/menu",
+    "success": false,
+    "statusCode": 403,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "China Great Buffet",
+    "placeId": "ChIJhzXQ_7TQwoARHgpmUiqNZKQ",
+    "url": "http://www.chinagreatbuffet.com/menu",
+    "originalUrl": "http://www.chinagreatbuffet.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "LINS GRAND BUFFET- YUMA",
+    "placeId": "ChIJo16bp_P11oARY_SWzhbfq8Q",
+    "url": "https://www.linsrestaurant.com/menu",
+    "originalUrl": "https://www.linsrestaurant.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Teppanyaki Grill Supreme Buffet",
+    "placeId": "ChIJFxIp7Doo3YARg3HbadS6Irw",
+    "url": "http://teppanyaki-grill-supreme-buffet.cafes-guide.com/menu",
+    "originalUrl": "http://teppanyaki-grill-supreme-buffet.cafes-guide.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "China King Buffet",
+    "placeId": "ChIJT1gnrDI1t4kRXa1r2o-2wrk",
+    "url": "https://www.chinakingbuffettappahannock.com/menu",
+    "originalUrl": "https://www.chinakingbuffettappahannock.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Super Golden Buffet",
+    "placeId": "ChIJL3aEeAB19YgR1vPqry4Kv6U",
+    "url": "http://supergoldenbuffets.com/menu",
+    "originalUrl": "http://supergoldenbuffets.com/menu",
+    "success": false,
+    "statusCode": 404,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "404 error - page not found",
+      "Scraping failed: 404 error - page not found"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "404 error - page not found"
+  },
+  {
+    "name": "King Buffet",
+    "placeId": "ChIJwYXF5b9FE4cRaf-t0HNko44",
+    "url": "https://kingbuffetcolorado.com/menu/menu",
+    "originalUrl": "https://kingbuffetcolorado.com/menu/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Tin Tin Buffet",
+    "placeId": "ChIJkWsioqCYlVQROK1F9MdhUxk",
+    "url": "https://tintinbuffetportland.com/menu",
+    "originalUrl": "https://tintinbuffetportland.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Super King Buffet",
+    "placeId": "ChIJAVsEMiOglVQRntoHl-nJQtc",
+    "url": "https://www.superkingbuffetor.com/menu",
+    "originalUrl": "https://www.superkingbuffetor.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Asian King Chinese & Sushi Buffet",
+    "placeId": "ChIJPw5J1D4lWYgRpKApo0GN1Wo",
+    "url": "http://hisgracebuffet.com/menu",
+    "originalUrl": "http://hisgracebuffet.com/menu",
+    "success": false,
+    "statusCode": 404,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "404 error - page not found",
+      "Scraping failed: 404 error - page not found"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "404 error - page not found"
+  },
+  {
+    "name": "Dragon Palace King Buffet",
+    "placeId": "ChIJvTmeS0LF7IARqe6Wl5U6LzE",
+    "url": "https://www.travelpaso.com/listing/dragon-palace-king-buffet/718/menu",
+    "originalUrl": "https://www.travelpaso.com/listing/dragon-palace-king-buffet/718/menu",
+    "success": false,
+    "statusCode": 404,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "404 error - page not found",
+      "Scraping failed: 404 error - page not found"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "404 error - page not found"
+  },
+  {
+    "name": "Jin's Buffet",
+    "placeId": "ChIJLYg2XS7JVogRP5V_sFJ6j28",
+    "url": "http://www.jinsbuffetlincolntonnc.com/menu",
+    "originalUrl": "http://www.jinsbuffetlincolntonnc.com/menu",
+    "success": false,
+    "statusCode": 404,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "404 error - page not found",
+      "Scraping failed: 404 error - page not found"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "404 error - page not found"
+  },
+  {
+    "name": "China Buffet",
+    "placeId": "ChIJ0ZG11acA_ocRhKe6pwNhDow",
+    "url": "http://chinabuffetave.com/menu",
+    "originalUrl": "http://chinabuffetave.com/menu",
+    "success": false,
+    "statusCode": 404,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "404 error - page not found",
+      "Scraping failed: 404 error - page not found"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "404 error - page not found"
+  },
+  {
+    "name": "Feast Buffet",
+    "placeId": "ChIJvdObvbJCkFQRYQGoSIqcIS8",
+    "url": "http://www.feastbuffetrenton.com/menu",
+    "originalUrl": "http://www.feastbuffetrenton.com/menu",
+    "success": false,
+    "statusCode": 202,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: No menu-related content found in HTML - skipping record"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "No menu-related content found in HTML - skipping record"
+  },
+  {
+    "name": "King Super Buffet",
+    "placeId": "ChIJvf5d4twp2YgRnZIxXspqTp8",
+    "url": "https://flkingsuperbuffet.com/menu",
+    "originalUrl": "https://flkingsuperbuffet.com/menu",
+    "success": false,
+    "statusCode": null,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: socket hang up"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "socket hang up"
+  },
+  {
+    "name": "KIOKU SUPREME BUFFET",
+    "placeId": "ChIJ0ej6JZQ_R4YRIuF75ISuWfc",
+    "url": "http://www.kiokubuffettx.com/menu",
+    "originalUrl": "http://www.kiokubuffettx.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Grand Buffet",
+    "placeId": "ChIJBdV4KwQrbogRbBdFK6YI0LQ",
+    "url": "http://evansvillegrandbuffet.com/menu",
+    "originalUrl": "http://evansvillegrandbuffet.com/menu",
+    "success": false,
+    "statusCode": null,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca"
+  },
+  {
+    "name": "Mizumi Buffet",
+    "placeId": "ChIJbZBqWZQvVUARNaREXvx05kU",
+    "url": "https://www.mizumi-buffet.com/menu?utm_source=GoogleMyBusiness&utm_medium=Website%20Button&utm_campaign=2021",
+    "originalUrl": "https://www.mizumi-buffet.com/menu?utm_source=GoogleMyBusiness&utm_medium=Website%20Button&utm_campaign=2021",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Peking Chinese Super Buffet",
+    "placeId": "ChIJ1wPRFm2k8IgRuWN8zZm1MPk",
+    "url": "https://www.pekingchinesesuperbuffetga.com/menu",
+    "originalUrl": "https://www.pekingchinesesuperbuffetga.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "East Buffet",
+    "placeId": "ChIJ0XQatbo-R4YRtDvtKAroqzQ",
+    "url": "http://eastbuffetatconroe.com/menu",
+    "originalUrl": "http://eastbuffetatconroe.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "King Buffet",
+    "placeId": "ChIJAZ6pL_2LUocRpBBblfkm6gg",
+    "url": "https://utahkingbuffetss.com/menu",
+    "originalUrl": "https://utahkingbuffetss.com/menu",
+    "success": false,
+    "statusCode": 404,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "404 error - page not found",
+      "Scraping failed: 404 error - page not found"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "404 error - page not found"
+  },
+  {
+    "name": "China Wall Buffet",
+    "placeId": "ChIJu7cgZ9dmhYAR3Y4_lUe1GBM",
+    "url": "https://chinawallbuffet.shop/menu",
+    "originalUrl": "https://chinawallbuffet.shop/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Ni's China Buffet",
+    "placeId": "ChIJc8SSRXQ5R4YRMenokRGHJFo",
+    "url": "https://www.nischinabuffet.com/menu",
+    "originalUrl": "https://www.nischinabuffet.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "China Buffet",
+    "placeId": "ChIJidDwuSUcVIgRsZ3QeUkp-oQ",
+    "url": "https://china-buffet.shop/menu",
+    "originalUrl": "https://china-buffet.shop/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "King Buffet",
+    "placeId": "ChIJFb2Xw3aHa4cRVlFb4Lxsus4",
+    "url": "https://kingbuffetco.com/menu",
+    "originalUrl": "https://kingbuffetco.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Hibachi Grill Supreme Buffet Jimmy Carter",
+    "placeId": "ChIJF8AaTpSm9YgRvpPZfmMwMKQ",
+    "url": "https://hibachigrillsupremebuffetjimmycarter.shop/menu",
+    "originalUrl": "https://hibachigrillsupremebuffetjimmycarter.shop/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Hong Kong Buffet",
+    "placeId": "ChIJEXw-oSPG9YgRXT31asuR02Y",
+    "url": "https://www.hongkongbuffet-ga.com/menu",
+    "originalUrl": "https://www.hongkongbuffet-ga.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Natsumi Sushi & Seafood Buffet",
+    "placeId": "ChIJp5Tx4VL_24ARNOlqbKLTVdo",
+    "url": "http://natsumibuffet.com/menu",
+    "originalUrl": "http://natsumibuffet.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "CJ Palace",
+    "placeId": "ChIJQW9eIgA5mYARxkpWrtuBisM",
+    "url": "http://www.cjpalace.com/menu",
+    "originalUrl": "http://www.cjpalace.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "New Hong Kong Buffet",
+    "placeId": "ChIJe2Jnzcs9SIYR6tAjRi1JKHI",
+    "url": "http://txnewhongkongbuffet.com/menu",
+    "originalUrl": "http://txnewhongkongbuffet.com/menu",
+    "success": false,
+    "statusCode": null,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca"
+  },
+  {
+    "name": "Flaming Chinese Buffet",
+    "placeId": "ChIJVZzvaTgPVIgRw2YWgKxCQX4",
+    "url": "https://flamingchinesebuffet.shop/menu",
+    "originalUrl": "https://flamingchinesebuffet.shop/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Grand Buffet",
+    "placeId": "ChIJX-LJAyUGR4YRCwS6qqcl2eU",
+    "url": "https://www.grandbuffettx.com/menu",
+    "originalUrl": "https://www.grandbuffettx.com/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Fast Dragon Buffet & Carry Out",
+    "placeId": "ChIJNYadVOT1CogREIej8AfUgqI",
+    "url": "https://www.fastdragonbuffet.net/menu",
+    "originalUrl": "https://www.fastdragonbuffet.net/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  },
+  {
+    "name": "Teppanyaki Buffet",
+    "placeId": "ChIJW9fAsxup2YgRjKKZzBHcrt0",
+    "url": "http://www.teppanyakibuffet.net/menu",
+    "originalUrl": "http://www.teppanyakibuffet.net/menu",
+    "success": false,
+    "statusCode": 200,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "Page requires JavaScript rendering - skipping (OCR/JS disabled)"
+  }
+]

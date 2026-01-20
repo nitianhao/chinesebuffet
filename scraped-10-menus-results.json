@@ -1,0 +1,179 @@
+[
+  {
+    "name": "Hongkong Garden",
+    "placeId": "ChIJc-esBtf_v1QRFjzH8-pnaoc",
+    "url": "http://www.hongkonggarden989.com/menu",
+    "success": false,
+    "statusCode": 302,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: No text extracted from menu"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 6,
+    "error": "No text extracted from menu"
+  },
+  {
+    "name": "Chen's Family Dish",
+    "placeId": "ChIJ5RIiW___v1QRZju_kvnmPqg",
+    "url": "http://www.chensfamilydishsalem.com/menu",
+    "success": true,
+    "statusCode": 301,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Content does not appear to be menu-related",
+      "Only 1 valid menu item(s) found (need at least 2)"
+    ],
+    "itemCount": 1,
+    "categoryCount": 1,
+    "rawTextLength": 27,
+    "error": null
+  },
+  {
+    "name": "YGF Malatang",
+    "placeId": "ChIJT_AIGpMH2YgR0-mO6kMhblY",
+    "url": "http://ygfmiami.com/menu",
+    "success": true,
+    "statusCode": 301,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Content does not appear to be menu-related",
+      "Only 1 valid menu item(s) found (need at least 2)"
+    ],
+    "itemCount": 1,
+    "categoryCount": 1,
+    "rawTextLength": 27,
+    "error": null
+  },
+  {
+    "name": "Golden Crown Restaurant",
+    "placeId": "ChIJXUmwVQz_v1QRtDx7ABQQvOA",
+    "url": "http://gcrownrestaurant.com/menu",
+    "success": false,
+    "statusCode": 301,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: No text extracted from menu"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "No text extracted from menu"
+  },
+  {
+    "name": "Beijing Chinese Restaurant",
+    "placeId": "ChIJizxra3j55IcRoSZuVA8v3fo",
+    "url": "https://www.facebook.com/Beijing-Chinese-Restaurant-535868396534176/menu",
+    "success": true,
+    "statusCode": 400,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Content does not appear to be menu-related",
+      "No menu items or categories found in structured data"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 108,
+    "error": null
+  },
+  {
+    "name": "China Inn Restaurant",
+    "placeId": "ChIJD7AxMcvw5IcRxbRWd4pt1e8",
+    "url": "https://chinainniatogo.com/menu",
+    "success": true,
+    "statusCode": 308,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Content does not appear to be menu-related",
+      "No menu items or categories found in structured data"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 14,
+    "error": null
+  },
+  {
+    "name": "Happy Bibimbop House",
+    "placeId": "ChIJ61nGdRL_v1QRt6SuDOXXHMM",
+    "url": "https://www.happybibimbophouse.com/menu",
+    "success": false,
+    "statusCode": 301,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Scraping failed: No text extracted from menu"
+    ],
+    "itemCount": 0,
+    "categoryCount": 0,
+    "rawTextLength": 0,
+    "error": "No text extracted from menu"
+  },
+  {
+    "name": "Oriental Chinese & Sushi Restaurant",
+    "placeId": "ChIJUV1gQOv-v1QRgoUzC_LbYYE",
+    "url": "http://www.oriental2016.com/menu",
+    "success": true,
+    "statusCode": 301,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Content does not appear to be menu-related",
+      "Only 1 valid menu item(s) found (need at least 2)"
+    ],
+    "itemCount": 1,
+    "categoryCount": 1,
+    "rawTextLength": 27,
+    "error": null
+  },
+  {
+    "name": "Panda Lin",
+    "placeId": "ChIJe2huKDn35IcRe5CQUqc3OOk",
+    "url": "http://www.pandalinchineserestaurant.com/menu",
+    "success": true,
+    "statusCode": 302,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Content does not appear to be menu-related",
+      "Only 1 valid menu item(s) found (need at least 2)"
+    ],
+    "itemCount": 1,
+    "categoryCount": 1,
+    "rawTextLength": 22,
+    "error": null
+  },
+  {
+    "name": "Panda Garden",
+    "placeId": "ChIJM1Q7P46hwokRKEnQl3PBqPo",
+    "url": "http://www.pandagardenstamford.com/menu",
+    "success": true,
+    "statusCode": 302,
+    "saved": false,
+    "skipped": true,
+    "skipReason": "validation_failed",
+    "validationErrors": [
+      "Content does not appear to be menu-related",
+      "Only 1 valid menu item(s) found (need at least 2)"
+    ],
+    "itemCount": 1,
+    "categoryCount": 1,
+    "rawTextLength": 22,
+    "error": null
+  }
+]

@@ -39,3 +39,9 @@ next-env.d.ts
 /data/*.json
 !data/.gitkeep
 
+# large example JSON files (too big for git and file watching)
+Research/
+**/Example JSON/**
+**/Research/**
+.cursor/
+**/.cursor/**

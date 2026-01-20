@@ -28,8 +28,24 @@ export default function ServiceOptions({ additionalInfo }: ServiceOptionsProps) 
     if (category === 'Service options') {
       if (lowerItem.includes('delivery')) return '🚚';
       if (lowerItem.includes('takeout') || lowerItem.includes('take-out')) return '🥡';
-      if (lowerItem.includes('dine-in') || lowerItem.includes('dine in')) return '🍽️';
-      if (lowerItem.includes('drive-through') || lowerItem.includes('drive through')) return '🚗';
+      if (lowerItem.includes('dine-in') || lowerItem.includes('dine in') || lowerItem.includes('dinein')) return '🍽️';
+      if (lowerItem.includes('drive-through') || lowerItem.includes('drive through') || lowerItem.includes('drivethrough')) return '🚗';
+      if (lowerItem.includes('reservable') || lowerItem.includes('reservation')) return '📅';
+    }
+    
+    // Food service options icons
+    if (category === 'Food service options') {
+      if (lowerItem.includes('breakfast')) return '🌅';
+      if (lowerItem.includes('brunch')) return '🥐';
+      if (lowerItem.includes('lunch')) return '🍱';
+      if (lowerItem.includes('dinner')) return '🍜';
+      if (lowerItem.includes('beer')) return '🍺';
+      if (lowerItem.includes('wine')) return '🍷';
+      if (lowerItem.includes('cocktail')) return '🍹';
+      if (lowerItem.includes('coffee')) return '☕';
+      if (lowerItem.includes('dessert')) return '🍰';
+      if (lowerItem.includes('vegetarian')) return '🥬';
+      if (lowerItem.includes('children') || lowerItem.includes('kid')) return '👶';
     }
     
     // Highlights icons
@@ -57,6 +73,12 @@ export default function ServiceOptions({ additionalInfo }: ServiceOptionsProps) 
       if (lowerItem.includes('outdoor') || lowerItem.includes('patio')) return '🌳';
     }
     
+    // Additional service options icons
+    if (category === 'Additional service options') {
+      if (lowerItem.includes('dog') || lowerItem.includes('pet')) return '🐕';
+      if (lowerItem.includes('curbside') || lowerItem.includes('pickup')) return '🚗';
+    }
+    
     // Payments icons
     if (category === 'Payments') {
       if (lowerItem.includes('credit') || lowerItem.includes('debit')) return '💳';
@@ -69,30 +91,70 @@ export default function ServiceOptions({ additionalInfo }: ServiceOptionsProps) 
   const renderCategory = (categoryName: string, items: Array<Record<string, boolean>>) => {
     if (!items || items.length === 0) return null;
 
-    const enabledItems: string[] = [];
+    const allItems: Array<{ key: string; value: boolean }> = [];
     items.forEach(item => {
       Object.entries(item).forEach(([key, value]) => {
-        if (value === true) {
-          enabledItems.push(key);
-        }
+        allItems.push({ key, value });
       });
     });
 
-    if (enabledItems.length === 0) return null;
+    if (allItems.length === 0) return null;
 
     return (
       <div key={categoryName} className="mb-5 sm:mb-6 last:mb-0">
         <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3">{categoryName}</h3>
         <div className="flex flex-wrap gap-2 sm:gap-3">
-          {enabledItems.map((item, index) => (
-            <span
-              key={index}
-              className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm sm:text-base text-gray-700 hover:bg-gray-100 hover:border-gray-300 transition-all active:scale-95 font-medium"
-            >
-              <span className="text-base">{getIcon(categoryName, item)}</span>
-              <span>{item}</span>
-            </span>
-          ))}
+          {allItems.map((item, index) => {
+            const isEnabled = item.value === true;
+            // Format the key for display (e.g., "servesBreakfast" -> "Serves Breakfast", "allowsDogs" -> "Allows Dogs")
+            const formatKey = (key: string) => {
+              // Handle specific patterns first
+              if (key.toLowerCase() === 'allowsdogs') return 'Allows Dogs';
+              if (key.toLowerCase() === 'curbsidepickup') return 'Curbside Pickup';
+              
+              // Remove common prefixes like "serves", "has", "is", "allows", etc.
+              let formatted = key
+                .replace(/^serves/i, '')
+                .replace(/^has/i, '')
+                .replace(/^is/i, '')
+                .replace(/^allows/i, '')
+                .replace(/^menu/i, 'Menu ')
+                .replace(/For/i, ' for');
+              
+              // Convert camelCase to Title Case
+              formatted = formatted
+                .replace(/([A-Z])/g, ' $1')
+                .replace(/^./, str => str.toUpperCase())
+                .trim();
+              
+              // Add back prefix if it was removed
+              if (key.toLowerCase().startsWith('serves')) {
+                formatted = 'Serves ' + formatted;
+              } else if (key.toLowerCase().startsWith('has')) {
+                formatted = 'Has ' + formatted;
+              } else if (key.toLowerCase().startsWith('is')) {
+                formatted = 'Is ' + formatted;
+              } else if (key.toLowerCase().startsWith('allows')) {
+                formatted = 'Allows ' + formatted;
+              }
+              
+              return formatted || key;
+            };
+            
+            return (
+              <span
+                key={index}
+                className={`inline-flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border text-sm sm:text-base font-medium transition-all ${
+                  isEnabled
+                    ? 'bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-300 active:scale-95'
+                    : 'bg-gray-100 border-gray-200 text-gray-400 opacity-60 line-through'
+                }`}
+              >
+                <span className="text-base">{getIcon(categoryName, item.key)}</span>
+                <span>{formatKey(item.key)}</span>
+              </span>
+            );
+          })}
         </div>
       </div>
     );
@@ -100,6 +162,8 @@ export default function ServiceOptions({ additionalInfo }: ServiceOptionsProps) 
 
   const categoryOrder = [
     'Service options',
+    'Food service options',
+    'Additional service options',
     'Highlights',
     'Offerings',
     'Dining options',

@@ -51,17 +51,25 @@ export default function Map({
     let isActive = true;
 
     // Dynamically import Leaflet only when mounted on client
-    Promise.all([
-      import('leaflet'),
-      import('leaflet.markercluster'),
-    ]).then(([LModule, MarkerClusterModule]) => {
+    // Import Leaflet first and make it globally available for markercluster
+    import('leaflet').then((LModule) => {
       if (!isActive || !mapContainerRef.current) return;
 
       const L = LModule.default;
-      const MarkerClusterGroup = MarkerClusterModule.default || MarkerClusterModule;
+      
+      // Make L available globally for leaflet.markercluster
+      if (typeof window !== 'undefined') {
+        (window as any).L = L;
+      }
       
       LRef.current = L;
-      MarkerClusterGroupRef.current = MarkerClusterGroup;
+
+      // Now import markercluster which expects L to be global
+      return import('leaflet.markercluster').then((MarkerClusterModule) => {
+        if (!isActive || !mapContainerRef.current) return;
+
+        const MarkerClusterGroup = MarkerClusterModule.default || MarkerClusterModule;
+        MarkerClusterGroupRef.current = MarkerClusterGroup;
 
       // Fix for default marker icons in Next.js
       delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -145,13 +153,14 @@ export default function Map({
         });
       }
 
-      // Fit bounds if markers exist
-      if (markers.length > 0) {
-        const bounds = L.latLngBounds(
-          markers.map(m => [m.lat, m.lng] as [number, number])
-        );
-        mapRef.current?.fitBounds(bounds, { padding: [50, 50] });
-      }
+        // Fit bounds if markers exist
+        if (markers.length > 0) {
+          const bounds = L.latLngBounds(
+            markers.map(m => [m.lat, m.lng] as [number, number])
+          );
+          mapRef.current?.fitBounds(bounds, { padding: [50, 50] });
+        }
+      });
     }).catch((error) => {
       console.error('Error loading Leaflet:', error);
     });

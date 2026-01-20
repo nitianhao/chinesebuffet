@@ -110,6 +110,8 @@ async function importData() {
             categoryName: buffet.categoryName,
             hours: buffet.hours,
             categories: buffet.categories,
+            images: buffet.images,
+            imageCategories: buffet.imageCategories,
           })
           .link({ city: cityId });
       })

@@ -1,11 +1,11 @@
 import { MetadataRoute } from 'next';
-import { getAllCitySlugs, getCityBySlug } from '@/lib/data';
+import { getAllCitySlugs, getCityBySlug, getAllStateAbbrs, getNeighborhoodsByCity } from '@/lib/data-instantdb';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://yoursite.com'; // Update with your actual domain
   
-  const citySlugs = getAllCitySlugs();
-  const states = new Set<string>();
+  const citySlugs = await getAllCitySlugs();
+  const stateAbbrs = await getAllStateAbbrs();
   
   // Homepage
   const routes: MetadataRoute.Sitemap = [
@@ -17,14 +17,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  // City pages and collect states
-  citySlugs.forEach(slug => {
-    const city = getCityBySlug(slug);
+  // State pages
+  for (const stateAbbr of stateAbbrs) {
+    routes.push({
+      url: `${baseUrl}/chinese-buffets/states/${stateAbbr.toLowerCase()}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    });
+  }
+
+  // City pages and neighborhoods
+  for (const slug of citySlugs) {
+    const city = await getCityBySlug(slug);
     if (city) {
-      // Track states for state hub pages
-      const stateSlug = city.state.toLowerCase().replace(/\s+/g, '-');
-      states.add(stateSlug);
-      
       routes.push({
         url: `${baseUrl}/chinese-buffets/${slug}`,
         lastModified: new Date(),
@@ -33,27 +39,27 @@ export default function sitemap(): MetadataRoute.Sitemap {
       });
 
       // Individual buffet pages
-      city.buffets.forEach(buffet => {
+      for (const buffet of city.buffets) {
         routes.push({
           url: `${baseUrl}/chinese-buffets/${slug}/${buffet.slug}`,
           lastModified: new Date(),
           changeFrequency: 'monthly',
           priority: 0.6,
         });
-      });
-    }
-  });
+      }
 
-  // State hub pages - commented out due to routing conflict
-  // TODO: Re-implement state pages with a different route structure (e.g., /states/[state])
-  // states.forEach(stateSlug => {
-  //   routes.push({
-  //     url: `${baseUrl}/chinese-buffets/${stateSlug}`,
-  //     lastModified: new Date(),
-  //     changeFrequency: 'weekly',
-  //     priority: 0.7,
-  //   });
-  // });
+      // Neighborhood pages
+      const neighborhoods = await getNeighborhoodsByCity(slug);
+      for (const neighborhood of neighborhoods) {
+        routes.push({
+          url: `${baseUrl}/chinese-buffets/${slug}/neighborhoods/${neighborhood.slug}`,
+          lastModified: new Date(),
+          changeFrequency: 'monthly',
+          priority: 0.5,
+        });
+      }
+    }
+  }
 
   return routes;
 }

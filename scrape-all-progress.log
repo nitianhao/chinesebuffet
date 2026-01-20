@@ -1,0 +1,2177 @@
+nohup: APIFY_TOKEN=8jZbabiDjHQiHregEYBRGHJEJ: No such file or directory
+⚠️  Could not read .env.local, using environment variables instead
+Reading JSON file...
+Found 1957 total records in file
+
+Found 1564 unscraped records (out of 1957 total)
+Already enriched: 393 records
+Target: Scrape 1564 records
+
+📦 Processing batch 1 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJZQqVDFrND4gRiNxd84D2Erk",
+    "ChIJcdGoWYMtDogR__zn7Q0lojE",
+    "ChIJCTOLZIYwDogRw0OWALV3nxU",
+    "ChIJ98DYLUQwDogRAlK5mVK1Aog",
+    "ChIJq6r6Qla2xokRg561FBN-6X0",
+    "ChIJ82dZPAnGxokRG-Jfuj4xjd4",
+    "ChIJg2MXtRzExokRf-g1M2Io3ao",
+    "ChIJq0j5j8HGxokRiNkK9DkDvtU",
+    "ChIJKZDV8qy1xokRk2ZbdyJE348",
+    "ChIJpX33Gdm4xokR-a2MWSKWdzY",
+    "ChIJ1Zi3HE_GxokRqJ7sn_o2xKc",
+    "ChIJYXzqegPIxokRk2xwc0I85Eg",
+    "ChIJKTUrxKzHxokR5D7XiI0yOUk",
+    "ChIJY7magi7HxokRTOPeoSJ5ov4",
+    "ChIJS3vBIBTIxokRQow0ipnNLss",
+    "ChIJhc4nHxy4xokR0fWf4At5-Es",
+    "ChIJ0yH-LQDHxokRryQ_AFsMQI0",
+    "ChIJr1FAeRfGxokR8vKH61oqGQ0",
+    "ChIJkYvTQCrGxokRfWJ0QSC_Ar0",
+    "ChIJu6quD--3xokR0YOFxarNbOk",
+    "ChIJ_a9oaNC3xokR1kZzH-sW3uI",
+    "ChIJu2CN_bC3xokRDU6k9LTRPlU",
+    "ChIJD_Zhun7JxokRoO8yOXxVgPE",
+    "ChIJi5Y-jQ7IxokR9luX5IeLjOY",
+    "ChIJp7yD1Ge2xokR_yFL8ncAUoQ",
+    "ChIJoeZuwGfIxokRcukhelD33uE",
+    "ChIJNS2GDmnIxokRkzQAxiigp7I",
+    "ChIJeR4kHevGxokRsQbUNAClJcw",
+    "ChIJdXeBZ5i3xokR8MJr-XWBaNQ",
+    "ChIJcT6VZFfGxokR2p3Y2NGVDzA",
+    "ChIJ9YF0UADHxokRYNZZATUomgY",
+    "ChIJl5T_Tt63xokRMGPzVjkuaOs",
+    "ChIJabJF9i_HxokRXpabTrY5TG0",
+    "ChIJt99ytBfIxokRlhu7vjwlHLs",
+    "ChIJ31pFpXzIxokRVaeYsIqd9BM",
+    "ChIJWeNNa_jGxokR0emSQPaFovE",
+    "ChIJ6YipsZi3xokRaFbSyqw9hzI",
+    "ChIJ82DPJirGxokR7GDJ1zQTsb0",
+    "ChIJXcHPmPa3xokRE5TD6dQ7lr8",
+    "ChIJlQ4Im1nHxokRUkN6FhzVWHU",
+    "ChIJ-17R8OfHxokRDL1frSKBAb4",
+    "ChIJIf5unZLHxokRhtSIKG411gQ",
+    "ChIJVQHYG4uAhYARy5TU756NqIk",
+    "ChIJPe15ufSAhYARf6hhhS-Kq7w",
+    "ChIJE254JIuAhYARaXWa1zg16A0",
+    "ChIJj1tdWD-HhYARGy7FzEgUB-E",
+    "ChIJFUvxpPSAhYARe7KCl28GNo8",
+    "ChIJFTpWPAp_j4ARH9UXgeJy5vE",
+    "ChIJkSegIXyBhYARbdCs8CIHuME",
+    "ChIJmZN_ljx-j4ARF16HqVQ2vnI"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+✅ Actor run started: LX2wyM2eobXOVMltQ
+🔗 View run: https://console.apify.com/actors/runs/LX2wyM2eobXOVMltQ
+⏳ Waiting for actor to finish...
+✅ Actor run completed successfully!
+📊 Retrieved 50 items from dataset
+✅ Successfully scraped 50 items
+💾 Progress saved (50 records updated so far)
+⏸️  Waiting 2 seconds before next batch...
+
+📦 Processing batch 2 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJHT3R4oqAhYARLvyjGU7q9Y4",
+    "ChIJI2tuDZqAhYARO_QYhY8IAzQ",
+    "ChIJP9HbwPSAhYAR2jzkKhT18MY",
+    "ChIJO-snjjeHhYARm8Mg2OwhFaE",
+    "ChIJQfeaP5SAhYAR-eP7uq2r1DE",
+    "ChIJmevPu_SAhYARMmQlHRt_Rj4",
+    "ChIJu1arufSAhYARYTkZE8E6oGQ",
+    "ChIJlYL0Wa-BhYARJi6qr49Ncv0",
+    "ChIJvWcY7I2AhYAR5NUXRDHctgM",
+    "ChIJTcQvb4-AhYARxgpb4-1EyJM",
+    "ChIJJ6nevPSAhYARaA2MbiRuBSU",
+    "ChIJY2BJ9-J-j4ARj_pzeKOJHF8",
+    "ChIJVwLhg12HhYARcIdFDox3HxM",
+    "ChIJ198mjPSAhYAR6g_G4vb9ksE",
+    "ChIJXbSH3w-HhYAR7x1xc3I2GGA",
+    "ChIJyRDJYIuAhYARyAPkIc7A2Vo",
+    "ChIJKeX8H-t9j4AR38MGinqQnmc",
+    "ChIJHZKUwfSAhYARbTxrs8Pa7_k",
+    "ChIJayBxyPSAhYARj12TiMzIRZ4",
+    "ChIJ9ZO2sS2BhYARvva8Lnz0HFI",
+    "ChIJjfQjX4uAhYARqZnA2Bg758w",
+    "ChIJ51REwfSAhYARvoU7sm7LGps",
+    "ChIJ33bEwHeHhYAR0TQ3w_5YJoc",
+    "ChIJKSZZU4uAhYARS57sg4li-8w",
+    "ChIJ8dFJmeSHhYARq0qoC7tZBiQ",
+    "ChIJx1IXkvOAhYARMNdQA5IcmEc",
+    "ChIJW-VIGYuAhYARDoGG1byUOcs",
+    "ChIJ0QaAqvSAhYAR3ID2OTZi71g",
+    "ChIJsfbADX2AhYARso30kEbG2yc",
+    "ChIJQ8ltgPSAhYAR7MLcpoA-6vM",
+    "ChIJ1aUl92KAhYARTY_D5x-dTnE",
+    "ChIJ_0OEpPSAhYARmd_vGxWFN68",
+    "ChIJE_x2VGSAhYARoXDSoUvUjkI",
+    "ChIJk5c5ZQR-j4ARhHCzKVyTxTc",
+    "ChIJ95iY6haHhYARtOr7VcGNGQE",
+    "ChIJyXwHlvOAhYARm3NdhLfKKuU",
+    "ChIJMTt42OJ-j4ARhWVPXaTY2jc",
+    "ChIJvS92wfSAhYARC2tq3BmjmIM",
+    "ChIJP7NkRRCHhYARuRfNZhoGJI8",
+    "ChIJCyGWvfSAhYARVoUSujzOuqo",
+    "ChIJverWRvOAhYARVfNtAtDviIc",
+    "ChIJAQCctPSAhYAR72MQv1h658I",
+    "ChIJs2uddV2HhYARjdjZIjMbg1U",
+    "ChIJ1dIgA82BhYARF0NrYkCbYfI",
+    "ChIJX77nnpF9j4AR-y4znSpMuYc",
+    "ChIJBV5LmLe5woARcEuWjesz8-M",
+    "ChIJR77OJy2XwoARV5uNNkCTVfM",
+    "ChIJ5U8nMR-cwoAR__XDuL7FTmM",
+    "ChIJkwjGOFK_woARqDgRmx9i_X0",
+    "ChIJwzfKrLbHwoARJrilSPACY_E"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+✅ Actor run started: kq8ybWZlNKnRKLeMv
+🔗 View run: https://console.apify.com/actors/runs/kq8ybWZlNKnRKLeMv
+⏳ Waiting for actor to finish...
+✅ Actor run completed successfully!
+📊 Retrieved 50 items from dataset
+✅ Successfully scraped 50 items
+💾 Progress saved (100 records updated so far)
+⏸️  Waiting 2 seconds before next batch...
+
+📦 Processing batch 3 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJz4WkqSi4woARLW7Kgesg2PI",
+    "ChIJaw-zN9jHwoARLb3FlSt6TSw",
+    "ChIJH8IvD1rGwoAROKIvYQixrcM",
+    "ChIJj2yLqFvGwoARIcaIkZyNrTc",
+    "ChIJz-cGTPi4woARk0WgI2vv_Pk",
+    "ChIJ_etSrzLGwoARy3jLTRcOGP4",
+    "ChIJj_zD29XHwoAR9I997k0v2bU",
+    "ChIJ8ymRd9HHwoARJY3CCmI293o",
+    "ChIJQ0vnzVvGwoARmNDhf4YgIcU",
+    "ChIJl_NBe5_HwoAR3pv5DjuLZ7k",
+    "ChIJmUad2VnGwoAR-x_TD_jDKXQ",
+    "ChIJp_Vh-rDHwoARpNm-h_lUFP0",
+    "ChIJc2KaQ1nGwoARaoH2ks-gGcg",
+    "ChIJNRuP28rHwoARsVROzrrmszs",
+    "ChIJR9EAnUe_woARCHNKFWNgEU0",
+    "ChIJ6Vw4T0K7woARd5Tn1I-YwSk",
+    "ChIJ_bN7G3HPwoARcnFVWl_H8os",
+    "ChIJY-yh8VrGwoARZaakJwHYcR4",
+    "ChIJmxE3m1W_woARGvyhs-ZIF-A",
+    "ChIJn2kx7JLHwoARDmGiB376xZo",
+    "ChIJ4-0cbXe7woAR4yecKEw4gpM",
+    "ChIJre7lnkq5woARc4eVeKkOoEQ",
+    "ChIJM2CAe4LHwoARpYc6ydQYiLA",
+    "ChIJpeD4wYG4woARpX9-6xQNsWA",
+    "ChIJJ_g-wGbHwoARlSKy83mDibI",
+    "ChIJf9jSo8u7woAR6TIp0hqze2w",
+    "ChIJldMq7KK5woAR5XzXd1F1B1k",
+    "ChIJs9q0gHPGwoARHpHNuUmLvtY",
+    "ChIJr4h3TpjHwoAR7EG_za6LgP0",
+    "ChIJG57A24y7woARWkikFbxeKdA",
+    "ChIJ28pEyf_DwoARw0Eldrb7BZs",
+    "ChIJTSWqRie_woARNsLoEiiJ00M",
+    "ChIJA-qq5gjEwoAR5exBEVFn2Kw",
+    "ChIJIRJIYl-7woARjobN_PT56Eo",
+    "ChIJm_uSXqzAwoARjBgpNxtBPRQ",
+    "ChIJJVSXlV_PwoARh-0Cls6awTY",
+    "ChIJFycRzrHHwoARwBAa5sAAhOg",
+    "ChIJZX3WdLbHwoARXgQYRyTmkic",
+    "ChIJXwtmVGi7woARX-nyGBdzBt8",
+    "ChIJhc4A0yQ23YARcV4YZBEfHXY",
+    "ChIJd6gGUXbHwoARuFb9FJlVBJg",
+    "ChIJ5ZfrY4nHwoARBhJV3Ml0kGA",
+    "ChIJk4rRiG-9woAR7E7n4jO7pqo",
+    "ChIJjUyHr9W7woAR5jM21SKip_0",
+    "ChIJ03p4m1W_woAR96Yzvo0Ca5I",
+    "ChIJY39e2KXIwoARz3XEFrVF93w",
+    "ChIJT2xcGie_woAR8uh6e-RvZyw",
+    "ChIJu0Tq9J-7woARF0t-T_MatJg",
+    "ChIJT1d9Z1rGwoAR-F0MntLRrlM",
+    "ChIJ4_zY4B--woARl1JEYZB50SY"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+✅ Actor run started: 8S5K9iZPP6XKHmld0
+🔗 View run: https://console.apify.com/actors/runs/8S5K9iZPP6XKHmld0
+⏳ Waiting for actor to finish...
+✅ Actor run completed successfully!
+📊 Retrieved 50 items from dataset
+✅ Successfully scraped 50 items
+💾 Progress saved (150 records updated so far)
+⏸️  Waiting 2 seconds before next batch...
+
+📦 Processing batch 4 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJO-zj1Zu5woARvbMNo6qgZYM",
+    "ChIJW3L9H9c13YARqRalElErrAA",
+    "ChIJq8P6Jn64woARTVV3Bf5BgVo",
+    "ChIJNcQoRzy_woARoKj8HeOlyqY",
+    "ChIJq9Pek0vGwoAR_iRiVVz4ZCg",
+    "ChIJRaosTfa5woAR4wOTRcJfhog",
+    "ChIJU1_7xxi_woAR8U6RimokPDg",
+    "ChIJi2bu7Ha5woARbHYKW4gmT9k",
+    "ChIJk0BY74w13YARGApwAUoIzU8",
+    "ChIJt0TKFaC7woARVXwpIoR83zo",
+    "ChIJLZjAJH64woARL0_uqmA5jXM",
+    "ChIJFfyO2FrGwoARWNIuGZRBXbs",
+    "ChIJ82pfBe27woARVYJAhWaHRV4",
+    "ChIJ8dmI-KPHwoARFMV9bq8mvQ0",
+    "ChIJa9ZAxEm7woARKUF0-cjv72E",
+    "ChIJwRS6YaC4woARDMMEGJovdPA",
+    "ChIJc5alenRK3YARmA92o72b26A",
+    "ChIJX8hbGRa5woARJ_hvTwW7Hq8",
+    "ChIJ29vn80-5woARcPkO44cJPio",
+    "ChIJY6vs9a3PwoARtyy_uXSGjFQ",
+    "ChIJj0wUCMrHwoAREznb5ubGVnw",
+    "ChIJ5ZNDtTu_woARN_oM_I9pUpo",
+    "ChIJb8nhZYDIwoARCjsg5E6jwbY",
+    "ChIJzwRqgs6-woARXxqqihr_YYk",
+    "ChIJ0VpRaAjGwoAR07BTU-z1kHY",
+    "ChIJRyF3bZy7woARKC7OSU4wuP8",
+    "ChIJedrIDlnGwoARqk3KNmDXLpE",
+    "ChIJtagnzWm5woAR2KBbLb5JceU",
+    "ChIJaxWqmnq4woARFOnoNC6hgn0",
+    "ChIJiwk1vCO_woAR2b29_baYPFc",
+    "ChIJnwBmY2jIwoAR9AffomiQ-B0",
+    "ChIJ75p-_iHHwoARVdkS14137u8",
+    "ChIJL4vKAMvHwoARxSWRFfesApo",
+    "ChIJi9JeTZi4woAR-4bqxxqgOzg",
+    "ChIJu06Xi067woARTHa6eWxgZSY",
+    "ChIJ2yY6fhLGwoAR1-Lsyc2dKr8",
+    "ChIJ7QYWyIK7woARO-CPMuJz1PQ",
+    "ChIJlzIip1nGwoAR_PIzuDetJFI",
+    "ChIJ1b7hZYDIwoARJnTEroEDqcQ",
+    "ChIJeUtcbefHwoAR4LUUWvXFBCo",
+    "ChIJ1evWfgC7woARLkD4J6fLEhc",
+    "ChIJIZcTb4y_woARVxjyKtPCROs",
+    "ChIJL7AEBE7PwoARAwndl9KRj4Y",
+    "ChIJYzT551rGwoARVG7HSTYD8qw",
+    "ChIJ09LqsaO7woARt1hiXTMMbpM",
+    "ChIJ4YMxQF25woAR451_sJTb0yk",
+    "ChIJsejvqai4woARnzzuarYeaf4",
+    "ChIJZ1cJg4u4woAR4duLkOxL8ik",
+    "ChIJOezzS1rGwoARDRirQsLqWuM",
+    "ChIJYUfgaPm4woARLrUzjwm_wlc"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+✅ Actor run started: DXEDfYI0Ow2vj6s8n
+🔗 View run: https://console.apify.com/actors/runs/DXEDfYI0Ow2vj6s8n
+⏳ Waiting for actor to finish...
+✅ Actor run completed successfully!
+📊 Retrieved 50 items from dataset
+✅ Successfully scraped 50 items
+💾 Progress saved (200 records updated so far)
+⏸️  Waiting 2 seconds before next batch...
+
+📦 Processing batch 5 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJX9eyIUm_woART2-8how99Pg",
+    "ChIJE9xa4bHAwoARnTJjSUohDJ4",
+    "ChIJCbZo4VG_woAR60sCftVQDaA",
+    "ChIJVTGn9jWYwoARb4o9noRMO90",
+    "ChIJ5ZPE8o2awoARpEEHyuvjFqc",
+    "ChIJsd8wj6qbwoARo4VIIayRZ4I",
+    "ChIJo0kUqKubwoAR_AUdbQk9DI0",
+    "ChIJQelgHt2VwoARYERFVF2dQHY",
+    "ChIJAzWLgiOXwoARGM_n9de43fY",
+    "ChIJy3SdcPu9woARaQwim79C7C0",
+    "ChIJuwm-oqCQwoARJ1hx2vQXV_8",
+    "ChIJRTUWnvy9woARS7NzCECwZsU",
+    "ChIJK8Sg556RwoARx86PUhXfszk",
+    "ChIJI3_YkUCbwoARcJt4ytihcxA",
+    "ChIJTdTix5SXwoARZ1GytZsqLts",
+    "ChIJVYfGP8KbwoARrfhE2TvkvYE",
+    "ChIJXa5iV3SZwoARNEvMTHM2gck",
+    "ChIJEXMvp4abwoARKskjTkSLnwQ",
+    "ChIJ5aE4HQeZwoARS_jLxssmf34",
+    "ChIJJ5pXEtiQwoAROckuT-8dRkA",
+    "ChIJo0fjXwiZwoAReLIRoJN9mJE",
+    "ChIJT5cCxY-ZwoARcatqmA-DZaU",
+    "ChIJG3RH7CyWwoARxi49_mUQCPQ",
+    "ChIJx9UWDG2XwoAR3owyI9ij1Io",
+    "ChIJO7skFr6QwoARI3PZLmfuHMQ",
+    "ChIJvVfKij6RwoARm-znjKApMbE",
+    "ChIJxYThA2KQwoARsLkT6051Sn8",
+    "ChIJhyrKgdI33YARAmqeP2Jsbf8",
+    "ChIJ6yaIuQGtNYgRrGnX6Gxsikc",
+    "ChIJs9iFJC23t4kRa5Sf1VH3NGk",
+    "ChIJt_bImC25t4kRjWPY5yGOX4U",
+    "ChIJf4bWtiS2t4kR8QQw-sO0Bik",
+    "ChIJi4CqOLTJt4kR7KJtJkpPPQ0",
+    "ChIJx6X7A4e3t4kRZEyMF0iqEys",
+    "ChIJeRMXQ3m5t4kRI4NAO8Q18pw",
+    "ChIJqXN9hLm3t4kRiB1EhAOAVz0",
+    "ChIJk2NSSAC3t4kRcTSQkZsWBOc",
+    "ChIJWbDYQ-q3t4kRluRkCxojHi4",
+    "ChIJ7SXjUTe2t4kRPE0xBroJK_g",
+    "ChIJTRIX_ey3t4kRGkTeAWsk_9w",
+    "ChIJAW6V4o23t4kR9VKu5P3pd6I",
+    "ChIJl2JZZMi3t4kRZFkJ3rd8IsA",
+    "ChIJtZJQ2Y23t4kRs7N-Zpd5j1Q",
+    "ChIJX1RQ-bG3t4kRFQG5gEYKHxQ",
+    "ChIJ77MH9423t4kR1yI5zyphx9E",
+    "ChIJU2Ss5Y23t4kRjO9i2ArBXno",
+    "ChIJGWrp3o23t4kRqfq8f4NwqoI",
+    "ChIJm-uSRCHIt4kR_FFrlMV9WEk",
+    "ChIJ2RrBICy4t4kRBGPgaKzFvcE",
+    "ChIJ9wVeDq63t4kRwh7qDu3zyqo"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+✅ Actor run started: jXhgUJgWv7Jz4wgjw
+🔗 View run: https://console.apify.com/actors/runs/jXhgUJgWv7Jz4wgjw
+⏳ Waiting for actor to finish...
+✅ Actor run completed successfully!
+📊 Retrieved 50 items from dataset
+✅ Successfully scraped 50 items
+💾 Progress saved (250 records updated so far)
+⏸️  Waiting 2 seconds before next batch...
+
+📦 Processing batch 6 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJj7Uuxo23t4kRAbXVguBedUc",
+    "ChIJ7S8g4Y23t4kRk1M7B60v_Lw",
+    "ChIJR7oJX4O3t4kRMk9wMjj9S9A",
+    "ChIJ7dYFEDO4t4kRN9V5ruem5L4",
+    "ChIJ__8jWYy3t4kRapAJ24HEfDE",
+    "ChIJcVRqOB3It4kRYft504Yd678",
+    "ChIJLQcMHXW3t4kRq28J2ukEI5E",
+    "ChIJA2yUXs-3t4kRKQebJqdtxtc",
+    "ChIJ6YCC2EQVkFQRnU7mI0L-rQc",
+    "ChIJ32fXjYoUkFQRHJcKdo6yO2E",
+    "ChIJL037U7xqkFQRyIYgmPJzieU",
+    "ChIJa2TgWLxqkFQRUHagkFyjJ98",
+    "ChIJd_P1J2IRkFQRrlCcZsU0GAQ",
+    "ChIJPemT0bRqkFQREiTAzMgdB0M",
+    "ChIJ28RmYd9DkFQR2bWX9aNJikc",
+    "ChIJ-eF_9rgRkFQRQ1tRXo2x_RI",
+    "ChIJp-24eGQXkFQRMKv19GfDR-Q",
+    "ChIJTVaFaLxqkFQR42Oyj9kuuqg",
+    "ChIJb-fHC-9rkFQR6GgwSRE8f2Y",
+    "ChIJfQ1kJTcRkFQRU5OhnO71YqI",
+    "ChIJn3FkYQYVkFQRHzoP_DJA-4Y",
+    "ChIJnb9JP7xqkFQR1r8VvSZ-zsY",
+    "ChIJvxCod1YRkFQRIb-30C3EAqc",
+    "ChIJKbLpOI8UkFQRC30sDr56TAs",
+    "ChIJAZtONKdrkFQR3vB9Wtz3-4A",
+    "ChIJVVWF7ooUkFQRtdshBrxhPUQ",
+    "ChIJOxWO3PcTkFQRYayAXrsAuEg",
+    "ChIJp-tsXbxqkFQR1odBHpvf_YY",
+    "ChIJ-wqz0XYRkFQR5MqxsG-3xno",
+    "ChIJhzCYbwBrkFQRvY0tB68Tid4",
+    "ChIJ_RikQrxqkFQRH1VyS-G5DNI",
+    "ChIJ_-VzJwsUkFQRg_p19UuEKJo",
+    "ChIJYYN0DHRrkFQRbz4HEE2Zxbk",
+    "ChIJFcFOWLxqkFQRMuFR02hPit4",
+    "ChIJ440RaLxqkFQRSwfzSKGlIzg",
+    "ChIJg1WHfLNqkFQRmMF8bO42-K4",
+    "ChIJIfHalrxqkFQRaVg8DKk28po",
+    "ChIJbTiGhGRrkFQRhy1uWRKbmVM",
+    "ChIJRa6XiLxqkFQRhREHDZZihzE",
+    "ChIJBRWjsYZrkFQR5BNry0t0Smo",
+    "ChIJcfCH-gd7bIcRNgi1pdi-nAE",
+    "ChIJz1c7vh9_bIcRGiYOhBeBHz0",
+    "ChIJL7VeeYuAa4cRNUc9PNeDmjM",
+    "ChIJHQ9VH2eAa4cRgIk8JW4vJIE",
+    "ChIJY-5Ny-6Ba4cR0cqdb_FPvkc",
+    "ChIJT44bPyt5bIcReZb6itIMD5o",
+    "ChIJx_TX17R_bIcRHnZQJA5KPiE",
+    "ChIJtyKyDTN7bIcR7nEEWchMBYg",
+    "ChIJweN_M3R-bIcRpngVEN5YR0U",
+    "ChIJs2jKDHl_bIcRrt4GKQUiUR8"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+✅ Actor run started: cptItXvT2zoaOhXRG
+🔗 View run: https://console.apify.com/actors/runs/cptItXvT2zoaOhXRG
+⏳ Waiting for actor to finish...
+✅ Actor run completed successfully!
+📊 Retrieved 50 items from dataset
+✅ Successfully scraped 50 items
+💾 Progress saved (300 records updated so far)
+⏸️  Waiting 2 seconds before next batch...
+
+📦 Processing batch 7 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJ3U-avi99bIcR7gRofiAPEn0",
+    "ChIJaTdh0Nd5bIcRAyFQ0BaDv3A",
+    "ChIJl1mUBwB5bIcRJ7btGRT8das",
+    "ChIJ_0r_quF_bIcR7gAzqfcuDCQ",
+    "ChIJm70vBLN-bIcRxyyQlM71J8o",
+    "ChIJEYCVdvp_bIcRoZJJxZuMevo",
+    "ChIJf7zwUax-bIcRg92HgqPW3wk",
+    "ChIJw9oMT6l5bIcR2goLgZtRR3U",
+    "ChIJ3XhMll95bIcRp1ED6dmKufo",
+    "ChIJGyE7_cR4bIcRuzF0YptKk0E",
+    "ChIJM7s1OJZ-bIcRKgfsb7KgipQ",
+    "ChIJte-nk115bIcR9c9h2j_tpK8",
+    "ChIJYzIhVG9_bIcRYirGjZXEF5c",
+    "ChIJiz68dxp5bIcRnDG_uUVRVJw",
+    "ChIJo98A4Bp5bIcRuPNa0RDovf0",
+    "ChIJB1aZqGd_bIcRmS7O2eYJ8Uc",
+    "ChIJc7jqqXV-bIcRyqyhJig01X0",
+    "ChIJB4a44eR_bIcRM8s20n7nxkw",
+    "ChIJk9vBC4V7bIcRmt7vZuPV1QQ",
+    "ChIJXW6jf3CHbIcRBIH--qWXbD0",
+    "ChIJMe_kGEl_bIcR_GuTvBcnor8",
+    "ChIJh5dYuc1-bIcRrA4G15yYqjg",
+    "ChIJvcQOeeN-bIcRzREF62EAfzE",
+    "ChIJi4r7LbF-bIcRiiEiL2UiiAs",
+    "ChIJcfCH-gd7bIcRNgi1pdi-nAE",
+    "ChIJ-VPF5N2fToYRs-KLPEkNiAU",
+    "ChIJm9s-eEEnTIYRok22cKIgmq4",
+    "ChIJby71PD6dToYRyt4XXDc5tgU",
+    "ChIJ-d6zGLWjToYRppVgbJDh9RM",
+    "ChIJk8fDen2aToYRvlH1AsJia7o",
+    "ChIJaUzu-mOaToYRvCcCw23YBwk",
+    "ChIJUd82PA6hToYRKu6eiU3gWGE",
+    "ChIJm5g0jwGfToYRQWW-L-GCoJg",
+    "ChIJ3xJUndCfToYRxnGoPJHqt7w",
+    "ChIJ8Xc5UjEhTIYROYrUg5aFFnU",
+    "ChIJodnwRt-dToYRy8xWK76yxw4",
+    "ChIJc-r5siGfToYRhFeIZiPxuR4",
+    "ChIJTQQfuo4nTIYRordZLpLBT9o",
+    "ChIJ22Ci9y-ZToYRghQoxsUonC0",
+    "ChIJb61_KtKYToYRTt8790WeSBQ",
+    "ChIJD9RzUamhToYRO-P-4nohgG8",
+    "ChIJnYU5FhiZToYRAABPRjoEeAY",
+    "ChIJ3Yp_y4IgTIYRedDz34j7MFc",
+    "ChIJx-EY2r2fToYR4xz2qlETukc",
+    "ChIJK9z3zqKfToYR81s9o0FdmZE",
+    "ChIJdbNcWayRToYRSbnLcPnODyQ",
+    "ChIJufIkNcKdToYRzke9kfEIgEI",
+    "ChIJFWJ_pPYjTIYR2FOFsd2lA8Q",
+    "ChIJSYoagqyRToYRfeoPeYSIrxk",
+    "ChIJZ8wlIfKfToYRLGAoUxU2nzw"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+✅ Actor run started: m2GbJUvcd9ugjlfMj
+🔗 View run: https://console.apify.com/actors/runs/m2GbJUvcd9ugjlfMj
+⏳ Waiting for actor to finish...
+✅ Actor run completed successfully!
+📊 Retrieved 50 items from dataset
+✅ Successfully scraped 50 items
+💾 Progress saved (350 records updated so far)
+⏸️  Waiting 2 seconds before next batch...
+
+📦 Processing batch 8 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJIwmaTxmfToYR3LYceOPjbzM",
+    "ChIJnX1vcwCfToYR1VF3CQWn5Ao",
+    "ChIJk8fDen2aToYRvlH1AsJia7o",
+    "ChIJaUzu-mOaToYRvCcCw23YBwk",
+    "ChIJ-d6zGLWjToYRppVgbJDh9RM",
+    "ChIJ-VPF5N2fToYRs-KLPEkNiAU",
+    "ChIJm9s-eEEnTIYRok22cKIgmq4",
+    "ChIJb61_KtKYToYRTt8790WeSBQ",
+    "ChIJSYoagqyRToYRfeoPeYSIrxk",
+    "ChIJc9rwb2W4QIYRneVK2roYYAE",
+    "ChIJ80GOoP6cQIYRpdWvXVHURbk",
+    "ChIJ8cdReDHdQIYR9zrBm7yasio",
+    "ChIJDzjUPQCbQIYRkWGxGthE_tw",
+    "ChIJwRdgi8vcQIYRevZJUrCc0Fk",
+    "ChIJ_bhF_-aZQIYRVkDjE3qhFsQ",
+    "ChIJW6WSgdKXQIYRgSL9p885SnY",
+    "ChIJS3_5wM2XQIYRcSdU2G3lGd4",
+    "ChIJ0bnyn3a-QIYRl9DeGaY3uk4",
+    "ChIJa2Q06Oi9QIYRkFhok8OrixA",
+    "ChIJi6aPbL_BQIYRpabcIU6_SjA",
+    "ChIJ2Tm25N7BQIYRbPbBg0k4FbY",
+    "ChIJ5eA6SQDXQIYRsOa6Fyiw_Jg",
+    "ChIJeTnO4eW_QIYRl3j5Eyx7uhg",
+    "ChIJwzIYv9vDQIYRB_SHzSNBpcE",
+    "ChIJ3wG5vlbBQIYRYpdTrgIfo-Y",
+    "ChIJDSIKnTvCQIYRRDm85GU4JfA",
+    "ChIJq5rHWyPHQIYRmAt5EEiDUMI",
+    "ChIJ4b1nWubDQIYRyaWtseeCF38",
+    "ChIJw9jsuGPBQIYRI1Eqwr5DUzs",
+    "ChIJhaNTui-_QIYRTQQ-lnvKciE",
+    "ChIJEdHzoLbBQIYRETupw5AKXpA",
+    "ChIJo2KTqju_QIYRqFVvdCsutDs",
+    "ChIJSV20CBi_QIYRd1tQPtBQjv8",
+    "ChIJ0Ws6SCO_QIYRbOEvJcNjhzc",
+    "ChIJ5deKMyq_QIYR1f8UpbHefsw",
+    "ChIJb9iRT8TDQIYRmOMD5vocwB8",
+    "ChIJH_WngaTAQIYRkbIiCkpo-ts",
+    "ChIJ_QXQkh-_QIYRBDsEwjPW1kU",
+    "ChIJD9uG7OHDQIYR27Q1ECCBGG0",
+    "ChIJRft3kObDQIYRiL0dvb33tHU",
+    "ChIJ0-L_R_DNQIYRbbk5sz8l7y0",
+    "ChIJ8dfzke3RQIYRHdD8CsqjMCE",
+    "ChIJYXmG5-HKQIYRVa-9kicIewE",
+    "ChIJ-V8WRirBQIYRFeDQk-5c5co",
+    "ChIJqZ9GBuW_QIYRTUoBNsgnIw4",
+    "ChIJsVQlO4jBQIYRBnXTb9pCr1U",
+    "ChIJFTGf7xe_QIYRSc34ln_EMC4",
+    "ChIJzyaroDu_QIYRSQ34PNEQkj0",
+    "ChIJld24_WTHQIYRxXvG7YH40_g",
+    "ChIJuRHz52G_QIYRxIp7J-aRmoA"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+✅ Actor run started: J8crl1v1bPdFIMKrR
+🔗 View run: https://console.apify.com/actors/runs/J8crl1v1bPdFIMKrR
+⏳ Waiting for actor to finish...
+✅ Actor run completed successfully!
+📊 Retrieved 50 items from dataset
+✅ Successfully scraped 50 items
+💾 Progress saved (400 records updated so far)
+⏸️  Waiting 2 seconds before next batch...
+
+📦 Processing batch 9 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJUwRG0HW_QIYRD6VV_YYRJFE",
+    "ChIJLX5EAGPBQIYRNd52FDUGJVo",
+    "ChIJqfguMku_QIYRd37lnmSdfBE",
+    "ChIJCV6R2EvHQIYRqjvHR9eE8P8",
+    "ChIJh6uBttrCQIYRZ6i15eIPyCw",
+    "ChIJtSc3i_XHQIYRPObH8_vEwNM",
+    "ChIJNy66RQDBQIYRwkbFFrK7hRA",
+    "ChIJt_REpnXbQIYR9sXxHooHMH8",
+    "ChIJcZL4NOzBQIYR39o2ZfMEaZc",
+    "ChIJ0U4QFUbBQIYRMSo37MFw7Ik",
+    "ChIJ8ZJcIALLQIYRrvla_ZwRbLA",
+    "ChIJTYvgGoLFQIYR9xNzbTgCmiw",
+    "ChIJpRigTwbFQIYRkw38EAtxrMo",
+    "ChIJA0fKZibdQIYRCKr2ANhhokU",
+    "ChIJp6ZTjxa_QIYRX8dCnbSBhBU",
+    "ChIJk0ApUCLRQIYRBmE-IBgRX1w",
+    "ChIJMzhDoV-_QIYRPQyTeUD4DZ0",
+    "ChIJg5FEU3vHQIYR6LRc6SH18L8",
+    "ChIJX_4-UcvcQIYRYUrEC-AA_pU",
+    "ChIJ08VJrJXEQIYREXzX6SLa_hA",
+    "ChIJyXHml2DZQIYRl-knzdVeqDY",
+    "ChIJNc4K5cTCQIYRe9OyIN7DcGE",
+    "ChIJSbfNMS-_QIYRJR2XZfauCAU",
+    "ChIJs8GxCJDGQIYRJzXeFxr1_HU",
+    "ChIJu2FXIiTCQIYR-b9wk5tfOEo",
+    "ChIJmYOKfi_EQIYRZUBstYZACQo",
+    "ChIJF7Xtj9rFQIYRd8M2df44Qnw",
+    "ChIJa2Eg6eDdQIYRkwdHbp03cIM",
+    "ChIJM2jNYD7HQIYR-mHY_M3kj8M",
+    "ChIJx_5pIKHHQIYRd7ce_JJ3zPw",
+    "ChIJb-3XKcrJQIYRlR9F0g06e9I",
+    "ChIJWw6hIe_CQIYRb4KrQtfMxVA",
+    "ChIJ67StKejCQIYRsDyi2uzoOLY",
+    "ChIJWxriwwXIQIYRKs2cyBPbcDA",
+    "ChIJc_Kl6EPHQIYRRo0BvuT8UEY",
+    "ChIJbY764vjBQIYRfMk0y-IETkA",
+    "ChIJn3sngiHOQIYRdsR57Douulk",
+    "ChIJZc08w8jcQIYRZjlUCiqpAHs",
+    "ChIJmR8jI5fEQIYR9zealf84rL4",
+    "ChIJ-fEp4NDdQIYR0Da0kjICpWE",
+    "ChIJ_5J0g-7EQIYRxmN9jE8Pw8o",
+    "ChIJ03y92KLHQIYRt97VGDN7UOQ",
+    "ChIJE5KfSFXGQIYR2UKQ2wTMf58",
+    "ChIJHT9WSFrJQIYR97HDrcj6tWo",
+    "ChIJQaj9YzzdQIYRAgYH_hSVkOk",
+    "ChIJBeSi8hq_QIYRdg8s3swItrs",
+    "ChIJrcp_LEvBQIYR0a-Dp9KqnB0",
+    "ChIJ7Xo1ImTMQIYR6M7jPYLz8Zs",
+    "ChIJ6z14F4zEQIYRcakuL-mubvQ",
+    "ChIJ2cJZ117CQIYRRxQRJcJftB4"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+✅ Actor run started: fztAGrDQatkxYRPIR
+🔗 View run: https://console.apify.com/actors/runs/fztAGrDQatkxYRPIR
+⏳ Waiting for actor to finish...
+✅ Actor run completed successfully!
+📊 Retrieved 50 items from dataset
+✅ Successfully scraped 50 items
+💾 Progress saved (450 records updated so far)
+⏸️  Waiting 2 seconds before next batch...
+
+📦 Processing batch 10 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJT0TSXCPFQIYRFGwGo8nraB0",
+    "ChIJ72ACtgjGQIYROd4uu-8OvMU",
+    "ChIJfeSZqEPDQIYRH4CjHfTxqf4",
+    "ChIJNfc3yxbEQIYRq6OEXE22hLU",
+    "ChIJdUKkpjDdQIYRiOnD_Ce-UWM",
+    "ChIJ3_RjExu5QIYRnOf2c1n7OdE",
+    "ChIJQUOa00a5QIYRQvRrrq4IktE",
+    "ChIJ2afCtDaxQIYRNr5vAJcs8qY",
+    "ChIJr9ZsYDu_QIYR0XOLg_GQ2Sk",
+    "ChIJB72hBxfdQIYR4LJ3_mGWVTA",
+    "ChIJZY91UiO_QIYRrQ1wnhC4wUo",
+    "ChIJkXoTqfa_QIYRlGCYlVUkAFk",
+    "ChIJDRtyyV29QIYRA70eE0zuZd8",
+    "ChIJ0V64bJa2QIYRdkHihcMDbMc",
+    "ChIJJY6SkXbBQIYR0fzDnNEFSaw",
+    "ChIJi3Jn3iDFQIYRj9uXjcUeZmQ",
+    "ChIJ39KXnce4QIYRvlgJKqrENSk",
+    "ChIJeS6UyVW_QIYR-TR2eol9sKY",
+    "ChIJT5-X7mqxQIYRT3xjcTZNkZY",
+    "ChIJxUHglu7DQIYRCc0sdgaaK-Q",
+    "ChIJo45SEofPQIYRBKMGenHoSII",
+    "ChIJI1Xm9m3DQIYR3KiX8vie4jI",
+    "ChIJnatR7r_HQIYR08SNgDSjvvo",
+    "ChIJwYwLXSS_QIYR423520yjaqM",
+    "ChIJGQYt7c_CQIYR7N_c8Ls3iQE",
+    "ChIJB1vOpvXNQIYRoJGRNRue_ro",
+    "ChIJgcfyZTjQQIYR5cXEyi8oJkw",
+    "ChIJfaA8SlqvQIYRozXxuihDhdk",
+    "ChIJR6vXCuTNQIYR-TkbzIfQFyk",
+    "ChIJKVOIlyPEQIYROt9Ia_Sp4DQ",
+    "ChIJm-EJDdS0QIYRPzugwbAlykI",
+    "ChIJJ_L7amTdQIYRuYuusmGLgXQ",
+    "ChIJS5VzzCe-QIYR69Qiukr8fyA",
+    "ChIJl2SYH0HFQIYR6g53dLgOCR4",
+    "ChIJTV9kcP3FQIYRU8t7EyNXLLI",
+    "ChIJocWzLYPGQIYRIH_YC386gi8",
+    "ChIJ7QW5l9zBQIYRM55nghS5ep4",
+    "ChIJOR-lxSW_QIYRHaErE8WwcL4",
+    "ChIJl7YotkggQYYRQlaGOyGA5lE",
+    "ChIJA2Y0Ug7BQIYRx90jE4jDAxU",
+    "ChIJAaFWMG3DQIYRR3sCC6CkmYQ",
+    "ChIJi1D_u7jDQIYRqITJGMEP__E",
+    "ChIJMXyz5D2_QIYRD9b0ul80_k4",
+    "ChIJ_UBIUvPJQIYR034v6Qz_XmU",
+    "ChIJwXk_kr_FQIYROiA9COz5CYY",
+    "ChIJkf3vOHzGQIYRkMXPBHBhiIY",
+    "ChIJK8S4Xg7DQIYRorTxmnHxt3g",
+    "ChIJVVldQcncQIYRrDoA9JvT9Wg",
+    "ChIJofQUO5_CQIYRk56Ppzvy8xs",
+    "ChIJvwXEoDXFQIYR_nte71Gxq3A"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+✅ Actor run started: ow7oLdugIIEMsuCEj
+🔗 View run: https://console.apify.com/actors/runs/ow7oLdugIIEMsuCEj
+⏳ Waiting for actor to finish...
+✅ Actor run completed successfully!
+📊 Retrieved 50 items from dataset
+✅ Successfully scraped 50 items
+💾 Progress saved (500 records updated so far)
+⏸️  Waiting 2 seconds before next batch...
+
+📦 Processing batch 11 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJ9079KO7JQIYRCSc2n5IHCSk",
+    "ChIJxfDNnHa-QIYRtEmJZGPhvWk",
+    "ChIJe0h9nvbdQIYR4gPnqslCKOE",
+    "ChIJg_kjqnPbQIYRfRh1CQgof1w",
+    "ChIJkwHpHs_CQIYR4rAI59lAPtA",
+    "ChIJj8arVZvbQIYRz_EgW8FL3V8",
+    "ChIJ5eooT2u_QIYRYLy83jurShA",
+    "ChIJd0lT68_CQIYRwDA969YCRsI",
+    "ChIJLQMeiCPHQIYRKEcVzypDEGw",
+    "ChIJg8ruMzuWQIYRYW9f3coOVn0",
+    "ChIJ9ztKs8vIQIYRYHykhE44CK0",
+    "ChIJTRAKTwGcQIYRlmoJrGZKsfs",
+    "ChIJjRVIGHndQIYR5dorb7fxPk4",
+    "ChIJN735XT2WQIYR23yeabsgvIM",
+    "ChIJb4T3KgDRQIYRw2LpU4raB_Q",
+    "ChIJ41YHL9GdQIYRJMeRAQR4pb8",
+    "ChIJS4B2lyXRQIYRxliEIvmu2KE",
+    "ChIJEwDX9KnBQIYRnCbx-miNdOo",
+    "ChIJq94xw4nSQIYRVWbp0xzSfN8",
+    "ChIJUYv1SSLSQIYRd-MDz0qOapE",
+    "ChIJf99P10uuQIYRFHx2DehdMqU",
+    "ChIJ00k-fYXCQIYR3W3YZeoNxJ4",
+    "ChIJFYP5Agq4QIYRj_NkEjHQbis",
+    "ChIJf_pjj-XNQIYRanMf_7cDdqw",
+    "ChIJDVEB_xXNQIYRoTgSRcgfwDo",
+    "ChIJH36QB8PCQIYRbxc1qrmpUW4",
+    "ChIJ_UK_dBuvQIYR3toe-zpCa54",
+    "ChIJFcDYxufBQIYRYaiol45VVdI",
+    "ChIJNeQ5CpTAQIYRoJTTTodnf-8",
+    "ChIJK93nP3KcQIYRJt5SxpMWsLw",
+    "ChIJ3QRAod63QIYRPJ5FhMOnhTU",
+    "ChIJBfb3z8m_QIYR1IokETeDh4E",
+    "ChIJuds_-fucQIYRCRn28G8IV-E",
+    "ChIJS-TgG-jBQIYRCigTuqaRI2g",
+    "ChIJj_F8KwC3QIYRvRYqSoTWSEw",
+    "ChIJlxoC3EmcQIYRMD7_eGI6A3I",
+    "ChIJGXRzOxi3QIYRYOXDoCGy6Hw",
+    "ChIJVVVVVR7AQIYRZ_JClToAXI8",
+    "ChIJE3u4UgDBQIYR733-H-h7E_A",
+    "ChIJT3ZJrH7RQIYR67YXfTvyc0w",
+    "ChIJYbJNNSvJQIYRvHt2Wg8D5Qs",
+    "ChIJIymopvnAQIYRvYQletGseOk",
+    "ChIJmZk6tTfTQIYRnAvCUBgLVcY",
+    "ChIJtU4PqAzcQIYRLcwZ6gN1Qpc",
+    "ChIJcSlw2UXBQIYRtSHVBntI2Qo",
+    "ChIJa2Q06Oi9QIYRkFhok8OrixA",
+    "ChIJ8cdReDHdQIYR9zrBm7yasio",
+    "ChIJDzjUPQCbQIYRkWGxGthE_tw",
+    "ChIJ_bhF_-aZQIYRVkDjE3qhFsQ",
+    "ChIJ80GOoP6cQIYRpdWvXVHURbk"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+✅ Actor run started: blTA6Sio1aF8u3d8l
+🔗 View run: https://console.apify.com/actors/runs/blTA6Sio1aF8u3d8l
+⏳ Waiting for actor to finish...
+✅ Actor run completed successfully!
+📊 Retrieved 50 items from dataset
+✅ Successfully scraped 50 items
+💾 Progress saved (550 records updated so far)
+⏸️  Waiting 2 seconds before next batch...
+
+📦 Processing batch 12 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJwRdgi8vcQIYRevZJUrCc0Fk",
+    "ChIJc9rwb2W4QIYRneVK2roYYAE",
+    "ChIJS3_5wM2XQIYRcSdU2G3lGd4",
+    "ChIJkf3vOHzGQIYRkMXPBHBhiIY",
+    "ChIJ8ZJcIALLQIYRrvla_ZwRbLA",
+    "ChIJwzIYv9vDQIYRB_SHzSNBpcE",
+    "ChIJWw6hIe_CQIYRb4KrQtfMxVA",
+    "ChIJDSIKnTvCQIYRRDm85GU4JfA",
+    "ChIJu2FXIiTCQIYR-b9wk5tfOEo",
+    "ChIJ8dfzke3RQIYRHdD8CsqjMCE",
+    "ChIJ5eA6SQDXQIYRsOa6Fyiw_Jg",
+    "ChIJofQUO5_CQIYRk56Ppzvy8xs",
+    "ChIJFYP5Agq4QIYRj_NkEjHQbis",
+    "ChIJtSc3i_XHQIYRPObH8_vEwNM",
+    "ChIJEdHzoLbBQIYRETupw5AKXpA",
+    "ChIJ0-L_R_DNQIYRbbk5sz8l7y0",
+    "ChIJgcfyZTjQQIYR5cXEyi8oJkw",
+    "ChIJb9iRT8TDQIYRmOMD5vocwB8",
+    "ChIJB1vOpvXNQIYRoJGRNRue_ro",
+    "ChIJhUE5ImsFyIkRmkQPEPupcOQ",
+    "ChIJYfM27BoFyIkRuNk1GjIIDnU",
+    "ChIJ5wd5FXgEyIkRQlVhinMO0ow",
+    "ChIJZ9XZO-gEyIkRsQPWu8nkNvY",
+    "ChIJu5Ozy4MEyIkRb1zxvPEIkAE",
+    "ChIJrcXiBR0FyIkRYFar_cfpzLk",
+    "ChIJWf2QojsDyIkR7w2Y21t5g1U",
+    "ChIJfdreLxUayIkRdjpreIfj6yE",
+    "ChIJuaaoq_Cw2YgR7q54INRUPjY",
+    "ChIJpxIFkEu42YgR0DEHuD4qHvc",
+    "ChIJ_7aiw_ax2YgRl_H1J-Gh9BI",
+    "ChIJpxIFkEu42YgR0DEHuD4qHvc",
+    "ChIJuaaoq_Cw2YgR7q54INRUPjY",
+    "ChIJxX6HTz3PmoARAqhSvwO0v4g",
+    "ChIJ07IWRMPbmoARa5htsk6Gjtg",
+    "ChIJC1-m7lTFmoARRLhsjKzCAlM",
+    "ChIJK9Yvp3HFmoAR6f6yviMMfPg",
+    "ChIJf6KZLijZmoARoctn_BOKFvM",
+    "ChIJuYDozfbQmoARp3jE152kqhE",
+    "ChIJo3NM0pTFmoARdAbQCrO5Oto",
+    "ChIJBbjisLjbmoAReLXg01rjgBI",
+    "ChIJMx7p7T3XmoARY4OFhEwy6EU",
+    "ChIJvcGpQ-LQmoARxBFt2un_aPE",
+    "ChIJKQsAD4vWmoARjd1Y5-HIScI",
+    "ChIJ-S8i0hjRmoARQh7ny3PoMvI",
+    "ChIJWwugJ0bbmoAR-EIyMd2JMrg",
+    "ChIJxX6HTz3PmoARAqhSvwO0v4g",
+    "ChIJK9Yvp3HFmoAR6f6yviMMfPg",
+    "ChIJ07IWRMPbmoARa5htsk6Gjtg",
+    "ChIJ4TFp1QxZXIYRwfVV0wodjeY",
+    "ChIJPwD5XGtYXIYRNj-eAggZReI"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+✅ Actor run started: R7T2SmxexZ5ReF2ej
+🔗 View run: https://console.apify.com/actors/runs/R7T2SmxexZ5ReF2ej
+⏳ Waiting for actor to finish...
+✅ Actor run completed successfully!
+📊 Retrieved 45 items from dataset
+✅ Successfully scraped 45 items
+💾 Progress saved (595 records updated so far)
+⏸️  Waiting 2 seconds before next batch...
+
+📦 Processing batch 13 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJSXYwKUVeXIYRUMkdNt-NpZ8",
+    "ChIJVeoKLHZhXIYRTwo8TOEZ7X8",
+    "ChIJ3TGcmmJdXIYRaHES0x7FiJs",
+    "ChIJSflskiZdXIYRXCv7ZJk7bbQ",
+    "ChIJV8WAiYtDXIYRVaEPNd9ILUQ",
+    "ChIJO5UjNrtZXIYRefCzvrc_2oQ",
+    "ChIJM4fcswVdXIYROUJOngtb3NA",
+    "ChIJw0TyVIRfXIYRdqS-Y4B7hOg",
+    "ChIJx0fa_Qn3XIYRkac1IxszodM",
+    "ChIJLwKP13JYXIYRqK6VJXxqGcQ",
+    "ChIJV70yjDT1XIYRlKRfIyRobZk",
+    "ChIJWWbdnROJXIYRrFevex2uIgE",
+    "ChIJhw0qkLdYXIYRZ7u6lr48GDo",
+    "ChIJ_cRh32BgXIYRa0CIuY89Fjc",
+    "ChIJAQl5HktfXIYRcPKsYXKo3JI",
+    "ChIJh3KkVEWLXIYRMYTCVsv3LnM",
+    "ChIJE_xsJBv1XIYR58xiCXjFbII",
+    "ChIJ_-F8o2hnXIYRqAgPxChJPLE",
+    "ChIJHw8VFmNCXIYR8Nm02vyk2SM",
+    "ChIJrZ2Gnr6JXIYRD3fLMoKsJXc",
+    "ChIJZVwgMkFgXIYR6c0t-Mk7WWg",
+    "ChIJHZHNf9BpXIYR5stlS-0ruuU",
+    "ChIJeYFW18j2XIYR89Ee9O1CPq4",
+    "ChIJEf5vsVxfXIYRJNl23PQ2dN8",
+    "ChIJD6uvlLZgXIYRhQDmnQ_CIfA",
+    "ChIJF6zs9kH1XIYRPDyy1S8abaE",
+    "ChIJFXnsCMr0XIYReCyHqb82hi8",
+    "ChIJrdndo9tZXIYRyNMuRpbygHU",
+    "ChIJ6_ntwZ_1XIYRG0r71Wy2k7Q",
+    "ChIJYUyJS7VdXIYRmuUVzdVtMZs",
+    "ChIJ2e9s1Z1lXIYRTTbAkzkw3V8",
+    "ChIJqxk052uMXIYR71bflA9Ckr4",
+    "ChIJsxKsFmldXIYROivYO0ZuAr8",
+    "ChIJsdGICOhdXIYRAqVkHwIAaQs",
+    "ChIJQd9JEvWHXIYRj-qmsAbnEaI",
+    "ChIJleKHUPr0XIYR-zDxDPiPb2g",
+    "ChIJCXOgSZf1XIYRvKJtemwHqSE",
+    "ChIJ7See-2D1XIYRpO8Qc2lo2oo",
+    "ChIJEW_cRERcXIYRurPi9JsUs7Q",
+    "ChIJ-Twc7GJhXIYRxd-fArogE6k",
+    "ChIJFysgZdNdXIYRnOPJ0etY2GI",
+    "ChIJS13p60GLXIYRQ34GQhAPdr4",
+    "ChIJ_USBxsOMXIYR_hMy19_Ag4Y",
+    "ChIJI-VXRnX2XIYR7oYnWmErSL8",
+    "ChIJGSohzQFeXIYRsZX2ElDgqDM",
+    "ChIJheQ7pn1mXIYRWucyuGp_iBE",
+    "ChIJlV8GASVfXIYRWBSOsk8uG5Q",
+    "ChIJCwOUDsBdXIYR1FW3ZIfCiFM",
+    "ChIJq1zYXO1nXIYRnRH4jCFhPQY",
+    "ChIJw5U-ONRhXIYRkPB1U-AECvw"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+✅ Actor run started: XeGHwH4C2oZrUWeth
+🔗 View run: https://console.apify.com/actors/runs/XeGHwH4C2oZrUWeth
+⏳ Waiting for actor to finish...
+✅ Actor run completed successfully!
+📊 Retrieved 50 items from dataset
+✅ Successfully scraped 50 items
+💾 Progress saved (645 records updated so far)
+⏸️  Waiting 2 seconds before next batch...
+
+📦 Processing batch 14 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJR3FgiI31XIYRQgirkhQMI4c",
+    "ChIJgX5TabJgXIYRvx86OFZH8aI",
+    "ChIJE7Ot8WlnXIYRt91qASOofjw",
+    "ChIJpYYcnY_3XIYR1TKh2DNBupc",
+    "ChIJw0M3eEReXIYRC9bxQ8wFgpU",
+    "ChIJG6KFWuH0XIYRxYqMfVoYVmc",
+    "ChIJ-3uAF2JYXIYRoUZB-Oa-Xtg",
+    "ChIJ2enfsIOMXIYR2rbJwYa4L80",
+    "ChIJ7eXk5WjzXIYR6aqa2HqIxyQ",
+    "ChIJYWvfBVT5XIYROJLOKxFzUAs",
+    "ChIJryFASntfXIYRpCG1P81oq6w",
+    "ChIJk6YtLiBiXIYR2fM5io8ba18",
+    "ChIJtz_xdtZnXIYRg3-KhGFll9w",
+    "ChIJUcRAzS2KXIYRGZPjjXl88NU",
+    "ChIJt4bTcE2KXIYR97OLzOI8qyY",
+    "ChIJs9zGeSpZXIYRrrMyRNDsAOI",
+    "ChIJjer7SwpeXIYR15eVNDBE-dE",
+    "ChIJQc_PKK-JXIYRdBEQZ7bjmyo",
+    "ChIJLQ02zhCJXIYRKBRVqSmqEXo",
+    "ChIJ2Q0MYpf3XIYRwDyR3JYF_eo",
+    "ChIJkxzh8t1hXIYRQq0dT4Hid24",
+    "ChIJV9ic2L1fXIYRr1JQLy3ca9w",
+    "ChIJs8lgFOBdXIYRFgzspFWagD0",
+    "ChIJNWkX3RFgXIYRoIACrWEyU_o",
+    "ChIJM4uch8KLXIYRlke3YBxUZNM",
+    "ChIJ7bfTi3H3XIYRED0RKAaOkG0",
+    "ChIJWWvWG7hcXIYRpHeILXDEH9I",
+    "ChIJuSyBcr1dXIYR7NoBUGWy0QE",
+    "ChIJQWiH3mlZXIYR7W1UEB_LTMI",
+    "ChIJE5bCqcNnXIYRt3dzfbLR5ps",
+    "ChIJ7T4-8cJnXIYRuNUyht4-p3M",
+    "ChIJQU1BEWhbXIYRpFEYeqyCOmY",
+    "ChIJaUYZFbVZXIYR8tVUwWQhA6A",
+    "ChIJzeBK4PBdXIYRMq9Ag3fNUZo",
+    "ChIJ7yjZF1RDXIYRTtey4KANH5k",
+    "ChIJZ6lp11dbXIYR6DWISOM9TEc",
+    "ChIJJZb25YdCXIYRbdFBU7L_QRc",
+    "ChIJbwU6OwpeXIYR9FNsef1D8Wc",
+    "ChIJ5RZ-_BdbXIYR51bXJvGnVmo",
+    "ChIJr42Z5NZjXIYRlNtfOGi00vw",
+    "ChIJ3-sNgb6JXIYRxNa6TBpw5-g",
+    "ChIJBQlrlfVgXIYRfjIsdX7g67E",
+    "ChIJ5UIjwrRZXIYRCdwgCT1b_Cs",
+    "ChIJq_bCSEBeXIYRAUha3X3DAFE",
+    "ChIJO-9wB6lcXIYRfkKY1aNJ28o",
+    "ChIJzSz2xMxjXIYRfzwPOR5UcnA",
+    "ChIJQeVksOFbXIYRVJyC9E7oqtU",
+    "ChIJjbpGDwNiXIYRK5ILEID8LyU",
+    "ChIJj5ktwuVaXIYRm8cZlAEYoZw",
+    "ChIJKRMOBQBDXIYRER9jWipf3QM"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+✅ Actor run started: 3mPJnmYwN7ujNCanX
+🔗 View run: https://console.apify.com/actors/runs/3mPJnmYwN7ujNCanX
+⏳ Waiting for actor to finish...
+✅ Actor run completed successfully!
+📊 Retrieved 50 items from dataset
+✅ Successfully scraped 50 items
+💾 Progress saved (695 records updated so far)
+⏸️  Waiting 2 seconds before next batch...
+
+📦 Processing batch 15 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJpUtlsgZdXIYRob6pxaZsg0g",
+    "ChIJFcLa26dfXIYRjejmXGk67kE",
+    "ChIJjwLJ6GRbXIYR3U5UOuwWp1Q",
+    "ChIJiQCKXjZfXIYR9Mx1gCi4AUg",
+    "ChIJadLEKgZoXIYRCxkDCEp05cQ",
+    "ChIJ8-RCuANdXIYR1R8nh-bu5tU",
+    "ChIJG0lbHNBDXIYRh3D0bwJRgtk",
+    "ChIJG3F9tsJfXIYRsLzw_TPuz_E",
+    "ChIJt-SBjjZnXIYRYBEiRAFQQ2E",
+    "ChIJU5wrzmmLXIYRwAalCMoriy4",
+    "ChIJH4GYawBbXIYRL3xT8lYVQoo",
+    "ChIJTQXwQ9VhXIYRvdWa-xkQrnk",
+    "ChIJRbP4ZkpDXIYRifEFBRdAz_k",
+    "ChIJZ4DoHqdcXIYRT6RaAGdllCk",
+    "ChIJJ7Cesr5dXIYRpo_0A-KMiT0",
+    "ChIJI8JU8LZZXIYRATkD2m5_fPk",
+    "ChIJ3cDbYN5mXIYRjm0A_5_qwhQ",
+    "ChIJ_____2ZmXIYRIso7zzLEZfs",
+    "ChIJ5TEAPHaLXIYRJZaia6GUbjc",
+    "ChIJqTl_y2bzXIYRr1sXcrbjJLM",
+    "ChIJO8lf6nb3XIYRCycIqu3XQao",
+    "ChIJR7zLNHVgXIYRO3XrkAaMfQk",
+    "ChIJ5bhwYy9dXIYRN4gE1zg2DD4",
+    "ChIJK2AMv9mJXIYRVPE78kv2SJE",
+    "ChIJF-yuV-uJXIYRTp05jB78TAI",
+    "ChIJc6KjMRqKXIYRw6JwNPu7vbY",
+    "ChIJGTfNan5oXIYRuJWr_keiafA",
+    "ChIJPa0XM3VgXIYRQbqKNDp5ZPE",
+    "ChIJOacBaB-KXIYRDW3WSK8tsoY",
+    "ChIJj1KRlLX3XIYRqNuYArEZ42s",
+    "ChIJ92NekXP3XIYRU5r7LijFfO0",
+    "ChIJr5Xxzs73XIYRH2LesxillTE",
+    "ChIJLXk2dE_ByIAR36SnHjHL3ws",
+    "ChIJ192cPZbAyIAR_AFolkqVYhY",
+    "ChIJy1nFc2TbyIAR02-2eF8r_hk",
+    "ChIJLYtZLjPEyIARAeSVsMCAOWA",
+    "ChIJOULRBWLbyIARX7WOWWlHHTM",
+    "ChIJiW8GMVDFyIARyJ4i_z_UN78",
+    "ChIJZ6PvL1PFyIARZerOKCF_aK0",
+    "ChIJ5Xb1pBrFyIARmNGuWX31Xws",
+    "ChIJQTjZqT_qyIARVaYfqr6WnWE",
+    "ChIJj2nry0TFyIARBmX5Vnm_9Rs",
+    "ChIJP0ZKHtvOyIAR1LqZG9Yuy0M",
+    "ChIJMWG7Io7PyIARVwAAu4vIglg",
+    "ChIJjfx9NKTGyIARjfjkHdAjKxM",
+    "ChIJpfdAAdLGyIAR5vpsb5_YKAU",
+    "ChIJXTVpoFXFyIARTfILeRYBZiQ",
+    "ChIJySwjNHHHyIARYNF-v3m3feI",
+    "ChIJFykJqHTHyIARsK4n-oDjESs",
+    "ChIJYR0FflDHyIARR8Ii55REvLk"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+✅ Actor run started: 2iR772qWbDZ6wib6I
+🔗 View run: https://console.apify.com/actors/runs/2iR772qWbDZ6wib6I
+⏳ Waiting for actor to finish...
+✅ Actor run completed successfully!
+📊 Retrieved 50 items from dataset
+✅ Successfully scraped 50 items
+💾 Progress saved (745 records updated so far)
+⏸️  Waiting 2 seconds before next batch...
+
+📦 Processing batch 16 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJt8-8vUbByIARD3gllkxHc1k",
+    "ChIJUcH4jIvGyIARORtEvcORAHs",
+    "ChIJeasFer24yIARtO4IBXnk-hA",
+    "ChIJ3xFfbafGyIARW6eipXpfV0I",
+    "ChIJWTkzgUnDyIARlNEdOKxnK3o",
+    "ChIJqzfRYTbEyIARRK2Jk_LZG2o",
+    "ChIJAZ9b4zHEyIARz5gvlz2aUYs",
+    "ChIJiRLw3abGyIARTHt7qQgZEtw",
+    "ChIJB7gMKcvFyIARtuJmzvuzLFU",
+    "ChIJ-yCfLwDFyIARB5uVd-iJfco",
+    "ChIJV_Ex_BbbyIARb4c0DaJaV-8",
+    "ChIJZe_PNsDHyIARXT7tR595_r4",
+    "ChIJ7Ts4FxTbyIARxvVL8N2L5Sk",
+    "ChIJN3jnXz7EyIAR6JZIhMDJ368",
+    "ChIJq6_1WoTHyIARPQfGel9bZXo",
+    "ChIJqWMJlcLFyIARR250Q7EPwX0",
+    "ChIJ73KY5J7GyIARf8DaJXfGnqU",
+    "ChIJb7Qe8RTEyIARe3XtJlBwoww",
+    "ChIJQRFRezfByIARwACP7_t8YRI",
+    "ChIJswuaqjrEyIAR9cWNl-7T0so",
+    "ChIJ3SbHSSDEyIARinOsGqJVKJc",
+    "ChIJNXI_1b_GyIARzvyRIAKXjV8",
+    "ChIJRx-B1X4PK4cR34zpKvlJ9OY",
+    "ChIJ67FFX_ITK4cRnHv5IXLsDDo",
+    "ChIJxxXcjbYNK4cR3VVLWW5GXx0",
+    "ChIJ31_viSgRK4cRtBWLLsLkk8w",
+    "ChIJAyZ_0D1tK4cR1-VONQESqM8",
+    "ChIJm4vmhRhsK4cRVXjjCKWGiXE",
+    "ChIJo2DP7dQSK4cRRkn5-nxek8Q",
+    "ChIJIfVpQqYVK4cRh638jCyDnc4",
+    "ChIJ05ZZv3MVK4cRQ09hYVtEq-A",
+    "ChIJE2sVYbcNK4cRn7RS6Nd9K4k",
+    "ChIJKaFu0ZANK4cRm0vgt4q4dyk",
+    "ChIJezOfOj9vK4cRZ9jTkBomWe4",
+    "ChIJ62ZicEJsK4cRsCaVZ1jyaF4",
+    "ChIJMVxTp_ZxK4cRpuqx2DkxtKE",
+    "ChIJHRZGuntsK4cRo5sULVfhE3Q",
+    "ChIJwVRyhNkUK4cRftXZu7k-qA4",
+    "ChIJIZ6VgQxzK4cRDSWE035yxuA",
+    "ChIJcwDK3VpxK4cR4ZG3hJQWP1g",
+    "ChIJ0Q8rUqwFK4cR4GIg8xJCjGc",
+    "ChIJBb9vVa8TK4cRv8xuGzkpNl8",
+    "ChIJrwmqoNBuK4cRbOB2RXMemuI",
+    "ChIJw3YRVr4TK4cRYtru7aHCVCs",
+    "ChIJAQtyko8RK4cRyPZgqGQ6SL8",
+    "ChIJg84aDIUUK4cRacl4C5-33CM",
+    "ChIJRSZtCbgNK4cRvNqgqE97ulg",
+    "ChIJbfP2yoBAK4cRm-1Ngmr1aCE",
+    "ChIJYQtsnlAMK4cRnmNnt1HbOec",
+    "ChIJXydnwmsPK4cRInholQfuyS8"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+✅ Actor run started: zKRQAUvsGLnNRrxWb
+🔗 View run: https://console.apify.com/actors/runs/zKRQAUvsGLnNRrxWb
+⏳ Waiting for actor to finish...
+✅ Actor run completed successfully!
+📊 Retrieved 50 items from dataset
+✅ Successfully scraped 50 items
+💾 Progress saved (795 records updated so far)
+⏸️  Waiting 2 seconds before next batch...
+
+📦 Processing batch 17 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJGVxCa_cEK4cRZe96neBnIzI",
+    "ChIJmZAnOxQQK4cRY6ICLT7XUSY",
+    "ChIJdfFRKSsOK4cRR_mEIs03Hdg",
+    "ChIJIx-rJx8SK4cRSwkStw0aIrA",
+    "ChIJ40Mu_65uK4cRLxD6rY7MObA",
+    "ChIJcxvWRCcTK4cRZgIfm-4Gupk",
+    "ChIJu64YXaNzK4cR9fDEgPF1-40",
+    "ChIJ6317j_IDK4cRQevr7WegMIg",
+    "ChIJVbmKiL0RK4cR3Z8PCMNbDx8",
+    "ChIJ4aMfqHARK4cRMf5FWMEu37Q",
+    "ChIJ3SCpGXYNK4cRbSHW0y3J0Wo",
+    "ChIJgwOzohMTK4cRGvLdLtr0RVg",
+    "ChIJRYmQ82EEK4cRrzgsuBdTmjI",
+    "ChIJEYJqTqsNK4cRy1I-hY6zVxU",
+    "ChIJxVvcsjsTK4cRvZU9NBW1FzE",
+    "ChIJ2dmASMBzK4cR6g2uiXuy9U0",
+    "ChIJL95cRG9tK4cRubgQYXXt6lM",
+    "ChIJp8xJUGEEK4cRuOjlwxsIMRg",
+    "ChIJf_QdLPsRK4cRFcfM1T9s7Z0",
+    "ChIJUfBK00cSK4cRYj69x5gEF0w",
+    "ChIJ86bJoicFK4cREmhlkD9z604",
+    "ChIJ-2fintgPK4cREZb2jLzPvWQ",
+    "ChIJtyjH1eUTK4cREz8hIgPyw2E",
+    "ChIJ6cWWhhsTK4cR4-1RnwS6_gk",
+    "ChIJA67jYWkTK4cRPXvzIJPMSio",
+    "ChIJpbz782gVK4cRDN0cqJGNYiY",
+    "ChIJof35hzpyK4cRcI1Plrupj8Y",
+    "ChIJ2TQjEMYNK4cRZ5UT-uH7UeY",
+    "ChIJhYj4k3dtK4cR45vJkuwirYg",
+    "ChIJUatYjotuK4cRVFjFstYe3vE",
+    "ChIJlWK5tlETK4cRcVzixH-Gjuw",
+    "ChIJa55pRmASK4cRXVO7g6Z9W20",
+    "ChIJ8dIRYScPK4cR4JYlF6cmTtM",
+    "ChIJH17gc-UPK4cRBfn27SL4mqo",
+    "ChIJJ3pXQUAQK4cRcZgxCucWsnQ",
+    "ChIJ8Z-uLqYNK4cRfflDa90um10",
+    "ChIJ5UsB9GEVK4cRzIqDz6d5etM",
+    "ChIJXQ6qBctxK4cRjG3QljHupFs",
+    "ChIJj21vrgoVK4cRMenuYWIGOGY",
+    "ChIJpXonLRgVK4cRPzACcxTlrLU",
+    "ChIJV5Yb5GoQK4cRNwWdVBsAbTE",
+    "ChIJI-LW_2psK4cRDwwjq4y0T-k",
+    "ChIJGZtrMl4UK4cRBVmwcrajguk",
+    "ChIJJ9CPfEtzK4cR8ToGD6QESfA",
+    "ChIJu6bzXhYPK4cRmH84X74h--8",
+    "ChIJmXO6Ij9vK4cRsxPHuP0xqCQ",
+    "ChIJ60p4a-w_K4cR0YUy1cRKixw",
+    "ChIJqyWCO-NsK4cRBLNGzEDqU-w",
+    "ChIJ638ZLigRK4cRxmZF50iXZGo",
+    "ChIJHV2DjkVyK4cRcm0MZxp6o8E"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+✅ Actor run started: MzHCDXDl6yu3Pjlwy
+🔗 View run: https://console.apify.com/actors/runs/MzHCDXDl6yu3Pjlwy
+⏳ Waiting for actor to finish...
+✅ Actor run completed successfully!
+📊 Retrieved 50 items from dataset
+✅ Successfully scraped 50 items
+💾 Progress saved (845 records updated so far)
+⏸️  Waiting 2 seconds before next batch...
+
+📦 Processing batch 18 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJdShk3WVxK4cR3Gswl_G8JHQ",
+    "ChIJEzwoKhkXK4cR9u0FWYJX11M",
+    "ChIJgdpdTUgVK4cRNDRcs82ReyI",
+    "ChIJMbmvUzJuK4cRF_qbB3gGmyY",
+    "ChIJOeYebRcVK4cRB1iHjulXYgE",
+    "ChIJtXpYVA8RK4cR7qOtaFjBBDs",
+    "ChIJGVhbQIFlK4cRDzJdkpH6Y-s",
+    "ChIJ9UDTWJVjK4cRN4yJmkSD6RE",
+    "ChIJkcEQIb5lK4cRWMj1DoZHtPU",
+    "ChIJRy-4apZlK4cRPhBXx51wq-4",
+    "ChIJjZR7yY1jK4cRK71GHwnMR2s",
+    "ChIJH2ceoeBwK4cRET6kIMFSqbA",
+    "ChIJPYpzT5Z2K4cRcJJokGFnJqg",
+    "ChIJhRqdkZtxK4cRzulKw6Tv70s",
+    "ChIJjZteuM1vK4cRPQWMABoHLkQ",
+    "ChIJmwJUBEIVK4cRAVGJ4Np0_5U",
+    "ChIJ-wAPBCIXK4cRKHJoO7JUo10",
+    "ChIJq4c0iktsK4cRcipozOAWgRo",
+    "ChIJH_87cilpK4cR5eMEBXZOZtA",
+    "ChIJux9vjAyeLIcR5c_H1iQjbdg",
+    "ChIJE2sVYbcNK4cRn7RS6Nd9K4k",
+    "ChIJMVxTp_ZxK4cRpuqx2DkxtKE",
+    "ChIJ31_viSgRK4cRtBWLLsLkk8w",
+    "ChIJ67FFX_ITK4cRnHv5IXLsDDo",
+    "ChIJm4vmhRhsK4cRVXjjCKWGiXE",
+    "ChIJIfVpQqYVK4cRh638jCyDnc4",
+    "ChIJAyZ_0D1tK4cR1-VONQESqM8",
+    "ChIJHRZGuntsK4cRo5sULVfhE3Q",
+    "ChIJ62ZicEJsK4cRsCaVZ1jyaF4",
+    "ChIJKaFu0ZANK4cRm0vgt4q4dyk",
+    "ChIJxxXcjbYNK4cR3VVLWW5GXx0",
+    "ChIJo2DP7dQSK4cRRkn5-nxek8Q",
+    "ChIJRx-B1X4PK4cR34zpKvlJ9OY",
+    "ChIJxX-5D7p-44kRYbf9zZPDWDw",
+    "ChIJ82w756p544kRme8-dW3050U",
+    "ChIJ-cbBVDJ444kResydrg8Uiis",
+    "ChIJdd-tQHh644kRCcyUaH395SM",
+    "ChIJb8BV9XZ644kRk542Fx092xg",
+    "ChIJ6a4ruDp644kR3CTWa3tkH3I",
+    "ChIJZ6wgewB744kRymGr73TIENk",
+    "ChIJ0UltMXh644kRocWltDnwfls",
+    "ChIJM7jPptZx44kR9cpOPK68I7M",
+    "ChIJQ69rqU9744kR2TjN_-0XffU",
+    "ChIJARrOK3h644kRhmCkDg0Yspw",
+    "ChIJz5PKO3h644kR_zF5SEKH1Q0",
+    "ChIJAxAcmXd644kRVJO136272ok",
+    "ChIJ43NEHRF744kR9INj6mqiNoc",
+    "ChIJawYhWj9744kRbyMpuS980VA",
+    "ChIJjTz-Inh644kRCme4b9Gc3Is",
+    "ChIJ1-BYKXh644kRKMsSvOl1-yg"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+✅ Actor run started: 3ruBALklcEjh5CKg1
+🔗 View run: https://console.apify.com/actors/runs/3ruBALklcEjh5CKg1
+⏳ Waiting for actor to finish...
+✅ Actor run completed successfully!
+📊 Retrieved 50 items from dataset
+✅ Successfully scraped 50 items
+💾 Progress saved (895 records updated so far)
+⏸️  Waiting 2 seconds before next batch...
+
+📦 Processing batch 19 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJxxfR6gx644kRoH80MYCbsCk",
+    "ChIJyxHyPHh644kRfpfAaZhknH8",
+    "ChIJuVlROXh644kRqUIF4W7-ZNo",
+    "ChIJ_xpxkYJw44kRBp5JjOO4hiA",
+    "ChIJT6O7KWt444kRdhrpLVrTapY",
+    "ChIJ3eXQX3h644kReshTTfXl1Jo",
+    "ChIJF9jb7Hd644kRXiZZ_FXCqX4",
+    "ChIJ3RjowFB744kRCF-FoQERwn4",
+    "ChIJrYKsR3h644kRhdRKR6aC7lk",
+    "ChIJyYldNHh644kRxSj93fanKJA",
+    "ChIJ82w756p544kRme8-dW3050U",
+    "ChIJxX-5D7p-44kRYbf9zZPDWDw",
+    "ChIJ-cbBVDJ444kResydrg8Uiis",
+    "ChIJnatqd3EH9YgRq0BcmBe06rE",
+    "ChIJxwKy3mAI9YgRc0uSUbaJiF0",
+    "ChIJBWTGEHgE9YgRsxHzq3LxxzQ",
+    "ChIJ2YnRH44F9YgRUlnP8LtcE88",
+    "ChIJxwKy3mAI9YgRc0uSUbaJiF0",
+    "ChIJyydqSLHNj4ARBRS3z9WrzFE",
+    "ChIJ2_879fYtjoAR2u_eXwUAOP8",
+    "ChIJcUmYwqQvjoARXGgBAPDYL60",
+    "ChIJSVOIhQo1joARbGYqp1MDJYc",
+    "ChIJswvN7iMujoARC-UUdRMq8sI",
+    "ChIJ-dIvYRUyjoAR-DHD2DImIGc",
+    "ChIJv7w-c7fLj4ARA42dGEEHJzA",
+    "ChIJc3ZFopjNj4ARan2YFQrZBsU",
+    "ChIJLSaUToO1j4ARdVELfKk7U_U",
+    "ChIJj12Pj3QtjoAREG747zIvCqQ",
+    "ChIJs0lTBVkzjoAR2w9E6CG9bv8",
+    "ChIJpziIOezKj4ARn4VC_ZM1_WA",
+    "ChIJFXvxa_bLj4ARcs8xud4GX34",
+    "ChIJuWg5EmjLj4ARfavbFPOdXRw",
+    "ChIJ6dN-zn8xjoARg-_DobujuyM",
+    "ChIJa3ewxuIzjoARgnPce9gZtM8",
+    "ChIJF9dwEKEyjoARFIhrcrSBIcU",
+    "ChIJ9QgKlRDMj4ARJBZ4nIFfZb4",
+    "ChIJl41rEWC1j4AR9m5ndL7k-Js",
+    "ChIJ_zYvdT0zjoAR5rfQmktsYQg",
+    "ChIJO7tbcBu1j4ARoay0lgaLw2U",
+    "ChIJM5oFKSo1joARjhd0mj1hlpk",
+    "ChIJOcEtUn21j4ARLhoS3HpFO8g",
+    "ChIJixNIotTNj4AR6cZ7e2KBtdM",
+    "ChIJyzwpKJHLj4ARHb4BKRasyyk",
+    "ChIJCZaQplzLj4AR0_o_GIg_nKc",
+    "ChIJ9YdtW7fMj4AR5NupPn-HNv4",
+    "ChIJT6j1hDXMj4ARXNxESkGklic",
+    "ChIJuQc_qbvSJIgR-hEyL9AiAZE",
+    "ChIJp0Wnlr_SJIgRA5L35vvHMcc",
+    "ChIJ282cUtnNJIgRi9TLQs7TbSo",
+    "ChIJj_SZxbfSJIgRM6C7LAXQPj8"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+✅ Actor run started: pOjM5co49Z2zXieAE
+🔗 View run: https://console.apify.com/actors/runs/pOjM5co49Z2zXieAE
+⏳ Waiting for actor to finish...
+✅ Actor run completed successfully!
+📊 Retrieved 49 items from dataset
+✅ Successfully scraped 49 items
+💾 Progress saved (944 records updated so far)
+⏸️  Waiting 2 seconds before next batch...
+
+📦 Processing batch 20 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJHZ2jICczO4gR7-7zhQQtp3E",
+    "ChIJYYmOrn3LJIgRPTGhgC7QLqI",
+    "ChIJEeRCtNvRJIgRDsSvQWiR5wg",
+    "ChIJZzVw2Ni1JIgRAXONZabjjU8",
+    "ChIJF66myDrTJIgRazGwbzSKmHU",
+    "ChIJ3YinUrTSJIgR-QH0J1XsB1g",
+    "ChIJX5MuS8e1JIgRyqSiZkFUcG8",
+    "ChIJpxSF6cLWJIgR1Caxx-LOAD4",
+    "ChIJEX8tQ8HWJIgR9zqmjQqerII",
+    "ChIJW5p9uZrWJIgRjdRc4KMNYEA",
+    "ChIJY974Lp_OJIgRZD9VoFoEDAQ",
+    "ChIJQTfH5OfMJIgRTGa3mKJ-WBs",
+    "ChIJb3YT9wMzO4gRX4OH0OAkYKE",
+    "ChIJZbLt71zMJIgRPhR2etYbbXg",
+    "ChIJ57UCFDrKJIgR_pfWYgEw0O4",
+    "ChIJjTVjQU_TJIgR5qWg7N_ptdo",
+    "ChIJC6BNh5MyO4gRFGmHRWx1C10",
+    "ChIJiczPH1DTJIgRUWHLvmYaPHI",
+    "ChIJPVeAbm7RJIgRRjsIKVsC0aE",
+    "ChIJIZGmZ6XTJIgRYNdOVCThkQ4",
+    "ChIJkWsioqCYlVQROK1F9MdhUxk",
+    "ChIJAVsEMiOglVQRntoHl-nJQtc",
+    "ChIJG6qNxQ5baIYRZ84o1A6Xbn8",
+    "ChIJGT-PEggLlVQRL-8JGWJQ3kA",
+    "ChIJq896BJ8MlVQR8NKSWpXXKYw",
+    "ChIJYUdH7YSflVQRGuG_AfDhx0s",
+    "ChIJj7X8Pi-hlVQR4hO3RgWzBN0",
+    "ChIJ4yBW_NmglVQRUShCyXTDfGE",
+    "ChIJ8VZvZfoJlVQRogkRnbNR8Zk",
+    "ChIJmT9HARMLlVQRGqvraAOhsJU",
+    "ChIJ5xszKTqglVQROqj7m5PXQUw",
+    "ChIJP7O_wUx1lVQREY8AwiLTufk",
+    "ChIJW4Xtqk6glVQRLrQdDSuT4W8",
+    "ChIJo6mCOmynlVQR-VwaXMcHTVg",
+    "ChIJkWsioqCYlVQROK1F9MdhUxk",
+    "ChIJeYUGJ49_f4gR6JpduOIQRig",
+    "ChIJyzTq65uGf4gR9Qw92s3VDYE",
+    "ChIJaUtwpAOdf4gRhtCmooGQi5Q",
+    "ChIJ_SLVrZiaf4gRtUeESewwxSs",
+    "ChIJK-GMobdj1YcROTbHyjNAdFU",
+    "ChIJ-U9g8PcHZIgRIcTTMolR2Io",
+    "ChIJpx2D4pKdf4gRWt_BRhfynh8",
+    "ChIJ-T7k056Qf4gRYTIMiTgu65Y",
+    "ChIJf0-mKGiBf4gRZJFx57e_bAs",
+    "ChIJTVSvFwmBf4gRocVuug5vKsA",
+    "ChIJofssC-2Ff4gRZ4b3CU2znBY",
+    "ChIJCdekRkOHf4gR_tfLun2MUbM",
+    "ChIJ9zH-CcaEf4gRMXrazUwfDqQ",
+    "ChIJd_1sfWqBf4gRooc1cBy6Zho",
+    "ChIJWV-y3eJ5f4gRzcYvc1R_PJw"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+❌ Error processing batch: By launching this job you will exceed your remaining usage of $0.265369.  Please consider upgrading at https://console.apify.com/billing/subscription to increase your limit.
+⏭️  Continuing with next batch...
+
+📦 Processing batch 21 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJb9sTvXp-1YcRwJIKx3dO97g",
+    "ChIJeeWY2FGHf4gRLHHHkajJMaM",
+    "ChIJi5KedgiCf4gRFmYeDpMLKsE",
+    "ChIJ_SLVrZiaf4gRtUeESewwxSs",
+    "ChIJpx2D4pKdf4gRWt_BRhfynh8",
+    "ChIJ-T7k056Qf4gRYTIMiTgu65Y",
+    "ChIJZTbdeyZnlIAR6X-MKUdfr8E",
+    "ChIJxYNNLutdlIARV2PP4xSY2CY",
+    "ChIJ38SZhixflIAR6eFOExWElQs",
+    "ChIJMTytFntdlIARw1zq1vZbYi4",
+    "ChIJw_nuWopnlIARl6wwcY8GVv0",
+    "ChIJFU7ayh9olIARAqpnGYzyIhE",
+    "ChIJFZgaR4NdlIARIpeySmsejwY",
+    "ChIJr_RmMZ5glIARjet5Gs1pQGg",
+    "ChIJOxv4hj5nlIAR57tPcrQXQ8w",
+    "ChIJ8VwTB1JnlIAR_7GinMf0MMQ",
+    "ChIJbyFFQFBnlIAR2jMKLt4zwlA",
+    "ChIJCVulBQBolIARTUr8HDRSAA4",
+    "ChIJDwffPwxdlIARI9RX6Prkl-I",
+    "ChIJk4gsFsZdlIAR3c3rEheR05o",
+    "ChIJnXTvQoNolIARRWUE115Irvo",
+    "ChIJnxqU7-ZnlIARxZwl3MsIyJw",
+    "ChIJZTbdeyZnlIAR6X-MKUdfr8E",
+    "ChIJHbAwYYWTtocRDkcXg90o5GE",
+    "ChIJgUtAueORtocRWDjkFG6akl0",
+    "ChIJhWOCqYCStocR_arhkiUzYp4",
+    "ChIJ2YVUEdiNtocRUu0P3bhqAy0",
+    "ChIJMz6NCpCNtocRift6eO7tunw",
+    "ChIJBewySDyNtocR04VpWMgv118",
+    "ChIJHY4RDGeTtocRUECu6kXFgJ8",
+    "ChIJJ3a1lZ2NtocRvNWtMYZ7Ky4",
+    "ChIJaf4PhzCOtocRZyArFyEc7WY",
+    "ChIJnzuw277stocRXGU_W8-EtUk",
+    "ChIJB-mwiYbttocRH6JdKotCgVA",
+    "ChIJv7w3mYeStocR8kHv97zMkao",
+    "ChIJn4oXLijttocRyADB5tzDTGM",
+    "ChIJHY4RDGeTtocRUECu6kXFgJ8",
+    "ChIJHbAwYYWTtocRDkcXg90o5GE",
+    "ChIJMz6NCpCNtocRift6eO7tunw",
+    "ChIJJ3a1lZ2NtocRvNWtMYZ7Ky4",
+    "ChIJ3T3wgPMn9ocRVmxWgey8KW4",
+    "ChIJQVGTo2wus1IRGaAC3_g41z8",
+    "ChIJGfZc6hgo9ocRWWJpIcYt3Rc",
+    "ChIJY1w0LQAn9ocR6jiTtpKBGg0",
+    "ChIJ3YSDxkMts1IRCZip6ljfkrI",
+    "ChIJGVnK4r4ys1IRTJAGAZqMkCA",
+    "ChIJJWL3JRIts1IRO3_X_4mrE2Q",
+    "ChIJn39Zn94n9ocRJHzGlHzy5oc",
+    "ChIJ3T3wgPMn9ocRVmxWgey8KW4",
+    "ChIJGfZc6hgo9ocRWWJpIcYt3Rc"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+❌ Error processing batch: By launching this job you will exceed your remaining usage of $0.265369.  Please consider upgrading at https://console.apify.com/billing/subscription to increase your limit.
+⏭️  Continuing with next batch...
+
+📦 Processing batch 22 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJQVGTo2wus1IRGaAC3_g41z8",
+    "ChIJGVnK4r4ys1IRTJAGAZqMkCA",
+    "ChIJHZOsStGlIIYRjgwq0-0N7mY",
+    "ChIJjYWTSaWlIIYRGYnuhJu22Bo",
+    "ChIJJcJ9koKlIIYRo1Bdmogag8g",
+    "ChIJRQ_QwgqnIIYRHdu7FCPP1Dw",
+    "ChIJr6YG1sOpIIYRuBsEvjWGib0",
+    "ChIJL08id52oIIYRSqlWbL3HCe4",
+    "ChIJq-fypAumIIYRmNRnZsoaArU",
+    "ChIJS3J0PmKvIIYRkfyd7dwNveE",
+    "ChIJcwZwCXqlIIYRQ-KNLhlW1dU",
+    "ChIJ7QsLLHO6IIYRXV43DO3Lck0",
+    "ChIJB-LAkG6mIIYRCgGFkYuumg0",
+    "ChIJW06r3vapIIYRlGT1He_imaM",
+    "ChIJv2z0FakAwFQRM4hJf8DRaZQ",
+    "ChIJl9v-iI3-v1QR4wLEylbXjk0",
+    "ChIJzSx4EjkG2YgRuVMnhaPRb7M",
+    "ChIJE3H7PZOhwokR8O-GxVNKaYg",
+    "ChIJt-DwHTkG2YgRV_nftnjTJJo",
+    "ChIJhZKgb-mWb4YRKew8ny4-roU",
+    "ChIJN6G-JR0J2YgRsIuMNGmPP7U",
+    "ChIJc-esBtf_v1QRFjzH8-pnaoc",
+    "ChIJx56D-ga-b4YRvuwNOmepV-4",
+    "ChIJv_3L-XQG2YgRNSPY510oouc",
+    "ChIJ9YIUDVb-v1QRV28F3zaXZcI",
+    "ChIJYVtcP8n4v1QR9vqjlUrHUAc",
+    "ChIJqyHeKiZ_ZYYR9oh-V0lLRKw",
+    "ChIJmwgQwuGTb4YRT-EvolhZRGE",
+    "ChIJ5RIiW___v1QRZju_kvnmPqg",
+    "ChIJoyN-GNx9WocR8BLnY4y_3E8",
+    "ChIJT_AIGpMH2YgR0-mO6kMhblY",
+    "ChIJXUmwVQz_v1QRtDx7ABQQvOA",
+    "ChIJizxra3j55IcRoSZuVA8v3fo",
+    "ChIJC77PmNr55IcRo4ra_NpfxFg",
+    "ChIJD7AxMcvw5IcRxbRWd4pt1e8",
+    "ChIJ61nGdRL_v1QRt6SuDOXXHMM",
+    "ChIJUV1gQOv-v1QRgoUzC_LbYYE",
+    "ChIJQzRKJpehwokRgN5e_G4vcUE",
+    "ChIJe2huKDn35IcRe5CQUqc3OOk",
+    "ChIJM1Q7P46hwokRKEnQl3PBqPo",
+    "ChIJv2uR-Qfx5IcRvxDuy61UXxU",
+    "ChIJswRe5ewBwFQRvp0OHdO6svo",
+    "ChIJkYi3If6hwokR6XXbWt3pTdM",
+    "ChIJB5B3WQEJ2YgRP4yqqmI3-tc",
+    "ChIJ0QmYDG3_v1QRHnJE5p-JjuE",
+    "ChIJMWymMVAHwFQR4PbVc9ygAMw",
+    "ChIJkd-v_TSUb4YRqqfIrrbcMic",
+    "ChIJJ1ceLlIHwFQRW3eQQ3xRH3s",
+    "ChIJp_jImP_45IcRQ9kHlYv5_S0",
+    "ChIJT7YZ2anx5IcRGZx4uq6H9tw"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+❌ Error processing batch: By launching this job you will exceed your remaining usage of $0.265369.  Please consider upgrading at https://console.apify.com/billing/subscription to increase your limit.
+⏭️  Continuing with next batch...
+
+📦 Processing batch 23 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJdYtUCVUG2YgRNc4g8_hRg6M",
+    "ChIJ27MNSpP-v1QRmtmiH5RPess",
+    "ChIJoz8f4an_v1QR5FYTA7BqUCA",
+    "ChIJV8DLTVwG2YgRdQGVADusC5c",
+    "ChIJf2-nXPmWb4YRhuNWUB8wob0",
+    "ChIJmwgQwuGTb4YRuLFJCVlhOFk",
+    "ChIJc1zBwtChwokRrClW5yoaRQU",
+    "ChIJTRyW5eahwokRCbwGO4dLRRI",
+    "ChIJMfz86aoJ2YgRuN15RHG7h8c",
+    "ChIJEba0soP65IcR9HKDyNj2B28",
+    "ChIJK3IjKmoHwFQRwAcRmof1kIY",
+    "ChIJZ1XbWlz-v1QRZnOpmWVaFGA",
+    "ChIJYcg7s_kF2YgRaYzdmk2tvMI",
+    "ChIJ2X56AbsI2YgRkCBKfsK1T_0",
+    "ChIJg7iXhDXw5IcRVFIfeZb1phU",
+    "ChIJWe4N5M99WocRp4pPp1Wichc",
+    "ChIJw_zK8msHwFQRE3l9VjcSzCU",
+    "ChIJX3_HQOqhwokR_KUslraYDjc",
+    "ChIJD04fn4eWb4YRT0Oxo89QzfU",
+    "ChIJ_bnxiB7x5IcRBqfRLMGaUIQ",
+    "ChIJnRZBJQL55IcRTp-dabMmB5g",
+    "ChIJ4ZpZDHnx5IcRRGEWRUtQh0k",
+    "ChIJedB_wu2hwokR5CNuoSLPK6o",
+    "ChIJnc1ls_qhwokR-yIs9NvnZOM",
+    "ChIJTzanphH55IcRjg8lLIifFvI",
+    "ChIJq1EJM-b35IcR6COSRbq_O6Q",
+    "ChIJYyFUfgD_v1QRxqymltUxKqk",
+    "ChIJNdoclZ__v1QR7Q7LvGO5tqg",
+    "ChIJ35ZnTwz_v1QREAYDiLpw564",
+    "ChIJI-NOZcFIa4gRgNKPrt8o8mo",
+    "ChIJvVbb3RqbQIYRK6nBGpnqRg8",
+    "ChIJx1f6kVqguokRe0GkDcNsLlU",
+    "ChIJczDCk-vjwIcRIiYym7Ha8Yw",
+    "ChIJuVQvajmYuokRmt-JluA61hk",
+    "ChIJO6uGAs2mZYYRUY1gbHRibTw",
+    "ChIJF0rPS3g1w4ARjsqsZAlIKCo",
+    "ChIJsye3NNEhU4YR5CB5HXqMpgc",
+    "ChIJRQhtOYQog4ARvjuT5gFGqE0",
+    "ChIJvZeyAhzW2IgRN59o3rC7ciM",
+    "ChIJvUA-UQBvv4cRIKSOiNimAKU",
+    "ChIJa07VPS5La4gRHRiV5HNiasc",
+    "ChIJ40dp3zFY2YAR__tWE2L9XeM",
+    "ChIJk_nYfbSw3IARQKuEqgW4g1U",
+    "ChIJrzoNS5CnZYYRe6mhUZsyx4g",
+    "ChIJDSwnXfOH3YgRAX7CUVG7poo",
+    "ChIJ6wVIamrrwIcRLQIGzguW24s",
+    "ChIJsxtfCCahZYYREv99pZjOVtk",
+    "ChIJHW1eLLlXa4gRvHeLpyZiHWQ",
+    "ChIJKwQl_akcIogRAP60eEYsjdg",
+    "ChIJQ82P_q7d5okRU12PkiqLcfw"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+❌ Error processing batch: By launching this job you will exceed your remaining usage of $0.265369.  Please consider upgrading at https://console.apify.com/billing/subscription to increase your limit.
+⏭️  Continuing with next batch...
+
+📦 Processing batch 24 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJU0azYrN5j4ARLTkhs8blumA",
+    "ChIJz7R8BNdw8ogRQ9XLNBdlhyI",
+    "ChIJ0Z1LpaatFIgRmpm28h7SoP0",
+    "ChIJe0ctlupx44kRSZh6ee9oUpQ",
+    "ChIJ9352sJO4A4gRRf0i_HkMgTo",
+    "ChIJ80D8ZAArw4ARpP0Jy_vOr-Q",
+    "ChIJbeRTO78ng4AReQhw7i7lXoc",
+    "ChIJg2I-PbBPa4gRLExYpWR2kx0",
+    "ChIJn_cy0oNNw4ARm14v5RRckN4",
+    "ChIJiwFzI8REa4gRvSzyebh4YWk",
+    "ChIJ27isjSkjhYARsl2iAuDOEeU",
+    "ChIJi6XIzKezFIgRYvQuId_Xc3Y",
+    "ChIJ0wv0j8OK6IkRnE0Y3fGnoqA",
+    "ChIJCYuM38xW2YARaAxSIn6bMes",
+    "ChIJiSfmUZ8tw4AR9Y1kAK0JL30",
+    "ChIJ_wUMSSO3FIgRoz7353HswOg",
+    "ChIJ2yToFrTiwIcRQ9MP9ZzLPwU",
+    "ChIJA8pdyCNX2YARTkT33J2JbU4",
+    "ChIJSX0RKubNFogR3JnEGftF2_k",
+    "ChIJK5In0kxk5ogRga2ItYyZ7t0",
+    "ChIJ86kwb0EgnlQRUUXwR7XBub4",
+    "ChIJRfvvoMyvFIgRSo2-VjVaQI4",
+    "ChIJf8yPICb6a4cRkAB29sCGOsw",
+    "ChIJg4sNegVFAYgRzhBD1F2jo-U",
+    "ChIJc2z9ur6Wb4YRYZxhBDCBSRI",
+    "ChIJ2Vk6E8D7AogRuL-pNGzMJtw",
+    "ChIJuZ9SzFJTF4gR_qd7Q6RPJPg",
+    "ChIJW5k2QbBvyYcRPBTgYCXNV8c",
+    "ChIJFxdMz5rpFogRZ5F0YSikAP8",
+    "ChIJpZbymDQawYcReMPszs9TmH0",
+    "ChIJ_aWdkUNf1oARDW4-MDWQT18",
+    "ChIJgyususdJO4gRgjS5t2Y_Iuo",
+    "ChIJ2yevBmxYwIcRu6NKyMQePJ4",
+    "ChIJOYZBZ0OhZYYRdxD7tQ35XzI",
+    "ChIJQzGNe7tsyYcRbtTVHtvC5L8",
+    "ChIJV_sIQ6F844kRWfqfpOa0Hpo",
+    "ChIJ-XHZpb84nlQRB1nOwMmkzw0",
+    "ChIJKa3Bsj7JwoARn1wFlYqtbfU",
+    "ChIJoSTWsMZsyYcRvvTcvcwdcEE",
+    "ChIJZxRTmjZfBIgRtvgE7T2YCQY",
+    "ChIJq6qqqjp454gRLIdGdpBseYg",
+    "ChIJoUtXur6XJIgRLDW5GmRsgB4",
+    "ChIJX46uugMcnlQRuHFy51tnbCI",
+    "ChIJQ7sZVARy44kRsN8HfDw5UWs",
+    "ChIJcZiV9AAt6IkRp3rbIXPQFkc",
+    "ChIJxVOO0r2gZYYRNlzfl2YnodE",
+    "ChIJA-nuhw2fQIYReXNwtMP6eew",
+    "ChIJSZexCJDXwoARkVgt8VJ5RaI",
+    "ChIJZ6kXU1jkAogRYxrY-iiRfsY",
+    "ChIJQ2u3fGbasokR2AW66smTT60"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+❌ Error processing batch: By launching this job you will exceed your remaining usage of $0.265369.  Please consider upgrading at https://console.apify.com/billing/subscription to increase your limit.
+⏭️  Continuing with next batch...
+
+📦 Processing batch 25 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJ_WuB8xiv3IARDQd8blq8OgI",
+    "ChIJIzk1O-5Sa4gRaoNvSpky4lU",
+    "ChIJF-RUGRfSFogRk36EYs4r6sk",
+    "ChIJIZKPPCxpwYcRRh6TsiQAQgc",
+    "ChIJD1GG0lX43YcRGtGdsvfz1XY",
+    "ChIJa6TKrC3NwoARh5zyVOeMKjM",
+    "ChIJRfcSD3ak44kRL2riPEWneHI",
+    "ChIJhzXQ_7TQwoARHgpmUiqNZKQ",
+    "ChIJqQljOUTQwoARp9MDxHQgK9I",
+    "ChIJo16bp_P11oARY_SWzhbfq8Q",
+    "ChIJ-9Ik9y3WwoARl3-yFS91Kw8",
+    "ChIJq9PiEOn_24ARpKWkDwgJpfY",
+    "ChIJixfeTSGDuokRfIld4SGYy_Y",
+    "ChIJvaH3m67bJIgRt7a9kTJ3nUo",
+    "ChIJFxIp7Doo3YARg3HbadS6Irw",
+    "ChIJKwrzc8bGYVMRAf3ojqiOD-0",
+    "ChIJjWKtv6TIuFQRV0TIjNmZ1Cg",
+    "ChIJ4-P4ZqPMFogRHIUvET46Ces",
+    "ChIJT1gnrDI1t4kRXa1r2o-2wrk",
+    "ChIJAQBAKnHd2ocRbeJHy4kEoPM",
+    "ChIJWXQE1rlvO4gRKkA_Lf9NKho",
+    "ChIJLStn9HSi-IgRHb6cGx0ZKuY",
+    "ChIJL3aEeAB19YgR1vPqry4Kv6U",
+    "ChIJwYXF5b9FE4cRaf-t0HNko44",
+    "ChIJYWWMvpfhcYgRgkTXAr7q7pY",
+    "ChIJy1TVUfmj9YgRH2CsSWmRbqo",
+    "ChIJYeRr8UKt6YARAKIrwU_1MdA",
+    "ChIJW6aBmlup2YgREDNS7tjUfqs",
+    "ChIJpVz4Je6tD4gRcOjOqYIsQgY",
+    "ChIJPw5J1D4lWYgRpKApo0GN1Wo",
+    "ChIJvTmeS0LF7IARqe6Wl5U6LzE",
+    "ChIJRaJpAhyj9YgREfoBR5EmZrE",
+    "ChIJxZzcLQE_mYAR6Fg-ezPsZFg",
+    "ChIJtbFAXvvlQIYRjueNSHIWBwc",
+    "ChIJLYg2XS7JVogRP5V_sFJ6j28",
+    "ChIJ_wQ8Js0n9YgRQVNblBxSolY",
+    "ChIJ0ZG11acA_ocRhKe6pwNhDow",
+    "ChIJvdObvbJCkFQRYQGoSIqcIS8",
+    "ChIJvf5d4twp2YgRnZIxXspqTp8",
+    "ChIJ0ej6JZQ_R4YRIuF75ISuWfc",
+    "ChIJBdV4KwQrbogRbBdFK6YI0LQ",
+    "ChIJi-dXsiQHI4gRj2Ts4hz5U_4",
+    "ChIJbZBqWZQvVUARNaREXvx05kU",
+    "ChIJOWv93IMFU4cRZidBT9hXTUg",
+    "ChIJ1wPRFm2k8IgRuWN8zZm1MPk",
+    "ChIJ0XQatbo-R4YRtDvtKAroqzQ",
+    "ChIJAZ6pL_2LUocRpBBblfkm6gg",
+    "ChIJu7cgZ9dmhYAR3Y4_lUe1GBM",
+    "ChIJ2Q0Vs9eFTYcRixAlkiMjdcM",
+    "ChIJ0fC3r6azQIYRqyFIwT6FswY"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+❌ Error processing batch: By launching this job you will exceed your remaining usage of $0.265369.  Please consider upgrading at https://console.apify.com/billing/subscription to increase your limit.
+⏭️  Continuing with next batch...
+
+📦 Processing batch 26 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJe4usbvq0VIgRXPkiTi12jGc",
+    "ChIJc8SSRXQ5R4YRMenokRGHJFo",
+    "ChIJmdrl4kJxIocRbIoe0Mxi7Bc",
+    "ChIJidDwuSUcVIgRsZ3QeUkp-oQ",
+    "ChIJ5-qdwNJzC4gRWqFsjZoGL44",
+    "ChIJKyPwmfSulVQRaEsnFEZXHXM",
+    "ChIJr22yfiWb5IkRVHIDdjLRdQc",
+    "ChIJFb2Xw3aHa4cRVlFb4Lxsus4",
+    "ChIJF8AaTpSm9YgRvpPZfmMwMKQ",
+    "ChIJEXw-oSPG9YgRXT31asuR02Y",
+    "ChIJp5Tx4VL_24ARNOlqbKLTVdo",
+    "ChIJQW9eIgA5mYARxkpWrtuBisM",
+    "ChIJfWhSw8jA54kRt0ODcp0Lug4",
+    "ChIJe2Jnzcs9SIYR6tAjRi1JKHI",
+    "ChIJVZzvaTgPVIgRw2YWgKxCQX4",
+    "ChIJX-LJAyUGR4YRCwS6qqcl2eU",
+    "ChIJNYadVOT1CogREIej8AfUgqI",
+    "ChIJW9fAsxup2YgRjKKZzBHcrt0",
+    "ChIJlSb02kxdkFQRSiRHgE0f8sM",
+    "ChIJtySpCXhAmYARAu513oDGGsc",
+    "ChIJD4rgyoRIE4cRPwvEQWmlnXI",
+    "ChIJvVxO_ZRibIcRif1u4ugRa18",
+    "ChIJp8xXPxWj9YgRLr9xxnkWLaY",
+    "ChIJaYUAK_ro3IAR6PaRa2kGJUQ",
+    "ChIJY5hMelHFIogRVygTeB5pn3Q",
+    "ChIJTbsuCseaTYcR9D9Ut2lmc7I",
+    "ChIJjwaAymr79IgRjA0C8hYA1Ec",
+    "ChIJd7OoVllbCogRqJPS3cG0xcc",
+    "ChIJxzPY7RKj9YgR9WRVVm8PzoU",
+    "ChIJU1w4zBiLUocRsllW4Z1jQnY",
+    "ChIJEzvwoIx3hYARd-2TQVbAJ8I",
+    "ChIJ3RZ9bWy1QIYRUMsZz2ScV44",
+    "ChIJgXuPr844K4cRRnoTKEzol84",
+    "ChIJnSmSTrcDU4cReITILN_xA5k",
+    "ChIJS7RIFogHT4YR5bY9Gqq5Gzk",
+    "ChIJqwc56xkFlVQRmP66XaUaLfo",
+    "ChIJiaf-84_q54kRn_aGl0djnSM",
+    "ChIJqcP_U84z3YARfDOdP23YKZU",
+    "ChIJS_tJdMl1bIcROi_V1N_GFxE",
+    "ChIJ_1rwxEGz54kRWMZrMBwewtc",
+    "ChIJTX2Cnqa99YgRtqL7E9PVctg",
+    "ChIJ_T0xSUn_CogRVBkSlgsI4YE",
+    "ChIJRf8c8F8IVIgRi2VWuc8DVok",
+    "ChIJ71vlMcgbNoYR-UxIzZmvfyI",
+    "ChIJdSJvEy2aVogRkAv-N0DUoFo",
+    "ChIJVRRAuYr254kRu4PQ3Dn2jTI",
+    "ChIJDYqf6-2LUocRFiyp5zietxQ",
+    "ChIJDQg_1UnhcYgRyxzNg--4m08",
+    "ChIJ9StcvNN3bIcRCYycctDCG2U",
+    "ChIJ84eQ9Fhr7IAR3ht7a4SFJDg"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+❌ Error processing batch: By launching this job you will exceed your remaining usage of $0.265369.  Please consider upgrading at https://console.apify.com/billing/subscription to increase your limit.
+⏭️  Continuing with next batch...
+
+📦 Processing batch 27 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJT40PPkeZAogRnYyJJsTYi1Q",
+    "ChIJaZSr7mUG2YgR__6TTWJWLVg",
+    "ChIJz9rXjjMgVIgRfwSuCaKT1O8",
+    "ChIJLynSVGE5mYARyTK4taiyITY",
+    "ChIJIcOsPjgPlVQR03dHZCfyIec",
+    "ChIJKUdk35Gs3IARDrckWaA2qlY",
+    "ChIJFTs7islEK4cRwtQjPsI8bGo",
+    "ChIJmcjvb41aHYgR_Y3Lvt96SKQ",
+    "ChIJJ5of3GFr7IAR4kkITZbK_n4",
+    "ChIJYTm63uLH54kRKdU7SKxxcKs",
+    "ChIJsWOHkdWHbIcRqoH0LDHLNfk",
+    "ChIJJ7n6KG4rbogRGBjyehmVZDA",
+    "ChIJtwNDXGAH9YgRsm4VmVU7zFQ",
+    "ChIJAwMI5ywrAogR7ozf3pd3nyE",
+    "ChIJS2dhZ6MTTIYRtGhu2W-DhA0",
+    "ChIJuU7_GIiDRoYRc9zs_O1TEq4",
+    "ChIJVc_Kj-Cp44kRcuPaJJIIyxw",
+    "ChIJNZ41F4qh5okR73imajZi_UM",
+    "ChIJqU3wRgXJ-4YRQWY5l-PU0sE",
+    "ChIJe33Ik0WFRoYRrmRZ1qiSMn0",
+    "ChIJXXBI75iDRoYRsfgNW3cJV7c",
+    "ChIJRTXD5ZWDRoYRZFlC735NNQ0",
+    "ChIJrTkP2b2piIgROFKRmZNf4Ds",
+    "ChIJU3O64I0AkFQR759ShDuKnQE",
+    "ChIJXVl2cgAdJIYR3FccatZTQwo",
+    "ChIJAa7shctx44kRAMHucq974VA",
+    "ChIJ1S_BYwl544YRQe6CQpnJt-A",
+    "ChIJx-dsN7awPoYRpsRkPbTsaSg",
+    "ChIJaXxvxRsbU4gRhXaBqzsOu-8",
+    "ChIJTSI-j7Wh3IARFkBRzaVZWi0",
+    "ChIJ6-VkUZITwYcRoOkPiLaGrZI",
+    "ChIJtySoVKyZU4gRNhrljeu40So",
+    "ChIJ8YIjPcCxe0gRW_sZs_FFWPM",
+    "ChIJQQU6oAAdTIYRlrS4QDJCxGM",
+    "ChIJZVv6tKSt2YgR00G5soQb7Xw",
+    "ChIJzYTKaNel2YgRkoTgBg8Vzp4",
+    "ChIJuwx2K7qHUocRM-oMg4CZtBI",
+    "ChIJb1DAYSct5ogRbUKmExPl_0o",
+    "ChIJQVJEW_KDRoYRogVVIupc6y0",
+    "ChIJIXCwUtIGkFQR0dzP5fauoTQ",
+    "ChIJVX_-Bd6ERoYRHPuspaPn4Gg",
+    "ChIJXaN1ZN2ERoYRk8cF_fKDReU",
+    "ChIJ6xyLgxkC44kRO53BfDYKyHI",
+    "ChIJVUYw47bXDIgRIVBJKai5zJI",
+    "ChIJZ8lCUbXUuYcRJgZbSA41180",
+    "ChIJZdON7hHys0wR0SSBXaCTvVg",
+    "ChIJy0NTenuDRoYRwty89FTr_7o",
+    "ChIJt-ezrg9LOYYRdvdMLLRj2i0",
+    "ChIJneGVu1093oYRmcX9hhJJujg",
+    "ChIJjePBzB4kTIYRMfr7oFGc4v0"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+❌ Error processing batch: By launching this job you will exceed your remaining usage of $0.265369.  Please consider upgrading at https://console.apify.com/billing/subscription to increase your limit.
+⏭️  Continuing with next batch...
+
+📦 Processing batch 28 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJu-4qJ9qDRoYR2CRbfl00Dbc",
+    "ChIJR45not0YTIYRPUr5crcdmhE",
+    "ChIJy1nvJniERoYRtCowQYOTvUk",
+    "ChIJX5H5VjwDIocRyyTlD79oofY",
+    "ChIJCQboZR-t2YgRHQUOom8GkrQ",
+    "ChIJ7RNStFgc2YgROWSdvz6KKjE",
+    "ChIJ3_lxatRiz4cRPurlvz806PA",
+    "ChIJpdWvydWwPoYRH3YWW58vL-c",
+    "ChIJmX7L3NaaRoYReq_XYvGPEoM",
+    "ChIJDU3kvQtWrlQRqEpYSPtJ_5I",
+    "ChIJS3wIqFwfTIYRLpE004Nkc3M",
+    "ChIJjd-bja1kz4cR-IqaS32KyZI",
+    "ChIJB_wmFbN_P4YRHbrTS_r5_CI",
+    "ChIJ3cRMWWkfU4gRkvY3ygosmys",
+    "ChIJBf-jsIqFRoYRkqdXLYDQFcg",
+    "ChIJFy0N3f5nkYgR72uJHw2Elio",
+    "ChIJbS5BvER4ToYRIZixd7bCuak",
+    "ChIJFfLec29jz4cRD3BOkEUX-jw",
+    "ChIJoTbLMT-BRoYREB7n2dV1BKg",
+    "ChIJEwz0D4lx3IARLBFdj4lv1lY",
+    "ChIJWZXsOQaxPoYRelaqsJE5zcw",
+    "ChIJgwpXpPNVwIcR9EVnIgfrFrM",
+    "ChIJs7pTKF4p5YcRUKwahRD9tRc",
+    "ChIJSeYVdmvqwIcRvVPAN6-lo_I",
+    "ChIJowbtsTBjSFMRpVMjZFCZmGY",
+    "ChIJRQjRvITwwogROo9QNEjauW8",
+    "ChIJeYpuUY7kwogRNwIzLPZhH3A",
+    "ChIJyf5tWc6pK4cRQFghamTiL6k",
+    "ChIJiQXepUOsQIYRKjPq6QgViRA",
+    "ChIJScvfCiB5ToYRYblgxqkebrk",
+    "ChIJTSFfGNRVrlQRuTYkj0zGqMM",
+    "ChIJ88BC7rsNU4gROm785ua_PIE",
+    "ChIJ--3ULgCFRoYRfecfn715XbQ",
+    "ChIJ_2Wo86JdXIYRXNxwtR-cYFA",
+    "ChIJDR4G9jSs2YgRh993N7Supz0",
+    "ChIJgzIT0i7P-4YRzOsZAqlU9L8",
+    "ChIJex4OAksF2YgRSXR71i3ake0",
+    "ChIJCTA3t7j4j4ARkyaZ5wxsR1o",
+    "ChIJkRqu1HTq4YkRxghzHhCAeYM",
+    "ChIJYQDmqxsZTIYRUDtAh2d7K7Q",
+    "ChIJ-yFRFsR8SFMROxWiPdXS5Jg",
+    "ChIJuXv60kZwSFMR54-P-0pHMeY",
+    "ChIJ8-mXsLLnwogRclIOcTaAmGc",
+    "ChIJ39mJLtPxwogRdmJRzqjdbHk",
+    "ChIJV8dcZTiBRoYRU4SB7ef_1aM",
+    "ChIJ2-CL2-XAwogRqH4bU_-TRhE",
+    "ChIJiXcB_6QD2YgRJOXCDS92nfg",
+    "ChIJge9qF27eAocRs_izEWltbOU",
+    "ChIJS7YL7r47xIkRgTYEaFdi6_c",
+    "ChIJ6xnwUkt9_ogRBboqgHuRddY"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+❌ Error processing batch: By launching this job you will exceed your remaining usage of $0.265369.  Please consider upgrading at https://console.apify.com/billing/subscription to increase your limit.
+⏭️  Continuing with next batch...
+
+📦 Processing batch 29 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJgYv6RxV8_ogRteZAIcHT2q8",
+    "ChIJxz8xsqrX2IgRoOQXvlWRjmQ",
+    "ChIJG9LhFxsv6IAR_wu5srG7XZA",
+    "ChIJrcHVo0Rj_ogRprBTu8Vgab8",
+    "ChIJEWamX1zf2IgRYvJ6v3p2zEA",
+    "ChIJx-U84A87xIkRtIhpUTPlLPM",
+    "ChIJCcJ8j1rzqYkRXPrzM2IVGOA",
+    "ChIJf_ejs8Mp2YgR6Sb5kcpX8Ho",
+    "ChIJM7Fmv6-MqYkRnPrbjrCK7zM",
+    "ChIJi785Ythj_ogRyzjaAeLniFE",
+    "ChIJX9rgqO8p2YgRKIEgnkDy0FE",
+    "ChIJQW8MRsRj_ogRuxhJbtGy7fY",
+    "ChIJ9w_dHCQo6IARYXjkyXNeffY",
+    "ChIJmRQbVq7X2IgRdLQzTDlsELk",
+    "ChIJETq5RLl9_ogRjmjh3CEp6so",
+    "ChIJFcAKdl2J_ogR5ShAbUuP-fo",
+    "ChIJczTzgIti_ogRWOTSKgAih8s",
+    "ChIJc3QeTCMv2YgRwLnDUTvzbYg",
+    "ChIJm1E-RCUvlYARusIRFtGnGAQ",
+    "ChIJ7wwlhzmL_ogR-FzVJEPgFfk",
+    "ChIJpWECcC4bv4cRRJ65xr8F3oQ",
+    "ChIJMRXXQBE_xIkRZN4HU75BLJU",
+    "ChIJtxY3QM4Bv4cRuhzOowmnX34",
+    "ChIJt0y_eDQo6IAR70xashTmm_0",
+    "ChIJl9wkTkQ4xIkRIQNX_VGbkd0",
+    "ChIJzYCJRXdclIARoazoLGJWigI",
+    "ChIJRSfnPgA5xIkRXJfGKR8H42g",
+    "ChIJUSFvKTNDlIARq4mfwBGZK8s",
+    "ChIJr6wXpL6MqYkRUgg5aWAxNoY",
+    "ChIJjero93Y6xIkRgvrLeR3YhOo",
+    "ChIJ-5wtTT39vocRHKod2icnUSQ",
+    "ChIJ2dr5CwzW2IgRtm2QZsnJeJw",
+    "ChIJiWvU5aZ9_ogR5bOKNEdWdDU",
+    "ChIJ-a_KLZQu6IAR7FqZ3B40yGM",
+    "ChIJU5h2thH9vocRXHF_2OxxLZI",
+    "ChIJh8vMvdKJ_ogRnzQLE7oQ2JI",
+    "ChIJ5-EwjBkp6IAR_HS7Tgg1qS8",
+    "ChIJPWsCijL9vocRYX-Ee0bUGmM",
+    "ChIJGc6TP5mKqYkRj32L9tP6aiw",
+    "ChIJAe3T4uw5xIkR-Rs-C7j_PjE",
+    "ChIJ_yGOMcADv4cR3f0efzvxk8c",
+    "ChIJCwd-3FhclIARLgg8CmhFWsw",
+    "ChIJK9R2Zcxk_ogR5iUa3RlHLDk",
+    "ChIJF7rk914wxIkRfgDnqNElGN8",
+    "ChIJf9Pl555clIARev5kT8eoeRw",
+    "ChIJRbyRtxD9vocRg5xrhgnMmYM",
+    "ChIJk5LwOgc5xIkRqovtA7_wYAU",
+    "ChIJZZc40lSKxIkRKcmwH8LmZJU",
+    "ChIJXxncou4u6IARM2-8JKfMJuw",
+    "ChIJrYtfoFcp2YgRz9Ob-qCdA-E"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+❌ Error processing batch: By launching this job you will exceed your remaining usage of $0.265369.  Please consider upgrading at https://console.apify.com/billing/subscription to increase your limit.
+⏭️  Continuing with next batch...
+
+📦 Processing batch 30 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJQSIPXLZk_ogReIQNkU6l6ow",
+    "ChIJ39Zgwskn2YgRUVgaboDQdTo",
+    "ChIJZzLDyioDv4cR958EGUPOYKE",
+    "ChIJM-DReqr1qYkRvFyC3Fx6Rsw",
+    "ChIJnxddmxADv4cRJx5uTuCjmFg",
+    "ChIJtxWG9xxAxIkR6OAaRGKuPMk",
+    "ChIJVf-_Sq0p6IAR7b6_KlXn0u8",
+    "ChIJrSr-R3o5xIkRlMqJgIaEsVk",
+    "ChIJoe2izaL1qYkRUwbEMNt-mNg",
+    "ChIJE7VfFm7eAocRXi597P93hsQ",
+    "ChIJA6XVa21blIARmp-SLyw4pyo",
+    "ChIJMUK4xn31qYkRXeVpbMdKTlY",
+    "ChIJT4X0Ap3X2IgR9MH2ZQug8p0",
+    "ChIJ-V2kNQ79vocR36nXiNNTV-Y",
+    "ChIJaWEJZcQ7xIkRLyVYgUPaOv0",
+    "ChIJ78KPGLbY2IgRrUW4br-l4K8",
+    "ChIJxemjmdOJ_ogRWo9MSqiHew0",
+    "ChIJ3V4DvwE8xIkR7CnxjUBuwWY",
+    "ChIJc6FGw4YwxIkRnAMvz1-2EFs",
+    "ChIJx0zzwhnwlIAR_w1nMd9t1hE",
+    "ChIJQVV4RkQ_xIkRHkOUZ1pmcFU",
+    "ChIJTS5J7p35vocRisGiFRXkx8M",
+    "ChIJ6aTn1XOL_ogRvh01oo2F4pY",
+    "ChIJd-f99mVblIARlBSf1AJWOfg",
+    "ChIJgZWsM60p6IAR1ls93g_rI7s",
+    "ChIJu4n-GIhk_ogRT-53jy5Pg8A",
+    "ChIJldnhF7P9vocRpGzfxuKqw48",
+    "ChIJhY6ipjJ7_ogRnapaH6dS48A",
+    "ChIJwwZ56i45xIkR4LwMhKLMqL0",
+    "ChIJQ6jKIbyMqYkRQAMHjHdgQc4",
+    "ChIJpy2R35c5xIkREHz-CYVR6BY",
+    "ChIJFfwKdgBDlIARyBU1Sbr5tL8",
+    "ChIJIehfu-vkxokRyDs3NyiNBsc",
+    "ChIJ-WQOn6N3xokRxIoGF89yRr8",
+    "ChIJv6FXD4g5xIkR0VULvrUWIWI",
+    "ChIJB3ddRgH1qYkRLJFoCw8lsuI",
+    "ChIJP6D89Ob0qYkR0hXzD5iJKyw",
+    "ChIJAbvO5Ac5xIkRgsojYTzz5Qw",
+    "ChIJMdmormc5xIkRQoCA_8ufP1I",
+    "ChIJJSx0Hqr1qYkR4RfL7XzMO40",
+    "ChIJA3alRagp6IARdc56iVNsO7A",
+    "ChIJtS-QGM4u6IARvwLBhmx_Lzc",
+    "ChIJwx4i-8WxPIgRMV-7zpdW8GA",
+    "ChIJy6EA81FzhYARUF8YWkqblO8",
+    "ChIJx8TkPMaLtocR2vMf-leu-rQ",
+    "ChIJWWB_t7A66IARhO6LKX-rI4U",
+    "ChIJC0EdSZ5nhYARar7H9zxDJOE",
+    "ChIJa6ZnwYw43YgR4_p8khfO_lQ",
+    "ChIJdzC4mZaPj4ARq5tjZiCVUFg",
+    "ChIJJdPcw1SJtocRR0vG6nK0928"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+❌ Error processing batch: By launching this job you will exceed your remaining usage of $0.265369.  Please consider upgrading at https://console.apify.com/billing/subscription to increase your limit.
+⏭️  Continuing with next batch...
+
+📦 Processing batch 31 (50 place IDs)...
+🚀 Running Apify actor for 50 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJCcT0EjFuhYARy54BZClMwSI",
+    "ChIJr7DcaNVf94cRh_X0wxL5_2I",
+    "ChIJKysdEa-vPIgRZHX1SvIjGng",
+    "ChIJidXvPlhf94cRVuLJST9OmQM",
+    "ChIJhcNxl_5yhYAR0E6gH1L4wIA",
+    "ChIJAQAAAHClPIgRElD5fIw7Mvw",
+    "ChIJsR62_Q9zhYARC9bNAUbEzd8",
+    "ChIJk4mD_PpzhYARaFjTNrCj930",
+    "ChIJq_gjVESuPIgRuUJqLVPNMgE",
+    "ChIJ6zuA1xk_3YgRHVHcNk5tULg",
+    "ChIJYU8Ujbzs0lQRBQnIp7vSF7o",
+    "ChIJD5YiqZZmhYARgjucJNb-tFY",
+    "ChIJr9JmIJ4w6IARJvIZlL0xFuY",
+    "ChIJYwS3rsZmhYARkGKX3IjmxuI",
+    "ChIJl5V5IypzhYARMCTt5Ex4eqc",
+    "ChIJmy8uTwCNtocRNEJ_jQ_MBJ0",
+    "ChIJQw0ldINhhYARAXENYCNcRNQ",
+    "ChIJH58FieeoPIgRCtqck2JHOfw",
+    "ChIJ4Rlfc3WMtocRFsVzPtqsHvc",
+    "ChIJ_1YR-Z9f94cRlT9qKYZUxZY",
+    "ChIJRyQFelKvPIgRGjD8wyozykQ",
+    "ChIJLZ4uI1yJtocRfgVzjpfUqmw",
+    "ChIJDXfRGmNf94cRMTXp-bW6VWg",
+    "ChIJE6Dvtb9G3YgRYSOxrUXl6Bo",
+    "ChIJGYhrUTevPIgR-BOgavV5O58",
+    "ChIJnU3O_SasPIgRZRRgqnh9HQs",
+    "ChIJqwx7UH0MhYARoJTarqkQnc4",
+    "ChIJV6BHIuiNtocR8ZPc41S_xwc",
+    "ChIJr5gnzKQ66IARJ1rXLLb9AKw",
+    "ChIJv5QFphVH3YgRcWBRxnpGUEc",
+    "ChIJO8NQlp8w6IARYo75v3D4nYQ",
+    "ChIJa-359FFzhYARZJ3KXuTupbU",
+    "ChIJQ0pPBGVzhYARlbabW6gkMK0",
+    "ChIJbXq3c2VzhYARsPduq1j5Aww",
+    "ChIJhX3HBRtNO4gRTp9fl_a_Wis",
+    "ChIJb8357OB2hYARAUn-DfB8a80",
+    "ChIJm1d7DT-uPIgRI7Y-DwGNfuc",
+    "ChIJWd4Svyte94cRFtqeZHyU1bA",
+    "ChIJ_6GIM9hmhYAR5enJsRzO-5U",
+    "ChIJp3s6ulZH3YgR9nda5-HXZB0",
+    "ChIJL3PpqqQx6IAR1TsTI5N7bmk",
+    "ChIJ4Vyw-v456IARPeCUHOLQ1JU",
+    "ChIJscoCRJBg94cRQ1t09PAi9OM",
+    "ChIJWQfJI_sk6IARBFVFX5OWQyc",
+    "ChIJC9c9aiOJtocRJ_Rp92Nqc5U",
+    "ChIJq2mEMSIl6IARSUCOfLkyxjA",
+    "ChIJz6rdBgBehYAR6xD2YEdnvlc",
+    "ChIJITErV_Mk6IARKbS_kB9aw4s",
+    "ChIJIZ7cTJ7wtocRS-AKOcfZ1PM",
+    "ChIJvbI7IJk66IARkLRR_retBpY"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+❌ Error processing batch: By launching this job you will exceed your remaining usage of $0.265369.  Please consider upgrading at https://console.apify.com/billing/subscription to increase your limit.
+⏭️  Continuing with next batch...
+
+📦 Processing batch 32 (14 place IDs)...
+🚀 Running Apify actor for 14 places...
+🚀 Starting Apify actor: compass/crawler-google-places
+📥 Input: {
+  "placeIds": [
+    "ChIJN9qLqAA66IARfcgqSGj0uhk",
+    "ChIJWRQCM9ivPIgR9eqQsqA1JQM",
+    "ChIJIazQNT-uPIgRlrirrokKi1M",
+    "ChIJowDuKSdf94cRuK8XoUuomL8",
+    "ChIJrSIdSK0MhYARg816qnbBzZ0",
+    "ChIJ39kKj9nh-YcRx9fFnrAN2gs",
+    "ChIJkVzJZTsl6IARB3uxuAoWw04",
+    "ChIJSVCDX6G7PIgRJrdXXJQ46Vc",
+    "ChIJp2U9_HZH3YgR-ZV8yMEgCKI",
+    "ChIJPR-TJ2lW94cRxu_JKyP8sfg",
+    "ChIJH9_zPdKxPIgR5I3LKVqS_Ho",
+    "ChIJC8FrZeqvPIgRin9AHIZ2-6A",
+    "ChIJp441-Ho53YgRDHD_3VrZpNo",
+    "ChIJOwdHPWRzhYAR-XIwvMgOW2E"
+  ],
+  "includeReviews": false,
+  "includePhotos": false,
+  "includeBusinessLeads": false,
+  "includeSocialMedia": false,
+  "includeMenu": true
+}
+❌ Error processing batch: By launching this job you will exceed your remaining usage of $0.265369.  Please consider upgrading at https://console.apify.com/billing/subscription to increase your limit.
+⏭️  Continuing with next batch...
+
+✅ Batch processing complete!
+📊 Statistics:
+   - Successfully scraped: 944 records
+   - Failed/Skipped: 614 records
+   - Total processed: 1558 records
+   - Remaining unscraped: 673 records
+
+📝 File saved to: /Users/michalpekarcik/Cursor/Chinese Buffet/Example JSON/apify-big-cities.json
+
+✅ Done!

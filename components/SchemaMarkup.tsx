@@ -1,4 +1,5 @@
-import { Buffet, City, getCityBySlug } from '@/lib/data';
+import { Buffet, City } from '@/lib/data';
+import { getCityBySlug } from '@/lib/data-instantdb';
 
 interface SchemaMarkupProps {
   type: 'homepage' | 'city' | 'buffet';
@@ -6,7 +7,7 @@ interface SchemaMarkupProps {
   citySlug?: string;
 }
 
-export default function SchemaMarkup({ type, data, citySlug }: SchemaMarkupProps) {
+export default async function SchemaMarkup({ type, data, citySlug }: SchemaMarkupProps) {
   const baseUrl = 'https://yoursite.com'; // Update with your actual domain
   let schemas: any[] = [];
 
@@ -71,7 +72,7 @@ export default function SchemaMarkup({ type, data, citySlug }: SchemaMarkupProps
     // Note: FAQs should be passed separately if available
   } else if (type === 'buffet' && data && 'name' in data) {
     const buffet = data as Buffet;
-    const city = citySlug ? getCityBySlug(citySlug) : null;
+    const city = citySlug ? await getCityBySlug(citySlug) : null;
     
     // Restaurant schema
     schemas.push({

@@ -1,0 +1,25 @@
+1. Food & Dining
+2. Retail & Shopping
+3. Healthcare & Medical Services
+4. Personal Care & Beauty
+5. Transportation & Automotive
+6. Recreation & Entertainment
+7. Education & Learning
+8. Professional & Business Services
+9. Financial Services
+10. Accommodation & Lodging
+11. Government & Public Services
+12. Utilities & Infrastructure
+13. Arts & Culture
+14. Sports & Fitness
+15. Home Improvement & Garden
+16. Religious & Spiritual
+17. Social & Community Services
+18. Communications & Technology
+19. Industrial & Manufacturing
+20. Repair & Maintenance Services
+21. Pet Care & Veterinary
+22. Agricultural & Farming
+23. Legal & Security Services
+24. Travel & Tourism Services
+25. Miscellaneous Services

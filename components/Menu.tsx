@@ -3,6 +3,28 @@
 interface MenuProps {
   menu: string | {
     [key: string]: any;
+    categories?: Array<{
+      name: string;
+      items: Array<{
+        name: string;
+        description?: string | null;
+        price?: string | null;
+        priceNumber?: number | null;
+      }>;
+    }>;
+    items?: Array<{
+      name: string;
+      description?: string | null;
+      price?: string | null;
+      priceNumber?: number | null;
+    }>;
+    sourceUrl?: string;
+    contentType?: string;
+    metadata?: {
+      sourceUrl?: string;
+      extractedAt?: string;
+      parsingStatus?: string;
+    };
   } | null;
 }
 
@@ -41,11 +63,111 @@ export default function Menu({ menu }: MenuProps) {
     );
   }
 
-  // If menu is an object, display structured data
+  // If menu is an object, check if it has structured data
   if (typeof menu !== 'object' || Object.keys(menu).length === 0) {
     return null;
   }
 
+  // Check if menu has structured categories/items (new format)
+  const hasStructuredData = menu.categories && Array.isArray(menu.categories) && menu.categories.length > 0;
+  const hasItemsOnly = !hasStructuredData && menu.items && Array.isArray(menu.items) && menu.items.length > 0;
+
+  // Render structured menu with categories
+  if (hasStructuredData) {
+    return (
+      <div className="space-y-6">
+        {menu.sourceUrl && (
+          <div className="mb-4">
+            <a
+              href={menu.sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-blue-600 hover:text-blue-800 inline-flex items-center gap-1"
+            >
+              View original menu
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </a>
+          </div>
+        )}
+        
+        {menu.categories.map((category, categoryIndex) => (
+          <div key={categoryIndex} className="border border-gray-200 rounded-lg p-4 bg-white">
+            <h3 className="text-xl font-bold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+              {category.name}
+            </h3>
+            <div className="space-y-3">
+              {category.items && category.items.length > 0 ? (
+                category.items.map((item, itemIndex) => (
+                  <div key={itemIndex} className="flex justify-between items-start gap-4 py-2 border-b border-gray-100 last:border-0">
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-gray-900">{item.name}</h4>
+                      {item.description && (
+                        <p className="text-sm text-gray-600 mt-1">{item.description}</p>
+                      )}
+                    </div>
+                    {item.price && (
+                      <div className="flex-shrink-0">
+                        <span className="font-semibold text-gray-900">{item.price}</span>
+                      </div>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-500 text-sm">No items in this category</p>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  // Render items-only format (no categories)
+  if (hasItemsOnly) {
+    return (
+      <div className="space-y-4">
+        {menu.sourceUrl && (
+          <div className="mb-4">
+            <a
+              href={menu.sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-blue-600 hover:text-blue-800 inline-flex items-center gap-1"
+            >
+              View original menu
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </a>
+          </div>
+        )}
+        
+        <div className="border border-gray-200 rounded-lg p-4 bg-white">
+          <div className="space-y-3">
+            {menu.items.map((item, itemIndex) => (
+              <div key={itemIndex} className="flex justify-between items-start gap-4 py-2 border-b border-gray-100 last:border-0">
+                <div className="flex-1">
+                  <h4 className="font-semibold text-gray-900">{item.name}</h4>
+                  {item.description && (
+                    <p className="text-sm text-gray-600 mt-1">{item.description}</p>
+                  )}
+                </div>
+                {item.price && (
+                  <div className="flex-shrink-0">
+                    <span className="font-semibold text-gray-900">{item.price}</span>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Fallback: render generic object structure (legacy format)
   const renderMenuItem = (key: string, value: any, level: number = 0): React.ReactNode => {
     if (value === null || value === undefined) {
       return null;
@@ -123,3 +245,21 @@ export default function Menu({ menu }: MenuProps) {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
