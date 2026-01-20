@@ -45,3 +45,11 @@ Research/
 **/Research/**
 .cursor/
 **/.cursor/**
+
+# cursor
+.cursor/
+**/.cursor/**
+
+# logs
+*.log
+**/*.log
