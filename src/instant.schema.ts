@@ -105,6 +105,12 @@ const _schema = i.schema({
       reviewSummaryParagraph2: i.string().optional(),
       // Overpass API POI data (JSON string - will be migrated to overpassPOIs table)
       overpassPOIs: i.string().optional(), // JSON stringified object with nearby POIs
+      // SEO description fields
+      seoDescriptionMd: i.string().optional(), // Generated SEO description in Markdown
+      seoDescriptionProvider: i.string().optional(), // AI provider used (gemini, groq, etc.)
+      seoDescriptionModel: i.string().optional(), // Model name used
+      seoDescriptionGeneratedAt: i.string().optional(), // ISO timestamp when generated
+      seoDescriptionInputHash: i.string().optional(), // Hash of input data for change detection
     }),
     reviews: i.entity({
       reviewerId: i.string().optional(),
