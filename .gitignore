@@ -54,6 +54,7 @@ Research/
 *.log
 **/*.log
 
-# script output
-scripts/output/
+# script outputs
+/scripts/output/
+
 env.local.txt

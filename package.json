@@ -76,25 +76,29 @@
     "enrich-cities:phase2": "node scripts/enrich-cities/index.js phase2",
     "enrich-cities:all": "node scripts/enrich-cities/index.js all",
     "generate-seo-descriptions": "npx tsx scripts/generate-seo-descriptions/generate-all-descriptions.ts",
-    "generate-seo-descriptions:test": "npx tsx scripts/generate-seo-descriptions/test-sample.ts"
+    "generate-seo-descriptions:v2": "npx tsx scripts/generate-seo-descriptions.ts",
+    "generate-seo-descriptions:test": "npx tsx scripts/generate-seo-descriptions/test-sample.ts",
+    "generate-poi-accommodation-seo": "npx tsx scripts/generate-poi-accommodation-seo.ts"
   },
   "dependencies": {
+    "@google/genai": "^1.4.0",
     "@google/generative-ai": "^0.24.1",
     "@googlemaps/google-maps-services-js": "^3.4.2",
     "@instantdb/admin": "^0.22.88",
     "@instantdb/react": "^0.22.88",
     "apify-client": "^2.21.0",
+    "dotenv": "^16.4.7",
     "groq-sdk": "^0.37.0",
     "leaflet": "^1.9.4",
     "leaflet.markercluster": "^1.5.3",
     "minisearch": "^7.0.0",
     "next": "^14.0.0",
     "openai": "^6.16.0",
-    "p-limit": "^5.0.0",
+    "p-limit": "^6.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-leaflet": "^4.2.1",
-    "zod": "^3.22.4"
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@types/leaflet": "^1.9.8",

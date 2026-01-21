@@ -325,7 +325,7 @@ async function generateDescription(buffetData: string): Promise<string> {
   if (aiProvider === 'gemini') {
     // Try using the SDK first, which handles model selection better
     try {
-      const model = aiClient.getGenerativeModel({ model: 'gemini-pro' });
+      const model = aiClient.getGenerativeModel({ model: 'gemini-2.0-flash' });
       const result = await model.generateContent(prompt);
       const response = await result.response;
       return response.text() || '';
