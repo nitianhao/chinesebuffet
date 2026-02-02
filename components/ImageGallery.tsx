@@ -8,15 +8,46 @@ interface ImageGalleryProps {
   imagesCount?: number | null;
 }
 
+/**
+ * Build a proxied image URL from photo data
+ * - Prioritizes photoUrl (already has API key embedded) via /api/photo proxy
+ * - Falls back to photoReference via /api/place-photo proxy (requires env var)
+ * - String URLs go through /api/photo proxy for CORS handling
+ */
+function getProxiedImageUrl(img: string | { photoUrl?: string; photoReference?: string; widthPx?: number; heightPx?: number; [key: string]: any }, size: 'thumbnail' | 'full' = 'thumbnail'): string | null {
+  // String URL - use generic photo proxy
+  if (typeof img === 'string') {
+    return `/api/photo?url=${encodeURIComponent(img)}`;
+  }
+  
+  // Object with photoUrl - use generic photo proxy (preferred, has API key baked in)
+  if (img && typeof img === 'object' && img.photoUrl) {
+    // For full size, try to modify the maxWidthPx/maxHeightPx in the URL if present
+    let url = img.photoUrl;
+    if (size === 'full' && url.includes('maxWidthPx=')) {
+      url = url.replace(/maxWidthPx=\d+/, 'maxWidthPx=1200');
+      url = url.replace(/maxHeightPx=\d+/, 'maxHeightPx=1200');
+    }
+    return `/api/photo?url=${encodeURIComponent(url)}`;
+  }
+  
+  // Object with only photoReference - use place-photo proxy (requires GOOGLE_MAPS_API_KEY env var)
+  if (img && typeof img === 'object' && img.photoReference) {
+    const maxWidth = size === 'thumbnail' ? 400 : 1200;
+    return `/api/place-photo?photoReference=${encodeURIComponent(img.photoReference)}&maxWidthPx=${maxWidth}`;
+  }
+  
+  return null;
+}
+
 export default function ImageGallery({ images, buffetName, imagesCount }: ImageGalleryProps) {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
 
-  // Extract URLs from images (handle both string URLs and photo objects)
-  const imageUrls = images.map(img => {
-    if (typeof img === 'string') return img;
-    if (img && typeof img === 'object' && img.photoUrl) return img.photoUrl;
-    return null;
-  }).filter((url): url is string => url !== null);
+  // Build proxied URLs for thumbnails
+  const imageUrls = images.map(img => getProxiedImageUrl(img, 'thumbnail')).filter((url): url is string => url !== null);
+  
+  // Build proxied URLs for full-size images (lightbox)
+  const fullSizeUrls = images.map(img => getProxiedImageUrl(img, 'full')).filter((url): url is string => url !== null);
 
   if (!imageUrls || imageUrls.length === 0) {
     return null;
@@ -56,18 +87,13 @@ export default function ImageGallery({ images, buffetName, imagesCount }: ImageG
                 </svg>
               </div>
               <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
-                Photos ({imagesCount && imagesCount > imageUrls.length ? imagesCount : imageUrls.length})
-                {imagesCount && imagesCount > imageUrls.length && (
-                  <span className="text-sm font-normal text-gray-600 ml-2">
-                    ({imageUrls.length} shown)
-                  </span>
-                )}
+                Photos
               </h2>
             </div>
             {imageUrls.length > 6 && (
               <button
                 onClick={() => openLightbox(0)}
-                className="px-3 py-1.5 text-blue-600 hover:text-blue-700 hover:bg-blue-50 font-semibold text-sm rounded-lg transition-colors active:scale-95"
+                className="px-3 py-1.5 text-[var(--accent1)] hover:text-[var(--accent1)] hover:bg-[var(--surface2)] font-semibold text-sm rounded-lg transition-colors active:scale-95"
               >
                 View All →
               </button>
@@ -79,7 +105,7 @@ export default function ImageGallery({ images, buffetName, imagesCount }: ImageG
             {displayImages.map((imageUrl, index) => (
             <div
               key={index}
-              className="relative aspect-square rounded-lg overflow-hidden border border-gray-200 bg-gray-100 cursor-pointer group hover:border-blue-400 hover:shadow-md transition-all"
+              className="relative aspect-square rounded-lg overflow-hidden border border-gray-200 bg-gray-100 cursor-pointer group hover:border-[var(--accent1)] hover:shadow-md transition-all"
               onClick={() => openLightbox(index)}
             >
               <img
@@ -111,7 +137,7 @@ export default function ImageGallery({ images, buffetName, imagesCount }: ImageG
             
             {remainingCount > 0 && (
               <div
-                className="relative aspect-square rounded-lg overflow-hidden border-2 border-dashed border-gray-300 bg-gray-50 cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-all flex items-center justify-center"
+                className="relative aspect-square rounded-lg overflow-hidden border-2 border-dashed border-gray-300 bg-gray-50 cursor-pointer hover:border-[var(--accent1)] hover:bg-[var(--surface2)] transition-all flex items-center justify-center"
                 onClick={() => openLightbox(6)}
               >
                 <div className="text-center">
@@ -210,7 +236,7 @@ export default function ImageGallery({ images, buffetName, imagesCount }: ImageG
 
             {/* Image */}
             <img
-              src={imageUrls[selectedImage]}
+              src={fullSizeUrls[selectedImage]}
               alt={`${buffetName} - Photo ${selectedImage + 1}`}
               className="max-w-full max-h-full object-contain"
               onClick={(e) => e.stopPropagation()}

@@ -1,81 +1,70 @@
 'use client';
 
+import ChipGridWithExpand, { ChipItem } from '@/components/ui/ChipGridWithExpand';
+
 interface ParkingProps {
-  data: Record<string, any> | any[];
+  data: Record<string, unknown> | unknown[];
 }
 
 function formatLabel(value: string): string {
-  return value
-    .replace(/([A-Z])/g, ' $1')
-    .replace(/^./, (str) => str.toUpperCase())
-    .replace(/_/g, ' ')
-    .trim();
+  const mapping: Record<string, string> = {
+    lot: 'Parking Lot',
+    garage: 'Parking Garage',
+    street: 'Street Parking',
+    valet: 'Valet Parking',
+    validated: 'Validated Parking',
+    free: 'Free Parking',
+    paid: 'Paid Parking',
+  };
+  const normalized = value.toLowerCase().replace(/\s+/g, '');
+  return mapping[normalized] || value.replace(/([A-Z])/g, ' $1').replace(/^./, (s) => s.toUpperCase()).trim();
 }
 
-function flattenBooleans(input: Record<string, any>, prefix: string[] = []): Array<[string, boolean | string | number]> {
+function flattenBooleans(
+  input: Record<string, unknown>,
+  prefix: string[] = []
+): Array<[string, boolean | string | number]> {
   const results: Array<[string, boolean | string | number]> = [];
-
   Object.entries(input).forEach(([key, value]) => {
     if (value === null || value === undefined) return;
-
     if (typeof value === 'boolean' || typeof value === 'string' || typeof value === 'number') {
       results.push([[...prefix, key].join(' '), value]);
-      return;
-    }
-
-    if (typeof value === 'object' && !Array.isArray(value)) {
-      results.push(...flattenBooleans(value, [...prefix, key]));
+    } else if (typeof value === 'object' && !Array.isArray(value)) {
+      results.push(...flattenBooleans(value as Record<string, unknown>, [...prefix, key]));
     }
   });
-
   return results;
 }
 
 export default function Parking({ data }: ParkingProps) {
   if (!data) return null;
 
-  const entries: Array<[string, boolean | string | number]> = [];
+  const items: ChipItem[] = [];
 
   if (Array.isArray(data)) {
-    data.forEach((item) => {
+    (data as string[]).forEach((item) => {
       if (typeof item === 'string' && item.trim()) {
-        entries.push([item.trim(), true]);
+        items.push({ label: item.trim(), available: true });
       }
     });
   } else if (typeof data === 'object') {
-    entries.push(...flattenBooleans(data as Record<string, any>));
+    flattenBooleans(data as Record<string, unknown>).forEach(([key, value]) => {
+      const label = formatLabel(key);
+      if (value === true || value === 'true' || value === 'yes') {
+        items.push({ label, available: true });
+      } else if (value === false || value === 'false' || value === 'no') {
+        items.push({ label, available: false });
+      }
+    });
   }
 
-  if (entries.length === 0) return null;
+  if (items.length === 0) return null;
 
   return (
-    <div className="mb-6">
-      <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
-        <span className="text-2xl">🅿️</span>
-        Parking
-      </h2>
-      <div className="bg-gradient-to-br from-slate-50 to-gray-50 rounded-xl border border-slate-100 p-6 shadow-sm space-y-3">
-        {entries.map(([key, value]) => {
-          const isAvailable = value === true || value === 'true' || value === 'yes' || value === 1;
-          const isUnavailable = value === false || value === 'false' || value === 'no' || value === 0;
-          return (
-            <div key={key} className="flex items-center gap-3">
-              <div className="flex-1 font-medium text-gray-800">{formatLabel(key)}</div>
-              <div
-                className={`px-4 py-2 rounded-lg font-medium ${
-                  isAvailable
-                    ? 'bg-green-100 text-green-800'
-                    : isUnavailable
-                    ? 'bg-red-100 text-red-800'
-                    : 'bg-gray-100 text-gray-800'
-                }`}
-              >
-                {isAvailable ? 'Available' : isUnavailable ? 'Not Available' : String(value)}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
+    <ChipGridWithExpand
+      items={items}
+      initialCount={6}
+      className="mt-1"
+    />
   );
 }

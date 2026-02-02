@@ -1,0 +1,20 @@
+{
+  "budgets": {
+    "initialJS": {
+      "maxSizeKB": 130,
+      "description": "Initial JavaScript bundle size (first load)"
+    },
+    "totalJS": {
+      "maxSizeKB": 300,
+      "description": "Total JavaScript bundle size across all chunks"
+    },
+    "lcp": {
+      "maxTimeMs": 2500,
+      "description": "Largest Contentful Paint"
+    },
+    "domNodes": {
+      "maxCount": 1500,
+      "description": "Maximum DOM nodes in the page"
+    }
+  }
+}

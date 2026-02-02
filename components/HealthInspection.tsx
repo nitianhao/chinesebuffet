@@ -334,7 +334,7 @@ export default function HealthInspection({ healthInspection, buffetName }: Healt
             {healthInspection.inspectionHistory.length > 5 && (
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="mt-3 text-sm font-semibold text-blue-600 hover:text-blue-800"
+                className="mt-3 text-sm font-semibold text-[var(--accent1)] hover:text-[var(--accent1)]"
               >
                 {isExpanded ? 'Show less' : `Show all ${healthInspection.inspectionHistory.length} inspections`}
               </button>
@@ -376,7 +376,7 @@ export default function HealthInspection({ healthInspection, buffetName }: Healt
                 href={healthInspection.healthDepartmentUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1"
+                className="text-[var(--accent1)] hover:text-[var(--accent1)] font-semibold flex items-center gap-1"
               >
                 View official records
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

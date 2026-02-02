@@ -1,10 +1,13 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import BuffetCard from '@/components/BuffetCard';
-import Map from '@/components/MapWrapper';
-import SchemaMarkup from '@/components/SchemaMarkup';
-import { getCityBySlug, getAllCitySlugs, getNeighborhoodsByCity, buildNeighborhoodsFromBuffets } from '@/lib/data-instantdb';
+import { getCityBuffetsRollup, STATE_ABBR_TO_NAME, RollupDebugInfo, CityBuffetRow } from '@/lib/rollups';
+
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://yoursite.com';
+const isDev = process.env.NODE_ENV !== 'production';
+
+// ISR: Revalidate every 6 hours in prod, 1 hour in dev
+export const revalidate = isDev ? 3600 : 21600;
 
 interface CityPageProps {
   params: {
@@ -12,359 +15,132 @@ interface CityPageProps {
   };
 }
 
-export async function generateStaticParams() {
-  const citySlugs = await getAllCitySlugs();
-  return citySlugs.map((slug) => ({
-    'city-state': slug,
-  }));
+// Debug panel component (dev-only)
+function DebugPanel({ debug }: { debug: RollupDebugInfo }) {
+  if (!isDev) return null;
+  
+  return (
+    <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-4 my-4">
+      <h3 className="font-bold text-yellow-800 mb-2">🔧 Rollup Debug (dev only)</h3>
+      <div className="text-sm text-yellow-900 space-y-1">
+        <p><strong>Rollup:</strong> {debug.rollupType}/{debug.rollupKey}</p>
+        <p><strong>Status:</strong> {debug.found ? (debug.stale ? '⚠️ STALE' : '✅ HIT') : '❌ MISSING'}</p>
+        <p><strong>Updated:</strong> {debug.updatedAt ? new Date(debug.updatedAt).toLocaleString() : 'never'}</p>
+        <p><strong>Buffets:</strong> {debug.dataLength}</p>
+        <p><strong>Fetch time:</strong> {debug.fetchDurationMs}ms</p>
+        {!debug.found && (
+          <div className="mt-2 p-2 bg-red-100 rounded">
+            <p className="text-red-800 font-semibold">⚠️ Rollup missing!</p>
+            <p className="text-red-700 mt-1">Run: <code className="bg-red-200 px-1">node scripts/rebuildRollups.js</code></p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Buffet card component
+function BuffetCard({ buffet, citySlug }: { buffet: CityBuffetRow; citySlug: string }) {
+  return (
+    <Link
+      href={`/chinese-buffets/${citySlug}/${buffet.slug}`}
+      className="bg-[var(--surface)] border border-[var(--border)] rounded-lg p-4 hover:shadow-md hover:border-[var(--accent1)] transition-all group"
+    >
+      <div className="flex justify-between items-start mb-2">
+        <h3 className="font-semibold text-lg text-[var(--text)] group-hover:text-[var(--accent1)] line-clamp-1">
+          {buffet.name}
+        </h3>
+        {buffet.rating && (
+          <span className="flex items-center gap-1 text-sm text-[var(--muted)]">
+            ⭐ {buffet.rating.toFixed(1)}
+          </span>
+        )}
+      </div>
+      
+      <p className="text-[var(--muted)] text-sm line-clamp-1 mb-2">
+        {buffet.address}
+      </p>
+      
+      <div className="flex flex-wrap gap-2 text-xs text-[var(--muted)]">
+        {buffet.neighborhood && (
+          <span className="bg-[var(--surface2)] px-2 py-1 rounded">
+            {buffet.neighborhood}
+          </span>
+        )}
+        {buffet.price && (
+          <span className="bg-[var(--surface2)] px-2 py-1 rounded">
+            {buffet.price}
+          </span>
+        )}
+        {buffet.reviewsCount && buffet.reviewsCount > 0 && (
+          <span className="bg-[var(--surface2)] px-2 py-1 rounded">
+            {buffet.reviewsCount.toLocaleString()} reviews
+          </span>
+        )}
+      </div>
+    </Link>
+  );
 }
 
 export async function generateMetadata({ params }: CityPageProps): Promise<Metadata> {
-  const city = await getCityBySlug(params['city-state']);
+  const citySlug = params['city-state'];
+  const { data } = await getCityBuffetsRollup(citySlug);
   
-  if (!city) {
+  if (!data || data.buffets.length === 0) {
     return {
       title: 'City Not Found',
+      robots: { index: false, follow: false },
     };
   }
 
   return {
-    title: `Chinese Buffets in ${city.city}, ${city.state} - ${city.buffets.length} Locations`,
-    description: `Find ${city.buffets.length} Chinese buffets in ${city.city}, ${city.state}. Compare hours, prices, ratings, and locations. Map included.`,
+    title: `Chinese Buffets in ${data.cityName}, ${data.state} - ${data.buffetCount} Locations`,
+    description: `Find ${data.buffetCount} Chinese buffets in ${data.cityName}, ${data.state}. Compare hours, prices, ratings, and locations.`,
+    alternates: {
+      canonical: `${BASE_URL}/chinese-buffets/${citySlug}`,
+    },
   };
 }
 
 export default async function CityPage({ params }: CityPageProps) {
-  const city = await getCityBySlug(params['city-state']);
-
-  if (!city) {
+  const pageStart = Date.now();
+  const citySlug = params['city-state'];
+  
+  const { data, debug } = await getCityBuffetsRollup(citySlug);
+  const pageRenderMs = Date.now() - pageStart;
+  
+  // If no rollup data, show helpful message in dev or 404 in prod
+  if (!data || data.buffets.length === 0) {
+    if (isDev) {
+      return (
+        <div className="min-h-screen bg-[var(--bg)] p-8">
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Rollup Missing</h1>
+          <p className="mb-4">The city buffets rollup for {citySlug} is missing or empty.</p>
+          <p className="mb-4">Run: <code className="bg-gray-100 px-2 py-1 rounded">node scripts/rebuildRollups.js</code></p>
+          <DebugPanel debug={{ ...debug, fetchDurationMs: pageRenderMs }} />
+        </div>
+      );
+    }
     notFound();
   }
 
-  // Get neighborhoods for this city (compute locally from city.buffets to avoid extra fetch)
-  const neighborhoods = buildNeighborhoodsFromBuffets(city.buffets || [], params['city-state'], city.city, city.stateAbbr);
-
-  // Get all city slugs and nearby cities
-  // NOTE: getNearbyCities is expensive (calls getCityBySlug for many cities).
-  // Temporarily skip to keep page responsive during debug.
-  const nearbyCities: Array<{ slug: string; city: string; state: string; buffetCount: number }> = [];
-
-  // Sort buffets by rating (highest first)
-  const sortedBuffets = [...city.buffets].sort((a, b) => 
+  const { cityName, state, stateAbbr, buffets, neighborhoods, buffetCount } = data;
+  
+  // Sort by rating for top rated section
+  const sortedByRating = [...buffets].sort((a, b) => 
     (b.rating || 0) - (a.rating || 0)
   );
-
-  // Get top 5 buffets for highlights
-  const topBuffets = sortedBuffets.slice(0, 5);
-
-  // Create map markers (filter out buffets without valid location data)
-  const mapMarkers = city.buffets
-    .filter(buffet => buffet.location && typeof buffet.location.lat === 'number' && typeof buffet.location.lng === 'number')
-    .map(buffet => ({
-      id: buffet.id,
-      name: buffet.name,
-      lat: buffet.location.lat,
-      lng: buffet.location.lng,
-      rating: buffet.rating,
-      citySlug: params['city-state'],
-      slug: buffet.slug,
-    }));
-
-  // Generate city-specific content
-  const introContent = generateCityIntro(city);
-  const faqs = generateCityFAQs(city);
-
-  return (
-    <>
-      <SchemaMarkup type="city" data={city} citySlug={params['city-state']} />
-      {faqs.length > 0 && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'FAQPage',
-              mainEntity: faqs.map(faq => ({
-                '@type': 'Question',
-                name: faq.question,
-                acceptedAnswer: {
-                  '@type': 'Answer',
-                  text: faq.answer,
-                },
-              })),
-            }),
-          }}
-        />
-      )}
-      
-      <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <header className="bg-white shadow-sm">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <nav className="text-sm text-gray-600 mb-4">
-              <Link href="/" className="hover:text-blue-600">Home</Link>
-              <span className="mx-2">/</span>
-              <Link 
-                href={`/chinese-buffets/${city.state.toLowerCase().replace(/\s+/g, '-')}`}
-                className="hover:text-blue-600"
-              >
-                Chinese Buffets in {city.state}
-              </Link>
-              <span className="mx-2">/</span>
-              <span className="text-gray-900">{city.city}</span>
-            </nav>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              Chinese Buffets in {city.city}, {city.state}
-            </h1>
-            <p className="text-lg text-gray-600">
-              {city.buffets.length} {city.buffets.length === 1 ? 'location' : 'locations'} found
-            </p>
-          </div>
-        </header>
-
-        {/* Summary Block */}
-        <section className="bg-blue-50 py-6 border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-white rounded-lg p-4 shadow-sm">
-                <div className="text-sm text-gray-600 mb-1">Total Buffets</div>
-                <div className="text-2xl font-bold text-blue-600">{city.buffets.length}</div>
-              </div>
-              {topBuffets.length > 0 && topBuffets[0] && (
-                <div className="bg-white rounded-lg p-4 shadow-sm">
-                  <div className="text-sm text-gray-600 mb-1">Top Rated</div>
-                  <div className="text-lg font-semibold">{topBuffets[0].name}</div>
-                  <div className="text-sm text-gray-600">⭐ {topBuffets[0].rating.toFixed(1)}</div>
-                </div>
-              )}
-              {city.buffets.some(b => b.price) && (
-                <div className="bg-white rounded-lg p-4 shadow-sm">
-                  <div className="text-sm text-gray-600 mb-1">Price Range</div>
-                  <div className="text-lg font-semibold">
-                    {(() => {
-                      const prices = city.buffets
-                        .map(b => b.price)
-                        .filter(Boolean)
-                        .map(p => {
-                          const match = p?.match(/\$(\d+)/);
-                          return match ? parseInt(match[1]) : null;
-                        })
-                        .filter((p): p is number => p !== null);
-                      if (prices.length > 0) {
-                        const min = Math.min(...prices);
-                        const max = Math.max(...prices);
-                        return min === max ? `$${min}` : `$${min}-$${max}`;
-                      }
-                      return 'Varies';
-                    })()}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </section>
-
-        {/* Intro Section */}
-        <section className="bg-white py-8 border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="prose max-w-none">
-              {introContent.map((paragraph, index) => (
-                <p key={index} className="text-gray-700 mb-4">
-                  {paragraph}
-                </p>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Top Picks Section */}
-        {topBuffets.length > 0 && (
-          <section className="bg-blue-50 py-8">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                Top Rated Chinese Buffets in {city.city}
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {topBuffets.map((buffet) => (
-                  <BuffetCard
-                    key={buffet.id}
-                    buffet={buffet}
-                    citySlug={params['city-state']}
-                  />
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* Map Section */}
-        <section className="bg-white py-8">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              Map of Chinese Buffets in {city.city}
-            </h2>
-            <div className="bg-white rounded-lg shadow-lg p-4 mb-6">
-              <Map
-                markers={mapMarkers}
-                center={[
-                  city.buffets[0]?.location.lat || 0,
-                  city.buffets[0]?.location.lng || 0,
-                ]}
-                zoom={12}
-                height="500px"
-                showClusters={city.buffets.length > 10}
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* Neighborhoods Section */}
-        {neighborhoods.length > 0 && (
-          <section className="bg-gray-50 py-8">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                Chinese Buffets by Neighborhood in {city.city}
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {neighborhoods.map((neighborhood) => (
-                  <Link
-                    key={neighborhood.slug}
-                    href={`/chinese-buffets/${params['city-state']}/neighborhoods/${neighborhood.slug}`}
-                    className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow bg-white"
-                  >
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <h3 className="font-semibold text-lg text-gray-900">
-                          {neighborhood.neighborhood}
-                        </h3>
-                        <p className="text-gray-600 text-sm mt-1">
-                          {neighborhood.buffetCount} {neighborhood.buffetCount === 1 ? 'buffet' : 'buffets'}
-                        </p>
-                      </div>
-                      <span className="text-blue-600">→</span>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* All Buffets Section */}
-        <section className="bg-white py-8">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              All Chinese Buffets in {city.city}, {city.state}
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {sortedBuffets.map((buffet) => (
-                <BuffetCard
-                  key={buffet.id}
-                  buffet={buffet}
-                  citySlug={params['city-state']}
-                />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* FAQs Section */}
-        {faqs.length > 0 && (
-          <section className="bg-gray-50 py-8">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                Frequently Asked Questions
-              </h2>
-              <div className="space-y-6">
-                {faqs.map((faq, index) => (
-                  <div key={index} className="bg-white rounded-lg p-6 shadow-sm">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      {faq.question}
-                    </h3>
-                    <p className="text-gray-700">
-                      {faq.answer}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* Nearby Cities Section */}
-        <section className="bg-white py-8 border-t">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              More Chinese Buffets Nearby
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-              {nearbyCities.map((nearbyCity) => (
-                <Link
-                  key={nearbyCity.slug}
-                  href={`/chinese-buffets/${nearbyCity.slug}`}
-                  className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-                >
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h3 className="font-semibold text-lg text-gray-900">
-                        {nearbyCity.city}, {nearbyCity.state}
-                      </h3>
-                      <p className="text-gray-600 text-sm mt-1">
-                        {nearbyCity.buffetCount} {nearbyCity.buffetCount === 1 ? 'buffet' : 'buffets'}
-                      </p>
-                    </div>
-                    <span className="text-blue-600">→</span>
-                  </div>
-                </Link>
-              ))}
-            </div>
-            <p className="text-gray-600">
-              <Link href="/" className="text-blue-600 hover:text-blue-800">
-                Browse all cities →
-              </Link>
-            </p>
-          </div>
-        </section>
-      </div>
-    </>
-  );
-}
-
-// Generate city-specific intro content
-function generateCityIntro(city: Awaited<ReturnType<typeof getCityBySlug>>) {
-  if (!city) return [];
   
-  const paragraphs = [
-    `Looking for Chinese buffets in ${city.city}, ${city.state}? You've come to the right place. Our directory features ${city.buffets.length} ${city.buffets.length === 1 ? 'Chinese buffet' : 'Chinese buffets'} in ${city.city}, offering all-you-can-eat dining experiences throughout the city.`,
-  ];
-
-  if (city.buffets.length > 5) {
-    paragraphs.push(
-      `With ${city.buffets.length} locations to choose from, ${city.city} offers plenty of options for Chinese buffet enthusiasts. Whether you're looking for a quick lunch buffet or a full dinner experience with crab legs and sushi, you'll find diverse options across the city.`
-    );
-  }
-
-  if (city.population > 500000) {
-    paragraphs.push(
-      `As one of the larger cities in ${city.state} with a population of over ${(city.population / 1000000).toFixed(1)} million, ${city.city} has a vibrant dining scene. The Chinese buffets here cater to a wide range of tastes and budgets, from budget-friendly options to more upscale establishments.`
-    );
-  }
-
-  paragraphs.push(
-    `Use the map above to find Chinese buffets near you, or browse through our detailed listings below. Each listing includes hours, prices, ratings, and contact information to help you plan your visit.`
+  // Sort by reviews for most popular section
+  const sortedByPopularity = [...buffets].sort((a, b) => 
+    (b.reviewsCount || 0) - (a.reviewsCount || 0)
   );
-
-  return paragraphs;
-}
-
-// Generate city-specific FAQs
-function generateCityFAQs(city: Awaited<ReturnType<typeof getCityBySlug>>) {
-  if (!city) return [];
-
-  const faqs = [];
-
-  // Average price FAQ
-  const prices = city.buffets
+  
+  const topBuffets = sortedByRating.slice(0, 5);
+  const popularBuffets = sortedByPopularity.slice(0, 5);
+  
+  // Calculate price range
+  const prices = buffets
     .map(b => b.price)
     .filter(Boolean)
     .map(p => {
@@ -372,74 +148,214 @@ function generateCityFAQs(city: Awaited<ReturnType<typeof getCityBySlug>>) {
       return match ? parseInt(match[1]) : null;
     })
     .filter((p): p is number => p !== null);
+  
+  const priceRange = prices.length > 0 
+    ? `$${Math.min(...prices)}-$${Math.max(...prices)}`
+    : 'Varies';
 
-  if (prices.length > 0) {
-    const avgPrice = prices.reduce((a, b) => a + b, 0) / prices.length;
-    faqs.push({
-      question: `How much does a Chinese buffet cost in ${city.city}?`,
-      answer: `The average price for Chinese buffets in ${city.city} ranges from $${Math.floor(avgPrice)} to $${Math.ceil(avgPrice + 5)}. Most buffets offer lunch and dinner pricing, with lunch typically being more affordable. Weekend and dinner prices are usually higher.`,
-    });
-  }
+  return (
+    <div className="min-h-screen bg-[var(--bg)]">
+      {/* Header */}
+      <header className="bg-[var(--surface)] shadow-sm border-b border-[var(--border)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <nav className="text-sm text-[var(--muted)] mb-4">
+            <Link href="/" className="hover:text-[var(--accent1)]">Home</Link>
+            <span className="mx-2">/</span>
+            <Link 
+              href={`/chinese-buffets/states/${stateAbbr.toLowerCase()}`}
+              className="hover:text-[var(--accent1)]"
+            >
+              {state}
+            </Link>
+            <span className="mx-2">/</span>
+            <span className="text-[var(--text)]">{cityName}</span>
+          </nav>
+          <h1 className="text-4xl font-bold text-[var(--text)] mb-2">
+            Chinese Buffets in {cityName}, {state}
+          </h1>
+          <p className="text-lg text-[var(--muted)]">
+            {buffetCount} {buffetCount === 1 ? 'location' : 'locations'} found
+          </p>
+        </div>
+      </header>
 
-  // Hours FAQ
-  faqs.push({
-    question: `What are the typical hours for Chinese buffets in ${city.city}?`,
-    answer: `Most Chinese buffets in ${city.city} are open daily, typically from 11 AM to 9-10 PM. Many locations offer lunch service from 11 AM to 3 PM, followed by dinner service. Some buffets may have extended hours on weekends. Check individual listings for specific hours.`,
-  });
+      {/* Debug Panel - shows in dev */}
+      {isDev && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <DebugPanel debug={{ ...debug, fetchDurationMs: pageRenderMs }} />
+        </div>
+      )}
 
-  // Best rated FAQ
-  if (city.buffets.length > 0) {
-    const topRated = [...city.buffets]
-      .sort((a, b) => (b.rating || 0) - (a.rating || 0))[0];
-    
-    if (topRated && topRated.rating > 4) {
-      faqs.push({
-        question: `What is the highest-rated Chinese buffet in ${city.city}?`,
-        answer: `${topRated.name} is currently the highest-rated Chinese buffet in ${city.city} with a ${topRated.rating.toFixed(1)}-star rating based on ${topRated.reviewsCount.toLocaleString()} reviews.`,
-      });
-    }
-  }
+      {/* Summary Block */}
+      <section className="bg-[var(--surface2)] py-6 border-b border-[var(--border)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-[var(--surface)] rounded-lg p-4 shadow-sm border border-[var(--border)]">
+              <div className="text-sm text-[var(--muted)] mb-1">Total Buffets</div>
+              <div className="text-2xl font-bold text-[var(--accent1)]">{buffetCount}</div>
+            </div>
+            {topBuffets.length > 0 && topBuffets[0]?.rating && (
+              <div className="bg-[var(--surface)] rounded-lg p-4 shadow-sm border border-[var(--border)]">
+                <div className="text-sm text-[var(--muted)] mb-1">Top Rated</div>
+                <div className="text-lg font-semibold text-[var(--text)] line-clamp-1">{topBuffets[0].name}</div>
+                <div className="text-sm text-[var(--muted)]">⭐ {topBuffets[0].rating.toFixed(1)}</div>
+              </div>
+            )}
+            <div className="bg-[var(--surface)] rounded-lg p-4 shadow-sm border border-[var(--border)]">
+              <div className="text-sm text-[var(--muted)] mb-1">Price Range</div>
+              <div className="text-lg font-semibold text-[var(--text)]">{priceRange}</div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-  // Variety FAQ
-  faqs.push({
-    question: `Do Chinese buffets in ${city.city} offer variety beyond Chinese food?`,
-    answer: `Many Chinese buffets in ${city.city} feature extensive buffets that include sushi bars, Mongolian grills, American food sections, and dessert bars. Some locations also offer special items like crab legs on weekends. Check individual listings for specific features.`,
-  });
+      {/* Intro Section */}
+      <section className="bg-[var(--surface)] py-8 border-b border-[var(--border)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="prose max-w-none">
+            <p className="text-[var(--text-secondary)] mb-4">
+              Looking for Chinese buffets in {cityName}, {state}? You've come to the right place. Our directory 
+              features {buffetCount} {buffetCount === 1 ? 'Chinese buffet' : 'Chinese buffets'} in {cityName}, 
+              offering all-you-can-eat dining experiences throughout the city.
+            </p>
+            {buffetCount > 5 && (
+              <p className="text-[var(--text-secondary)] mb-4">
+                With {buffetCount} locations to choose from, {cityName} offers plenty of options for Chinese 
+                buffet enthusiasts. Whether you're looking for a quick lunch buffet or a full dinner experience 
+                with crab legs and sushi, you'll find diverse options across the city.
+              </p>
+            )}
+            <p className="text-[var(--text-secondary)]">
+              Browse through our detailed listings below. Each listing includes hours, prices, ratings, and 
+              contact information to help you plan your visit.
+            </p>
+          </div>
+        </div>
+      </section>
 
-  return faqs;
+      {/* Top Rated Section */}
+      {topBuffets.length > 0 && (
+        <section className="bg-[var(--surface2)] py-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-2xl font-bold text-[var(--text)] mb-2">
+              Top Rated Chinese Buffets in {cityName}
+            </h2>
+            <p className="text-[var(--muted)] mb-6">
+              Highest-rated options based on customer reviews
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {topBuffets.map((buffet) => (
+                <BuffetCard key={buffet.id} buffet={buffet} citySlug={citySlug} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Most Popular Section */}
+      {popularBuffets.length > 0 && popularBuffets[0]?.reviewsCount && popularBuffets[0].reviewsCount > 10 && (
+        <section className="bg-[var(--surface)] py-8 border-b border-[var(--border)]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-2xl font-bold text-[var(--text)] mb-2">
+              Most Popular Chinese Buffets in {cityName}
+            </h2>
+            <p className="text-[var(--muted)] mb-6">
+              Most-reviewed options, indicating high customer engagement
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {popularBuffets.map((buffet) => (
+                <BuffetCard key={buffet.id} buffet={buffet} citySlug={citySlug} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Neighborhoods Section */}
+      {neighborhoods.length > 0 && (
+        <section className="bg-[var(--surface2)] py-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-2xl font-bold text-[var(--text)] mb-6">
+              Chinese Buffets by Neighborhood in {cityName}
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {neighborhoods.map((neighborhood) => (
+                <Link
+                  key={neighborhood.slug}
+                  href={`/chinese-buffets/${citySlug}/neighborhoods/${neighborhood.slug}`}
+                  className="border border-[var(--border)] rounded-lg p-4 hover:shadow-md transition-shadow bg-[var(--surface)] hover:border-[var(--accent1)] group"
+                >
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h3 className="font-semibold text-lg text-[var(--text)] group-hover:text-[var(--accent1)]">
+                        {neighborhood.neighborhood}
+                      </h3>
+                      <p className="text-[var(--muted)] text-sm mt-1">
+                        {neighborhood.buffetCount} {neighborhood.buffetCount === 1 ? 'buffet' : 'buffets'}
+                      </p>
+                    </div>
+                    <span className="text-[var(--accent1)]">→</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+            <div className="mt-4">
+              <Link 
+                href={`/chinese-buffets/${citySlug}/neighborhoods`}
+                className="text-[var(--accent1)] hover:opacity-80 font-medium"
+              >
+                View all neighborhoods →
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* All Buffets Section */}
+      <section className="bg-[var(--surface)] py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-[var(--text)]">
+              All Chinese Buffets in {cityName}, {state}
+            </h2>
+            <span className="text-sm text-[var(--muted)]">
+              {buffetCount} {buffetCount === 1 ? 'location' : 'locations'}
+            </span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {buffets.map((buffet) => (
+              <BuffetCard key={buffet.id} buffet={buffet} citySlug={citySlug} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Back Navigation */}
+      <section className="bg-[var(--surface2)] py-6 border-t border-[var(--border)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Link 
+            href={`/chinese-buffets/states/${stateAbbr.toLowerCase()}`}
+            className="text-[var(--accent1)] hover:opacity-80 font-medium"
+          >
+            ← Back to {state}
+          </Link>
+          <span className="mx-4 text-[var(--muted)]">|</span>
+          <Link href="/chinese-buffets/cities" className="text-[var(--accent1)] hover:opacity-80 font-medium">
+            Browse All Cities →
+          </Link>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-[var(--headerBg)] text-white py-8 mt-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <p className="text-white/60">
+              Chinese Buffets Directory - Find all-you-can-eat Chinese buffets in {cityName}, {state}
+            </p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
 }
-
-// Get nearby cities (same state, or other cities with buffets)
-async function getNearbyCities(
-  currentCity: Awaited<ReturnType<typeof getCityBySlug>>,
-  allCitySlugs: string[]
-): Promise<Array<{ slug: string; city: string; state: string; buffetCount: number }>> {
-  if (!currentCity) return [];
-  
-  const nearby: Array<{ slug: string; city: string; state: string; buffetCount: number; isSameState: boolean }> = [];
-  
-  // Get other cities, prioritizing same state
-  for (const slug of allCitySlugs) {
-    if (slug === currentCity.slug) continue;
-    const city = await getCityBySlug(slug);
-    if (!city || !city.buffets || city.buffets.length === 0) continue;
-    
-    nearby.push({
-      slug: city.slug,
-      city: city.city,
-      state: city.state,
-      buffetCount: city.buffets.length,
-      isSameState: city.state === currentCity.state,
-    });
-  }
-  
-  // Sort: same state first, then by buffet count
-  nearby.sort((a, b) => {
-    if (a.isSameState && !b.isSameState) return -1;
-    if (!a.isSameState && b.isSameState) return 1;
-    return b.buffetCount - a.buffetCount;
-  });
-  
-  return nearby.slice(0, 6).map(({ isSameState, ...rest }) => rest);
-}
-

@@ -4,6 +4,7 @@
 const { init, id } = require('@instantdb/admin');
 const fs = require('fs');
 const path = require('path');
+const { normalizeSearchText } = require('./lib/normalizeSearchText');
 
 // Load environment variables from .env.local if it exists
 const envPath = path.join(__dirname, '../.env.local');
@@ -246,6 +247,7 @@ async function importData() {
       const buffetData = {
         // Core required fields
         name: buffetName,
+        searchName: normalizeSearchText(buffetName),
         slug: buffetSlug,
         street: place.street || '',
         cityName: cityName,

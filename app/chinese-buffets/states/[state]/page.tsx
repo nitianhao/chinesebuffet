@@ -1,10 +1,13 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import BuffetCard from '@/components/BuffetCard';
-import Map from '@/components/MapWrapper';
-import SchemaMarkup from '@/components/SchemaMarkup';
-import { getStateByAbbr, getAllStateAbbrs } from '@/lib/data-instantdb';
+import { getStateCitiesRollup, STATE_ABBR_TO_NAME, RollupDebugInfo } from '@/lib/rollups';
+
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://yoursite.com';
+const isDev = process.env.NODE_ENV !== 'production';
+
+// ISR: Revalidate every 12 hours in prod, 1 hour in dev
+export const revalidate = isDev ? 3600 : 43200;
 
 interface StatePageProps {
   params: {
@@ -12,251 +15,228 @@ interface StatePageProps {
   };
 }
 
-export async function generateStaticParams() {
-  const stateAbbrs = await getAllStateAbbrs();
-  return stateAbbrs.map((abbr) => ({
-    state: abbr.toLowerCase(),
-  }));
+// Debug panel component (dev-only)
+function DebugPanel({ debug }: { debug: RollupDebugInfo }) {
+  if (!isDev) return null;
+  
+  return (
+    <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-4 my-4">
+      <h3 className="font-bold text-yellow-800 mb-2">🔧 Rollup Debug (dev only)</h3>
+      <div className="text-sm text-yellow-900 space-y-1">
+        <p><strong>Rollup:</strong> {debug.rollupType}/{debug.rollupKey}</p>
+        <p><strong>Status:</strong> {debug.found ? (debug.stale ? '⚠️ STALE' : '✅ HIT') : '❌ MISSING'}</p>
+        <p><strong>Updated:</strong> {debug.updatedAt ? new Date(debug.updatedAt).toLocaleString() : 'never'}</p>
+        <p><strong>Cities:</strong> {debug.dataLength}</p>
+        <p><strong>Fetch time:</strong> {debug.fetchDurationMs}ms</p>
+        {!debug.found && (
+          <div className="mt-2 p-2 bg-red-100 rounded">
+            <p className="text-red-800 font-semibold">⚠️ Rollup missing!</p>
+            <p className="text-red-700 mt-1">Run: <code className="bg-red-200 px-1">node scripts/rebuildRollups.js</code></p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export async function generateMetadata({ params }: StatePageProps): Promise<Metadata> {
-  const stateData = await getStateByAbbr(params.state.toUpperCase());
+  const stateAbbr = params.state.toUpperCase();
+  const stateName = STATE_ABBR_TO_NAME[stateAbbr];
   
-  if (!stateData) {
+  if (!stateName) {
     return {
       title: 'State Not Found',
+      robots: { index: false, follow: false },
+    };
+  }
+  
+  const { data } = await getStateCitiesRollup(stateAbbr);
+  
+  if (!data || data.cities.length === 0) {
+    return {
+      title: `Chinese Buffets in ${stateName}`,
+      description: `Find Chinese buffets in ${stateName}.`,
+      robots: { index: false, follow: true },
     };
   }
 
   return {
-    title: `Chinese Buffets in ${stateData.state} - ${stateData.buffetCount} Locations`,
-    description: `Find ${stateData.buffetCount} Chinese buffets across ${stateData.cityCount} cities in ${stateData.state}. Compare hours, prices, ratings, and locations.`,
+    title: `Chinese Buffets in ${stateName} - ${data.buffetCount} Locations`,
+    description: `Find ${data.buffetCount} Chinese buffets across ${data.cityCount} cities in ${stateName}. Compare hours, prices, ratings, and locations.`,
+    alternates: {
+      canonical: `${BASE_URL}/chinese-buffets/states/${params.state.toLowerCase()}`,
+    },
   };
 }
 
 export default async function StatePage({ params }: StatePageProps) {
-  const stateData = await getStateByAbbr(params.state.toUpperCase());
-
-  if (!stateData) {
+  const pageStart = Date.now();
+  const stateAbbr = params.state.toUpperCase();
+  const stateName = STATE_ABBR_TO_NAME[stateAbbr];
+  
+  // If invalid state abbreviation, 404
+  if (!stateName) {
+    notFound();
+  }
+  
+  const { data, debug } = await getStateCitiesRollup(stateAbbr);
+  const pageRenderMs = Date.now() - pageStart;
+  
+  // If no rollup data, show helpful message in dev or 404 in prod
+  if (!data || data.cities.length === 0) {
+    if (isDev) {
+      return (
+        <div className="min-h-screen bg-[var(--bg)] p-8">
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Rollup Missing</h1>
+          <p className="mb-4">The state cities rollup for {stateName} ({stateAbbr}) is missing or empty.</p>
+          <p className="mb-4">Run: <code className="bg-gray-100 px-2 py-1 rounded">node scripts/rebuildRollups.js</code></p>
+          <DebugPanel debug={{ ...debug, fetchDurationMs: pageRenderMs }} />
+        </div>
+      );
+    }
     notFound();
   }
 
-  // Sort buffets by rating (highest first)
-  const sortedBuffets = [...stateData.buffets].sort((a, b) => 
-    (b.rating || 0) - (a.rating || 0)
-  );
-
-  // Get top 10 buffets for highlights
-  const topBuffets = sortedBuffets.slice(0, 10);
-
-  // Group cities by buffet count
-  const citiesByCount = stateData.cities.map(cityName => {
-    const cityBuffets = stateData.buffets.filter((b: any) => 
-      b.address.city === cityName
-    );
-    return {
-      name: cityName,
-      buffetCount: cityBuffets.length,
-      topBuffet: cityBuffets[0],
-    };
-  }).sort((a, b) => b.buffetCount - a.buffetCount);
-
-  // Create map markers
-  const mapMarkers = stateData.buffets.map((buffet: any) => ({
-    id: buffet.id,
-    name: buffet.name,
-    lat: buffet.location.lat,
-    lng: buffet.location.lng,
-    rating: buffet.rating,
-    citySlug: buffet.citySlug,
-    slug: buffet.slug,
-  }));
-
-  // Generate state-specific content
-  const introContent = [
-    `Discover the best Chinese buffets across ${stateData.state}. With ${stateData.buffetCount} locations spanning ${stateData.cityCount} cities, you're sure to find an all-you-can-eat Chinese buffet near you.`,
-    `Whether you're looking for traditional Chinese cuisine, Mongolian grill, sushi, or American-Chinese favorites, our directory covers all the Chinese buffet restaurants in ${stateData.state}.`,
-    `Each listing includes hours, prices, ratings, reviews, and detailed location information to help you find the perfect Chinese buffet experience.`,
-  ];
+  const { cities, buffetCount, cityCount } = data;
+  
+  // Get top city for stats
+  const topCity = cities[0];
+  const topRated = cities.length > 0 ? cities[0] : null;
 
   return (
-    <>
-      <SchemaMarkup type="state" data={stateData} />
-      
-      <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <header className="bg-white shadow-sm">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <nav className="text-sm text-gray-600 mb-4">
-              <Link href="/" className="hover:text-blue-600">Home</Link>
-              <span className="mx-2">/</span>
-              <span className="text-gray-900">Chinese Buffets in {stateData.state}</span>
-            </nav>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              Chinese Buffets in {stateData.state}
-            </h1>
-            <p className="text-lg text-gray-600">
-              {stateData.buffetCount} locations across {stateData.cityCount} cities
+    <div className="min-h-screen bg-[var(--bg)]">
+      {/* Header */}
+      <header className="bg-[var(--surface)] shadow-sm border-b border-[var(--border)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <nav className="text-sm text-[var(--muted)] mb-4">
+            <Link href="/" className="hover:text-[var(--accent1)]">Home</Link>
+            <span className="mx-2">/</span>
+            <Link href="/chinese-buffets/states" className="hover:text-[var(--accent1)]">States</Link>
+            <span className="mx-2">/</span>
+            <span className="text-[var(--text)]">{stateName}</span>
+          </nav>
+          <h1 className="text-4xl font-bold text-[var(--text)] mb-2">
+            Chinese Buffets in {stateName}
+          </h1>
+          <p className="text-lg text-[var(--muted)]">
+            {buffetCount.toLocaleString()} locations across {cityCount} cities
+          </p>
+        </div>
+      </header>
+
+      {/* Debug Panel - shows in dev */}
+      {isDev && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <DebugPanel debug={{ ...debug, fetchDurationMs: pageRenderMs }} />
+        </div>
+      )}
+
+      {/* Stats Section */}
+      <section className="bg-[var(--surface)] py-8 border-b border-[var(--border)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+            <div>
+              <div className="text-4xl font-bold text-[var(--accent1)]">
+                {buffetCount.toLocaleString()}
+              </div>
+              <div className="text-[var(--muted)] mt-2">Chinese Buffets</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-[var(--accent1)]">
+                {cityCount.toLocaleString()}
+              </div>
+              <div className="text-[var(--muted)] mt-2">Cities</div>
+            </div>
+            {topCity && (
+              <div>
+                <div className="text-4xl font-bold text-[var(--accent1)]">
+                  {topCity.buffetCount}
+                </div>
+                <div className="text-[var(--muted)] mt-2">in {topCity.cityName} (Top City)</div>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Intro Section */}
+      <section className="bg-[var(--surface)] py-8 border-b border-[var(--border)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="prose max-w-none">
+            <p className="text-[var(--text-secondary)] mb-4">
+              Discover the best Chinese buffets across {stateName}. With {buffetCount.toLocaleString()} locations 
+              spanning {cityCount} cities, you're sure to find an all-you-can-eat Chinese buffet near you.
+            </p>
+            <p className="text-[var(--text-secondary)] mb-4">
+              Whether you're looking for traditional Chinese cuisine, Mongolian grill, sushi, or American-Chinese 
+              favorites, our directory covers all the Chinese buffet restaurants in {stateName}.
+            </p>
+            <p className="text-[var(--text-secondary)]">
+              Each listing includes hours, prices, ratings, reviews, and detailed location information to help you 
+              find the perfect Chinese buffet experience.
             </p>
           </div>
-        </header>
+        </div>
+      </section>
 
-        {/* Stats Section */}
-        <section className="bg-white py-8 border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-              <div>
-                <div className="text-4xl font-bold text-blue-600">
-                  {stateData.buffetCount.toLocaleString()}
+      {/* Cities Grid */}
+      <section className="bg-[var(--surface2)] py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold text-[var(--text)] mb-6">
+            Cities with Chinese Buffets in {stateName}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {cities.map((city) => (
+              <Link
+                key={city.citySlug}
+                href={`/chinese-buffets/${city.citySlug}`}
+                className="bg-[var(--surface)] border border-[var(--border)] rounded-lg p-4 hover:shadow-md hover:border-[var(--accent1)] transition-all group"
+              >
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="font-semibold text-lg text-[var(--text)] group-hover:text-[var(--accent1)]">
+                      {city.cityName}
+                    </h3>
+                    <p className="text-[var(--muted)] text-sm mt-1">
+                      {city.buffetCount} {city.buffetCount === 1 ? 'buffet' : 'buffets'}
+                      {city.neighborhoodCount > 0 && (
+                        <span className="ml-1">
+                          · {city.neighborhoodCount} {city.neighborhoodCount === 1 ? 'area' : 'areas'}
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                  <span className="text-[var(--accent1)]">→</span>
                 </div>
-                <div className="text-gray-600 mt-2">Chinese Buffets</div>
-              </div>
-              <div>
-                <div className="text-4xl font-bold text-blue-600">
-                  {stateData.cityCount.toLocaleString()}
-                </div>
-                <div className="text-gray-600 mt-2">Cities</div>
-              </div>
-              <div>
-                <div className="text-4xl font-bold text-blue-600">
-                  {topBuffets.length > 0 ? topBuffets[0].rating.toFixed(1) : 'N/A'}
-                </div>
-                <div className="text-gray-600 mt-2">Top Rated</div>
-              </div>
-            </div>
+              </Link>
+            ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Intro Section */}
-        <section className="bg-white py-8 border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="prose max-w-none">
-              {introContent.map((paragraph, index) => (
-                <p key={index} className="text-gray-700 mb-4">
-                  {paragraph}
-                </p>
-              ))}
-            </div>
+      {/* Back Navigation */}
+      <section className="bg-[var(--surface)] py-6 border-t border-[var(--border)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Link href="/chinese-buffets/states" className="text-[var(--accent1)] hover:opacity-80 font-medium">
+            ← Back to All States
+          </Link>
+          <span className="mx-4 text-[var(--muted)]">|</span>
+          <Link href="/chinese-buffets/cities" className="text-[var(--accent1)] hover:opacity-80 font-medium">
+            Browse by City →
+          </Link>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-[var(--headerBg)] text-white py-8 mt-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <p className="text-white/60">
+              Chinese Buffets Directory - Find all-you-can-eat Chinese buffets in {stateName}
+            </p>
           </div>
-        </section>
-
-        {/* Top Cities Section */}
-        {citiesByCount.length > 0 && (
-          <section className="bg-blue-50 py-8">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                Cities with Chinese Buffets in {stateData.state}
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {citiesByCount.slice(0, 12).map((city) => (
-                  <Link
-                    key={city.name}
-                    href={`/chinese-buffets/${stateData.buffets.find((b: any) => b.address.city === city.name)?.citySlug || ''}`}
-                    className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow bg-white"
-                  >
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <h3 className="font-semibold text-lg text-gray-900">
-                          {city.name}
-                        </h3>
-                        <p className="text-gray-600 text-sm mt-1">
-                          {city.buffetCount} {city.buffetCount === 1 ? 'buffet' : 'buffets'}
-                        </p>
-                      </div>
-                      <span className="text-blue-600">→</span>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* Top Buffets Section */}
-        {topBuffets.length > 0 && (
-          <section className="bg-white py-8">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                Top Rated Chinese Buffets in {stateData.state}
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {topBuffets.map((buffet: any) => (
-                  <BuffetCard
-                    key={buffet.id}
-                    buffet={buffet}
-                    citySlug={buffet.citySlug || ''}
-                  />
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* Map Section */}
-        <section className="bg-white py-8">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              Map of Chinese Buffets in {stateData.state}
-            </h2>
-            <div className="bg-white rounded-lg shadow-lg p-4 mb-6">
-              <Map
-                markers={mapMarkers}
-                height="600px"
-                showClusters={true}
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* All Buffets Section */}
-        <section className="bg-white py-8">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              All Chinese Buffets in {stateData.state}
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {sortedBuffets.map((buffet: any) => (
-                <BuffetCard
-                  key={buffet.id}
-                  buffet={buffet}
-                  citySlug={buffet.citySlug || ''}
-                />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Footer */}
-        <footer className="bg-gray-800 text-white py-8 mt-12">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center">
-              <p className="text-gray-400">
-                Chinese Buffets Directory - Find all-you-can-eat Chinese buffets in {stateData.state}
-              </p>
-            </div>
-          </div>
-        </footer>
-      </div>
-    </>
+        </div>
+      </footer>
+    </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

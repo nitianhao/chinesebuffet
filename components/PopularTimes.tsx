@@ -38,30 +38,30 @@ export default function PopularTimes({ histogram, liveText, livePercent }: Popul
     <div className="space-y-4">
       {/* Current Status */}
       {(liveText || livePercent !== null) && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="bg-[var(--surface2)] border border-[var(--border)] rounded-lg p-4">
           <div className="flex items-center gap-3">
             <div className="flex-shrink-0">
-              <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-12 h-12 rounded-full bg-[var(--surface)] flex items-center justify-center">
+                <svg className="w-6 h-6 text-[var(--accent1)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
             </div>
             <div className="flex-1">
-              <div className="text-sm font-medium text-blue-900 mb-1">Live Status</div>
+              <div className="text-sm font-medium text-[var(--text)] mb-1">Live Status</div>
               {liveText && (
-                <div className="text-lg font-semibold text-blue-800">{liveText}</div>
+                <div className="text-lg font-semibold text-[var(--accent1)]">{liveText}</div>
               )}
               {livePercent !== null && livePercent !== undefined && (
                 <div className="mt-2">
                   <div className="flex items-center gap-2">
-                    <div className="flex-1 bg-blue-200 rounded-full h-2">
+                    <div className="flex-1 bg-[var(--accent-light)] rounded-full h-2">
                       <div
-                        className="bg-blue-600 h-2 rounded-full transition-all"
+                        className="bg-[var(--accent1)] h-2 rounded-full transition-all"
                         style={{ width: `${livePercent}%` }}
                       />
                     </div>
-                    <span className="text-sm font-medium text-blue-700">{livePercent}%</span>
+                    <span className="text-sm font-medium text-[var(--accent1)]">{livePercent}%</span>
                   </div>
                 </div>
               )}
@@ -84,11 +84,11 @@ export default function PopularTimes({ histogram, liveText, livePercent }: Popul
             const maxPopularity = Math.max(...dayData.map(h => h.occupancyPercent), 1);
             
             return (
-              <div key={dayKey} className={`${isToday ? 'bg-blue-50 border border-blue-200' : ''} rounded-lg p-3`}>
+              <div key={dayKey} className={`${isToday ? 'bg-[var(--surface2)] border border-[var(--border)]' : ''} rounded-lg p-3`}>
                 <div className="flex items-center gap-4">
                   <div className="w-12 text-sm font-medium text-gray-700">
                     {dayAbbr[dayIndex]}
-                    {isToday && <span className="block text-xs text-blue-600 font-semibold">Today</span>}
+                    {isToday && <span className="block text-xs text-[var(--accent1)] font-semibold">Today</span>}
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-1">

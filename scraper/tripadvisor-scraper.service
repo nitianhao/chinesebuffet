@@ -1,0 +1,22 @@
+[Unit]
+Description=TripAdvisor Review Scraper Service
+After=network.target
+
+[Service]
+Type=simple
+User=%i
+WorkingDirectory=/path/to/scraper
+Environment="NODE_ENV=production"
+EnvironmentFile=/path/to/scraper/.env
+ExecStart=/usr/bin/npx tsx src/index.ts
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+# Resource limits for low-power VPS
+MemoryLimit=512M
+CPUQuota=50%
+
+[Install]
+WantedBy=multi-user.target

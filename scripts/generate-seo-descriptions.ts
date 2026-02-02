@@ -5,9 +5,8 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
-import pLimit from 'p-limit';
 import { z } from 'zod';
-import { GoogleGenAI } from '@google/genai';
+import { getRateLimitManager } from './lib/rateLimitManager';
 
 dotenv.config({ path: path.join(process.cwd(), '.env.local') });
 dotenv.config();
@@ -16,12 +15,9 @@ const OUTPUT_DIR = path.resolve(__dirname, 'output');
 const PROGRESS_LOG = path.join(OUTPUT_DIR, 'seo-gen-progress.jsonl');
 const SENTENCES_FILE = path.join(OUTPUT_DIR, 'seo-sentences.json');
 
-const GEMINI_MODEL_PRIMARY = process.env.GEMINI_MODEL_PRIMARY || 'gemini-2.5-flash';
-const GEMINI_MODEL_SECONDARY = process.env.GEMINI_MODEL_SECONDARY || 'gemini-flash-latest';
 const GROQ_MODEL = process.env.GROQ_MODEL || 'llama-3.1-8b-instant';
 
 const REQUEST_TIMEOUT_MS = parseInt(process.env.REQUEST_TIMEOUT_MS || '25000', 10);
-const COOLDOWN_MS = parseInt(process.env.PROVIDER_COOLDOWN_MS || '30000', 10);
 
 const WORD_MIN = 120;
 const WORD_MAX = 250;
@@ -29,44 +25,18 @@ const WORD_MAX = 250;
 const LENGTH_TOKEN_LIMITS = [600, 750, 900];
 const MAX_LENGTH_FIX_ATTEMPTS = 4;
 const MAX_VALIDATION_RETRIES = 4;
-const MAX_PROVIDER_RETRIES = 4;
+const MAX_RETRIES = 3; // Max retries for Groq
 
 const NEGATIVE_TERMS = [
-  'rude',
-  'dirty',
-  'cold',
-  'slow',
-  'overpriced',
-  'bad',
-  'awful',
-  'worst',
-  'never',
-  'disappointed',
-  'disappointing',
-  'mediocre',
-  'bland',
-  'greasy',
-  'stale',
-  'not good',
-  'terrible',
-  'gross',
-  'unfriendly',
-  'inattentive',
-  'noisy',
-  'waited',
-  'wait time',
-  'overcooked',
-  'undercooked'
+  'rude', 'dirty', 'cold', 'slow', 'overpriced', 'bad', 'awful', 'worst',
+  'never', 'disappointed', 'disappointing', 'mediocre', 'bland', 'greasy',
+  'stale', 'not good', 'terrible', 'gross', 'unfriendly', 'inattentive',
+  'noisy', 'waited', 'wait time', 'overcooked', 'undercooked'
 ];
 
 const INITIAL_BANNED_OPENINGS = [
-  'look no further',
-  'hidden gem',
-  "if you're looking for",
-  'if you are looking for',
-  'your search ends here',
-  'a must-try',
-  'a must try'
+  'look no further', 'hidden gem', "if you're looking for",
+  'if you are looking for', 'your search ends here', 'a must-try', 'a must try'
 ];
 
 const JsonResponseSchema = z.object({
@@ -93,13 +63,20 @@ type BuffetRecord = {
   reviewRecords?: any[];
 };
 
+type TokenUsage = {
+  promptTokens: number;
+  completionTokens: number;
+  totalTokens: number;
+};
+
 type GeneratedResult = {
   descriptionMd: string;
   wordCount: number;
   boldPhrases: string[];
-  provider: 'gemini' | 'groq';
+  provider: 'groq';
   model: string;
   latencyMs: number;
+  tokens?: TokenUsage;
 };
 
 class GenerationError extends Error {
@@ -113,17 +90,6 @@ class GenerationError extends Error {
   }
 }
 
-type ProviderState = {
-  consecutive429: number;
-  cooldownUntil: number;
-};
-
-const providerState: Record<string, ProviderState> = {
-  [GEMINI_MODEL_PRIMARY]: { consecutive429: 0, cooldownUntil: 0 },
-  [GEMINI_MODEL_SECONDARY]: { consecutive429: 0, cooldownUntil: 0 },
-  groq: { consecutive429: 0, cooldownUntil: 0 }
-};
-
 function ensureOutputDir() {
   if (!fs.existsSync(OUTPUT_DIR)) {
     fs.mkdirSync(OUTPUT_DIR, { recursive: true });
@@ -132,28 +98,6 @@ function ensureOutputDir() {
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-function jitter(ms: number) {
-  const delta = Math.floor(Math.random() * 600);
-  return ms + delta;
-}
-
-function isCoolingDown(key: string) {
-  return Date.now() < providerState[key].cooldownUntil;
-}
-
-function mark429(key: string) {
-  providerState[key].consecutive429 += 1;
-  // Relax: require 5 consecutive 429s before cooldown (was 3)
-  if (providerState[key].consecutive429 >= 5) {
-    providerState[key].cooldownUntil = Date.now() + COOLDOWN_MS;
-    providerState[key].consecutive429 = 0;
-  }
-}
-
-function reset429(key: string) {
-  providerState[key].consecutive429 = 0;
 }
 
 function toWordCount(text: string): number {
@@ -213,12 +157,10 @@ function extractJsonFromText(text: string) {
   if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
     return { jsonText: trimmed, extracted: false };
   }
-
   const match = trimmed.match(/\{[\s\S]*\}/);
   if (match) {
     return { jsonText: match[0], extracted: true };
   }
-
   return { jsonText: trimmed, extracted: false };
 }
 
@@ -322,10 +264,8 @@ function buildPrompt(options: {
     doNotUseSentences.length > 0
       ? `Do NOT reuse these sentences or close variants: ${doNotUseSentences.join(' | ')}`
       : `Do NOT reuse any sentences from prior descriptions.`,
-    lengthDirective
-      ? lengthDirective
-      : `Length must be ${WORD_MIN}-${WORD_MAX} words.`,
-    uniquenessDirective ? uniquenessDirective : '',
+    lengthDirective || `Length must be ${WORD_MIN}-${WORD_MAX} words.`,
+    uniquenessDirective || '',
     `REQUIRED OUTPUT: Return STRICT JSON ONLY with keys {"description_md","word_count","bold_phrases"} and no extra text.`,
     `description_md should include several bold phrases using **...** (aim for 3-10).`,
     `Try to include "Chinese buffet" or "${geo}" in at least one bold phrase.`,
@@ -369,131 +309,45 @@ function classifyError(error: any) {
   const status = error?.status || error?.response?.status;
   const isRateLimit = status === 429 || message.includes('429') || message.includes('rate limit');
   const isServerError = status && status >= 500;
-  return { isRateLimit, isServerError, status, message };
-}
-
-async function generateWithGemini(
-  prompt: string,
-  maxOutputTokens: number,
-  temperature: number
-): Promise<{ text: string; model: string; latencyMs: number }> {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    throw new Error('GEMINI_API_KEY is not set');
-  }
-  const ai = new GoogleGenAI({ apiKey });
-  const models = [GEMINI_MODEL_PRIMARY, GEMINI_MODEL_SECONDARY];
-
-  let lastRateLimit = false;
-
-  for (const modelName of models) {
-    if (isCoolingDown(modelName)) {
-      continue;
-    }
-
-    for (let attempt = 0; attempt < MAX_PROVIDER_RETRIES; attempt++) {
-      const start = Date.now();
-      try {
-        const response = await withTimeout(
-          (signal) =>
-            ai.models.generateContent({
-              model: modelName,
-              contents: [{ role: 'user', parts: [{ text: prompt }] }],
-              generationConfig: {
-                temperature,
-                maxOutputTokens
-              },
-              safetySettings: [],
-              responseMimeType: 'application/json',
-              signal
-            }),
-          REQUEST_TIMEOUT_MS
-        );
-
-        const text = (response as any)?.text || (response as any)?.response?.text || '';
-        reset429(modelName);
-        return { text, model: modelName, latencyMs: Date.now() - start };
-      } catch (error: any) {
-        const info = classifyError(error);
-        if (info.isRateLimit) {
-          mark429(modelName);
-          lastRateLimit = true;
-          if (modelName === GEMINI_MODEL_PRIMARY) {
-            break;
-          }
-          const delayMs = jitter(Math.min(2000 * Math.pow(2, attempt), 20000));
-          await sleep(delayMs);
-          continue;
-        }
-        if (info.isServerError) {
-          const delayMs = jitter(Math.min(2000 * Math.pow(2, attempt), 20000));
-          await sleep(delayMs);
-          continue;
-        }
-        throw error;
-      }
-    }
-  }
-
-  if (lastRateLimit) {
-    const error: any = new Error('Gemini rate limited');
-    error.isRateLimit = true;
-    throw error;
-  }
-  throw new Error('Gemini unavailable');
-}
-
-function parseGroqRetry(headers: Headers) {
-  const retryAfter = headers.get('retry-after');
-  if (retryAfter) {
-    const seconds = Number(retryAfter);
-    if (!Number.isNaN(seconds)) {
-      return seconds * 1000;
-    }
-  }
-
-  const resetCandidates = [
-    headers.get('x-ratelimit-reset-requests'),
-    headers.get('x-ratelimit-reset-tokens')
-  ].filter(Boolean) as string[];
-
-  const now = Date.now();
-  let earliestMs = Number.POSITIVE_INFINITY;
-
-  for (const value of resetCandidates) {
-    const parsed = Number(value);
-    if (Number.isNaN(parsed)) continue;
-    const ms = parsed > 1e10 ? parsed : parsed * 1000;
-    if (ms > now && ms < earliestMs) earliestMs = ms;
-  }
-
-  if (earliestMs !== Number.POSITIVE_INFINITY) {
-    return earliestMs - now;
-  }
-
-  return null;
+  const isTimeout = message.includes('abort') || message.includes('timeout');
+  return { isRateLimit, isServerError, isTimeout, status, message };
 }
 
 async function generateWithGroq(
   prompt: string,
   maxOutputTokens: number,
   temperature: number
-): Promise<{ text: string; model: string; latencyMs: number; retryAfterMs?: number }> {
+): Promise<{ text: string; model: string; latencyMs: number; tokens?: TokenUsage }> {
+  const rateLimitManager = getRateLimitManager();
+  
+  // Check if Groq is in cooldown - if so, wait for it
+  if (!rateLimitManager.isHealthy('groq')) {
+    const health = rateLimitManager.getHealthStatus();
+    const waitMs = health.groq.unhealthyUntil - Date.now();
+    if (waitMs > 0) {
+      console.log(`[groq] Waiting ${Math.ceil(waitMs/1000)}s for cooldown to end...`);
+      await rateLimitManager.globalSleep(waitMs + 100, 'Groq cooldown');
+    }
+  }
+
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
+    rateLimitManager.markUnhealthy('groq', 'GROQ_API_KEY not set');
     throw new Error('GROQ_API_KEY is not set');
   }
 
-  if (isCoolingDown('groq')) {
-    const error: any = new Error('Groq cooling down');
-    error.isRateLimit = true;
-    throw error;
+  // Proactive throttling: check if we should wait
+  const estimatedTokens = rateLimitManager.estimateTokens(prompt, maxOutputTokens);
+  const proactiveWaitMs = rateLimitManager.shouldWaitForGroq(estimatedTokens);
+  if (proactiveWaitMs > 0) {
+    await rateLimitManager.globalSleep(proactiveWaitMs, `Groq proactive throttle (need ~${estimatedTokens} tokens)`);
   }
 
-  for (let attempt = 0; attempt < MAX_PROVIDER_RETRIES; attempt++) {
+  for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
     const start = Date.now();
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+    
     try {
       const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
@@ -508,8 +362,7 @@ async function generateWithGroq(
           messages: [
             {
               role: 'system',
-              content:
-                'You are an SEO copywriter for local restaurant pages. Use ONLY provided facts and highlights. Do not invent features or mention negatives.'
+              content: 'You are an SEO copywriter for local restaurant pages. Use ONLY provided facts and highlights. Do not invent features or mention negatives.'
             },
             {
               role: 'user',
@@ -523,34 +376,30 @@ async function generateWithGroq(
       const latencyMs = Date.now() - start;
       clearTimeout(timeoutId);
 
-      const retryAfterMs = parseGroqRetry(response.headers);
-      const rateHeaders = [
-        'x-ratelimit-limit-requests',
-        'x-ratelimit-remaining-requests',
-        'x-ratelimit-reset-requests',
-        'x-ratelimit-remaining-tokens',
-        'x-ratelimit-reset-tokens'
-      ]
-        .map((key) => [key, response.headers.get(key)])
-        .filter(([, value]) => value);
+      // Parse rate limit headers
+      const headers = rateLimitManager.parseGroqHeaders(response.headers);
+      rateLimitManager.updateGroqState(headers);
 
-      if (rateHeaders.length > 0) {
-        console.log(
-          `[groq] rate-limit ${rateHeaders.map(([key, value]) => `${key}=${value}`).join(' ')}`
-        );
-      }
       if (response.status === 429) {
-        mark429('groq');
+        // Brief sleep based on headers, upgraded account should rarely hit this
+        const sleepMs = Math.min(rateLimitManager.calculateSleepMs(headers, 0), 3000);
+        rateLimitManager.record429('groq', headers, sleepMs);
+        
+        if (attempt < MAX_RETRIES - 1) {
+          await rateLimitManager.globalSleep(sleepMs, `Groq 429 (retry ${attempt + 1}/${MAX_RETRIES})`);
+          continue;
+        }
+        
         const error: any = new Error('Groq rate limited');
         error.isRateLimit = true;
-        error.retryAfterMs = retryAfterMs || undefined;
+        error.headers = headers;
         throw error;
       }
 
       if (!response.ok) {
-        if (response.status >= 500) {
-          const delayMs = jitter(Math.min(2000 * Math.pow(2, attempt), 20000));
-          await sleep(delayMs);
+        if (response.status >= 500 && attempt < MAX_RETRIES - 1) {
+          const sleepMs = Math.min(500 * (attempt + 1), 2000);
+          await sleep(sleepMs);
           continue;
         }
         throw new Error(`Groq error: ${response.status}`);
@@ -558,20 +407,33 @@ async function generateWithGroq(
 
       const data = await response.json();
       const text = data?.choices?.[0]?.message?.content || '';
-      reset429('groq');
-      return { text, model: GROQ_MODEL, latencyMs, retryAfterMs: retryAfterMs || undefined };
+      
+      // Extract token usage from Groq response
+      let tokens: TokenUsage | undefined;
+      if (data?.usage) {
+        tokens = {
+          promptTokens: data.usage.prompt_tokens || 0,
+          completionTokens: data.usage.completion_tokens || 0,
+          totalTokens: data.usage.total_tokens || 0
+        };
+      }
+      
+      rateLimitManager.recordSuccess('groq');
+      return { text, model: GROQ_MODEL, latencyMs, tokens };
     } catch (error: any) {
       clearTimeout(timeoutId);
-      const info = classifyError(error);
-      if (info.isRateLimit) {
-        mark429('groq');
+      
+      if (error?.isRateLimit) {
         throw error;
       }
-      if (info.isServerError || info.message.includes('abort')) {
-        const delayMs = jitter(Math.min(2000 * Math.pow(2, attempt), 20000));
-        await sleep(delayMs);
+      
+      const info = classifyError(error);
+      if ((info.isServerError || info.isTimeout) && attempt < MAX_RETRIES - 1) {
+        const sleepMs = Math.min(500 * (attempt + 1), 2000);
+        await sleep(sleepMs);
         continue;
       }
+      
       throw error;
     }
   }
@@ -579,40 +441,14 @@ async function generateWithGroq(
   throw new Error('Groq unavailable');
 }
 
-async function generateWithFallback(
+// Simple wrapper - only using Groq now (upgraded account)
+async function generate(
   prompt: string,
   maxOutputTokens: number,
   temperature: number
-): Promise<{ text: string; provider: 'gemini' | 'groq'; model: string; latencyMs: number }> {
-  // Try Gemini first
-  let geminiError: any = null;
-  try {
-    const result = await generateWithGemini(prompt, maxOutputTokens, temperature);
-    return { text: result.text, provider: 'gemini', model: result.model, latencyMs: result.latencyMs };
-  } catch (error: any) {
-    geminiError = error;
-    console.log(`[fallback] Gemini failed (${error?.message || error}), trying Groq...`);
-  }
-
-  // Fall back to Groq for ANY Gemini failure
-  try {
-    const result = await generateWithGroq(prompt, maxOutputTokens, temperature);
-    return { text: result.text, provider: 'groq', model: result.model, latencyMs: result.latencyMs };
-  } catch (error: any) {
-    if (error?.isRateLimit) {
-      const retryAfterMs = error.retryAfterMs;
-      if (retryAfterMs && retryAfterMs > 0) {
-        console.log(`[fallback] Groq rate limited, sleeping ${retryAfterMs}ms...`);
-        await sleep(jitter(retryAfterMs));
-      } else {
-        const backoff = jitter(4000);
-        console.log(`[fallback] Groq rate limited, sleeping ${backoff}ms...`);
-        await sleep(backoff);
-      }
-    }
-    // If both failed, throw the Groq error (more recent)
-    throw error;
-  }
+): Promise<{ text: string; provider: 'groq'; model: string; latencyMs: number; tokens?: TokenUsage }> {
+  const result = await generateWithGroq(prompt, maxOutputTokens, temperature);
+  return { text: result.text, provider: 'groq', model: result.model, latencyMs: result.latencyMs, tokens: result.tokens };
 }
 
 function validateJsonOutput(
@@ -622,16 +458,12 @@ function validateJsonOutput(
 ) {
   const wordCount = toWordCount(descriptionText);
   
-  // Word count validation moved to generateDescription - here we just log mismatch
   if (parsed.word_count !== wordCount) {
-    console.warn(
-      `[warn] word_count mismatch: model=${parsed.word_count} computed=${wordCount}`
-    );
+    console.warn(`[warn] word_count mismatch: model=${parsed.word_count} computed=${wordCount}`);
   }
 
   const boldPhrases = extractBoldPhrases(descriptionText);
   
-  // Relaxed: just log warnings, never fail
   if (boldPhrases.length < 2) {
     console.warn(`[warn] only ${boldPhrases.length} bold phrases found`);
   }
@@ -649,7 +481,6 @@ function validateJsonOutput(
     console.warn(`[warn] description may contain negative term`);
   }
 
-  // Always return ok:true - we've relaxed all validation to warnings
   return { ok: true, wordCount, boldPhrases };
 }
 
@@ -811,23 +642,26 @@ async function generateDescription(
     const maxOutputTokens = LENGTH_TOKEN_LIMITS[Math.min(lengthAttempts, LENGTH_TOKEN_LIMITS.length - 1)];
 
     let responseText = '';
-    let provider: 'gemini' | 'groq' = 'gemini';
+    let provider: 'groq' = 'groq';
     let model = '';
     let latencyMs = 0;
+    let tokens: TokenUsage | undefined;
 
     try {
-      const result = await generateWithFallback(prompt, maxOutputTokens, temperature);
+      const result = await generate(prompt, maxOutputTokens, temperature);
       responseText = result.text;
       provider = result.provider;
       model = result.model;
       latencyMs = result.latencyMs;
+      tokens = result.tokens;
       transientRetries = 0;
     } catch (error: any) {
       transientRetries += 1;
-      if (transientRetries >= MAX_PROVIDER_RETRIES) {
+      if (transientRetries >= MAX_RETRIES) {
         throw error;
       }
-      await sleep(jitter(1500 * transientRetries));
+      // Brief sleep before retry
+      await sleep(300);
       continue;
     }
 
@@ -854,7 +688,6 @@ async function generateDescription(
     const description = parsedJson.description_md.trim();
     const wordCount = toWordCount(description);
 
-    // Very lenient: only retry if extremely short or long
     if (wordCount < 80) {
       lengthDirective = `Expand to ${WORD_MIN}-${WORD_MAX} words by adding concrete details from facts/highlights; do not add new claims.`;
       lengthAttempts += 1;
@@ -873,7 +706,7 @@ async function generateDescription(
     if (!validation.ok) {
       validationRetries += 1;
       if (validationRetries > MAX_VALIDATION_RETRIES) {
-        throw new GenerationError(`Validation failed: ${validation.reason}`, {
+        throw new GenerationError(`Validation failed: ${(validation as any).reason}`, {
           provider,
           model,
           latencyMs,
@@ -911,7 +744,8 @@ async function generateDescription(
       boldPhrases: validation.boldPhrases || parsedJson.bold_phrases,
       provider,
       model,
-      latencyMs
+      latencyMs,
+      tokens
     };
   }
 
@@ -935,7 +769,7 @@ async function main() {
   };
 
   const limit = getFlagValue('--limit', Number.POSITIVE_INFINITY);
-  const concurrency = getFlagValue('--concurrency', 3);
+  const maxConcurrency = getFlagValue('--concurrency', 3);
   const force = hasFlag('--force');
   const dryRun = hasFlag('--dry-run');
   const preflightOnly = hasFlag('--preflight');
@@ -961,6 +795,9 @@ async function main() {
     process.exit(0);
   }
 
+  // Initialize rate limit manager with max concurrency
+  const rateLimitManager = getRateLimitManager(maxConcurrency);
+
   const sentencesStore = ensureSentenceStore();
   const bannedOpenings = new Set<string>(INITIAL_BANNED_OPENINGS);
   const recentDescriptions = loadRecentDescriptions(40);
@@ -976,7 +813,134 @@ async function main() {
   let totalLatency = 0;
   const startTime = Date.now();
 
-  const limitConcurrency = pLimit(concurrency);
+  // Track active tasks for adaptive concurrency
+  const activeTasks: Promise<void>[] = [];
+
+  async function processBuffet(buffet: BuffetRecord) {
+    if (!buffet?.id) return;
+    
+    // Skip if already in progress log as successful
+    if (processedIds.has(buffet.id)) {
+      skippedCount += 1;
+      appendProgress({
+        timestamp: new Date().toISOString(),
+        buffetId: buffet.id,
+        name: buffet.name,
+        status: 'skipped',
+        reason: 'already_successful_in_log'
+      });
+      return;
+    }
+
+    // Skip if description2 is already populated in DB
+    if (buffet.description2 && buffet.description2.trim().length > 0) {
+      skippedCount += 1;
+      console.log(`[skipped] ${buffet.name} - description2 already populated (${buffet.description2.length} chars)`);
+      appendProgress({
+        timestamp: new Date().toISOString(),
+        buffetId: buffet.id,
+        name: buffet.name,
+        status: 'skipped',
+        reason: 'description2_already_populated'
+      });
+      return;
+    }
+
+    const facts = extractFacts(buffet);
+    const highlights = extractHighlights(buffet.reviewRecords || []);
+    let lastProvider: string = 'n/a';
+    let lastModel: string = 'n/a';
+    let lastLatency: number = 0;
+
+    try {
+      const result = await generateDescription(
+        buffet,
+        facts,
+        highlights,
+        sentencesStore,
+        recentDescriptions,
+        bannedOpenings
+      );
+
+      const sentences = splitSentences(result.descriptionMd).map(normalizeSentence).filter(Boolean);
+      sentences.forEach((s) => sentencesStore.add(s));
+      recentDescriptions.push(result.descriptionMd);
+      if (recentDescriptions.length > 60) recentDescriptions.shift();
+      persistSentenceStore(sentencesStore);
+
+      if (!dryRun) {
+        await db.transact([db.tx.buffets[buffet.id].update({ description2: result.descriptionMd })]);
+      }
+
+      successCount += 1;
+      totalLatency += result.latencyMs;
+      lastProvider = result.provider;
+      lastModel = result.model;
+      lastLatency = result.latencyMs;
+
+      // Print full generated text to terminal
+      const tokenInfo = result.tokens 
+        ? `Tokens: ${result.tokens.promptTokens} in / ${result.tokens.completionTokens} out / ${result.tokens.totalTokens} total`
+        : 'Tokens: N/A';
+      
+      console.log(`\n${'='.repeat(80)}`);
+      console.log(`[SUCCESS] ${buffet.name} (${buffet.cityName}, ${buffet.state})`);
+      console.log(`Provider: ${result.provider} | Model: ${result.model} | Words: ${result.wordCount} | Latency: ${result.latencyMs}ms`);
+      console.log(tokenInfo);
+      console.log(`${'─'.repeat(80)}`);
+      console.log(result.descriptionMd);
+      console.log(`${'='.repeat(80)}\n`);
+
+      appendProgress({
+        timestamp: new Date().toISOString(),
+        buffetId: buffet.id,
+        name: buffet.name,
+        status: 'success',
+        wordCount: result.wordCount,
+        provider: result.provider,
+        model: result.model,
+        latencyMs: result.latencyMs,
+        tokens: result.tokens,
+        description_md: result.descriptionMd
+      });
+    } catch (error: any) {
+      failedCount += 1;
+      lastProvider = error?.provider || lastProvider;
+      lastModel = error?.model || lastModel;
+      lastLatency = error?.latencyMs || lastLatency;
+      const responseSnippet = error?.responseSnippet ? String(error.responseSnippet) : undefined;
+      console.error(
+        `[failed] ${buffet.name || buffet.id} reason=${String(error?.message || error)} provider=${lastProvider} model=${lastModel}`
+      );
+      appendProgress({
+        timestamp: new Date().toISOString(),
+        buffetId: buffet.id,
+        name: buffet.name,
+        status: 'failed',
+        reason: String(error?.message || error),
+        provider: lastProvider,
+        model: lastModel,
+        latencyMs: lastLatency,
+        response_snippet: responseSnippet
+      });
+    }
+
+    totalProcessed += 1;
+
+    const elapsedMin = (Date.now() - startTime) / 1000 / 60;
+    const avgLatency = successCount ? totalLatency / successCount : 0;
+    const rate = totalProcessed ? totalProcessed / elapsedMin : 0;
+    const remaining = targetTotal !== null ? Math.max(targetTotal - totalProcessed, 0) : null;
+    const etaMin = rate > 0 && remaining !== null ? remaining / rate : 0;
+    const currentConcurrency = rateLimitManager.getConcurrency();
+
+    console.log(
+      `[progress] processed=${totalProcessed} success=${successCount} failed=${failedCount} skipped=${skippedCount} concurrency=${currentConcurrency} provider=${lastProvider} model=${lastModel} lastLatencyMs=${lastLatency.toFixed(0)} avgLatencyMs=${avgLatency.toFixed(0)} etaMin=${remaining !== null ? etaMin.toFixed(1) : 'unknown'}`
+    );
+
+    // Print stats periodically
+    rateLimitManager.maybePrintStats();
+  }
 
   while (totalProcessed < limit) {
     const query = await db.query({
@@ -990,138 +954,52 @@ async function main() {
     const buffets = (query.buffets || []) as BuffetRecord[];
     if (buffets.length === 0) break;
 
-    const tasks = buffets.map((buffet) =>
-      limitConcurrency(async () => {
-        if (!buffet?.id) return;
-        
-        // Skip if already in progress log as successful
-        if (processedIds.has(buffet.id)) {
-          skippedCount += 1;
-          appendProgress({
-            timestamp: new Date().toISOString(),
-            buffetId: buffet.id,
-            name: buffet.name,
-            status: 'skipped',
-            reason: 'already_successful_in_log'
-          });
-          return;
-        }
+    // Process buffets with adaptive concurrency
+    for (const buffet of buffets) {
+      if (totalProcessed >= limit) break;
 
-        // Skip if description2 is already populated in DB
-        if (buffet.description2 && buffet.description2.trim().length > 0) {
-          skippedCount += 1;
-          console.log(`[skipped] ${buffet.name} - description2 already populated (${buffet.description2.length} chars)`);
-          appendProgress({
-            timestamp: new Date().toISOString(),
-            buffetId: buffet.id,
-            name: buffet.name,
-            status: 'skipped',
-            reason: 'description2_already_populated'
-          });
-          return;
-        }
+      // Get current concurrency limit
+      const currentConcurrency = rateLimitManager.getConcurrency();
 
-        const facts = extractFacts(buffet);
-        const highlights = extractHighlights(buffet.reviewRecords || []);
-        let lastProvider: string = 'n/a';
-        let lastModel: string = 'n/a';
-        let lastLatency: number = 0;
-
-        try {
-          const result = await generateDescription(
-            buffet,
-            facts,
-            highlights,
-            sentencesStore,
-            recentDescriptions,
-            bannedOpenings
-          );
-
-          const sentences = splitSentences(result.descriptionMd).map(normalizeSentence).filter(Boolean);
-          sentences.forEach((s) => sentencesStore.add(s));
-          recentDescriptions.push(result.descriptionMd);
-          if (recentDescriptions.length > 60) recentDescriptions.shift();
-          persistSentenceStore(sentencesStore);
-
-          if (!dryRun) {
-            await db.transact([db.tx.buffets[buffet.id].update({ description2: result.descriptionMd })]);
+      // Wait if we're at capacity
+      while (activeTasks.length >= currentConcurrency) {
+        await Promise.race(activeTasks);
+        // Remove completed tasks
+        for (let i = activeTasks.length - 1; i >= 0; i--) {
+          const task = activeTasks[i];
+          const status = await Promise.race([task.then(() => 'done'), Promise.resolve('pending')]);
+          if (status === 'done') {
+            activeTasks.splice(i, 1);
           }
-
-          successCount += 1;
-          totalLatency += result.latencyMs;
-          lastProvider = result.provider;
-          lastModel = result.model;
-          lastLatency = result.latencyMs;
-
-          // Print full generated text to terminal
-          console.log(`\n${'='.repeat(80)}`);
-          console.log(`[SUCCESS] ${buffet.name} (${buffet.cityName}, ${buffet.state})`);
-          console.log(`Provider: ${result.provider} | Model: ${result.model} | Words: ${result.wordCount} | Latency: ${result.latencyMs}ms`);
-          console.log(`${'─'.repeat(80)}`);
-          console.log(result.descriptionMd);
-          console.log(`${'='.repeat(80)}\n`);
-
-          appendProgress({
-            timestamp: new Date().toISOString(),
-            buffetId: buffet.id,
-            name: buffet.name,
-            status: 'success',
-            wordCount: result.wordCount,
-            provider: result.provider,
-            model: result.model,
-            latencyMs: result.latencyMs,
-            description_md: result.descriptionMd
-          });
-        } catch (error: any) {
-          failedCount += 1;
-          lastProvider = error?.provider || lastProvider;
-          lastModel = error?.model || lastModel;
-          lastLatency = error?.latencyMs || lastLatency;
-          const responseSnippet = error?.responseSnippet ? String(error.responseSnippet) : undefined;
-          console.error(
-            `[failed] ${buffet.name || buffet.id} reason=${String(error?.message || error)} provider=${lastProvider} model=${lastModel}`
-          );
-          appendProgress({
-            timestamp: new Date().toISOString(),
-            buffetId: buffet.id,
-            name: buffet.name,
-            status: 'failed',
-            reason: String(error?.message || error),
-            provider: lastProvider,
-            model: lastModel,
-            latencyMs: lastLatency,
-            response_snippet: responseSnippet
-          });
         }
+      }
 
-        totalProcessed += 1;
+      // Start new task
+      const task = processBuffet(buffet).finally(() => {
+        const index = activeTasks.indexOf(task);
+        if (index > -1) activeTasks.splice(index, 1);
+      });
+      activeTasks.push(task);
+    }
 
-        const elapsedMin = (Date.now() - startTime) / 1000 / 60;
-        const avgLatency = successCount ? totalLatency / successCount : 0;
-        const rate = totalProcessed ? totalProcessed / elapsedMin : 0;
-        const remaining = targetTotal !== null ? Math.max(targetTotal - totalProcessed, 0) : null;
-        const etaMin = rate > 0 && remaining !== null ? remaining / rate : 0;
-
-        console.log(
-          `[progress] processed=${totalProcessed} success=${successCount} failed=${failedCount} skipped=${skippedCount} provider=${lastProvider} model=${lastModel} lastLatencyMs=${lastLatency.toFixed(
-            0
-          )} avgLatencyMs=${avgLatency.toFixed(0)} etaMin=${remaining !== null ? etaMin.toFixed(1) : 'unknown'}`
-        );
-      })
-    );
-
-    await Promise.all(tasks);
+    // Wait for remaining tasks in this batch
+    await Promise.all(activeTasks);
+    activeTasks.length = 0;
 
     offset += batchSize;
     if (buffets.length < batchSize) break;
   }
 
+  // Wait for any remaining tasks
+  await Promise.all(activeTasks);
+
   const durationMin = (Date.now() - startTime) / 1000 / 60;
   console.log(
-    `Done. processed=${totalProcessed} success=${successCount} failed=${failedCount} skipped=${skippedCount} durationMin=${durationMin.toFixed(
-      1
-    )}`
+    `Done. processed=${totalProcessed} success=${successCount} failed=${failedCount} skipped=${skippedCount} durationMin=${durationMin.toFixed(1)}`
   );
+
+  // Print final stats
+  rateLimitManager.maybePrintStats();
 }
 
 main().catch((error) => {

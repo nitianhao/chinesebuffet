@@ -16,6 +16,32 @@ export default function ReviewsModal({ reviews, isOpen, onClose }: ReviewsModalP
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOption, setSortOption] = useState<SortOption>('top-rated');
 
+  const getProxiedImageUrl = (url: string | undefined): string => {
+    if (!url) return '';
+    // If it's already a proxied URL, return as is
+    if (url.startsWith('/api/')) return url;
+    // If it's a relative URL, return as is
+    if (url.startsWith('/')) return url;
+    
+    // Check for geougc-cs URLs (Google Places review images that always fail)
+    // These should be proxied immediately to avoid retry loops
+    if (url.includes('/geougc-cs/')) {
+      return `/api/photo?url=${encodeURIComponent(url)}`;
+    }
+    
+    // Proxy external images through our API
+    try {
+      const urlObj = new URL(url);
+      // Check if it's an external URL that needs proxying
+      if (urlObj.hostname && !urlObj.hostname.includes('localhost') && !urlObj.hostname.includes('127.0.0.1')) {
+        return `/api/photo?url=${encodeURIComponent(url)}`;
+      }
+    } catch {
+      // If URL parsing fails, return original
+    }
+    return url;
+  };
+
   // Sort and filter reviews
   const filteredReviews = useMemo(() => {
     let result = [...reviews];
@@ -203,7 +229,7 @@ export default function ReviewsModal({ reviews, isOpen, onClose }: ReviewsModalP
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search reviews..."
-                  className="block w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base transition-all"
+                  className="block w-full pl-10 pr-10 py-2.5 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-[#C1121F]/40 focus:border-[#C1121F]/40 text-sm sm:text-base transition-all"
                 />
                 {searchQuery && (
                   <button
@@ -232,7 +258,7 @@ export default function ReviewsModal({ reviews, isOpen, onClose }: ReviewsModalP
                 <select
                   value={sortOption}
                   onChange={(e) => setSortOption(e.target.value as SortOption)}
-                  className="px-3 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 sm:min-w-[140px]"
+                  className="px-3 py-2.5 text-sm border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-[#C1121F]/40 focus:border-[#C1121F]/40 bg-white text-[var(--text)] sm:min-w-[140px]"
                 >
                   <option value="top-rated">Top Rated</option>
                   <option value="newest">Newest</option>
@@ -305,7 +331,7 @@ export default function ReviewsModal({ reviews, isOpen, onClose }: ReviewsModalP
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="font-semibold text-gray-900">{review.name}</h3>
                       {review.isLocalGuide && (
-                        <span className="px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-800 rounded">
+                        <span className="px-2 py-0.5 text-xs font-medium bg-amber-100 text-amber-800 rounded">
                           Local Guide
                         </span>
                       )}
@@ -362,14 +388,15 @@ export default function ReviewsModal({ reviews, isOpen, onClose }: ReviewsModalP
                           href={imageUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="relative w-24 h-24 rounded-lg overflow-hidden border border-gray-200 bg-gray-100 hover:border-blue-400 hover:shadow-md transition-all cursor-pointer group"
+                          className="relative w-24 h-24 rounded-lg overflow-hidden border border-[var(--border)] bg-[var(--surface2)] hover:border-[#C1121F]/40 hover:shadow-md transition-all cursor-pointer group"
                         >
                           <img
-                            src={imageUrl}
+                            src={getProxiedImageUrl(imageUrl)}
                             alt={`Review image ${imgIndex + 1}`}
                             className="w-full h-full object-cover"
                             loading="lazy"
                             onError={(e) => {
+                              // Hide broken images immediately - no retry
                               e.currentTarget.style.display = 'none';
                             }}
                           />
@@ -396,16 +423,16 @@ export default function ReviewsModal({ reviews, isOpen, onClose }: ReviewsModalP
 
                 {/* Owner Response */}
                 {review.responseFromOwnerText && (
-                  <div className="mt-4 pl-4 border-l-4 border-blue-500 bg-blue-50 rounded-r p-3">
+                  <div className="mt-4 pl-4 border-l-4 border-[#C1121F] bg-[#C1121F]/5 rounded-r p-3">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="font-semibold text-blue-900">Owner Response</span>
+                      <span className="font-semibold text-[var(--text)]">Owner Response</span>
                       {review.responseFromOwnerDate && (
-                        <span className="text-xs text-blue-700">
+                        <span className="text-xs text-[var(--muted)]">
                           {formatDate(review.responseFromOwnerDate)}
                         </span>
                       )}
                     </div>
-                    <p className="text-blue-800 whitespace-pre-line text-sm">
+                    <p className="text-[var(--text-secondary)] whitespace-pre-line text-sm">
                       {review.responseFromOwnerText}
                     </p>
                   </div>
@@ -424,7 +451,7 @@ export default function ReviewsModal({ reviews, isOpen, onClose }: ReviewsModalP
                       href={review.reviewUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-800"
+                      className="text-[#C1121F] hover:text-[#7F0A12]"
                     >
                       View on Google →
                     </a>

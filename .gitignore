@@ -1,3 +1,43 @@
+Make final polish improvements to Social & Community Services output (keep deterministic + cheap, JSON-only):
+
+1) SUMMARY VERB / PHRASING CLEANUP
+Avoid robotic phrasing like "Lists book exchanges..."
+Use one of these two deterministic sentence variants for the bucket-type sentence (pick by hash buffetId % 2):
+A) "Includes {typePhraseA} and {typePhraseB}."
+B) "Nearby options include {typePhraseA} and {typePhraseB}."
+Do not use the verb "Lists".
+
+2) PUBLIC_BOOKCASE FALLBACK CONSISTENCY
+When category === "public_bookcase" and name is null:
+- If the same bucket already contains an item whose normalizedName == "little free library":
+  fallback name => "Little Free Library (book exchange)"
+- Else fallback name => "Book exchange"
+This prevents mixing branded vs generic names awkwardly.
+
+3) RANGE ROUNDING (LESS PRECISE LOOK)
+For rangeText in feet, round to nearest 50 ft (or 100 ft) instead of exact tens:
+- e.g., 2890 -> 2900
+Keep item-level distanceText logic unchanged.
+
+4) SINGLE-ITEM SUMMARY HEDGE REMOVAL + CONTACT SENTENCE
+Single-item template should not say "about ~X" (double hedge).
+Use: "1 social & community service is listed {nearestDistanceText} from the buffet."
+If hasWebsite/hasPhone in the single item:
+- hasWebsite only => "A website link is available."
+- hasPhone only => "A phone number is available."
+- both => "Website and phone details are available."
+If neither, omit the second sentence unless hasHours => "Hours may vary."
+
+5) OPTIONAL: COUNT BY TYPE WHEN poiCount>=3 AND EXACTLY 2 BUCKETS
+Compute in code: "{nA} {typePhraseA} and {nB} {typePhraseB}"
+Then bucket-type sentence becomes:
+- "Includes {nA} {typePhraseA} and {nB} {typePhraseB}."
+(Only when poiCount>=3, else keep the simpler sentence.)
+
+Implement these changes in the TypeScript/tsx script:
+- Adjust preprocessing + computed fields passed to Groq (type counts, hasLFLInBucket).
+- Update minimal Groq prompt rules accordingly.
+Return the full updated script.
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
@@ -56,5 +96,8 @@ Research/
 
 # script outputs
 /scripts/output/
+
+# menu batch clean checkpoint (resume state)
+.menu-clean-checkpoint.json
 
 env.local.txt

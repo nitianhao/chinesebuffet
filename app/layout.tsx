@@ -1,5 +1,11 @@
 import type { Metadata } from 'next'
+import dynamic from 'next/dynamic'
 import './globals.css'
+import './design-system.css'
+
+const Header = dynamic(() => import('@/components/site/Header'), {
+  ssr: true,
+})
 
 export const metadata: Metadata = {
   title: 'Chinese Buffets Directory - Find All-You-Can-Eat Chinese Buffets Near You',
@@ -13,7 +19,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <Header />
+        {children}
+      </body>
     </html>
   )
 }

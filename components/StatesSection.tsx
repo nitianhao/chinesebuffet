@@ -26,16 +26,16 @@ export default function StatesSection() {
 
   if (isLoading) {
     return (
-      <section className="bg-white py-12">
+      <section id="states" className="bg-[var(--surface)] py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          <h2 className="text-2xl font-bold text-[var(--text)] mb-6">
             Browse by State
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {[...Array(24)].map((_, i) => (
-              <div key={i} className="border border-gray-200 rounded-lg p-4 text-center animate-pulse">
-                <div className="h-6 bg-gray-200 rounded mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-16 mx-auto"></div>
+              <div key={i} className="border border-[var(--border)] rounded-lg p-4 text-center animate-pulse">
+                <div className="h-6 bg-[var(--surface2)] rounded mb-2"></div>
+                <div className="h-4 bg-[var(--surface2)] rounded w-16 mx-auto"></div>
               </div>
             ))}
           </div>
@@ -51,9 +51,9 @@ export default function StatesSection() {
   const stateAbbrs = Object.keys(stateCounts).sort();
 
   return (
-    <section className="bg-white py-12">
+    <section id="states" className="bg-[var(--surface)] py-12" aria-labelledby="states-heading">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">
+        <h2 id="states-heading" className="text-2xl font-bold text-[var(--text)] mb-6">
           Browse by State
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
@@ -63,12 +63,12 @@ export default function StatesSection() {
               <Link
                 key={stateAbbr}
                 href={`/chinese-buffets/states/${stateAbbr.toLowerCase()}`}
-                className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow text-center"
+                className="border border-[var(--border)] rounded-lg p-4 hover:shadow-md hover:border-[var(--accent1)] transition-all text-center group"
               >
-                <div className="font-semibold text-lg text-gray-900 mb-1">
+                <div className="font-semibold text-lg text-[var(--text)] mb-1 group-hover:text-[var(--accent1)]">
                   {stateAbbr}
                 </div>
-                <div className="text-gray-600 text-sm">
+                <div className="text-[var(--muted)] text-sm">
                   {buffetCount} buffets
                 </div>
               </Link>
@@ -79,7 +79,3 @@ export default function StatesSection() {
     </section>
   );
 }
-
-
-
-
