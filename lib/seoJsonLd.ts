@@ -261,21 +261,16 @@ export function buildRestaurantJsonLd(
     schema.priceRange = buffet.price.trim();
   }
   
-  // Image(s) - convert to absolute URLs
+  // Image(s) - use photoReference via local proxy
   const images: string[] = [];
   
-  // Handle images array (can contain strings or photo objects)
   if (buffet.images && Array.isArray(buffet.images)) {
     buffet.images.slice(0, 5).forEach((img: any) => {
-      if (typeof img === 'string') {
-        const absoluteUrl = toAbsoluteUrl(img, siteBaseUrl);
-        if (absoluteUrl) images.push(absoluteUrl);
-      } else if (img?.photoUrl && typeof img.photoUrl === 'string') {
-        const absoluteUrl = toAbsoluteUrl(img.photoUrl, siteBaseUrl);
+      if (img?.photoReference && typeof img.photoReference === 'string') {
+        const proxyUrl = `/api/photo?photoReference=${encodeURIComponent(img.photoReference)}&w=800`;
+        const absoluteUrl = toAbsoluteUrl(proxyUrl, siteBaseUrl);
         if (absoluteUrl) images.push(absoluteUrl);
       }
-      // Note: photoReference objects need to be converted via API route
-      // For JSON-LD, we prefer direct image URLs
     });
   }
   

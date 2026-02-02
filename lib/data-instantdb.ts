@@ -221,6 +221,16 @@ function transformReview(review: any): any {
 function transformBuffet(buffet: any, citySlug?: string, reviewsFromLink?: any[]): any {
   const addressString = typeof buffet.address === 'string' ? buffet.address : '';
   const addressParts = addressString.split(',').map((s: string) => s.trim());
+  const parsedImages = parseJsonField(buffet.images) || [];
+  const images = Array.isArray(parsedImages)
+    ? parsedImages.filter(
+        (img) =>
+          img &&
+          typeof img === 'object' &&
+          typeof img.photoReference === 'string' &&
+          img.photoReference.startsWith('places/')
+      )
+    : [];
   
   return {
     id: buffet.id,
@@ -254,8 +264,7 @@ function transformBuffet(buffet: any, citySlug?: string, reviewsFromLink?: any[]
     temporarilyClosed: buffet.temporarilyClosed || false,
     placeId: buffet.placeId || null,
     imagesCount: buffet.imagesCount || 0,
-    imageUrls: parseJsonField(buffet.imageUrls) || [],
-    images: parseJsonField(buffet.images) || [], // Array of photo objects with photoUrl
+    images,
     imageCategories: parseJsonField(buffet.imageCategories) || [],
     citySlug: citySlug || buffet.city?.slug || '',
     description: buffet.description || null,
@@ -773,7 +782,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
   location?: { lat: number; lng: number };
   description?: string; 
   description2?: string; 
-  images: Array<string | { photoReference: string; widthPx?: number; heightPx?: number }>; 
+  images: Array<{ photoReference: string; widthPx?: number; heightPx?: number }>; 
   imageCount: number; 
   imageCategories: string[]; 
   hours?: any; 
@@ -1182,60 +1191,9 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
     };
     
     // Parse images field (JSON stringified array)
-    const imageUrls: string[] = [];
+    const photoObjects: Array<{ photoReference: string; widthPx?: number; heightPx?: number }> = [];
     
-    // First, try to get photos from Yelp data (these are publicly accessible)
-    if (buffet.yelpData) {
-      let yelpData: any = null;
-      if (typeof buffet.yelpData === 'string') {
-        try {
-          yelpData = JSON.parse(buffet.yelpData);
-          console.log('[getBuffetNameBySlug] Parsed yelpData:', {
-            hasDetails: !!yelpData?.details,
-            hasPhotos: !!yelpData?.details?.photos,
-            photosLength: Array.isArray(yelpData?.details?.photos) ? yelpData.details.photos.length : 0,
-            yelpDataKeys: yelpData ? Object.keys(yelpData) : [],
-          });
-        } catch (e) {
-          console.error('[getBuffetNameBySlug] Failed to parse yelpData:', e);
-        }
-      } else if (typeof buffet.yelpData === 'object') {
-        yelpData = buffet.yelpData;
-        console.log('[getBuffetNameBySlug] yelpData is object:', {
-          hasDetails: !!yelpData?.details,
-          hasPhotos: !!yelpData?.details?.photos,
-          photosLength: Array.isArray(yelpData?.details?.photos) ? yelpData.details.photos.length : 0,
-        });
-      }
-      
-      // Extract photos from Yelp data - check multiple possible paths
-      let yelpPhotos: any[] = [];
-      
-      if (yelpData) {
-        // Try yelpData.details.photos
-        if (yelpData.details && Array.isArray(yelpData.details.photos)) {
-          yelpPhotos = yelpData.details.photos;
-        }
-        // Try yelpData.photos
-        else if (Array.isArray(yelpData.photos)) {
-          yelpPhotos = yelpData.photos;
-        }
-        
-        yelpPhotos.forEach((url: any) => {
-          if (typeof url === 'string' && url.includes('yelpcdn.com')) {
-            imageUrls.push(url);
-          }
-        });
-        
-        console.log('[getBuffetNameBySlug] Yelp photos found:', yelpPhotos.length, 'added:', imageUrls.length);
-      }
-    }
-    
-    // If no Yelp photos, fall back to images field (Google Places URLs)
-    // Store photo objects with photoUrl (contains API key for direct proxy)
-    const photoObjects: Array<{ photoUrl?: string; photoReference?: string; widthPx?: number; heightPx?: number }> = [];
-    
-    if (imageUrls.length === 0 && buffet.images) {
+    if (buffet.images) {
       let parsedImages: any[] = [];
       if (typeof buffet.images === 'string') {
         try {
@@ -1247,35 +1205,22 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         parsedImages = buffet.images;
       }
       
-      // Extract photoReference from Google Places photo objects
-      // Prefer photoReference over photoUrl to avoid exposing API key
       parsedImages.forEach((img: any) => {
         if (typeof img === 'string') {
-          // Legacy: if it's a string URL, try to extract photoReference or use as-is
-          // Check if it's a Google Places photo URL
-          // Format: https://places.googleapis.com/v1/places/PLACE_ID/photos/PHOTO_ID/media?...
+          if (img.startsWith('places/')) {
+            photoObjects.push({ photoReference: img });
+            return;
+          }
           const placesMatch = img.match(/places\/([^\/]+)\/photos\/([^\/\?]+)/);
           if (placesMatch) {
             const placeId = placesMatch[1];
             const photoId = placesMatch[2];
-            photoObjects.push({ 
-              photoReference: `places/${placeId}/photos/${photoId}` 
-            });
-          } else {
-            // Fallback: use URL directly (for non-Google sources)
-            imageUrls.push(img);
+            photoObjects.push({ photoReference: `places/${placeId}/photos/${photoId}` });
           }
-        } else if (img && typeof img === 'object') {
-          // Include photoUrl for proxy (has API key baked in)
-          if (img.photoUrl) {
-            photoObjects.push({
-              photoUrl: img.photoUrl,
-              photoReference: img.photoReference,
-              widthPx: img.widthPx,
-              heightPx: img.heightPx,
-            });
-          } else if (img.photoReference) {
-            // Fallback: only photoReference (requires server env var)
+          return;
+        }
+        if (img && typeof img === 'object' && typeof img.photoReference === 'string') {
+          if (img.photoReference.startsWith('places/')) {
             photoObjects.push({
               photoReference: img.photoReference,
               widthPx: img.widthPx,
@@ -1285,27 +1230,9 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         }
       });
     }
-
-    // If still no images, try imageUrls field (direct URLs)
-    if (imageUrls.length === 0 && buffet.imageUrls) {
-      const parsedImageUrls = parseJsonField(buffet.imageUrls);
-      if (Array.isArray(parsedImageUrls)) {
-        parsedImageUrls.forEach((url: any) => {
-          if (typeof url === 'string') {
-            imageUrls.push(url);
-          }
-        });
-      } else if (typeof parsedImageUrls === 'string') {
-        imageUrls.push(parsedImageUrls);
-      }
-    }
     
-    // Combine photoObjects and imageUrls for return
-    // photoObjects will be used with /api/place-photo (secure, no API key)
-    // imageUrls will be used with /api/photo (for non-Google sources)
-    const allImages: Array<string | { photoReference: string; widthPx?: number; heightPx?: number }> = [
+    const allImages: Array<{ photoReference: string; widthPx?: number; heightPx?: number }> = [
       ...photoObjects,
-      ...imageUrls,
     ];
     
     // Get imageCount (use imagesCount field or actual count of images)
@@ -1338,14 +1265,12 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
     console.log('[getBuffetNameBySlug] Images debug:', {
       slug: buffetSlug,
       photoObjectsCount: photoObjects.length,
-      imageUrlsCount: imageUrls.length,
       totalImages: allImages.length,
       imageCount,
       imagesCountField: buffet.imagesCount,
       hasImagesField: !!buffet.images,
       imagesFieldType: typeof buffet.images,
       firstPhotoRef: photoObjects[0]?.photoReference?.substring(0, 50) || 'none',
-      firstImageUrl: imageUrls[0]?.substring(0, 50) || 'none',
     });
     
     // Collect contact info
@@ -1474,7 +1399,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
       location?: { lat: number; lng: number };
       description?: string; 
       description2?: string; 
-      images: Array<string | { photoReference: string; widthPx?: number; heightPx?: number }>; 
+      images: Array<{ photoReference: string; widthPx?: number; heightPx?: number }>; 
       imageCount: number; 
       imageCategories: string[]; 
       hours?: any; 

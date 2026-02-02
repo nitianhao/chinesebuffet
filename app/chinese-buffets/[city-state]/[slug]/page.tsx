@@ -28,7 +28,6 @@ import ServiceOptionsSection from '@/components/ServiceOptionsSection';
 import FoodAndDrink from '@/components/FoodAndDrink';
 import Highlights from '@/components/Highlights';
 import Planning from '@/components/Planning';
-import Image from 'next/image';
 import BuffetSummaryPanel from '@/components/BuffetSummaryPanel';
 import SeoJsonLd from '@/components/SeoJsonLd';
 import VerdictModule from '@/components/VerdictModule';
@@ -329,6 +328,16 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
     precomputedAdditionalInfo,
   } = transforms;
   endTransforms();
+
+  if (process.env.NODE_ENV === 'development') {
+    const firstPhotoRef =
+      sortedImages?.find((img: any) => typeof img?.photoReference === 'string')?.photoReference || null;
+    if (firstPhotoRef) {
+      const debugUrl = `/api/photo?photoReference=${encodeURIComponent(firstPhotoRef)}&w=800`;
+      console.log('[photos-test] photoReference:', firstPhotoRef);
+      console.log('[photos-test] url:', debugUrl);
+    }
+  }
 
   // Fetch nearby buffets for comparison
   let nearbyBuffetsForComparison: Array<{
@@ -813,16 +822,9 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
                 ? image.widthPx / image.heightPx
                 : 4 / 3;
               const isLCP = baseIndex === 0;
-              const maxWidthPx = isLCP ? 1200 : 800;
               let proxiedUrl: string | null = null;
-              if (typeof image === 'object') {
-                if (image.photoReference) {
-                  proxiedUrl = `/api/place-photo?photoReference=${encodeURIComponent(image.photoReference)}&maxWidthPx=${maxWidthPx}`;
-                } else if (image.photoUrl) {
-                  proxiedUrl = `/api/photo?url=${encodeURIComponent(image.photoUrl)}&maxWidthPx=${maxWidthPx}`;
-                }
-              } else if (typeof image === 'string') {
-                proxiedUrl = `/api/photo?url=${encodeURIComponent(image)}&maxWidthPx=${maxWidthPx}`;
+              if (typeof image === 'object' && image?.photoReference) {
+                proxiedUrl = `/api/photo?photoReference=${encodeURIComponent(image.photoReference)}&w=800`;
               }
               if (!proxiedUrl) return null;
               return (
@@ -831,13 +833,11 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
                   className="relative overflow-hidden rounded-[var(--radius-md)] bg-[var(--accent-light)]"
                   style={{ aspectRatio }}
                 >
-                  <Image
+                  <img
                     src={proxiedUrl}
                     alt={`${buffet.name} image ${baseIndex + 1}`}
-                    fill
-                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-                    priority={isLCP}
-                    className="object-cover"
+                    loading={isLCP ? 'eager' : 'lazy'}
+                    className="absolute inset-0 h-full w-full object-cover"
                   />
                 </div>
               );

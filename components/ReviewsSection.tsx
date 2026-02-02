@@ -193,22 +193,7 @@ export default function ReviewsSection({
 
   const getProxiedImageUrl = (url: string | undefined): string => {
     if (!url) return '';
-    if (url.startsWith('/api/') || url.startsWith('/')) return url;
-    if (url.includes('/geougc-cs/')) {
-      return `/api/photo?url=${encodeURIComponent(url)}`;
-    }
-    try {
-      const urlObj = new URL(url);
-      if (
-        urlObj.hostname &&
-        !urlObj.hostname.includes('localhost') &&
-        !urlObj.hostname.includes('127.0.0.1')
-      ) {
-        return `/api/photo?url=${encodeURIComponent(url)}`;
-      }
-    } catch {
-      /* ignore */
-    }
+    if (url.startsWith('/')) return url;
     return url;
   };
 

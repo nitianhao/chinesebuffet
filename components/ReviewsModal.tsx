@@ -18,27 +18,7 @@ export default function ReviewsModal({ reviews, isOpen, onClose }: ReviewsModalP
 
   const getProxiedImageUrl = (url: string | undefined): string => {
     if (!url) return '';
-    // If it's already a proxied URL, return as is
-    if (url.startsWith('/api/')) return url;
-    // If it's a relative URL, return as is
     if (url.startsWith('/')) return url;
-    
-    // Check for geougc-cs URLs (Google Places review images that always fail)
-    // These should be proxied immediately to avoid retry loops
-    if (url.includes('/geougc-cs/')) {
-      return `/api/photo?url=${encodeURIComponent(url)}`;
-    }
-    
-    // Proxy external images through our API
-    try {
-      const urlObj = new URL(url);
-      // Check if it's an external URL that needs proxying
-      if (urlObj.hostname && !urlObj.hostname.includes('localhost') && !urlObj.hostname.includes('127.0.0.1')) {
-        return `/api/photo?url=${encodeURIComponent(url)}`;
-      }
-    } catch {
-      // If URL parsing fails, return original
-    }
     return url;
   };
 

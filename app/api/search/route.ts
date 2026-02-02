@@ -55,7 +55,7 @@ function getAdminDb() {
   return cachedDb;
 }
 
-type RawImage = string | { photoUrl?: string; photoReference?: string };
+type RawImage = { photoReference?: string; widthPx?: number; heightPx?: number } | string;
 
 function parseImages(raw: unknown): RawImage[] {
   if (!raw) return [];
@@ -75,13 +75,13 @@ function buildThumbUrl(images: RawImage[]): string | null {
   const first = images[0];
   if (!first) return null;
   if (typeof first === 'string') {
-    return `/api/photo?url=${encodeURIComponent(first)}`;
+    if (first.startsWith('places/')) {
+      return `/api/photo?photoReference=${encodeURIComponent(first)}&w=400`;
+    }
+    return null;
   }
-  if (first.photoUrl) {
-    return `/api/photo?url=${encodeURIComponent(first.photoUrl)}`;
-  }
-  if (first.photoReference) {
-    return `/api/place-photo?photoReference=${encodeURIComponent(first.photoReference)}&maxWidthPx=400`;
+  if (first.photoReference && first.photoReference.startsWith('places/')) {
+    return `/api/photo?photoReference=${encodeURIComponent(first.photoReference)}&w=400`;
   }
   return null;
 }

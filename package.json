@@ -91,8 +91,7 @@
     "generate-seo-descriptions": "npx tsx scripts/generate-seo-descriptions/generate-all-descriptions.ts",
     "generate-seo-descriptions:v2": "npx tsx scripts/generate-seo-descriptions.ts",
     "generate-seo-descriptions:test": "npx tsx scripts/generate-seo-descriptions/test-sample.ts",
-    "generate-poi-accommodation-seo": "npx tsx scripts/generate-poi-accommodation-seo.ts",
-    "refresh-photo-cache": "npx tsx scripts/refresh-photo-cache.ts"
+    "generate-poi-accommodation-seo": "npx tsx scripts/generate-poi-accommodation-seo.ts"
   },
   "dependencies": {
     "@google/genai": "^1.4.0",
