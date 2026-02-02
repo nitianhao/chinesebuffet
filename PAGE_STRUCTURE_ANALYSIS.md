@@ -249,7 +249,6 @@ This is a **programmatic SEO site** for Chinese buffet restaurants across the US
 | `/api/states` | Get states data | ✅ |
 | `/api/search` | Search buffets | ✅ |
 | `/api/photo` | Get buffet photos | ✅ |
-| `/api/place-photo` | Get Google Places photos | ✅ |
 | `/api/list-poi-categories` | List POI categories | ✅ |
 | `/api/list-poi-groups` | List POI groups | ✅ |
 | `/api/list-poi-examples-by-group` | POI examples | ✅ |

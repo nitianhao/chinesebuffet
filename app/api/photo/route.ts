@@ -1,81 +1,72 @@
-import { NextRequest } from 'next/server';
+import { NextRequest } from "next/server";
 
-/**
- * Proxy route for Google Places Photos (New) API
- *
- * Usage: /api/photo?photoReference=places/.../photos/...&w=800
- * - photoReference: required, must start with places/
- * - w: optional, maxWidthPx (default 800)
- *
- * SECURITY: API key never exposed to browser.
- */
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const photoReference = searchParams.get('photoReference');
-  const wParam = searchParams.get('w');
-  const w = wParam ? Number.parseInt(wParam, 10) : 800;
-  const maxWidthPx = Number.isFinite(w) && w > 0 ? w : 800;
+export async function GET(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const photoReference = searchParams.get("photoReference") || "";
+    const wRaw = searchParams.get("w");
 
-  if (!photoReference || typeof photoReference !== 'string') {
+    // Validate
+    if (!photoReference || !photoReference.startsWith("places/")) {
+      return Response.json(
+        {
+          error: "Invalid photoReference: must start with places/",
+          received: photoReference,
+        },
+        { status: 400 }
+      );
+    }
+
+    const wNum = Number(wRaw);
+    const w = Number.isFinite(wNum) && wNum > 0 ? Math.round(wNum) : 800;
+
+    const key = process.env.GOOGLE_MAPS_API_KEY;
+    if (!key) {
+      return Response.json(
+        { error: "Missing GOOGLE_MAPS_API_KEY on server" },
+        { status: 500 }
+      );
+    }
+
+    const placesBase = "https://places." + "googleapis.com/v1";
+    const upstreamUrl = `${placesBase}/${photoReference}/media?maxWidthPx=${w}`;
+
+    const upstreamRes = await fetch(upstreamUrl, {
+      headers: {
+        "X-Goog-Api-Key": key,
+      },
+      // Strong caching on the server fetch
+      next: { revalidate: 60 * 60 * 24 * 30 },
+    });
+
+    if (!upstreamRes.ok) {
+      const bodyText = await upstreamRes.text().catch(() => "");
+      return Response.json(
+        {
+          error: "Google Places photo fetch failed",
+          status: upstreamRes.status,
+          body: bodyText.slice(0, 1200),
+        },
+        { status: 502 }
+      );
+    }
+
+    const contentType =
+      upstreamRes.headers.get("content-type") || "application/octet-stream";
+    const bytes = await upstreamRes.arrayBuffer();
+
+    return new Response(bytes, {
+      status: 200,
+      headers: {
+        "Content-Type": contentType,
+        // Strong browser caching
+        "Cache-Control": "public, max-age=31536000, immutable",
+      },
+    });
+  } catch (err: any) {
     return Response.json(
-      { error: 'Missing photoReference parameter' },
-      { status: 400 }
-    );
-  }
-
-  if (!photoReference.startsWith('places/')) {
-    return Response.json(
-      { error: 'Invalid photoReference: must start with places/' },
-      { status: 400 }
-    );
-  }
-
-  const apiKey = process.env.GOOGLE_MAPS_API_KEY;
-  if (!apiKey) {
-    return Response.json(
-      { error: 'Server configuration error - GOOGLE_MAPS_API_KEY not found' },
+      { error: "Unexpected error in /api/photo", message: String(err?.message ?? err) },
       { status: 500 }
     );
   }
-
-  const pathSegments = photoReference.split('/').map((segment) => encodeURIComponent(segment));
-  const encodedPhotoRef = pathSegments.join('/');
-  const url = `https://places.googleapis.com/v1/${encodedPhotoRef}/media?maxWidthPx=${maxWidthPx}`;
-
-  let res: Response;
-  try {
-    res = await fetch(url, {
-      headers: { 'X-Goog-Api-Key': apiKey },
-      next: { revalidate: 60 * 60 * 24 * 30 },
-    });
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
-    return Response.json(
-      { error: 'Google Places photo fetch failed', status: 0, body: msg.slice(0, 1200) },
-      { status: 502 }
-    );
-  }
-
-  if (!res.ok) {
-    const body = await res.text().catch(() => '');
-    return Response.json(
-      {
-        error: 'Google Places photo fetch failed',
-        status: res.status,
-        body: body.slice(0, 1200),
-      },
-      { status: 502 }
-    );
-  }
-
-  const contentType = res.headers.get('content-type') || 'image/jpeg';
-  const buffer = Buffer.from(await res.arrayBuffer());
-
-  return new Response(buffer, {
-    status: 200,
-    headers: {
-      'Content-Type': contentType,
-      'Cache-Control': 'public, max-age=31536000, immutable',
-    },
-  });
 }
