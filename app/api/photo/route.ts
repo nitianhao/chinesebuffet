@@ -11,7 +11,6 @@ export async function GET(req: NextRequest) {
       return Response.json(
         {
           error: "Invalid photoReference: must start with places/",
-          received: photoReference,
         },
         { status: 400 }
       );
