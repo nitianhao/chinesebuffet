@@ -11,8 +11,6 @@ import { cache } from 'react';
 import { init } from '@instantdb/admin';
 import schema from '@/src/instant.schema';
 
-const isDev = process.env.NODE_ENV !== 'production';
-
 // ============================================================================
 // Types
 // ============================================================================
@@ -100,23 +98,6 @@ export interface NeighborhoodBuffetsRollup {
   stateAbbr: string;
   buffetCount: number;
   buffets: CityBuffetRow[];
-}
-
-export interface RollupResult<T> {
-  data: T | null;
-  updatedAt: string | null;
-  found: boolean;
-  stale: boolean; // True if older than 24 hours
-}
-
-export interface RollupDebugInfo {
-  rollupType: RollupType;
-  rollupKey: string | null;
-  found: boolean;
-  stale: boolean;
-  updatedAt: string | null;
-  dataLength: number;
-  fetchDurationMs: number;
 }
 
 // ============================================================================
@@ -255,30 +236,10 @@ export const getRollup = cache(fetchRollupInternal);
  */
 export async function getStatesRollup(): Promise<{
   states: StateRollupRow[];
-  debug: RollupDebugInfo;
 }> {
-  const start = Date.now();
   const result = await getRollup('states', null);
-  const durationMs = Date.now() - start;
-  
   const states = (result.data as StateRollupRow[]) || [];
-  
-  if (isDev) {
-    console.log(`[Rollups] States: ${result.found ? 'HIT' : 'MISS'}, ${states.length} states, ${durationMs}ms`);
-  }
-  
-  return {
-    states,
-    debug: {
-      rollupType: 'states',
-      rollupKey: null,
-      found: result.found,
-      stale: result.stale,
-      updatedAt: result.updatedAt,
-      dataLength: states.length,
-      fetchDurationMs: durationMs,
-    },
-  };
+  return { states };
 }
 
 /**
@@ -286,30 +247,10 @@ export async function getStatesRollup(): Promise<{
  */
 export async function getCitiesRollup(): Promise<{
   cities: CityRollupRow[];
-  debug: RollupDebugInfo;
 }> {
-  const start = Date.now();
   const result = await getRollup('cities', null);
-  const durationMs = Date.now() - start;
-  
   const cities = (result.data as CityRollupRow[]) || [];
-  
-  if (isDev) {
-    console.log(`[Rollups] Cities: ${result.found ? 'HIT' : 'MISS'}, ${cities.length} cities, ${durationMs}ms`);
-  }
-  
-  return {
-    cities,
-    debug: {
-      rollupType: 'cities',
-      rollupKey: null,
-      found: result.found,
-      stale: result.stale,
-      updatedAt: result.updatedAt,
-      dataLength: cities.length,
-      fetchDurationMs: durationMs,
-    },
-  };
+  return { cities };
 }
 
 /**
@@ -317,30 +258,10 @@ export async function getCitiesRollup(): Promise<{
  */
 export async function getCityNeighborhoodsRollup(citySlug: string): Promise<{
   data: CityNeighborhoodsRollup | null;
-  debug: RollupDebugInfo;
 }> {
-  const start = Date.now();
   const result = await getRollup('cityNeighborhoods', citySlug);
-  const durationMs = Date.now() - start;
-  
   const data = result.data as CityNeighborhoodsRollup | null;
-  
-  if (isDev) {
-    console.log(`[Rollups] CityNeighborhoods(${citySlug}): ${result.found ? 'HIT' : 'MISS'}, ${data?.neighborhoods?.length || 0} neighborhoods, ${durationMs}ms`);
-  }
-  
-  return {
-    data,
-    debug: {
-      rollupType: 'cityNeighborhoods',
-      rollupKey: citySlug,
-      found: result.found,
-      stale: result.stale,
-      updatedAt: result.updatedAt,
-      dataLength: data?.neighborhoods?.length || 0,
-      fetchDurationMs: durationMs,
-    },
-  };
+  return { data };
 }
 
 /**
@@ -348,30 +269,10 @@ export async function getCityNeighborhoodsRollup(citySlug: string): Promise<{
  */
 export async function getStateCitiesRollup(stateAbbr: string): Promise<{
   data: StateCitiesRollup | null;
-  debug: RollupDebugInfo;
 }> {
-  const start = Date.now();
   const result = await getRollup('stateCities', stateAbbr.toLowerCase());
-  const durationMs = Date.now() - start;
-  
   const data = result.data as StateCitiesRollup | null;
-  
-  if (isDev) {
-    console.log(`[Rollups] StateCities(${stateAbbr}): ${result.found ? 'HIT' : 'MISS'}, ${data?.cities?.length || 0} cities, ${durationMs}ms`);
-  }
-  
-  return {
-    data,
-    debug: {
-      rollupType: 'stateCities',
-      rollupKey: stateAbbr.toLowerCase(),
-      found: result.found,
-      stale: result.stale,
-      updatedAt: result.updatedAt,
-      dataLength: data?.cities?.length || 0,
-      fetchDurationMs: durationMs,
-    },
-  };
+  return { data };
 }
 
 /**
@@ -379,30 +280,10 @@ export async function getStateCitiesRollup(stateAbbr: string): Promise<{
  */
 export async function getCityBuffetsRollup(citySlug: string): Promise<{
   data: CityBuffetsRollup | null;
-  debug: RollupDebugInfo;
 }> {
-  const start = Date.now();
   const result = await getRollup('cityBuffets', citySlug);
-  const durationMs = Date.now() - start;
-  
   const data = result.data as CityBuffetsRollup | null;
-  
-  if (isDev) {
-    console.log(`[Rollups] CityBuffets(${citySlug}): ${result.found ? 'HIT' : 'MISS'}, ${data?.buffets?.length || 0} buffets, ${durationMs}ms`);
-  }
-  
-  return {
-    data,
-    debug: {
-      rollupType: 'cityBuffets',
-      rollupKey: citySlug,
-      found: result.found,
-      stale: result.stale,
-      updatedAt: result.updatedAt,
-      dataLength: data?.buffets?.length || 0,
-      fetchDurationMs: durationMs,
-    },
-  };
+  return { data };
 }
 
 /**
@@ -410,29 +291,9 @@ export async function getCityBuffetsRollup(citySlug: string): Promise<{
  */
 export async function getNeighborhoodBuffetsRollup(citySlug: string, neighborhoodSlug: string): Promise<{
   data: NeighborhoodBuffetsRollup | null;
-  debug: RollupDebugInfo;
 }> {
-  const start = Date.now();
   const rollupKey = `${citySlug}/${neighborhoodSlug}`;
   const result = await getRollup('neighborhoodBuffets', rollupKey);
-  const durationMs = Date.now() - start;
-  
   const data = result.data as NeighborhoodBuffetsRollup | null;
-  
-  if (isDev) {
-    console.log(`[Rollups] NeighborhoodBuffets(${rollupKey}): ${result.found ? 'HIT' : 'MISS'}, ${data?.buffets?.length || 0} buffets, ${durationMs}ms`);
-  }
-  
-  return {
-    data,
-    debug: {
-      rollupType: 'neighborhoodBuffets',
-      rollupKey,
-      found: result.found,
-      stale: result.stale,
-      updatedAt: result.updatedAt,
-      dataLength: data?.buffets?.length || 0,
-      fetchDurationMs: durationMs,
-    },
-  };
+  return { data };
 }

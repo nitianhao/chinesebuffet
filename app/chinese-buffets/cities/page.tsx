@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { getCitiesRollup, RollupDebugInfo } from '@/lib/rollups';
+import { getCitiesRollup } from '@/lib/rollups';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://yoursite.com';
 const isDev = process.env.NODE_ENV !== 'production';
@@ -16,39 +16,8 @@ export const metadata: Metadata = {
   },
 };
 
-// Debug panel component (dev-only)
-function DebugPanel({ debug, isEmpty }: { debug: RollupDebugInfo; isEmpty: boolean }) {
-  if (!isDev) return null;
-  
-  return (
-    <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-4 my-4">
-      <h3 className="font-bold text-yellow-800 mb-2">🔧 Rollup Debug (dev only)</h3>
-      <div className="text-sm text-yellow-900 space-y-1">
-        <p><strong>Rollup:</strong> {debug.rollupType}{debug.rollupKey ? `/${debug.rollupKey}` : ''}</p>
-        <p><strong>Status:</strong> {debug.found ? (debug.stale ? '⚠️ STALE' : '✅ HIT') : '❌ MISSING'}</p>
-        <p><strong>Updated:</strong> {debug.updatedAt ? new Date(debug.updatedAt).toLocaleString() : 'never'}</p>
-        <p><strong>Records:</strong> {debug.dataLength}</p>
-        <p><strong>Fetch time:</strong> {debug.fetchDurationMs}ms</p>
-        {!debug.found && (
-          <div className="mt-2 p-2 bg-red-100 rounded">
-            <p className="text-red-800 font-semibold">⚠️ Rollup missing!</p>
-            <p className="text-red-700 mt-1">Run: <code className="bg-red-200 px-1">node scripts/rebuildRollups.js</code></p>
-          </div>
-        )}
-        {debug.stale && debug.found && (
-          <div className="mt-2 p-2 bg-orange-100 rounded">
-            <p className="text-orange-800">Rollup is stale (older than 24h). Consider rebuilding.</p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
 export default async function CitiesIndexPage() {
-  const pageStart = Date.now();
-  const { cities, debug } = await getCitiesRollup();
-  const pageRenderMs = Date.now() - pageStart;
+  const { cities } = await getCitiesRollup();
   
   // Group cities by state for better organization
   const citiesByState: Record<string, typeof cities> = {};
@@ -86,13 +55,6 @@ export default async function CitiesIndexPage() {
         </div>
       </header>
 
-      {/* Debug Panel - shows in dev */}
-      {isDev && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <DebugPanel debug={{ ...debug, fetchDurationMs: pageRenderMs }} isEmpty={isEmpty} />
-        </div>
-      )}
-
       {/* Intro Section */}
       <section className="bg-[var(--surface)] py-8 border-b border-[var(--border)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -113,11 +75,6 @@ export default async function CitiesIndexPage() {
           {isEmpty ? (
             <div className="text-center py-12">
               <p className="text-[var(--muted)]">No cities with buffets found.</p>
-              {isDev && !debug.found && (
-                <p className="text-yellow-600 mt-2">
-                  Rollup missing. Run: <code className="bg-yellow-100 px-2 py-1 rounded">node scripts/rebuildRollups.js</code>
-                </p>
-              )}
               <Link href="/" className="text-[var(--accent1)] hover:opacity-80 mt-4 inline-block">
                 ← Back to Home
               </Link>

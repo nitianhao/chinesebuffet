@@ -405,15 +405,40 @@ export default function SearchBar({
         throw new Error(`Search failed: ${response.status}`);
       }
       const data = (await response.json()) as SearchResponse;
+      
+      // DEBUG STEP 2: Log raw API response
+      console.log(
+        "[search-ui-debug]",
+        {
+          query: searchText,
+          citiesLength: data?.cities?.length,
+          resultsLength: data?.results?.length,
+          keys: Object.keys(data || {}),
+          citiesRaw: data?.cities,
+        }
+      );
+      
       if (requestId !== requestIdRef.current) return;
       // DEBUG: Log response shape (remove after confirmed)
       if (process.env.NODE_ENV !== 'production') {
         console.log(`[search-ui] response: cities=${data.cities?.length ?? 0} buffets=${data.results?.length ?? 0}`);
       }
       setCachedResult(cacheKey, data);
-      setResults(Array.isArray(data.results) ? data.results : []);
-      setCities(Array.isArray(data.cities) ? data.cities : []);
+      const newResults = Array.isArray(data.results) ? data.results : [];
+      const newCities = Array.isArray(data.cities) ? data.cities : [];
+      setResults(newResults);
+      setCities(newCities);
       setResultsQuery(data.q || searchText);
+      
+      // DEBUG STEP 2: Log state after setting
+      console.log(
+        "[search-ui-state]",
+        {
+          citiesState: newCities.length,
+          resultsState: newResults.length,
+          citiesData: newCities,
+        }
+      );
     } catch (error) {
       if ((error as Error).name === 'AbortError') return;
       if (process.env.NODE_ENV !== 'production') {
@@ -528,53 +553,56 @@ export default function SearchBar({
 
   // Track current option index for aria
   let optionIndex = 0;
+  const footerIdx = cities.length + results.length;
+  const isFooterHighlighted = highlightedIndex === footerIdx;
 
   return (
     <div className="relative w-full">
-      <span
-        className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-        aria-hidden="true"
-      >
-        <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-          />
-        </svg>
-      </span>
-      <input
-        ref={inputRef}
-        type="search"
-        value={query}
-        onChange={handleChange}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        onKeyDown={handleKeyDown}
-        placeholder={placeholder}
-        className={inputClasses}
-        autoFocus={autoFocus}
-        aria-label="Search for buffets"
-        aria-expanded={isOpen}
-        aria-haspopup="listbox"
-        aria-controls="search-listbox"
-        aria-activedescendant={highlightedIndex >= 0 ? `search-option-${highlightedIndex}` : undefined}
-        role="combobox"
-        autoComplete="off"
-      />
-
-      {showDropdown && (
-        <div 
-          ref={listboxRef}
-          id="search-listbox"
-          role="listbox"
-          aria-label="Search results"
-          className={panelClasses} 
-          onMouseDown={(event) => event.preventDefault()}
-          style={{ maxHeight: MAX_DROPDOWN_HEIGHT }}
+        <span
+          className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+          aria-hidden="true"
         >
-          <div className="overflow-y-auto overscroll-contain" style={{ maxHeight: MAX_DROPDOWN_HEIGHT }}>
+          <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+        </span>
+        <input
+          ref={inputRef}
+          type="search"
+          value={query}
+          onChange={handleChange}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
+          placeholder={placeholder}
+          className={inputClasses}
+          autoFocus={autoFocus}
+          name="q"
+          aria-label="Search for buffets"
+          aria-expanded={isOpen}
+          aria-haspopup="listbox"
+          aria-controls="search-listbox"
+          aria-activedescendant={highlightedIndex >= 0 ? `search-option-${highlightedIndex}` : undefined}
+          role="combobox"
+          autoComplete="off"
+        />
+
+        {showDropdown && (
+          <div 
+            ref={listboxRef}
+            id="search-listbox"
+            role="listbox"
+            aria-label="Search results"
+            className={panelClasses} 
+            onMouseDown={(event) => event.preventDefault()}
+            style={{ maxHeight: MAX_DROPDOWN_HEIGHT }}
+          >
+            <div className="overflow-y-auto overscroll-contain" style={{ maxHeight: MAX_DROPDOWN_HEIGHT }}>
             {/* Empty input: show suggestions or loading */}
             {showSuggestions && (
               <>
@@ -817,21 +845,15 @@ export default function SearchBar({
                 )}
               </div>
             )}
-          </div>
-
-          {shouldSearch && (
-            <div className="border-t border-gray-100">
-              {(() => {
-                const footerIdx = cities.length + results.length;
-                const isHighlighted = highlightedIndex === footerIdx;
-                return (
+              {shouldSearch && (
+                <div className="border-t border-gray-100">
                   <Link
                     id={`search-option-${footerIdx}`}
                     role="option"
-                    aria-selected={isHighlighted}
+                    aria-selected={isFooterHighlighted}
                     href={`/search?q=${encodeURIComponent(trimmedQuery)}`}
                     className={`flex items-center justify-center gap-2 px-4 py-3 text-sm transition-colors ${
-                      isHighlighted
+                      isFooterHighlighted
                         ? 'bg-[var(--accent1)]/5 text-[var(--accent1)]'
                         : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
                     }`}
@@ -844,12 +866,11 @@ export default function SearchBar({
                       <path fillRule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clipRule="evenodd" />
                     </svg>
                   </Link>
-                );
-              })()}
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      )}
+          </div>
+        )}
     </div>
   );
 }

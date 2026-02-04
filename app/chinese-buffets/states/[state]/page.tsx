@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getStateCitiesRollup, STATE_ABBR_TO_NAME, RollupDebugInfo } from '@/lib/rollups';
+import { getStateCitiesRollup, STATE_ABBR_TO_NAME } from '@/lib/rollups';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://yoursite.com';
 const isDev = process.env.NODE_ENV !== 'production';
@@ -13,30 +13,6 @@ interface StatePageProps {
   params: {
     state: string;
   };
-}
-
-// Debug panel component (dev-only)
-function DebugPanel({ debug }: { debug: RollupDebugInfo }) {
-  if (!isDev) return null;
-  
-  return (
-    <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-4 my-4">
-      <h3 className="font-bold text-yellow-800 mb-2">🔧 Rollup Debug (dev only)</h3>
-      <div className="text-sm text-yellow-900 space-y-1">
-        <p><strong>Rollup:</strong> {debug.rollupType}/{debug.rollupKey}</p>
-        <p><strong>Status:</strong> {debug.found ? (debug.stale ? '⚠️ STALE' : '✅ HIT') : '❌ MISSING'}</p>
-        <p><strong>Updated:</strong> {debug.updatedAt ? new Date(debug.updatedAt).toLocaleString() : 'never'}</p>
-        <p><strong>Cities:</strong> {debug.dataLength}</p>
-        <p><strong>Fetch time:</strong> {debug.fetchDurationMs}ms</p>
-        {!debug.found && (
-          <div className="mt-2 p-2 bg-red-100 rounded">
-            <p className="text-red-800 font-semibold">⚠️ Rollup missing!</p>
-            <p className="text-red-700 mt-1">Run: <code className="bg-red-200 px-1">node scripts/rebuildRollups.js</code></p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
 }
 
 export async function generateMetadata({ params }: StatePageProps): Promise<Metadata> {
@@ -70,7 +46,6 @@ export async function generateMetadata({ params }: StatePageProps): Promise<Meta
 }
 
 export default async function StatePage({ params }: StatePageProps) {
-  const pageStart = Date.now();
   const stateAbbr = params.state.toUpperCase();
   const stateName = STATE_ABBR_TO_NAME[stateAbbr];
   
@@ -79,21 +54,10 @@ export default async function StatePage({ params }: StatePageProps) {
     notFound();
   }
   
-  const { data, debug } = await getStateCitiesRollup(stateAbbr);
-  const pageRenderMs = Date.now() - pageStart;
+  const { data } = await getStateCitiesRollup(stateAbbr);
   
-  // If no rollup data, show helpful message in dev or 404 in prod
+  // If no rollup data, 404
   if (!data || data.cities.length === 0) {
-    if (isDev) {
-      return (
-        <div className="min-h-screen bg-[var(--bg)] p-8">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">Rollup Missing</h1>
-          <p className="mb-4">The state cities rollup for {stateName} ({stateAbbr}) is missing or empty.</p>
-          <p className="mb-4">Run: <code className="bg-gray-100 px-2 py-1 rounded">node scripts/rebuildRollups.js</code></p>
-          <DebugPanel debug={{ ...debug, fetchDurationMs: pageRenderMs }} />
-        </div>
-      );
-    }
     notFound();
   }
 
@@ -123,13 +87,6 @@ export default async function StatePage({ params }: StatePageProps) {
           </p>
         </div>
       </header>
-
-      {/* Debug Panel - shows in dev */}
-      {isDev && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <DebugPanel debug={{ ...debug, fetchDurationMs: pageRenderMs }} />
-        </div>
-      )}
 
       {/* Stats Section */}
       <section className="bg-[var(--surface)] py-8 border-b border-[var(--border)]">

@@ -1,7 +1,9 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getCityBuffetsRollup, STATE_ABBR_TO_NAME, RollupDebugInfo, CityBuffetRow } from '@/lib/rollups';
+import { getCityBuffetsRollup, STATE_ABBR_TO_NAME, CityBuffetRow } from '@/lib/rollups';
+import CityFilterBar from '@/components/city/CityFilterBar';
+import { getCityFacets, parseFiltersFromParams, applyFilters, hasActiveFilters } from '@/lib/facets/getCityFacets';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://yoursite.com';
 const isDev = process.env.NODE_ENV !== 'production';
@@ -13,30 +15,7 @@ interface CityPageProps {
   params: {
     'city-state': string;
   };
-}
-
-// Debug panel component (dev-only)
-function DebugPanel({ debug }: { debug: RollupDebugInfo }) {
-  if (!isDev) return null;
-  
-  return (
-    <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-4 my-4">
-      <h3 className="font-bold text-yellow-800 mb-2">🔧 Rollup Debug (dev only)</h3>
-      <div className="text-sm text-yellow-900 space-y-1">
-        <p><strong>Rollup:</strong> {debug.rollupType}/{debug.rollupKey}</p>
-        <p><strong>Status:</strong> {debug.found ? (debug.stale ? '⚠️ STALE' : '✅ HIT') : '❌ MISSING'}</p>
-        <p><strong>Updated:</strong> {debug.updatedAt ? new Date(debug.updatedAt).toLocaleString() : 'never'}</p>
-        <p><strong>Buffets:</strong> {debug.dataLength}</p>
-        <p><strong>Fetch time:</strong> {debug.fetchDurationMs}ms</p>
-        {!debug.found && (
-          <div className="mt-2 p-2 bg-red-100 rounded">
-            <p className="text-red-800 font-semibold">⚠️ Rollup missing!</p>
-            <p className="text-red-700 mt-1">Run: <code className="bg-red-200 px-1">node scripts/rebuildRollups.js</code></p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  searchParams: Record<string, string | string[] | undefined>;
 }
 
 // Buffet card component
@@ -102,37 +81,50 @@ export async function generateMetadata({ params }: CityPageProps): Promise<Metad
   };
 }
 
-export default async function CityPage({ params }: CityPageProps) {
-  const pageStart = Date.now();
+export default async function CityPage({ params, searchParams }: CityPageProps) {
   const citySlug = params['city-state'];
   
-  const { data, debug } = await getCityBuffetsRollup(citySlug);
-  const pageRenderMs = Date.now() - pageStart;
+  // Fetch rollup data and facets in parallel
+  const [rollupResult, facetsResult] = await Promise.all([
+    getCityBuffetsRollup(citySlug),
+    getCityFacets(citySlug),
+  ]);
   
-  // If no rollup data, show helpful message in dev or 404 in prod
+  const { data } = rollupResult;
+  
+  // Parse filters from URL
+  const activeFilters = parseFiltersFromParams(searchParams);
+  const isFiltering = hasActiveFilters(activeFilters);
+  
+  // If no rollup data, 404
   if (!data || data.buffets.length === 0) {
-    if (isDev) {
-      return (
-        <div className="min-h-screen bg-[var(--bg)] p-8">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">Rollup Missing</h1>
-          <p className="mb-4">The city buffets rollup for {citySlug} is missing or empty.</p>
-          <p className="mb-4">Run: <code className="bg-gray-100 px-2 py-1 rounded">node scripts/rebuildRollups.js</code></p>
-          <DebugPanel debug={{ ...debug, fetchDurationMs: pageRenderMs }} />
-        </div>
-      );
-    }
     notFound();
   }
 
   const { cityName, state, stateAbbr, buffets, neighborhoods, buffetCount } = data;
   
+  // Apply filters if any are active
+  let filteredBuffets = buffets;
+  if (isFiltering) {
+    const matchingIds = applyFilters(
+      facetsResult.facetsByBuffetId,
+      facetsResult.allBuffetIds,
+      activeFilters,
+      citySlug // Pass citySlug for "open now" caching (60s TTL)
+    );
+    const matchingIdSet = new Set(matchingIds);
+    filteredBuffets = buffets.filter(b => matchingIdSet.has(b.id));
+  }
+  
+  const filteredCount = filteredBuffets.length;
+  
   // Sort by rating for top rated section
-  const sortedByRating = [...buffets].sort((a, b) => 
+  const sortedByRating = [...filteredBuffets].sort((a, b) => 
     (b.rating || 0) - (a.rating || 0)
   );
   
   // Sort by reviews for most popular section
-  const sortedByPopularity = [...buffets].sort((a, b) => 
+  const sortedByPopularity = [...filteredBuffets].sort((a, b) => 
     (b.reviewsCount || 0) - (a.reviewsCount || 0)
   );
   
@@ -155,7 +147,7 @@ export default async function CityPage({ params }: CityPageProps) {
 
   return (
     <div className="min-h-screen bg-[var(--bg)]">
-      {/* Header */}
+      {/* Hero Header */}
       <header className="bg-[var(--surface)] shadow-sm border-b border-[var(--border)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <nav className="text-sm text-[var(--muted)] mb-4">
@@ -174,123 +166,116 @@ export default async function CityPage({ params }: CityPageProps) {
             Chinese Buffets in {cityName}, {state}
           </h1>
           <p className="text-lg text-[var(--muted)]">
-            {buffetCount} {buffetCount === 1 ? 'location' : 'locations'} found
+            {isFiltering ? `${filteredCount} of ${buffetCount}` : buffetCount} {buffetCount === 1 ? 'location' : 'locations'} {isFiltering ? 'matching filters' : 'found'}
           </p>
         </div>
       </header>
 
-      {/* Debug Panel - shows in dev */}
-      {isDev && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <DebugPanel debug={{ ...debug, fetchDurationMs: pageRenderMs }} />
-        </div>
-      )}
+      {/* TOP FILTER BAR - Sticky, immediately under hero */}
+      <CityFilterBar
+        aggregated={facetsResult.aggregated}
+        totalBuffets={buffetCount}
+        filteredCount={filteredCount}
+      />
 
-      {/* Summary Block */}
-      <section className="bg-[var(--surface2)] py-6 border-b border-[var(--border)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Summary Block */}
+        <section className="bg-[var(--surface)] rounded-lg border border-[var(--border)] p-4 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-[var(--surface)] rounded-lg p-4 shadow-sm border border-[var(--border)]">
+            <div>
               <div className="text-sm text-[var(--muted)] mb-1">Total Buffets</div>
               <div className="text-2xl font-bold text-[var(--accent1)]">{buffetCount}</div>
             </div>
             {topBuffets.length > 0 && topBuffets[0]?.rating && (
-              <div className="bg-[var(--surface)] rounded-lg p-4 shadow-sm border border-[var(--border)]">
+              <div>
                 <div className="text-sm text-[var(--muted)] mb-1">Top Rated</div>
                 <div className="text-lg font-semibold text-[var(--text)] line-clamp-1">{topBuffets[0].name}</div>
                 <div className="text-sm text-[var(--muted)]">⭐ {topBuffets[0].rating.toFixed(1)}</div>
               </div>
             )}
-            <div className="bg-[var(--surface)] rounded-lg p-4 shadow-sm border border-[var(--border)]">
+            <div>
               <div className="text-sm text-[var(--muted)] mb-1">Price Range</div>
               <div className="text-lg font-semibold text-[var(--text)]">{priceRange}</div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Intro Section */}
-      <section className="bg-[var(--surface)] py-8 border-b border-[var(--border)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="prose max-w-none">
-            <p className="text-[var(--text-secondary)] mb-4">
-              Looking for Chinese buffets in {cityName}, {state}? You've come to the right place. Our directory 
+        {/* No Results Message */}
+        {isFiltering && filteredCount === 0 && (
+          <section className="bg-[var(--surface)] rounded-lg border border-[var(--border)] p-8 mb-6 text-center">
+            <svg className="w-12 h-12 mx-auto text-[var(--muted)] mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h3 className="text-lg font-semibold text-[var(--text)] mb-2">No buffets match your filters</h3>
+            <p className="text-[var(--muted)] mb-4">Try adjusting your filters to see more results.</p>
+          </section>
+        )}
+
+        {/* Intro Section - only show when not filtering or has results */}
+        {(!isFiltering || filteredCount > 0) && (
+          <section className="mb-8">
+            <p className="text-[var(--text-secondary)]">
+              Looking for Chinese buffets in {cityName}, {state}? Our directory 
               features {buffetCount} {buffetCount === 1 ? 'Chinese buffet' : 'Chinese buffets'} in {cityName}, 
               offering all-you-can-eat dining experiences throughout the city.
             </p>
-            {buffetCount > 5 && (
-              <p className="text-[var(--text-secondary)] mb-4">
-                With {buffetCount} locations to choose from, {cityName} offers plenty of options for Chinese 
-                buffet enthusiasts. Whether you're looking for a quick lunch buffet or a full dinner experience 
-                with crab legs and sushi, you'll find diverse options across the city.
-              </p>
-            )}
-            <p className="text-[var(--text-secondary)]">
-              Browse through our detailed listings below. Each listing includes hours, prices, ratings, and 
-              contact information to help you plan your visit.
-            </p>
-          </div>
-        </div>
-      </section>
+          </section>
+        )}
 
-      {/* Top Rated Section */}
-      {topBuffets.length > 0 && (
-        <section className="bg-[var(--surface2)] py-8">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-bold text-[var(--text)] mb-2">
-              Top Rated Chinese Buffets in {cityName}
+        {/* Top Rated Section - show only when not filtering */}
+        {!isFiltering && topBuffets.length > 0 && (
+          <section className="mb-8">
+            <h2 className="text-xl font-bold text-[var(--text)] mb-2">
+              Top Rated Chinese Buffets
             </h2>
-            <p className="text-[var(--muted)] mb-6">
+            <p className="text-[var(--muted)] mb-4 text-sm">
               Highest-rated options based on customer reviews
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {topBuffets.map((buffet) => (
-                <BuffetCard key={buffet.id} buffet={buffet} citySlug={citySlug} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Most Popular Section */}
-      {popularBuffets.length > 0 && popularBuffets[0]?.reviewsCount && popularBuffets[0].reviewsCount > 10 && (
-        <section className="bg-[var(--surface)] py-8 border-b border-[var(--border)]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-bold text-[var(--text)] mb-2">
-              Most Popular Chinese Buffets in {cityName}
-            </h2>
-            <p className="text-[var(--muted)] mb-6">
-              Most-reviewed options, indicating high customer engagement
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {popularBuffets.map((buffet) => (
-                <BuffetCard key={buffet.id} buffet={buffet} citySlug={citySlug} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Neighborhoods Section */}
-      {neighborhoods.length > 0 && (
-        <section className="bg-[var(--surface2)] py-8">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-bold text-[var(--text)] mb-6">
-              Chinese Buffets by Neighborhood in {cityName}
-            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {neighborhoods.map((neighborhood) => (
+              {topBuffets.slice(0, 6).map((buffet) => (
+                <BuffetCard key={buffet.id} buffet={buffet} citySlug={citySlug} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Most Popular Section - show only when not filtering */}
+        {!isFiltering && popularBuffets.length > 0 && popularBuffets[0]?.reviewsCount && popularBuffets[0].reviewsCount > 10 && (
+          <section className="mb-8">
+            <h2 className="text-xl font-bold text-[var(--text)] mb-2">
+              Most Popular Chinese Buffets
+            </h2>
+            <p className="text-[var(--muted)] mb-4 text-sm">
+              Most-reviewed options in {cityName}
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {popularBuffets.slice(0, 6).map((buffet) => (
+                <BuffetCard key={buffet.id} buffet={buffet} citySlug={citySlug} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Neighborhoods Section - show only when not filtering */}
+        {!isFiltering && neighborhoods.length > 0 && (
+          <section className="mb-8">
+            <h2 className="text-xl font-bold text-[var(--text)] mb-4">
+              By Neighborhood
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {neighborhoods.slice(0, 6).map((neighborhood) => (
                 <Link
                   key={neighborhood.slug}
                   href={`/chinese-buffets/${citySlug}/neighborhoods/${neighborhood.slug}`}
-                  className="border border-[var(--border)] rounded-lg p-4 hover:shadow-md transition-shadow bg-[var(--surface)] hover:border-[var(--accent1)] group"
+                  className="border border-[var(--border)] rounded-lg p-3 hover:shadow-md transition-shadow bg-[var(--surface)] hover:border-[var(--accent1)] group"
                 >
                   <div className="flex justify-between items-center">
                     <div>
-                      <h3 className="font-semibold text-lg text-[var(--text)] group-hover:text-[var(--accent1)]">
+                      <h3 className="font-semibold text-[var(--text)] group-hover:text-[var(--accent1)]">
                         {neighborhood.neighborhood}
                       </h3>
-                      <p className="text-[var(--muted)] text-sm mt-1">
+                      <p className="text-[var(--muted)] text-sm">
                         {neighborhood.buffetCount} {neighborhood.buffetCount === 1 ? 'buffet' : 'buffets'}
                       </p>
                     </div>
@@ -299,36 +284,36 @@ export default async function CityPage({ params }: CityPageProps) {
                 </Link>
               ))}
             </div>
-            <div className="mt-4">
-              <Link 
-                href={`/chinese-buffets/${citySlug}/neighborhoods`}
-                className="text-[var(--accent1)] hover:opacity-80 font-medium"
-              >
-                View all neighborhoods →
-              </Link>
-            </div>
-          </div>
-        </section>
-      )}
+            {neighborhoods.length > 6 && (
+              <div className="mt-4">
+                <Link 
+                  href={`/chinese-buffets/${citySlug}/neighborhoods`}
+                  className="text-[var(--accent1)] hover:opacity-80 font-medium text-sm"
+                >
+                  View all {neighborhoods.length} neighborhoods →
+                </Link>
+              </div>
+            )}
+          </section>
+        )}
 
-      {/* All Buffets Section */}
-      <section className="bg-[var(--surface)] py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-[var(--text)]">
-              All Chinese Buffets in {cityName}, {state}
+        {/* All Buffets / Filtered Results Section */}
+        <section className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-[var(--text)]">
+              {isFiltering ? 'Filtered Results' : `All Chinese Buffets in ${cityName}`}
             </h2>
             <span className="text-sm text-[var(--muted)]">
-              {buffetCount} {buffetCount === 1 ? 'location' : 'locations'}
+              {filteredCount} {filteredCount === 1 ? 'location' : 'locations'}
             </span>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {buffets.map((buffet) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredBuffets.map((buffet) => (
               <BuffetCard key={buffet.id} buffet={buffet} citySlug={citySlug} />
             ))}
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
 
       {/* Back Navigation */}
       <section className="bg-[var(--surface2)] py-6 border-t border-[var(--border)]">

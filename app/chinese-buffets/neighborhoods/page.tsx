@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { getStatesRollup, STATE_ABBR_TO_NAME } from '@/lib/rollups';
+import { getCitiesRollup } from '@/lib/rollups';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://yoursite.com';
 const isDev = process.env.NODE_ENV !== 'production';
@@ -9,20 +9,20 @@ const isDev = process.env.NODE_ENV !== 'production';
 export const revalidate = isDev ? 3600 : 21600;
 
 export const metadata: Metadata = {
-  title: 'Chinese Buffets by State - All 50 States Directory',
-  description: 'Browse Chinese buffets in every US state. Find all-you-can-eat Chinese restaurants near you with hours, prices, ratings, and reviews.',
+  title: 'Chinese Buffets by Neighborhood - Browse Local Areas',
+  description: 'Browse Chinese buffets by neighborhood. Find all-you-can-eat Chinese restaurants in local areas across US cities with hours, prices, and reviews.',
   alternates: {
-    canonical: `${BASE_URL}/chinese-buffets/states`,
+    canonical: `${BASE_URL}/chinese-buffets/neighborhoods`,
   },
 };
 
-export default async function StatesIndexPage() {
-  const { states } = await getStatesRollup();
+export default async function NeighborhoodsIndexPage() {
+  const { cities } = await getCitiesRollup();
   
-  // Calculate totals
-  const totalBuffets = states.reduce((sum, s) => sum + s.buffetCount, 0);
-  const totalCities = states.reduce((sum, s) => sum + s.cityCount, 0);
-  const isEmpty = states.length === 0;
+  // Get cities that have neighborhoods, sorted by buffet count
+  const citiesWithNeighborhoods = cities
+    .filter(c => c.buffetCount >= 3) // Only cities with enough buffets likely have neighborhood data
+    .slice(0, 50); // Top 50 cities
 
   return (
     <div className="min-h-screen bg-[var(--bg)]">
@@ -32,13 +32,13 @@ export default async function StatesIndexPage() {
           <nav className="text-sm text-[var(--muted)] mb-4">
             <Link href="/" className="hover:text-[var(--accent1)]">Home</Link>
             <span className="mx-2">/</span>
-            <span className="text-[var(--text)]">States</span>
+            <span className="text-[var(--text)]">Neighborhoods</span>
           </nav>
           <h1 className="text-4xl font-bold text-[var(--text)] mb-2">
-            Chinese Buffets by State
+            Chinese Buffets by Neighborhood
           </h1>
           <p className="text-lg text-[var(--muted)]">
-            {totalBuffets.toLocaleString()} buffets across {states.length} states
+            Browse local areas in {cities.length} cities
           </p>
         </div>
       </header>
@@ -47,48 +47,51 @@ export default async function StatesIndexPage() {
       <section className="bg-[var(--surface)] py-8 border-b border-[var(--border)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-[var(--text-secondary)] max-w-3xl">
-            Find Chinese buffets in any US state. Our directory covers {totalBuffets.toLocaleString()} all-you-can-eat 
-            Chinese restaurants in {totalCities.toLocaleString()} cities. Select a state below to browse local listings 
-            with hours, prices, ratings, and customer reviews.
+            Find Chinese buffets in specific neighborhoods across the United States. 
+            Select a city below to explore buffets in local areas, complete with 
+            hours, pricing, ratings, and customer reviews.
           </p>
         </div>
       </section>
 
-      {/* States Grid */}
+      {/* Cities Grid */}
       <section className="bg-[var(--surface2)] py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {isEmpty ? (
+          <h2 className="text-2xl font-bold text-[var(--text)] mb-6">
+            Browse Neighborhoods by City
+          </h2>
+          {citiesWithNeighborhoods.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-[var(--muted)]">No states with buffets found.</p>
-              <Link href="/" className="text-[var(--accent1)] hover:opacity-80 mt-4 inline-block">
-                ← Back to Home
+              <p className="text-[var(--muted)]">No cities with neighborhood data found.</p>
+              <Link href="/chinese-buffets/cities" className="text-[var(--accent1)] hover:opacity-80 mt-4 inline-block">
+                Browse All Cities →
               </Link>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {states.map((state) => (
+              {citiesWithNeighborhoods.map((city) => (
                 <Link
-                  key={state.stateAbbr}
-                  href={`/chinese-buffets/states/${state.stateAbbr.toLowerCase()}`}
+                  key={city.slug}
+                  href={`/chinese-buffets/${city.slug}/neighborhoods`}
                   className="bg-[var(--surface)] border border-[var(--border)] rounded-lg p-4 hover:shadow-md hover:border-[var(--accent1)] transition-all group"
                 >
                   <div className="flex justify-between items-start">
                     <div>
-                      <h2 className="font-semibold text-lg text-[var(--text)] group-hover:text-[var(--accent1)]">
-                        {state.stateName}
-                      </h2>
+                      <h3 className="font-semibold text-lg text-[var(--text)] group-hover:text-[var(--accent1)]">
+                        {city.city}
+                      </h3>
                       <p className="text-[var(--muted)] text-sm mt-1">
-                        {state.buffetCount} {state.buffetCount === 1 ? 'buffet' : 'buffets'}
-                        {state.cityCount > 0 && (
-                          <span className="ml-1">
-                            · {state.cityCount} {state.cityCount === 1 ? 'city' : 'cities'}
-                          </span>
-                        )}
+                        {city.state}
                       </p>
                     </div>
-                    <span className="text-[var(--accent1)] text-xl font-bold">
-                      {state.stateAbbr}
-                    </span>
+                    <div className="text-right">
+                      <span className="text-[var(--accent1)] font-bold text-lg">
+                        {city.buffetCount}
+                      </span>
+                      <p className="text-[var(--muted)] text-xs">
+                        {city.buffetCount === 1 ? 'buffet' : 'buffets'}
+                      </p>
+                    </div>
                   </div>
                 </Link>
               ))}
@@ -107,6 +110,10 @@ export default async function StatesIndexPage() {
           <Link href="/chinese-buffets/cities" className="text-[var(--accent1)] hover:opacity-80 font-medium">
             Browse by City →
           </Link>
+          <span className="mx-4 text-[var(--muted)]">|</span>
+          <Link href="/chinese-buffets/states" className="text-[var(--accent1)] hover:opacity-80 font-medium">
+            Browse by State →
+          </Link>
         </div>
       </section>
 
@@ -115,7 +122,7 @@ export default async function StatesIndexPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <p className="text-white/60">
-              Chinese Buffets Directory - Find all-you-can-eat Chinese buffets by state
+              Chinese Buffets Directory - Find all-you-can-eat Chinese buffets by neighborhood
             </p>
           </div>
         </div>

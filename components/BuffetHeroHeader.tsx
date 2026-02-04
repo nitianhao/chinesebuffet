@@ -5,6 +5,7 @@ import SignatureCard from '@/components/ui/SignatureCard';
 
 interface BuffetHeroHeaderProps {
   buffet: {
+    id?: string | null;
     name: string;
     rating?: number | null;
     reviewsCount?: number | null;
@@ -71,6 +72,11 @@ export default function BuffetHeroHeader({ buffet, openStatus }: BuffetHeroHeade
               ? `${(buffet.reviewsCount / 1000).toFixed(1)}k`
               : buffet.reviewsCount.toLocaleString()}{' '}
             reviews)
+            {buffet.id != null && buffet.id !== '' && (
+              <span className="ml-1.5 text-[var(--muted)]/80" title="Buffet ID (for DB lookup)">
+                · ID: {buffet.id}
+              </span>
+            )}
           </span>
         </div>
       )}

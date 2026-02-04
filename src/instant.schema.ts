@@ -20,7 +20,7 @@ const _schema = i.schema({
       stateAbbr: i.string().indexed(),
       population: i.number(),
       slug: i.string().unique().indexed(),
-      searchName: i.string().indexed().optional(), // Normalized "city stateabbr" for search
+      searchName: i.string().optional().indexed(), // Normalized name for search queries
       // SEO enrichment fields
       timezone: i.string().optional(),
       elevation: i.number().optional(),
@@ -50,8 +50,8 @@ const _schema = i.schema({
     }),
     buffets: i.entity({
       name: i.string().indexed(),
-      searchName: i.string().indexed().optional(),
       slug: i.string().indexed(),
+      searchName: i.string().optional().indexed(), // Normalized name for search queries
       street: i.string(),
       cityName: i.string().indexed(), // City name as string (for filtering)
       state: i.string().indexed(),
@@ -134,6 +134,8 @@ const _schema = i.schema({
       utilitiesInfrastructure: i.string().optional(),
       retailShopping: i.string().optional(),
       transportationAutomotive: i.string().optional(),
+      // Facet index for filtering (precomputed from amenities + nearby POIs)
+      facetIndex: i.string().optional(), // JSON stringified BuffetFacetData
     }),
     reviews: i.entity({
       reviewerId: i.string().optional(),
@@ -207,12 +209,11 @@ const _schema = i.schema({
       updatedAt: i.string().optional(), // Timestamp when last updated
     }),
     directoryRollups: i.entity({
-      // Precomputed aggregations for hub pages (states, cities, neighborhoods)
-      type: i.string().indexed(), // "states" | "cities" | "cityNeighborhoods"
-      key: i.string().optional().indexed(), // null for global, cityStateSlug for cityNeighborhoods
-      data: i.string(), // JSON stringified array of rollup rows
-      updatedAt: i.string().indexed(), // ISO timestamp of last rebuild
-      buffetCount: i.number().optional(), // Total buffets in this rollup (for quick sanity check)
+      type: i.string().indexed(), // Rollup type: 'states', 'cities', 'cityNeighborhoods', etc.
+      key: i.string().optional().indexed(), // Optional key for keyed rollups (city slug, state abbr, etc.)
+      data: i.string(), // JSON stringified rollup data
+      updatedAt: i.string().optional(), // When the rollup was last rebuilt
+      buffetCount: i.number().optional(), // Total buffet count in rollup
     }),
   },
   links: {

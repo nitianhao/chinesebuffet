@@ -3,72 +3,30 @@
 @tailwind utilities;
 
 :root {
-  --bg: #FBFAF8;
-  --surface: #FFFFFF;
-  --surface2: #F5F3EF;
-  --text: #111111;
-  --muted: #6B625A;
-  --border: rgba(17, 17, 17, 0.08);
-  --accent1: #C1121F;
-  --accent2: #7F0A12;
+  --bg: #f6f4f1;
+  --surface: #ffffff;
+  --surface2: #fbfaf8;
+  --text: #1b1a18;
+  --muted: #6c6762;
+  --border: rgba(18, 15, 12, 0.08);
+  --accent1: #4f46e5;
+  --accent2: #ec4899;
   --radius-lg: 16px;
   --radius-xl: 20px;
-  --shadow-soft: 0 12px 30px rgba(17, 17, 17, 0.06);
-  --shadow-pop: 0 16px 44px rgba(17, 17, 17, 0.10);
+  --shadow-soft: 0 12px 30px rgba(18, 15, 12, 0.08);
+  --shadow-pop: 0 16px 44px rgba(18, 15, 12, 0.12);
   --background: var(--bg);
   --foreground: var(--text);
-  /* Section rhythm - mobile-first */
-  --section-gap: 2rem;
-  --section-gap-md: 3rem;
-  --section-padding-y: 1.75rem;
-  --section-padding-y-md: 2.5rem;
-  --block-gap: 1.25rem;
-  --block-gap-md: 1.5rem;
 }
 
 body {
   color: var(--text);
   background-color: var(--bg);
-  /* Subtle warm background with very faint red accent */
   background-image:
-    radial-gradient(700px 320px at 12% -10%, rgba(193, 18, 31, 0.04), transparent 60%),
-    radial-gradient(500px 240px at 88% -6%, rgba(127, 10, 18, 0.025), transparent 60%);
+    radial-gradient(700px 320px at 12% -10%, rgba(79, 70, 229, 0.12), transparent 60%),
+    radial-gradient(500px 240px at 88% -6%, rgba(236, 72, 153, 0.08), transparent 60%);
   background-repeat: no-repeat;
   background-attachment: fixed;
-}
-
-/* Section rhythm - alternating backgrounds, spacing-first layout */
-.page-section {
-  padding-top: var(--section-padding-y);
-  padding-bottom: var(--section-padding-y);
-}
-@media (min-width: 768px) {
-  .page-section {
-    padding-top: var(--section-padding-y-md);
-    padding-bottom: var(--section-padding-y-md);
-  }
-}
-.page-section-bg-base {
-  background-color: var(--bg);
-}
-.page-section-bg-alt {
-  background-color: var(--surface);
-}
-.page-section-gap {
-  margin-bottom: var(--section-gap);
-}
-@media (min-width: 768px) {
-  .page-section-gap {
-    margin-bottom: var(--section-gap-md);
-  }
-}
-.page-block-gap {
-  margin-bottom: var(--block-gap);
-}
-@media (min-width: 768px) {
-  .page-block-gap {
-    margin-bottom: var(--block-gap-md);
-  }
 }
 
 @layer utilities {
@@ -77,45 +35,43 @@ body {
   }
 }
 
+/* Filter drawer animations */
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+
 /* Leaflet styles */
 @import 'leaflet/dist/leaflet.css';
 @import 'leaflet.markercluster/dist/MarkerCluster.css';
 @import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 
-/* Ensure Leaflet map controls stay below header (z-[9999]) */
-/* Leaflet uses z-index up to ~1000, so we constrain it to stay below header */
-.leaflet-container {
-  position: relative;
-  z-index: 1 !important;
-}
-
-.leaflet-control-container {
-  z-index: 100 !important;
-}
-
-.leaflet-top,
-.leaflet-bottom {
-  z-index: 100 !important;
-}
-
-.leaflet-pane {
-  z-index: 1 !important;
-}
-
-.leaflet-control {
-  z-index: 100 !important;
-}
-
-.leaflet-popup-pane {
-  z-index: 200 !important;
-}
-
 /* Hide placeholder on focus and ensure caret is visible */
 .search-input:focus::placeholder {
   opacity: 0;
-}
-.search-input {
-  caret-color: #111111;
-  color: #111111;
+}.search-input {
+  caret-color: #111827; /* gray-900 */
+  color: #111827; /* gray-900 */
   background-color: white;
 }

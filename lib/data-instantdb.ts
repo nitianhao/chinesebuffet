@@ -2281,6 +2281,68 @@ export async function getTopRatedBuffets(limit: number = 10): Promise<Array<{
   }
 }
 
+/** First photo reference from buffet.images JSON for homepage thumb */
+function firstPhotoReferenceFromImages(imagesJson: unknown): string | undefined {
+  if (!imagesJson || typeof imagesJson !== 'string') return undefined;
+  try {
+    const arr = JSON.parse(imagesJson);
+    if (!Array.isArray(arr) || arr.length === 0) return undefined;
+    const first = arr[0];
+    const ref = first && typeof first === 'object' && first !== null && 'photoReference' in first
+      ? (first as { photoReference?: string }).photoReference
+      : undefined;
+    return typeof ref === 'string' && ref.startsWith('places/') ? ref : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * Top-rated buffets for homepage: name, slug, city, stateAbbr, rating, reviewCount, optional thumb.
+ * Uses same criteria as getTopRatedBuffets (rating >= 4.3, min 50 reviews). Direct DB query.
+ */
+export async function getTopRatedBuffetsForHomepage(limit: number = 12): Promise<Array<{
+  name: string;
+  slug: string;
+  citySlug: string;
+  city: string;
+  stateAbbr: string;
+  rating: number;
+  reviewCount: number;
+  thumbPhotoReference?: string;
+}>> {
+  const db = getAdminDb();
+  try {
+    const result = await db.query({
+      buffets: {
+        $: {
+          limit: 200,
+          where: { rating: { $gte: 4.3 } },
+          order: { rating: 'desc' },
+        },
+        city: {},
+      },
+    });
+    const buffets = (result.buffets || [])
+      .filter((b: any) => (b.reviewsCount ?? 0) >= 50 && b.city?.slug)
+      .slice(0, limit)
+      .map((b: any) => ({
+        name: b.name || '',
+        slug: b.slug || '',
+        citySlug: b.city?.slug || '',
+        city: b.cityName || b.city?.city || '',
+        stateAbbr: b.stateAbbr || b.state || '',
+        rating: b.rating ?? 0,
+        reviewCount: b.reviewsCount ?? 0,
+        thumbPhotoReference: firstPhotoReferenceFromImages(b.images),
+      }));
+    return buffets;
+  } catch (e) {
+    console.error('[data-instantdb] getTopRatedBuffetsForHomepage error:', e);
+    return [];
+  }
+}
+
 /**
  * Most reviewed buffets: sorted by reviewsCount desc. Direct DB query, no cache.
  */

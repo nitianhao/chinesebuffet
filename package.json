@@ -92,9 +92,10 @@
     "generate-seo-descriptions:v2": "npx tsx scripts/generate-seo-descriptions.ts",
     "generate-seo-descriptions:test": "npx tsx scripts/generate-seo-descriptions/test-sample.ts",
     "generate-poi-accommodation-seo": "npx tsx scripts/generate-poi-accommodation-seo.ts",
-    "key:fingerprint": "node scripts/print-google-key-fingerprint.mjs",
-    "photos:migrate:dry": "DRY_RUN=1 tsx scripts/migrate-photo-references-new-places.ts",
-    "photos:migrate:write": "DRY_RUN=0 tsx scripts/migrate-photo-references-new-places.ts"
+    "backfill:facet-index": "npx tsx scripts/backfillFacetIndex.ts",
+    "backfill:facet-index:dry": "npx tsx scripts/backfillFacetIndex.ts --dry-run",
+    "backfill:facet-index:resume": "npx tsx scripts/backfillFacetIndex.ts --resume",
+    "backfill:facet-index:force": "npx tsx scripts/backfillFacetIndex.ts --force"
   },
   "dependencies": {
     "@google/genai": "^1.4.0",
@@ -132,7 +133,6 @@
     "puppeteer": "^24.34.0",
     "tailwindcss": "^3.3.5",
     "tesseract.js": "^5.1.1",
-    "tsx": "^4.21.0",
     "typescript": "^5.2.2"
   }
 }

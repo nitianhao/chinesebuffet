@@ -43,6 +43,7 @@ interface ReviewsSectionProps {
 }
 
 const TRUNCATE_LENGTH = 200;
+const INITIAL_REVIEWS_COUNT = 5;
 
 /**
  * Sort reviews: most helpful first (likesCount), then by reviewerNumberOfReviews, then by date.
@@ -185,8 +186,10 @@ export default function ReviewsSection({
 
   const { counts, total } = getDistributionCounts(reviewsDistribution, reviews);
 
-  const totalPages = Math.ceil(sortedReviews.length / reviewsPerPage);
-  const paginatedReviews = sortedReviews.slice(
+  const initialReviews = sortedReviews.slice(0, INITIAL_REVIEWS_COUNT);
+  const remainingReviews = sortedReviews.slice(INITIAL_REVIEWS_COUNT);
+  const totalRemainingPages = Math.ceil(remainingReviews.length / reviewsPerPage);
+  const paginatedRemaining = remainingReviews.slice(
     (currentPage - 1) * reviewsPerPage,
     currentPage * reviewsPerPage
   );
@@ -476,64 +479,90 @@ export default function ReviewsSection({
         )}
       </div>
 
-      {/* 2. Reviews list - most helpful first, with expand/collapse */}
+      {/* 2. Reviews list - first 5 by default, then "Show more" for the rest */}
       {sortedReviews.length > 0 && (
         <div>
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
             Most helpful reviews
           </h3>
 
-          <button
-            type="button"
-            onClick={() => setShowAllReviews((v) => !v)}
-            className="w-full sm:w-auto mb-4 px-5 py-3 bg-[var(--accent1)] hover:bg-[var(--accent2)] text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
-          >
-            {showAllReviews ? 'Hide' : 'Show'} all reviews ({sortedReviews.length})
-            <svg
-              className={`w-5 h-5 transition-transform ${showAllReviews ? 'rotate-180' : ''}`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-          </button>
+          {/* First 5 reviews always visible */}
+          <div className="space-y-4">
+            {initialReviews.map((r, i) => renderReview(r, i))}
+          </div>
 
-          {showAllReviews && (
-            <div className="space-y-4">
-              {paginatedReviews.map((r, i) =>
-                renderReview(r, (currentPage - 1) * reviewsPerPage + i)
-              )}
+          {/* Show more button when there are more than 5 reviews */}
+          {remainingReviews.length > 0 && (
+            <>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowAllReviews((v) => !v);
+                  if (showAllReviews) setCurrentPage(1);
+                }}
+                className="w-full sm:w-auto mt-4 mb-4 px-5 py-3 bg-[var(--accent1)] hover:bg-[var(--accent2)] text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+              >
+                {showAllReviews
+                  ? 'Show less'
+                  : `Show more (${remainingReviews.length} more)`}
+                <svg
+                  className={`w-5 h-5 transition-transform ${showAllReviews ? 'rotate-180' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
 
-              {totalPages > 1 && (
-                <div className="flex items-center justify-center gap-2 pt-4">
-                  <button
-                    type="button"
-                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                    disabled={currentPage === 1}
-                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Previous
-                  </button>
-                  <span className="text-gray-700 text-sm">
-                    Page {currentPage} of {totalPages}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                    disabled={currentPage === totalPages}
-                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Next
-                  </button>
+              {showAllReviews && (
+                <div className="space-y-4">
+                  {paginatedRemaining.map((r, i) =>
+                    renderReview(
+                      r,
+                      INITIAL_REVIEWS_COUNT +
+                        (currentPage - 1) * reviewsPerPage +
+                        i
+                    )
+                  )}
+
+                  {totalRemainingPages > 1 && (
+                    <div className="flex items-center justify-center gap-2 pt-4">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setCurrentPage((p) => Math.max(1, p - 1))
+                        }
+                        disabled={currentPage === 1}
+                        className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Previous
+                      </button>
+                      <span className="text-gray-700 text-sm">
+                        Page {currentPage} of {totalRemainingPages}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setCurrentPage((p) =>
+                            Math.min(totalRemainingPages, p + 1)
+                          )
+                        }
+                        disabled={currentPage === totalRemainingPages}
+                        className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
-            </div>
+            </>
           )}
         </div>
       )}

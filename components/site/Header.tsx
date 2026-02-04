@@ -5,11 +5,12 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import ModalDrawer from '@/components/ui/ModalDrawer';
 import SearchBar from '@/components/SearchBar';
+import AddBuffetModal from '@/components/AddBuffetModal';
 
 const navLinks = [
-  { label: 'Cities', href: '/' },
+  { label: 'Cities', href: '/chinese-buffets/cities' },
   { label: 'States', href: '/chinese-buffets/states' },
-  { label: 'Neighborhoods', href: '/chinese-buffets/near/shopping-malls' },
+  { label: 'Neighborhoods', href: '/chinese-buffets/neighborhoods' },
 ];
 
 
@@ -82,6 +83,7 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAddBuffetOpen, setIsAddBuffetOpen] = useState(false);
 
   useEffect(() => {
     const updateScroll = () => {
@@ -156,12 +158,13 @@ export default function Header() {
             {/* Right: CTA + Mobile controls */}
             <div className="flex items-center gap-2">
               {/* Primary CTA - Red gradient */}
-              <Link
-                href="/#submit"
+              <button
+                type="button"
+                onClick={() => setIsAddBuffetOpen(true)}
                 className="inline-flex items-center rounded-full bg-gradient-to-r from-[#C1121F] to-[#7F0A12] px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:shadow-md hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C1121F] sm:px-4 sm:text-sm"
               >
                 Add a buffet
-              </Link>
+              </button>
 
               {/* Mobile controls */}
               <div className="flex items-center gap-2 md:hidden">
@@ -344,15 +347,25 @@ export default function Header() {
           </nav>
 
           <div className="mt-auto">
-            <Link
-              href="/#submit"
+            <button
+              type="button"
+              onClick={() => {
+                setIsMenuOpen(false);
+                setIsAddBuffetOpen(true);
+              }}
               className="inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-[#C1121F] to-[#7F0A12] px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:shadow-md hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C1121F]"
             >
               Add a buffet
-            </Link>
+            </button>
           </div>
         </div>
       </ModalDrawer>
+
+      {/* Add Buffet Modal */}
+      <AddBuffetModal
+        isOpen={isAddBuffetOpen}
+        onClose={() => setIsAddBuffetOpen(false)}
+      />
     </header>
   );
 }

@@ -101,10 +101,6 @@ function normalizeForIndex(text: string): string {
     .trim();
 }
 
-function prefixUpperBound(prefix: string): string {
-  return prefix + '\uffff';
-}
-
 function getCachedResponse(cacheKey: string): SearchResponse | null {
   const entry = responseCache.get(cacheKey);
   if (!entry) return null;
@@ -172,14 +168,14 @@ export async function GET(request: NextRequest) {
   try {
     const queryStart = Date.now();
     const fetchLimit = Math.min(limit * 5, 50);
-
-    const upper = prefixUpperBound(normalizedQuery);
+    const useContains = normalizedQuery.length >= 3;
+    const pattern = useContains ? `%${normalizedQuery}%` : `${normalizedQuery}%`;
     const [buffetResult, cityResult] = await Promise.all([
       db.query({
         buffets: {
           $: {
             where: {
-              searchName: { $gte: normalizedQuery, $lt: upper },
+              searchName: { $like: pattern },
             },
             limit: fetchLimit,
           },
@@ -190,38 +186,84 @@ export async function GET(request: NextRequest) {
         cities: {
           $: {
             where: {
-              searchName: { $gte: normalizedQuery, $lt: upper },
+              city: { $ilike: pattern },
             },
-            limit: MAX_CITIES * 3,
+            limit: useContains ? 100 : MAX_CITIES * 3,
           },
         },
       }),
     ]);
     const queryMs = Date.now() - queryStart;
 
+    if (process.env.NODE_ENV !== 'production') {
+      const raw = (cityResult.cities || []).slice(0, 20).map((c: any) => ({
+        city: c.city,
+        stateAbbr: c.stateAbbr,
+        slug: c.slug,
+        population: c.population,
+        rank: c.rank,
+        searchName: c.searchName,
+      }));
+      console.log('[debug-city-raw]', {
+        qn: normalizedQuery,
+        pattern,
+        count: cityResult.cities?.length ?? 0,
+        raw,
+      });
+    }
+
     let cityRows: any[] = cityResult.cities || [];
     let buffetRows: any[] = buffetResult.buffets || [];
 
-    if ((cityRows.length === 0 || buffetRows.length === 0) && process.env.NODE_ENV !== 'production') {
-      const [fallbackCities, fallbackBuffets] = await Promise.all([
-        db.query({ cities: { $: { limit: 50 } } }),
-        db.query({ buffets: { $: { limit: 50 }, city: {} } }),
-      ]);
-      if (cityRows.length === 0) {
+    // Fallback: if searchName query returned nothing, try fetching and filtering in-memory
+    // This handles cases where searchName isn't populated in the DB
+    if (cityRows.length === 0 || buffetRows.length === 0) {
+      const needsCityFallback = cityRows.length === 0;
+      const needsBuffetFallback = buffetRows.length === 0;
+      
+      const fallbackPromises: Promise<any>[] = [];
+      if (needsCityFallback) {
+        fallbackPromises.push(db.query({ cities: { $: { limit: 100 } } }));
+      }
+      if (needsBuffetFallback) {
+        fallbackPromises.push(db.query({ buffets: { $: { limit: 100 }, city: {} } }));
+      }
+      
+      const fallbackResults = await Promise.all(fallbackPromises);
+      let fallbackIdx = 0;
+      
+      if (needsCityFallback) {
+        const fallbackCities = fallbackResults[fallbackIdx++];
         cityRows = (fallbackCities.cities || []).filter((city: any) => {
           const citySearch = normalizeForIndex(`${city.city || ''} ${city.stateAbbr || ''}`);
           return citySearch.startsWith(normalizedQuery);
         });
+        if (process.env.NODE_ENV !== 'production') {
+          console.log(`[search] city fallback: found ${cityRows.length} matches`);
+        }
       }
-      if (buffetRows.length === 0) {
+      if (needsBuffetFallback) {
+        const fallbackBuffets = fallbackResults[fallbackIdx++];
         buffetRows = (fallbackBuffets.buffets || []).filter((buffet: any) => {
           const buffetSearch = normalizeForIndex(buffet.name || '');
           return buffetSearch.startsWith(normalizedQuery);
         });
+        if (process.env.NODE_ENV !== 'production') {
+          console.log(`[search] buffet fallback: found ${buffetRows.length} matches`);
+        }
       }
     }
 
     const qn = normalizedQuery;
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[search-match]', {
+        qn,
+        useContains,
+        pattern,
+        citiesCandidates: cityResult.cities?.length ?? 0,
+        buffetsCandidates: buffetResult.buffets?.length ?? 0,
+      });
+    }
     const cityCandidates = cityRows.map((city: any) => ({
       id: city.id,
       city: city.city || '',
@@ -232,16 +274,26 @@ export async function GET(request: NextRequest) {
       searchName: city.searchName || '',
     }));
 
+    cityCandidates.sort(
+      (a: any, b: any) =>
+        (b.population || 0) - (a.population || 0) || a.city.localeCompare(b.city)
+    );
+
     // Score and sort cities
     const scoredCities = cityCandidates.map((city: any) => {
       let score = 0;
       // Use searchName if available, otherwise compute it
       const searchName = city.searchName || normalizeForIndex(`${city.city} ${city.stateAbbr}`);
-      
+      const tokens = searchName.split(' ').filter(Boolean);
+
       if (searchName === qn) {
         score += 100;
       } else if (searchName.startsWith(qn)) {
-        score += 70;
+        score += 80;
+      } else if (tokens.some((token: string) => token.startsWith(qn))) {
+        score += 60;
+      } else if (useContains && searchName.includes(qn)) {
+        score += 30;
       }
       
       // Boost by rank (lower rank = more important city)
@@ -249,13 +301,15 @@ export async function GET(request: NextRequest) {
       
       // Boost by population (higher = more relevant)
       score += Math.min(city.population / 100000, 10);
+      score += Math.min((city.population || 0) / 1_000_000, 25);
       
       return { city, score };
     });
 
-    // Filter to only cities that match (score > 0 means it matched)
+    const minCityScore = useContains ? 30 : 60;
+    // Filter to only cities that match
     const cities: SearchCityResult[] = scoredCities
-      .filter((s: any) => s.score >= 70) // Must at least start with the query
+      .filter((s: any) => s.score >= minCityScore)
       .sort((a: any, b: any) => b.score - a.score)
       .slice(0, MAX_CITIES)
       .map(({ city }: any) => ({
@@ -268,10 +322,18 @@ export async function GET(request: NextRequest) {
     
     if (process.env.NODE_ENV !== 'production') {
       console.log(
+        '[city-rank-debug]',
+        qn,
+        cities.slice(0, 5).map((c) => `${c.city},${c.stateAbbr}:${c.population}`)
+      );
+    }
+
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(
         '[search-debug2] qn=',
         normalizedQuery,
-        'upper=',
-        upper,
+        'pattern=',
+        pattern,
         'cities=',
         cityResult.cities?.length ?? 0,
         'buffets=',
@@ -308,17 +370,17 @@ export async function GET(request: NextRequest) {
 
     const scoreCandidate = (candidate: SearchResult) => {
       const searchName = normalizeForIndex(candidate.name);
+      const tokens = searchName.split(' ').filter(Boolean);
       let score = 0;
 
       if (searchName === qn) {
         score += 100;
       } else if (searchName.startsWith(qn)) {
-        score += 70;
-      } else if (
-        qn.length > 0 &&
-        searchName.split(' ').some((token) => token.startsWith(qn))
-      ) {
-        score += 40;
+        score += 80;
+      } else if (qn.length > 0 && tokens.some((token) => token.startsWith(qn))) {
+        score += 60;
+      } else if (useContains && searchName.includes(qn)) {
+        score += 30;
       }
 
       if (citySlug && candidate.citySlug === citySlug) {
