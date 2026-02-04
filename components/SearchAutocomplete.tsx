@@ -67,7 +67,7 @@ export default function SearchAutocomplete({
         onChange={(event) => setQuery(event.target.value)}
         onFocus={() => setIsOpen(true)}
         onBlur={() => window.setTimeout(() => setIsOpen(false), 120)}
-        placeholder="Search buffets, cities, states..."
+        placeholder="Search buffets, cities, neighborhoods..."
         className={inputClasses}
         autoFocus={autoFocus}
       />

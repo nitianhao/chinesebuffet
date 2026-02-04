@@ -24,9 +24,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { init } from '@instantdb/admin';
 import schema from '@/src/instant.schema';
-import type { SearchResponse, SearchResult, SearchCityResult } from '@/lib/searchTypes';
+import type { SearchResponse, SearchResult, SearchCityResult, SearchNeighborhoodResult } from '@/lib/searchTypes';
 
-const MAX_CITIES = 5; // Limit cities in results
+const MAX_CITIES = 5; // Limit cities in results (autocomplete)
+const MAX_CITIES_FULL = 15; // Limit cities for full search page
+const MAX_NEIGHBORHOODS = 5; // Limit neighborhoods in results (autocomplete)
+const MAX_NEIGHBORHOODS_FULL = 15; // Limit neighborhoods for full search page
+const MAX_BUFFETS_FULL = 100; // Higher limit for full search page
 
 export const runtime = 'nodejs';
 
@@ -86,11 +90,19 @@ function buildThumbUrl(images: RawImage[]): string | null {
   return null;
 }
 
-function clampLimit(rawLimit: string | null): number {
-  if (!rawLimit) return 8;
+function clampLimit(rawLimit: string | null, isFullMode: boolean): number {
+  if (!rawLimit) return isFullMode ? 24 : 8;
   const parsed = Number.parseInt(rawLimit, 10);
-  if (!Number.isFinite(parsed) || parsed <= 0) return 8;
-  return Math.min(parsed, 12);
+  if (!Number.isFinite(parsed) || parsed <= 0) return isFullMode ? 24 : 8;
+  const max = isFullMode ? MAX_BUFFETS_FULL : 12;
+  return Math.min(parsed, max);
+}
+
+function parseOffset(rawOffset: string | null): number {
+  if (!rawOffset) return 0;
+  const parsed = Number.parseInt(rawOffset, 10);
+  if (!Number.isFinite(parsed) || parsed < 0) return 0;
+  return parsed;
 }
 
 function normalizeForIndex(text: string): string {
@@ -125,7 +137,9 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const rawQuery = searchParams.get('q') || '';
   const trimmedQuery = rawQuery.trim().slice(0, 80);
-  const limit = clampLimit(searchParams.get('limit'));
+  const isFullMode = searchParams.get('mode') === 'full'; // Full search page mode
+  const limit = clampLimit(searchParams.get('limit'), isFullMode);
+  const offset = parseOffset(searchParams.get('offset'));
   const citySlug = searchParams.get('citySlug') || null;
   const normalizedQuery = normalizeForIndex(trimmedQuery);
 
@@ -148,7 +162,7 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  const cacheKey = `${normalizedQuery}:${limit}:${citySlug || ''}`;
+  const cacheKey = `${normalizedQuery}:${limit}:${offset}:${isFullMode ? 'full' : 'auto'}:${citySlug || ''}`;
   const cached = getCachedResponse(cacheKey);
   if (cached) {
     if (process.env.NODE_ENV !== 'production') {
@@ -167,17 +181,26 @@ export async function GET(request: NextRequest) {
 
   try {
     const queryStart = Date.now();
-    const fetchLimit = Math.min(limit * 5, 50);
+    // In full mode, fetch more results for pagination
+    const buffetFetchLimit = isFullMode 
+      ? Math.min((limit + offset) * 2, MAX_BUFFETS_FULL * 2) 
+      : Math.min(limit * 5, 50);
+    const cityFetchLimit = isFullMode 
+      ? MAX_CITIES_FULL * 3 
+      : (normalizedQuery.length >= 3 ? 100 : MAX_CITIES * 3);
+    const neighborhoodFetchLimit = isFullMode 
+      ? MAX_NEIGHBORHOODS_FULL * 3 
+      : (normalizedQuery.length >= 3 ? 100 : MAX_NEIGHBORHOODS * 3);
     const useContains = normalizedQuery.length >= 3;
     const pattern = useContains ? `%${normalizedQuery}%` : `${normalizedQuery}%`;
-    const [buffetResult, cityResult] = await Promise.all([
+    const [buffetResult, cityResult, neighborhoodResult] = await Promise.all([
       db.query({
         buffets: {
           $: {
             where: {
               searchName: { $like: pattern },
             },
-            limit: fetchLimit,
+            limit: buffetFetchLimit,
           },
           city: {},
         },
@@ -188,7 +211,17 @@ export async function GET(request: NextRequest) {
             where: {
               city: { $ilike: pattern },
             },
-            limit: useContains ? 100 : MAX_CITIES * 3,
+            limit: cityFetchLimit,
+          },
+        },
+      }),
+      db.query({
+        neighborhoods: {
+          $: {
+            where: {
+              searchName: { $like: pattern },
+            },
+            limit: neighborhoodFetchLimit,
           },
         },
       }),
@@ -307,11 +340,12 @@ export async function GET(request: NextRequest) {
     });
 
     const minCityScore = useContains ? 30 : 60;
+    const maxCities = isFullMode ? MAX_CITIES_FULL : MAX_CITIES;
     // Filter to only cities that match
     const cities: SearchCityResult[] = scoredCities
       .filter((s: any) => s.score >= minCityScore)
       .sort((a: any, b: any) => b.score - a.score)
-      .slice(0, MAX_CITIES)
+      .slice(0, maxCities)
       .map(({ city }: any) => ({
         id: city.id,
         city: city.city,
@@ -336,8 +370,72 @@ export async function GET(request: NextRequest) {
         pattern,
         'cities=',
         cityResult.cities?.length ?? 0,
+        'neighborhoods=',
+        neighborhoodResult.neighborhoods?.length ?? 0,
         'buffets=',
         buffetResult.buffets?.length ?? 0
+      );
+    }
+
+    // Process neighborhoods
+    const neighborhoodRows: any[] = neighborhoodResult.neighborhoods || [];
+    const neighborhoodCandidates = neighborhoodRows.map((n: any) => ({
+      id: n.id,
+      neighborhood: n.neighborhood || '',
+      slug: n.slug || '',
+      fullSlug: n.fullSlug || '',
+      citySlug: n.citySlug || '',
+      cityName: n.cityName || '',
+      stateAbbr: n.stateAbbr || '',
+      buffetCount: typeof n.buffetCount === 'number' ? n.buffetCount : 0,
+      searchName: n.searchName || '',
+    }));
+
+    // Score and sort neighborhoods
+    const scoredNeighborhoods = neighborhoodCandidates.map((n: any) => {
+      let score = 0;
+      const searchName = n.searchName || normalizeForIndex(`${n.neighborhood} ${n.cityName} ${n.stateAbbr}`);
+      const tokens = searchName.split(' ').filter(Boolean);
+
+      if (searchName === qn) {
+        score += 100;
+      } else if (searchName.startsWith(qn)) {
+        score += 80;
+      } else if (tokens.some((token: string) => token.startsWith(qn))) {
+        score += 60;
+      } else if (useContains && searchName.includes(qn)) {
+        score += 30;
+      }
+      
+      // Boost by buffet count (more buffets = more relevant)
+      score += Math.min(n.buffetCount / 5, 15);
+      
+      return { neighborhood: n, score };
+    });
+
+    const minNeighborhoodScore = useContains ? 30 : 60;
+    const maxNeighborhoods = isFullMode ? MAX_NEIGHBORHOODS_FULL : MAX_NEIGHBORHOODS;
+    // Filter to only neighborhoods that match
+    const neighborhoods: SearchNeighborhoodResult[] = scoredNeighborhoods
+      .filter((s: any) => s.score >= minNeighborhoodScore)
+      .sort((a: any, b: any) => b.score - a.score)
+      .slice(0, maxNeighborhoods)
+      .map(({ neighborhood }: any) => ({
+        id: neighborhood.id,
+        neighborhood: neighborhood.neighborhood,
+        slug: neighborhood.slug,
+        fullSlug: neighborhood.fullSlug,
+        citySlug: neighborhood.citySlug,
+        cityName: neighborhood.cityName,
+        stateAbbr: neighborhood.stateAbbr,
+        buffetCount: neighborhood.buffetCount,
+      }));
+
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(
+        '[neighborhood-rank-debug]',
+        qn,
+        neighborhoods.slice(0, 5).map((n) => `${n.neighborhood},${n.cityName}:${n.buffetCount}`)
       );
     }
 
@@ -364,7 +462,7 @@ export async function GET(request: NextRequest) {
           citySlug: buffet.city?.slug || null,
         };
       })
-      .slice(0, fetchLimit);
+      .slice(0, buffetFetchLimit);
 
     const dedupedMap = new Map<string, { candidate: SearchResult; score: number }>();
 
@@ -414,7 +512,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const deduped = Array.from(dedupedMap.values())
+    const allSorted = Array.from(dedupedMap.values())
       .sort((a, b) => {
         if (b.score !== a.score) return b.score - a.score;
         const reviewA = a.candidate.reviewCount ?? 0;
@@ -422,11 +520,23 @@ export async function GET(request: NextRequest) {
         if (reviewB !== reviewA) return reviewB - reviewA;
         return a.candidate.name.localeCompare(b.candidate.name);
       })
-      .map((entry) => entry.candidate)
-      .slice(0, limit);
+      .map((entry) => entry.candidate);
+    
+    // Apply pagination (offset + limit)
+    const totalBuffets = allSorted.length;
+    const deduped = allSorted.slice(offset, offset + limit);
+    const hasMore = offset + limit < totalBuffets;
 
     const tookMs = Date.now() - start;
-    const response: SearchResponse = { q: normalizedQuery, tookMs, results: deduped, cities };
+    const response: SearchResponse = { 
+      q: normalizedQuery, 
+      tookMs, 
+      results: deduped, 
+      cities,
+      neighborhoods,
+      // Include pagination info in full mode
+      ...(isFullMode && { total: totalBuffets, hasMore, offset, limit }),
+    };
     setCachedResponse(cacheKey, response);
     if (process.env.NODE_ENV !== 'production') {
       console.log(

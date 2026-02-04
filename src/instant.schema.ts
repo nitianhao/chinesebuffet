@@ -215,6 +215,17 @@ const _schema = i.schema({
       updatedAt: i.string().optional(), // When the rollup was last rebuilt
       buffetCount: i.number().optional(), // Total buffet count in rollup
     }),
+    neighborhoods: i.entity({
+      neighborhood: i.string().indexed(), // Neighborhood name
+      slug: i.string().indexed(), // URL-safe slug (neighborhood-slug)
+      fullSlug: i.string().unique().indexed(), // City-scoped slug: {citySlug}/{neighborhoodSlug}
+      searchName: i.string().optional().indexed(), // Normalized name for search queries
+      citySlug: i.string().indexed(), // Parent city slug
+      cityName: i.string().optional(), // City name for display
+      stateAbbr: i.string().optional(), // State abbreviation for display
+      buffetCount: i.number().optional(), // Number of buffets in neighborhood
+      avgRating: i.number().optional(), // Average rating across buffets
+    }),
   },
   links: {
     "$usersLinkedPrimaryUser": {

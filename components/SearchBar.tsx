@@ -33,9 +33,11 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ChangeEvent, KeyboardEvent } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { generateSlug } from '@/lib/utils';
-import type { SearchResponse, SearchResult, SearchCityResult, SearchSuggestionsResponse } from '@/lib/searchTypes';
+import type { SearchResponse, SearchResult, SearchCityResult, SearchNeighborhoodResult, SearchSuggestionsResponse } from '@/lib/searchTypes';
+import { CityIcon } from '@/components/search/CityIcon';
+import { NeighborhoodIcon } from '@/components/search/NeighborhoodIcon';
 
 type SearchBarProps = {
   variant?: 'desktop' | 'mobile';
@@ -52,8 +54,9 @@ const MAX_CACHE_ENTRIES = 50;
 const SUGGESTIONS_TTL_MS = 60 * 60 * 1000;
 const BUFFET_ROW_HEIGHT = 52; // Slightly reduced for density
 const CITY_ROW_HEIGHT = 48; // Compact city rows
+const NEIGHBORHOOD_ROW_HEIGHT = 48; // Same as city rows
 const SKELETON_ROWS = 4;
-const MAX_DROPDOWN_HEIGHT = 420; // Max height before scroll
+const MAX_DROPDOWN_HEIGHT = 480; // Max height before scroll (increased for neighborhoods)
 
 type SearchCacheEntry = {
   ts: number;
@@ -154,12 +157,17 @@ function SkeletonRow() {
 }
 
 // Section header component for consistent styling
-function SectionHeader({ children }: { children: React.ReactNode }) {
+function SectionHeader({ children, count }: { children: React.ReactNode; count?: number }) {
   return (
-    <div className="px-4 py-2">
+    <div className="px-4 py-2 flex items-center justify-between">
       <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-400/90">
         {children}
       </div>
+      {typeof count === 'number' && (
+        <span className="text-[11px] font-medium text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">
+          {count}
+        </span>
+      )}
     </div>
   );
 }
@@ -175,14 +183,16 @@ function ChevronRight({ className }: { className?: string }) {
 
 export default function SearchBar({
   variant = 'desktop',
-  placeholder = 'Search buffets, cities...',
+  placeholder = 'Search buffets, cities, neighborhoods...',
   autoFocus = false,
   onNavigate,
 }: SearchBarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [cities, setCities] = useState<SearchCityResult[]>([]);
+  const [neighborhoods, setNeighborhoods] = useState<SearchNeighborhoodResult[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSuggestionsLoading, setIsSuggestionsLoading] = useState(false);
@@ -225,7 +235,7 @@ export default function SearchBar({
 
   // Build flat list of navigable items for keyboard navigation
   const navigableItems = useMemo(() => {
-    const items: Array<{ type: 'suggestion' | 'place' | 'result' | 'city' | 'footer'; value: string; href?: string }> = [];
+    const items: Array<{ type: 'suggestion' | 'place' | 'result' | 'city' | 'neighborhood' | 'footer'; value: string; href?: string }> = [];
     
     if (showSuggestions && suggestions) {
       suggestions.suggestions.popularQueries.forEach((q) => {
@@ -236,26 +246,33 @@ export default function SearchBar({
         items.push({ type: 'place', value: place.name, href });
       });
     } else {
-      // Cities first, then buffets, then footer CTA
+      // Cities first, then neighborhoods, then buffets, then footer CTA
       cities.forEach((city) => {
         items.push({ type: 'city', value: `${city.city}, ${city.stateAbbr}`, href: getCityHref(city) });
+      });
+      neighborhoods.forEach((neighborhood) => {
+        items.push({ 
+          type: 'neighborhood', 
+          value: `${neighborhood.neighborhood}, ${neighborhood.cityName}`, 
+          href: `/chinese-buffets/${neighborhood.fullSlug}` 
+        });
       });
       results.forEach((result) => {
         items.push({ type: 'result', value: result.name, href: getResultHref(result) });
       });
       // Add footer CTA if we have results
-      if (shouldSearch && (cities.length > 0 || results.length > 0)) {
+      if (shouldSearch && (cities.length > 0 || neighborhoods.length > 0 || results.length > 0)) {
         items.push({ type: 'footer', value: trimmedQuery, href: `/search?q=${encodeURIComponent(trimmedQuery)}` });
       }
     }
     
     return items;
-  }, [showSuggestions, suggestions, cities, results, shouldSearch, trimmedQuery]);
+  }, [showSuggestions, suggestions, cities, neighborhoods, results, shouldSearch, trimmedQuery]);
 
   // Reset highlight when results/suggestions change
   useEffect(() => {
     setHighlightedIndex(-1);
-  }, [navigableItems.length, showSuggestions, results, cities]);
+  }, [navigableItems.length, showSuggestions, results, cities, neighborhoods]);
 
   const handleChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     const nextValue = event.target.value;
@@ -357,9 +374,14 @@ export default function SearchBar({
         );
         break;
       case 'Enter':
+        event.preventDefault();
         if (highlightedIndex >= 0) {
-          event.preventDefault();
           selectHighlightedItem();
+        } else if (query.trim().length >= MIN_QUERY_LENGTH) {
+          // Navigate to search results page
+          setIsOpen(false);
+          router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+          onNavigate?.();
         }
         break;
       case 'Escape':
@@ -369,7 +391,7 @@ export default function SearchBar({
         inputRef.current?.blur();
         break;
     }
-  }, [isOpen, highlightedIndex, navigableItems.length, selectHighlightedItem]);
+  }, [isOpen, highlightedIndex, navigableItems.length, selectHighlightedItem, query, router, onNavigate]);
 
   // Scroll highlighted item into view
   useEffect(() => {
@@ -426,8 +448,10 @@ export default function SearchBar({
       setCachedResult(cacheKey, data);
       const newResults = Array.isArray(data.results) ? data.results : [];
       const newCities = Array.isArray(data.cities) ? data.cities : [];
+      const newNeighborhoods = Array.isArray(data.neighborhoods) ? data.neighborhoods : [];
       setResults(newResults);
       setCities(newCities);
+      setNeighborhoods(newNeighborhoods);
       setResultsQuery(data.q || searchText);
       
       // DEBUG STEP 2: Log state after setting
@@ -435,6 +459,7 @@ export default function SearchBar({
         "[search-ui-state]",
         {
           citiesState: newCities.length,
+          neighborhoodsState: newNeighborhoods.length,
           resultsState: newResults.length,
           citiesData: newCities,
         }
@@ -447,6 +472,7 @@ export default function SearchBar({
       if (requestId !== requestIdRef.current) return;
       setResults([]);
       setCities([]);
+      setNeighborhoods([]);
       setResultsQuery(searchText);
     } finally {
       if (requestId === requestIdRef.current) {
@@ -463,6 +489,7 @@ export default function SearchBar({
       abortRef.current?.abort();
       setResults([]);
       setCities([]);
+      setNeighborhoods([]);
       setResultsQuery(trimmedQuery);
       setIsLoading(false);
       setDebouncedQuery('');
@@ -486,6 +513,7 @@ export default function SearchBar({
     if (cached) {
       setResults(Array.isArray(cached.results) ? cached.results : []);
       setCities(Array.isArray(cached.cities) ? cached.cities : []);
+      setNeighborhoods(Array.isArray(cached.neighborhoods) ? cached.neighborhoods : []);
       setResultsQuery(cached.q || debouncedQuery);
       setIsLoading(false);
       if (process.env.NODE_ENV !== 'production') {
@@ -553,7 +581,7 @@ export default function SearchBar({
 
   // Track current option index for aria
   let optionIndex = 0;
-  const footerIdx = cities.length + results.length;
+  const footerIdx = cities.length + neighborhoods.length + results.length;
   const isFooterHighlighted = highlightedIndex === footerIdx;
 
   return (
@@ -702,8 +730,8 @@ export default function SearchBar({
               <div>
                 {/* Cities section - navigation entry points */}
                 {cities.length > 0 && (
-                  <div className="py-2">
-                    <SectionHeader>Cities</SectionHeader>
+                  <div className={`py-2 ${neighborhoods.length === 0 && results.length === 0 ? 'pb-16' : ''}`}>
+                    <SectionHeader count={cities.length}>Cities</SectionHeader>
                     <div className="space-y-0.5">
                       {cities.map((city, idx) => {
                         const isHighlighted = highlightedIndex === idx;
@@ -723,16 +751,11 @@ export default function SearchBar({
                             onClick={handleNavigate}
                             onMouseEnter={() => setHighlightedIndex(idx)}
                           >
-                            <div className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg transition-colors ${
-                              isHighlighted
-                                ? 'bg-[var(--accent1)]/10 text-[var(--accent1)]'
-                                : 'bg-gray-100 text-gray-400 group-hover:bg-gray-200/70'
-                            }`}>
-                              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-                              </svg>
-                            </div>
+                            <CityIcon 
+                              cityName={city.city} 
+                              stateAbbr={city.stateAbbr} 
+                              isHighlighted={isHighlighted}
+                            />
                             <div className="min-w-0 flex-1">
                               <div className={`truncate text-sm font-semibold ${isHighlighted ? 'text-[var(--accent1)]' : 'text-gray-900'}`}>
                                 {highlightMatch(city.city, trimmedQuery)}
@@ -754,18 +777,74 @@ export default function SearchBar({
                   </div>
                 )}
 
-                {/* Divider between sections */}
-                {cities.length > 0 && results.length > 0 && (
+                {/* Divider between cities and neighborhoods */}
+                {cities.length > 0 && neighborhoods.length > 0 && (
+                  <div className="mx-4 border-t border-gray-100" />
+                )}
+
+                {/* Neighborhoods section */}
+                {neighborhoods.length > 0 && (
+                  <div className={`py-2 ${results.length === 0 ? 'pb-16' : ''}`}>
+                    <SectionHeader count={neighborhoods.length}>Neighborhoods</SectionHeader>
+                    <div className="space-y-0.5">
+                      {neighborhoods.map((neighborhood, idx) => {
+                        const globalIdx = cities.length + idx;
+                        const isHighlighted = highlightedIndex === globalIdx;
+                        return (
+                          <Link
+                            key={neighborhood.id}
+                            id={`search-option-${globalIdx}`}
+                            role="option"
+                            aria-selected={isHighlighted}
+                            href={`/chinese-buffets/${neighborhood.fullSlug}`}
+                            className={`group flex items-center gap-3 rounded-lg px-4 py-2 transition-colors ${
+                              isHighlighted
+                                ? 'bg-[var(--accent1)]/8 ring-1 ring-[var(--accent1)]/15'
+                                : 'hover:bg-gray-50'
+                            }`}
+                            style={{ minHeight: NEIGHBORHOOD_ROW_HEIGHT }}
+                            onClick={handleNavigate}
+                            onMouseEnter={() => setHighlightedIndex(globalIdx)}
+                          >
+                            <NeighborhoodIcon 
+                              neighborhoodName={neighborhood.neighborhood} 
+                              cityName={neighborhood.cityName}
+                              stateAbbr={neighborhood.stateAbbr}
+                              isHighlighted={isHighlighted}
+                            />
+                            <div className="min-w-0 flex-1">
+                              <div className={`truncate text-sm font-semibold ${isHighlighted ? 'text-[var(--accent1)]' : 'text-gray-900'}`}>
+                                {highlightMatch(neighborhood.neighborhood, trimmedQuery)}
+                                <span className="font-normal text-gray-500">, {neighborhood.cityName}</span>
+                              </div>
+                              <div className="truncate text-xs text-gray-400">
+                                {neighborhood.buffetCount || 0} buffet{neighborhood.buffetCount !== 1 ? 's' : ''} in this neighborhood
+                              </div>
+                            </div>
+                            <ChevronRight className={`h-4 w-4 flex-shrink-0 transition-all ${
+                              isHighlighted
+                                ? 'text-[var(--accent1)] opacity-100'
+                                : 'text-gray-300 opacity-0 group-hover:opacity-100'
+                            }`} />
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Divider between neighborhoods/cities and buffets */}
+                {(cities.length > 0 || neighborhoods.length > 0) && results.length > 0 && (
                   <div className="mx-4 border-t border-gray-100" />
                 )}
 
                 {/* Buffets section - compact and scannable */}
                 {results.length > 0 && (
-                  <div className="py-2">
-                    {cities.length > 0 && <SectionHeader>Buffets</SectionHeader>}
+                  <div className="py-2 pb-16">
+                    <SectionHeader count={results.length}>Buffets</SectionHeader>
                     <div className="space-y-0.5">
                       {results.map((result, idx) => {
-                        const globalIdx = cities.length + idx;
+                        const globalIdx = cities.length + neighborhoods.length + idx;
                         const isHighlighted = highlightedIndex === globalIdx;
                         const locationParts = [
                           result.neighborhood || null,
@@ -829,7 +908,7 @@ export default function SearchBar({
                 )}
 
                 {(!isLoading && cities.length === 0 && results.length === 0) && (
-                  <div className="px-4 py-8 text-center">
+                  <div className="px-4 py-8 pb-4 text-center">
                     <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
                       <svg className="h-6 w-6 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
@@ -845,23 +924,23 @@ export default function SearchBar({
                 )}
               </div>
             )}
-              {shouldSearch && (
-                <div className="border-t border-gray-100">
+              {/* Sticky footer - Show all results button */}
+              {shouldSearch && !isLoading && (cities.length > 0 || neighborhoods.length > 0 || results.length > 0) && (
+                <div className="sticky bottom-0 left-0 right-0 border-t border-gray-200 bg-white/95 backdrop-blur-sm shadow-[0_-2px_8px_rgba(0,0,0,0.06)]">
                   <Link
                     id={`search-option-${footerIdx}`}
                     role="option"
                     aria-selected={isFooterHighlighted}
                     href={`/search?q=${encodeURIComponent(trimmedQuery)}`}
-                    className={`flex items-center justify-center gap-2 px-4 py-3 text-sm transition-colors ${
+                    className={`flex items-center justify-center gap-2 px-4 py-3 m-2 rounded-lg text-sm font-semibold transition-all ${
                       isFooterHighlighted
-                        ? 'bg-[var(--accent1)]/5 text-[var(--accent1)]'
-                        : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+                        ? 'bg-[var(--accent1)] text-white shadow-md'
+                        : 'bg-[var(--accent1)]/10 text-[var(--accent1)] hover:bg-[var(--accent1)] hover:text-white'
                     }`}
                     onClick={handleNavigate}
                     onMouseEnter={() => setHighlightedIndex(footerIdx)}
                   >
-                    <span>See all results for</span>
-                    <span className="font-medium text-gray-700">"{trimmedQuery}"</span>
+                    <span>Show all {cities.length + neighborhoods.length + results.length} results</span>
                     <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clipRule="evenodd" />
                     </svg>

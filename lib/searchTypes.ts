@@ -19,11 +19,28 @@ export type SearchCityResult = {
   population?: number;
 };
 
+export type SearchNeighborhoodResult = {
+  id: string;
+  neighborhood: string;
+  slug: string;
+  fullSlug: string;
+  citySlug: string;
+  cityName: string;
+  stateAbbr: string;
+  buffetCount?: number;
+};
+
 export type SearchResponse = {
   q: string;
   tookMs: number;
   results: SearchResult[]; // Buffets (kept for backward compatibility)
   cities?: SearchCityResult[]; // Cities matching query
+  neighborhoods?: SearchNeighborhoodResult[]; // Neighborhoods matching query
+  // Pagination fields (only in mode=full)
+  total?: number;
+  hasMore?: boolean;
+  offset?: number;
+  limit?: number;
 };
 
 export type SearchSuggestionPlace = {
