@@ -2245,8 +2245,8 @@ export async function getTopRatedBuffetsForHomepage(limit: number = 12): Promise
   reviewCount: number;
   thumbPhotoReference?: string;
 }>> {
-  const db = getAdminDb();
   try {
+    const db = getAdminDb();
     const result = await adminQuery(db, {
       buffets: {
         $: {

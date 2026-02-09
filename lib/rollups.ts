@@ -129,20 +129,24 @@ let cachedDb: ReturnType<typeof init> | null = null;
 // Page-level ISR is configured via `export const revalidate` in each route file.
 const rollupFetchOpts: RequestInit = { cache: 'force-cache' };
 
-function getDb() {
+/** Returns null when INSTANT_ADMIN_TOKEN is missing so pages never 503 during build/runtime. */
+function getDb(): ReturnType<typeof init> | null {
   if (cachedDb) return cachedDb;
-  
+
   if (!process.env.INSTANT_ADMIN_TOKEN) {
-    throw new Error('INSTANT_ADMIN_TOKEN is required');
+    return null;
   }
-  
-  cachedDb = init({
-    appId: process.env.NEXT_PUBLIC_INSTANT_APP_ID || process.env.INSTANT_APP_ID || '709e0e09-3347-419b-8daa-bad6889e480d',
-    adminToken: process.env.INSTANT_ADMIN_TOKEN,
-    schema: (schema as any).default || schema,
-  });
-  
-  return cachedDb;
+
+  try {
+    cachedDb = init({
+      appId: process.env.NEXT_PUBLIC_INSTANT_APP_ID || process.env.INSTANT_APP_ID || '709e0e09-3347-419b-8daa-bad6889e480d',
+      adminToken: process.env.INSTANT_ADMIN_TOKEN,
+      schema: (schema as any).default || schema,
+    });
+    return cachedDb;
+  } catch {
+    return null;
+  }
 }
 
 // ============================================================================
@@ -166,8 +170,11 @@ async function fetchRollupInternal(
 }> {
   const tTotal = perfMark();
   const db = getDb();
+  if (!db) {
+    return { data: null, updatedAt: null, found: false, stale: true };
+  }
   const label = `rollup:${type}/${key ?? 'global'}`;
-  
+
   try {
     // Build query based on type and key
     const whereClause: any = { type };
