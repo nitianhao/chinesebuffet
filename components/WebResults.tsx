@@ -1,5 +1,3 @@
-'use client';
-
 import { Buffet } from '@/lib/data';
 
 interface WebResultsProps {
@@ -44,13 +42,13 @@ export default function WebResults({ webResults }: WebResultsProps) {
             href={result.url || '#'}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:border-blue-400 hover:bg-blue-50 transition-colors group"
+            className="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:border-[var(--accent1)] hover:bg-[var(--surface2)] transition-colors group"
           >
-            <div className="flex-shrink-0 text-blue-600 group-hover:text-blue-700">
+            <div className="flex-shrink-0 text-[var(--accent1)] group-hover:text-[var(--accent1)]">
               {getIcon(result.url || '')}
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-gray-900 group-hover:text-blue-700 mb-1">
+              <h3 className="font-semibold text-gray-900 group-hover:text-[var(--accent1)] mb-1">
                 {result.title || 'External Link'}
               </h3>
               {result.description && (
@@ -61,7 +59,7 @@ export default function WebResults({ webResults }: WebResultsProps) {
               )}
             </div>
             <svg
-              className="w-5 h-5 text-gray-400 group-hover:text-blue-600 flex-shrink-0 mt-1"
+              className="w-5 h-5 text-gray-400 group-hover:text-[var(--accent1)] flex-shrink-0 mt-1"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

@@ -1,0 +1,35 @@
+
+================================================================================
+CRAWL PATH ANALYSIS REPORT
+================================================================================
+
+📊 SUMMARY
+--------------------------------------------------------------------------------
+Total Pages:        5
+Max Depth:          1 clicks
+Orphan Pages:       0
+Depth Violations:   0 (pages > 3 clicks)
+URL Issues:         0
+
+📈 DEPTH DISTRIBUTION
+--------------------------------------------------------------------------------
+Depth 0:     1 pages 
+Depth 1:     4 pages 
+
+🗺️  CRAWL MAP (Sample - First 3 levels)
+--------------------------------------------------------------------------------
+Level 0: https://yoursite.com
+  └─ Level 1: /chinese-buffets/near/parking (poi)
+  └─ Level 1: /chinese-buffets/near/shopping-malls (poi)
+  └─ Level 1: /chinese-buffets/near/highways (poi)
+  └─ Level 1: /chinese-buffets/near/gas-stations (poi)
+
+================================================================================
+
+💡 RECOMMENDATIONS
+--------------------------------------------------------------------------------
+4. ✅ Ensure consistent internal linking:
+   - All pages should link back to parent pages
+   - Use breadcrumbs for navigation
+   - Include hub links (city/state) on detail pages
+

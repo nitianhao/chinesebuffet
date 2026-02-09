@@ -1,5 +1,6 @@
 import { Buffet, City } from '@/lib/data';
 import { getCityBySlug } from '@/lib/data-instantdb';
+import { getSiteUrl } from '@/lib/site-url';
 
 interface SchemaMarkupProps {
   type: 'homepage' | 'city' | 'buffet';
@@ -8,7 +9,7 @@ interface SchemaMarkupProps {
 }
 
 export default async function SchemaMarkup({ type, data, citySlug }: SchemaMarkupProps) {
-  const baseUrl = 'https://yoursite.com'; // Update with your actual domain
+  const baseUrl = getSiteUrl();
   let schemas: any[] = [];
 
   if (type === 'homepage') {

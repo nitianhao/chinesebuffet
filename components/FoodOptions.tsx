@@ -1,133 +1,54 @@
-'use client';
+import ChipGridWithExpand, { ChipItem } from '@/components/ui/ChipGridWithExpand';
 
 interface FoodOptionsProps {
-  data: Record<string, any> | any[];
+  data: Record<string, unknown> | unknown[];
 }
 
 function formatLabel(value: string): string {
-  return value
-    .replace(/([A-Z])/g, ' $1')
-    .replace(/^./, (str) => str.toUpperCase())
-    .replace(/_/g, ' ')
-    .trim();
+  return value.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase()).replace(/_/g, ' ').trim();
 }
 
-function normalizeList(value: any): string[] {
+function normalizeList(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
-  return value.filter((item) => typeof item === 'string' && item.trim()).map((item) => item.trim());
+  return (value as string[]).filter((item) => typeof item === 'string' && item.trim()).map((item) => item.trim());
 }
 
 export default function FoodOptions({ data }: FoodOptionsProps) {
   if (!data) return null;
 
-  const diningOptions = normalizeList((data as any).diningOptions);
-  const popularFor = normalizeList((data as any).popularFor);
-  const serviceOptions = typeof (data as any).foodServiceOptions === 'object' && (data as any).foodServiceOptions
-    ? Object.entries((data as any).foodServiceOptions).filter(([, value]) =>
-        typeof value === 'boolean' || typeof value === 'string' || typeof value === 'number'
-      )
-    : [];
+  const items: ChipItem[] = [];
+  const dataObj = data as Record<string, unknown>;
 
-  const fallbackTags = Array.isArray(data)
-    ? normalizeList(data)
-    : Object.entries(data as Record<string, any>)
-        .filter(([, value]) => Array.isArray(value))
-        .flatMap(([, value]) => normalizeList(value));
+  const diningOptions = normalizeList(dataObj.diningOptions);
+  const popularFor = normalizeList(dataObj.popularFor);
+  diningOptions.forEach((item) => items.push({ label: item, available: true }));
+  popularFor.forEach((item) => items.push({ label: item, available: true }));
 
-  const hasContent =
-    diningOptions.length > 0 ||
-    popularFor.length > 0 ||
-    serviceOptions.length > 0 ||
-    fallbackTags.length > 0;
+  const serviceOptions =
+    typeof dataObj.foodServiceOptions === 'object' && dataObj.foodServiceOptions
+      ? Object.entries(dataObj.foodServiceOptions as Record<string, unknown>)
+      : [];
 
-  if (!hasContent) return null;
+  serviceOptions.forEach(([key, value]) => {
+    const label = formatLabel(key);
+    if (value === true || value === 'true' || value === 'yes') {
+      items.push({ label, available: true });
+    } else if (value === false || value === 'false' || value === 'no') {
+      items.push({ label, available: false });
+    }
+  });
+
+  if (Array.isArray(data)) {
+    normalizeList(data).forEach((item) => items.push({ label: item, available: true }));
+  }
+
+  if (items.length === 0) return null;
 
   return (
-    <div className="mb-6">
-      <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
-        <span className="text-2xl">🍽️</span>
-        Food Options
-      </h2>
-      <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl border border-orange-100 p-6 shadow-sm space-y-6">
-        {diningOptions.length > 0 && (
-          <div>
-            <h3 className="text-sm font-semibold text-orange-700 uppercase tracking-wide mb-2">
-              Dining Options
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {diningOptions.map((item, index) => (
-                <span
-                  key={`${item}-${index}`}
-                  className="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium bg-white border border-orange-200 text-gray-800 shadow-sm"
-                >
-                  <span>{item}</span>
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {popularFor.length > 0 && (
-          <div>
-            <h3 className="text-sm font-semibold text-orange-700 uppercase tracking-wide mb-2">
-              Popular For
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {popularFor.map((item, index) => (
-                <span
-                  key={`${item}-${index}`}
-                  className="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium bg-white border border-orange-200 text-gray-800 shadow-sm"
-                >
-                  <span>{item}</span>
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {serviceOptions.length > 0 && (
-          <div>
-            <h3 className="text-sm font-semibold text-orange-700 uppercase tracking-wide mb-2">
-              Service Options
-            </h3>
-            <div className="space-y-3">
-              {serviceOptions.map(([key, value]) => {
-                const isAvailable = value === true || value === 'true' || value === 'yes' || value === 1;
-                const isUnavailable = value === false || value === 'false' || value === 'no' || value === 0;
-                return (
-                  <div key={key} className="flex items-center gap-3">
-                    <div className="flex-1 font-medium text-gray-800">{formatLabel(key)}</div>
-                    <div
-                      className={`px-4 py-2 rounded-lg font-medium ${
-                        isAvailable
-                          ? 'bg-green-100 text-green-800'
-                          : isUnavailable
-                          ? 'bg-red-100 text-red-800'
-                          : 'bg-gray-100 text-gray-800'
-                      }`}
-                    >
-                      {isAvailable ? 'Available' : isUnavailable ? 'Not Available' : String(value)}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {fallbackTags.length > 0 && diningOptions.length === 0 && popularFor.length === 0 && serviceOptions.length === 0 && (
-          <div className="flex flex-wrap gap-2">
-            {fallbackTags.map((item, index) => (
-              <span
-                key={`${item}-${index}`}
-                className="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium bg-white border border-orange-200 text-gray-800 shadow-sm"
-              >
-                <span>{item}</span>
-              </span>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
+    <ChipGridWithExpand
+      items={items}
+      initialCount={6}
+      className="mt-1"
+    />
   );
 }

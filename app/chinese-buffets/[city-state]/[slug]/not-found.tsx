@@ -2,15 +2,15 @@ import Link from 'next/link';
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+    <div className="min-h-screen bg-[var(--bg)] flex items-center justify-center">
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Buffet Not Found</h1>
-        <p className="text-gray-600 mb-8">
+        <h1 className="text-4xl font-bold text-[var(--text)] mb-4">Buffet Not Found</h1>
+        <p className="text-[var(--muted)] mb-8">
           The buffet you're looking for doesn't exist in our directory.
         </p>
         <Link
           href="/"
-          className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+          className="inline-block bg-gradient-to-r from-[var(--accent1)] to-[var(--accent2)] text-white px-6 py-3 rounded-lg hover:opacity-90 transition-opacity"
         >
           Return to Homepage
         </Link>
@@ -18,4 +18,3 @@ export default function NotFound() {
     </div>
   );
 }
-

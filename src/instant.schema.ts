@@ -20,6 +20,7 @@ const _schema = i.schema({
       stateAbbr: i.string().indexed(),
       population: i.number(),
       slug: i.string().unique().indexed(),
+      searchName: i.string().optional().indexed(), // Normalized name for search queries
       // SEO enrichment fields
       timezone: i.string().optional(),
       elevation: i.number().optional(),
@@ -50,6 +51,7 @@ const _schema = i.schema({
     buffets: i.entity({
       name: i.string().indexed(),
       slug: i.string().indexed(),
+      searchName: i.string().optional().indexed(), // Normalized name for search queries
       street: i.string(),
       cityName: i.string().indexed(), // City name as string (for filtering)
       state: i.string().indexed(),
@@ -64,7 +66,8 @@ const _schema = i.schema({
       reviewsCount: i.number().optional(),
       lat: i.number(),
       lng: i.number(),
-      neighborhood: i.string().optional(),
+      neighborhood: i.string().optional(), // Primary neighborhood (backward compatible)
+      neighborhoodContext: i.string().optional(), // JSON stringified enriched location context (neighborhoods, districts, county, metro_area)
       permanentlyClosed: i.boolean(),
       temporarilyClosed: i.boolean(),
       placeId: i.string().indexed().optional(), // OPTIMIZATION: Index placeId for menu/review lookups
@@ -106,7 +109,33 @@ const _schema = i.schema({
       reviewSummaryParagraph2: i.string().optional(),
       // Overpass API POI data (JSON string - will be migrated to overpassPOIs table)
       overpassPOIs: i.string().optional(), // JSON stringified object with nearby POIs
-      accommodationLodging: i.string().optional(), // JSON stringified list of nearby lodging POIs
+      // Nearby POI categories (JSON stringified arrays)
+      accommodationLodging: i.string().optional(),
+      agriculturalFarming: i.string().optional(),
+      artsCulture: i.string().optional(),
+      communicationsTechnology: i.string().optional(),
+      educationLearning: i.string().optional(),
+      financialServices: i.string().optional(),
+      foodDining: i.string().optional(),
+      governmentPublicServices: i.string().optional(),
+      healthcareMedicalServices: i.string().optional(),
+      homeImprovementGarden: i.string().optional(),
+      industrialManufacturing: i.string().optional(),
+      miscellaneousServices: i.string().optional(),
+      personalCareBeauty: i.string().optional(),
+      petCareVeterinary: i.string().optional(),
+      professionalBusinessServices: i.string().optional(),
+      recreationEntertainment: i.string().optional(),
+      sportsFitness: i.string().optional(),
+      travelTourismServices: i.string().optional(),
+      repairMaintenance: i.string().optional(),
+      religiousSpiritual: i.string().optional(),
+      socialCommunityServices: i.string().optional(),
+      utilitiesInfrastructure: i.string().optional(),
+      retailShopping: i.string().optional(),
+      transportationAutomotive: i.string().optional(),
+      // Facet index for filtering (precomputed from amenities + nearby POIs)
+      facetIndex: i.string().optional(), // JSON stringified BuffetFacetData
     }),
     reviews: i.entity({
       reviewerId: i.string().optional(),
@@ -165,6 +194,7 @@ const _schema = i.schema({
       category: i.string().optional().indexed(), // Category (amenity/shop/tourism type)
       group: i.string().optional().indexed(), // High-level category group (e.g., 'Food & Dining', 'Retail & Shopping')
       distance: i.number().indexed(), // Distance in meters from the buffet
+      distanceFt: i.number().optional().indexed(), // Distance in feet from the buffet
       lat: i.number().indexed(), // Latitude
       lon: i.number().indexed(), // Longitude
       tags: i.string().optional(), // JSON stringified object with all OSM tags
@@ -177,6 +207,24 @@ const _schema = i.schema({
       group: i.string().optional().indexed(), // Group/category for organizing structured data
       createdAt: i.string().optional(), // Timestamp when created
       updatedAt: i.string().optional(), // Timestamp when last updated
+    }),
+    directoryRollups: i.entity({
+      type: i.string().indexed(), // Rollup type: 'states', 'cities', 'cityNeighborhoods', etc.
+      key: i.string().optional().indexed(), // Optional key for keyed rollups (city slug, state abbr, etc.)
+      data: i.string(), // JSON stringified rollup data
+      updatedAt: i.string().optional(), // When the rollup was last rebuilt
+      buffetCount: i.number().optional(), // Total buffet count in rollup
+    }),
+    neighborhoods: i.entity({
+      neighborhood: i.string().indexed(), // Neighborhood name
+      slug: i.string().indexed(), // URL-safe slug (neighborhood-slug)
+      fullSlug: i.string().unique().indexed(), // City-scoped slug: {citySlug}/{neighborhoodSlug}
+      searchName: i.string().optional().indexed(), // Normalized name for search queries
+      citySlug: i.string().indexed(), // Parent city slug
+      cityName: i.string().optional(), // City name for display
+      stateAbbr: i.string().optional(), // State abbreviation for display
+      buffetCount: i.number().optional(), // Number of buffets in neighborhood
+      avgRating: i.number().optional(), // Average rating across buffets
     }),
   },
   links: {

@@ -1,5 +1,3 @@
-'use client';
-
 interface OwnerUpdate {
   updateText?: string;
   updateDate?: string;
@@ -34,32 +32,32 @@ export default function OwnerUpdates({ updates }: OwnerUpdatesProps) {
       {updates.map((update, index) => (
         <div
           key={index}
-          className="bg-blue-50 border-l-4 border-blue-500 rounded-r-lg p-4"
+          className="bg-[var(--surface2)] border-l-4 border-[var(--accent1)] rounded-r-lg p-4"
         >
           <div className="flex items-start gap-3">
             <div className="flex-shrink-0">
-              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-10 h-10 rounded-full bg-[var(--surface)] flex items-center justify-center">
+                <svg className="w-5 h-5 text-[var(--accent1)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
                 </svg>
               </div>
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
-                <span className="font-semibold text-blue-900">Business Owner</span>
+                <span className="font-semibold text-[var(--text)]">Business Owner</span>
                 {update.updateDate && (
-                  <span className="text-xs text-blue-700">
+                  <span className="text-xs text-[var(--accent1)]">
                     {formatDate(update.updateDate) || update.updateDate}
                   </span>
                 )}
               </div>
               {update.updateText && (
-                <p className="text-blue-800 whitespace-pre-line leading-relaxed">
+                <p className="text-[var(--accent1)] whitespace-pre-line leading-relaxed">
                   {update.updateText}
                 </p>
               )}
               {!update.updateText && Object.keys(update).some(k => k !== 'updateDate') && (
-                <p className="text-blue-800">
+                <p className="text-[var(--accent1)]">
                   {JSON.stringify(update)}
                 </p>
               )}

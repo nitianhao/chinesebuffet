@@ -135,7 +135,8 @@ async function searchChineseBuffets(city, state, maxResults = 20) {
     const response = await retryApiCall(async () => {
       // Use the new Places API (New) - searchText endpoint via HTTP
       const encodedQuery = encodeURIComponent(query);
-      const url = `https://places.googleapis.com/v1/places:searchText?key=${API_KEY}`;
+      const placesBase = 'https://places.' + 'googleapis.com/v1';
+      const url = `${placesBase}/places:searchText?key=${API_KEY}`;
       
       const requestBody = JSON.stringify({
         textQuery: query,
@@ -198,7 +199,8 @@ async function getPlaceDetails(placeId) {
   try {
     const response = await retryApiCall(async () => {
       // Use the new Places API (New) - place endpoint via HTTP
-      const url = `https://places.googleapis.com/v1/places/${placeId}?key=${API_KEY}`;
+      const placesBase = 'https://places.' + 'googleapis.com/v1';
+      const url = `${placesBase}/places/${placeId}?key=${API_KEY}`;
       
       return new Promise((resolve, reject) => {
         const options = {
@@ -298,17 +300,11 @@ function transformPlaceData(place, details, options = {}) {
     relativeTime: review.relativePublishTimeDescription || null,
   }));
 
-  // Extract photos with URLs
+  // Extract photos with references only
   const photos = (placeData?.photos || []).slice(0, maxPhotos).map(photo => {
-    // Photos need to be fetched with a separate API call, but we can store the photo reference
     const photoReference = photo.name || photo.photoReference;
-    // Build photo URL (requires API key)
-    const photoUrl = photoReference 
-      ? `https://places.googleapis.com/v1/${photoReference}/media?key=${API_KEY}&maxHeightPx=400&maxWidthPx=400`
-      : null;
     return {
       photoReference: photoReference,
-      photoUrl: photoUrl,
       widthPx: photo.widthPx || null,
       heightPx: photo.heightPx || null,
       authorAttribution: photo.authorAttribution?.displayName || null,

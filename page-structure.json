@@ -1,0 +1,161 @@
+{
+  "generatedAt": "2026-01-31T11:52:11.500Z",
+  "summary": {
+    "totalPages": 12,
+    "staticPages": 5,
+    "dynamicPages": 7,
+    "depthDistribution": {
+      "0": 1,
+      "1": 2,
+      "2": 3,
+      "3": 5,
+      "4": 1
+    },
+    "uniqueDynamicParams": [
+      "city-state",
+      "neighborhood",
+      "poi-type",
+      "region",
+      "slug",
+      "state"
+    ]
+  },
+  "pages": [
+    {
+      "urlPath": "/",
+      "filePath": "app/page.tsx",
+      "dynamicParams": [],
+      "depth": 0,
+      "hasDynamicSegments": false
+    },
+    {
+      "urlPath": "/cities",
+      "filePath": "app/cities/page.tsx",
+      "dynamicParams": [],
+      "depth": 1,
+      "hasDynamicSegments": false
+    },
+    {
+      "urlPath": "/design-test",
+      "filePath": "app/design-test/page.tsx",
+      "dynamicParams": [],
+      "depth": 1,
+      "hasDynamicSegments": false
+    },
+    {
+      "urlPath": "/chinese-buffets/[city-state]",
+      "filePath": "app/chinese-buffets/[city-state]/page.tsx",
+      "dynamicParams": [
+        {
+          "name": "city-state",
+          "segment": "[city-state]",
+          "type": "dynamic"
+        }
+      ],
+      "depth": 2,
+      "hasDynamicSegments": true
+    },
+    {
+      "urlPath": "/chinese-buffets/cities",
+      "filePath": "app/chinese-buffets/cities/page.tsx",
+      "dynamicParams": [],
+      "depth": 2,
+      "hasDynamicSegments": false
+    },
+    {
+      "urlPath": "/chinese-buffets/states",
+      "filePath": "app/chinese-buffets/states/page.tsx",
+      "dynamicParams": [],
+      "depth": 2,
+      "hasDynamicSegments": false
+    },
+    {
+      "urlPath": "/chinese-buffets/[city-state]/[slug]",
+      "filePath": "app/chinese-buffets/[city-state]/[slug]/page.tsx",
+      "dynamicParams": [
+        {
+          "name": "city-state",
+          "segment": "[city-state]",
+          "type": "dynamic"
+        },
+        {
+          "name": "slug",
+          "segment": "[slug]",
+          "type": "dynamic"
+        }
+      ],
+      "depth": 3,
+      "hasDynamicSegments": true
+    },
+    {
+      "urlPath": "/chinese-buffets/[city-state]/neighborhoods",
+      "filePath": "app/chinese-buffets/[city-state]/neighborhoods/page.tsx",
+      "dynamicParams": [
+        {
+          "name": "city-state",
+          "segment": "[city-state]",
+          "type": "dynamic"
+        }
+      ],
+      "depth": 3,
+      "hasDynamicSegments": true
+    },
+    {
+      "urlPath": "/chinese-buffets/near/[poi-type]",
+      "filePath": "app/chinese-buffets/near/[poi-type]/page.tsx",
+      "dynamicParams": [
+        {
+          "name": "poi-type",
+          "segment": "[poi-type]",
+          "type": "dynamic"
+        }
+      ],
+      "depth": 3,
+      "hasDynamicSegments": true
+    },
+    {
+      "urlPath": "/chinese-buffets/regions/[region]",
+      "filePath": "app/chinese-buffets/regions/[region]/page.tsx",
+      "dynamicParams": [
+        {
+          "name": "region",
+          "segment": "[region]",
+          "type": "dynamic"
+        }
+      ],
+      "depth": 3,
+      "hasDynamicSegments": true
+    },
+    {
+      "urlPath": "/chinese-buffets/states/[state]",
+      "filePath": "app/chinese-buffets/states/[state]/page.tsx",
+      "dynamicParams": [
+        {
+          "name": "state",
+          "segment": "[state]",
+          "type": "dynamic"
+        }
+      ],
+      "depth": 3,
+      "hasDynamicSegments": true
+    },
+    {
+      "urlPath": "/chinese-buffets/[city-state]/neighborhoods/[neighborhood]",
+      "filePath": "app/chinese-buffets/[city-state]/neighborhoods/[neighborhood]/page.tsx",
+      "dynamicParams": [
+        {
+          "name": "city-state",
+          "segment": "[city-state]",
+          "type": "dynamic"
+        },
+        {
+          "name": "neighborhood",
+          "segment": "[neighborhood]",
+          "type": "dynamic"
+        }
+      ],
+      "depth": 4,
+      "hasDynamicSegments": true
+    }
+  ]
+}

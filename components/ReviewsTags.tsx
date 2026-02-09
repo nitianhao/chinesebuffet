@@ -1,5 +1,3 @@
-'use client';
-
 interface ReviewTag {
   title: string;
   count: number;
@@ -22,11 +20,11 @@ export default function ReviewsTags({ tags }: ReviewsTagsProps) {
       {topTags.map((tag, index) => (
         <span
           key={index}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 text-sm font-medium hover:bg-blue-100 transition-colors"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--surface2)] text-[var(--accent1)] text-sm font-medium hover:bg-[var(--surface)] transition-colors"
         >
           <span>{tag.title}</span>
           {tag.count > 1 && (
-            <span className="text-xs bg-blue-200 text-blue-800 rounded-full px-1.5 py-0.5">
+            <span className="text-xs bg-[var(--accent-medium)] text-[var(--accent1)] rounded-full px-1.5 py-0.5">
               {tag.count}
             </span>
           )}

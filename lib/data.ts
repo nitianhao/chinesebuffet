@@ -67,7 +67,7 @@ export interface Buffet {
   placeId: string | null;
   imagesCount: number;
   imageUrls?: string[];
-  images?: Array<{ photoUrl?: string; photoReference?: string; [key: string]: any }>;
+  images?: Array<{ photoReference?: string; [key: string]: any }>;
   imageCategories?: string[];
   citySlug?: string;
   reviews?: Review[];

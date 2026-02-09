@@ -3,21 +3,64 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --bg: #f6f4f1;
+  --surface: #ffffff;
+  --surface2: #fbfaf8;
+  --text: #1b1a18;
+  --muted: #6c6762;
+  --border: rgba(18, 15, 12, 0.08);
+  --accent1: #4f46e5;
+  --accent2: #ec4899;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --shadow-soft: 0 12px 30px rgba(18, 15, 12, 0.08);
+  --shadow-pop: 0 16px 44px rgba(18, 15, 12, 0.12);
+  --background: var(--bg);
+  --foreground: var(--text);
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text);
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(700px 320px at 12% -10%, rgba(79, 70, 229, 0.12), transparent 60%),
+    radial-gradient(500px 240px at 88% -6%, rgba(236, 72, 153, 0.08), transparent 60%);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+@media (max-width: 768px) {
+  table {
+    width: 100%;
+    display: block;
+    overflow-x: auto;
+  }
+
+  th,
+  td {
+    word-break: break-word;
+  }
+}
+
+/* Opt-in layout debug: add data-debug-overflow="true" to <body> to show outlines. Disabled by default. */
+body[data-debug-overflow="true"] * {
+  outline: 1px solid rgba(255, 0, 0, 0.15);
+}
+body[data-debug-overflow="true"] *:hover {
+  outline-color: rgba(255, 0, 0, 0.6);
 }
 
 @layer utilities {
@@ -26,10 +69,36 @@ body {
   }
 }
 
-/* Leaflet styles */
-@import 'leaflet/dist/leaflet.css';
-@import 'leaflet.markercluster/dist/MarkerCluster.css';
-@import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
+/* Filter drawer animations */
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+
+/* Leaflet CSS removed from global scope — it is loaded on-demand inside
+   components/Map.tsx which is dynamically imported with ssr:false.
+   This keeps ~145KB of Leaflet out of the shared initial bundle. */
 
 /* Hide placeholder on focus and ensure caret is visible */
 .search-input:focus::placeholder {

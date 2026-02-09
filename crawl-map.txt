@@ -1,0 +1,52 @@
+
+====================================================================================================
+CRAWL MAP VISUALIZATION
+====================================================================================================
+
+📊 PAGE HIERARCHY
+----------------------------------------------------------------------------------------------------
+
+Level 0 (Homepage)
+  / [home]
+    └─ Links to 4 pages
+
+Level 1 (4 pages)
+  POI Pages (4):
+    ├─ /chinese-buffets/near/parking [poi]
+    ├─ /chinese-buffets/near/shopping-malls [poi]
+    ├─ /chinese-buffets/near/highways [poi]
+    ├─ /chinese-buffets/near/gas-stations [poi]
+
+
+📈 STATISTICS
+----------------------------------------------------------------------------------------------------
+Total Pages:        5
+Max Depth:          1 clicks
+Orphan Pages:       0
+Depth Violations:   0 (pages > 3 clicks)
+
+🔗 URL CONSISTENCY
+----------------------------------------------------------------------------------------------------
+✅ All URLs are consistent
+
+🛤️  SAMPLE CRAWL PATHS
+----------------------------------------------------------------------------------------------------
+Path 1: Home → State → City → Buffet (3 clicks)
+  / → /chinese-buffets/states/ca → /chinese-buffets/los-angeles-ca → /chinese-buffets/los-angeles-ca/china-buffet
+
+Path 2: Home → POI Page → Buffet (2 clicks)
+  / → /chinese-buffets/near/parking → [buffet links]
+
+Path 3: Home → City → Buffet (2 clicks)
+  / → /chinese-buffets/new-york-ny → /chinese-buffets/new-york-ny/china-buffet
+
+💡 RECOMMENDATIONS
+----------------------------------------------------------------------------------------------------
+3. ✅ Current optimizations:
+   - POI pages now linked from homepage (depth 1)
+   - State pages linked from homepage (depth 1)
+   - City pages linked from state pages (depth 2)
+   - Buffet pages linked from city pages (depth 3)
+   - All key pages accessible in ≤3 clicks
+
+====================================================================================================

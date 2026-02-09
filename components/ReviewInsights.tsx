@@ -1,5 +1,3 @@
-'use client';
-
 import { Review } from '@/lib/data';
 
 interface ReviewInsightsProps {
@@ -105,7 +103,7 @@ export default function ReviewInsights({ reviews }: ReviewInsightsProps) {
                   <div className="flex items-center gap-3">
                     <div className="w-32 bg-gray-200 rounded-full h-2">
                       <div
-                        className="bg-blue-500 h-2 rounded-full transition-all"
+                        className="bg-[var(--surface2)]0 h-2 rounded-full transition-all"
                         style={{ width: `${item.percentage}%` }}
                       />
                     </div>

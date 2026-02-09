@@ -1,5 +1,3 @@
-'use client';
-
 interface ServiceOptionsProps {
   additionalInfo: {
     'Service options'?: Array<Record<string, boolean>>;

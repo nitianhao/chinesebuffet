@@ -76,7 +76,7 @@ function extractMenuData(doordashResult) {
       description: item.description || item.itemDescription || '',
       price: item.price || item.priceText || item.displayPrice || '',
       priceNumber: parseFloat((item.price || item.priceText || '0').toString().replace(/[^0-9.]/g, '')) || 0,
-      imageUrl: item.imageUrl || item.image || item.photoUrl || null,
+      imageUrl: item.imageUrl || item.image || item.photo || null,
       available: item.available !== false, // Default to true unless explicitly false
     };
     

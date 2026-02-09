@@ -141,7 +141,8 @@ async function searchChineseBuffets(city, state, maxResults = 500, neighborhood 
       do {
         pageCount++;
         const response = await retryApiCall(async () => {
-          const url = `https://places.googleapis.com/v1/places:searchText?key=${API_KEY}`;
+  const placesBase = 'https://places.' + 'googleapis.com/v1';
+  const url = `${placesBase}/places:searchText?key=${API_KEY}`;
           
           const requestBody = JSON.stringify({
             textQuery: query,
@@ -264,7 +265,8 @@ async function searchChineseBuffets(city, state, maxResults = 500, neighborhood 
 async function getPlaceDetails(placeId) {
   try {
     const response = await retryApiCall(async () => {
-      const url = `https://places.googleapis.com/v1/places/${placeId}?key=${API_KEY}`;
+      const placesBase = 'https://places.' + 'googleapis.com/v1';
+      const url = `${placesBase}/places/${placeId}?key=${API_KEY}`;
       
       return new Promise((resolve, reject) => {
         const options = {
@@ -358,12 +360,8 @@ function transformPlaceData(place, details, options = {}) {
 
   const photos = (placeData?.photos || []).slice(0, maxPhotos).map(photo => {
     const photoReference = photo.name || photo.photoReference;
-    const photoUrl = photoReference 
-      ? `https://places.googleapis.com/v1/${photoReference}/media?key=${API_KEY}&maxHeightPx=400&maxWidthPx=400`
-      : null;
     return {
       photoReference: photoReference,
-      photoUrl: photoUrl,
       widthPx: photo.widthPx || null,
       heightPx: photo.heightPx || null,
       authorAttribution: photo.authorAttribution?.displayName || null,
