@@ -1,10 +1,12 @@
 /* Design System CSS Variables - Chinese Buffet Directory Premium Theme */
 /* Black + Chinese Red + Warm Neutrals */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+/* Font is loaded via next/font in layout.tsx (self-hosted, non-blocking). */
+/* The CSS variable --font-inter is set on <html> by next/font.           */
 
 :root {
-  /* Font */
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  /* Font — var(--font-inter) is injected by next/font; the system-ui
+     stack provides an instant fallback while the font loads.            */
+  --font-sans: var(--font-inter, 'Inter'), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   
   /* Core Colors - Warm Neutrals */
   --bg: #FBFAF8;
@@ -13,9 +15,9 @@
   --surface-hover: #FEFEFE;
   --surface2: #F5F3EF;
   --text: #111111;
-  --text-secondary: #4A4540;
-  --muted: #6B625A;
-  --muted-light: #9C958E;
+  --text-secondary: #3F3A35;
+  --muted: #5C534B;
+  --muted-light: #7B726A;
   --border: rgba(17, 17, 17, 0.08);
   --border-strong: rgba(17, 17, 17, 0.12);
   
@@ -45,6 +47,21 @@
   --radius-xl: 1.25rem;
   --radius-2xl: 1.5rem;
   --radius-full: 9999px;
+
+  /* Type scale (mobile-friendly) */
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-base: 1rem;
+  --fs-lg: 1.125rem;
+  --fs-xl: 1.25rem;
+  --fs-2xl: 1.5rem;
+  --fs-3xl: 1.875rem;
+
+  /* Line heights */
+  --lh-tight: 1.2;
+  --lh-snug: 1.35;
+  --lh-normal: 1.5;
+  --lh-relaxed: 1.65;
   
   /* Shadows - Warm and subtle */
   --shadow-soft: 0 1px 3px 0 rgba(17, 17, 17, 0.04), 0 1px 2px -1px rgba(17, 17, 17, 0.03);
@@ -58,14 +75,24 @@
   --glass-blur: 12px;
   
   /* Spacing */
-  --section-padding: 1rem;
-  --section-gap: 0.75rem;
+  --page-max-w: 72rem;
+  --page-x: 1rem;
+  --page-x-lg: 1.5rem;
+  --page-y: 2rem;
+  --section-pad: 1.25rem;
+  --section-gap: 1rem;
+  --section-radius: var(--radius-2xl);
+  --bottom-nav-height: 64px;
+  --header-mobile-height: 3rem;
+  --header-offset-mobile: calc(env(safe-area-inset-top) + var(--header-mobile-height));
 }
 
 @media (min-width: 1024px) {
   :root {
-    --section-padding: 1.5rem;
-    --section-gap: 1rem;
+    --page-x: var(--page-x-lg);
+    --page-y: 2.5rem;
+    --section-pad: 1.5rem;
+    --section-gap: 1.25rem;
   }
 }
 

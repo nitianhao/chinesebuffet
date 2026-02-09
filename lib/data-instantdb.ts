@@ -2,6 +2,7 @@
 // This allows server-side rendering while reading directly from InstantDB
 
 import { cache } from 'react';
+import { unstable_cache } from 'next/cache';
 import { init } from '@instantdb/admin';
 import MiniSearch from 'minisearch';
 import schema from '@/src/instant.schema';
@@ -14,23 +15,27 @@ export type { Review, Buffet, City, BuffetsByCity, BuffetsById, Summary } from '
 // OPTIMIZATION: Cache the database connection to avoid re-initialization overhead
 let cachedDb: ReturnType<typeof init> | null = null;
 
+// InstantDB's admin SDK forces `cache: "no-store"` on Next 13/14 by default
+// (see @instantdb/admin getDefaultFetchOpts). For the heavy "fetch-all" query
+// used by most content pages we bypass this with `unstable_cache` (see below).
+//
+// For lighter per-entity queries (getCityBySlug, getBuffetBySlug, etc.) we
+// override with `force-cache` so SSG can cache individual POST responses.
+// Page-level ISR is handled via `export const revalidate` in each route file.
+const contentFetchOpts: RequestInit = { cache: 'force-cache' };
+const adminQuery = <Q>(
+  db: ReturnType<typeof init>,
+  query: Q,
+) => db.query(query as any, { fetchOpts: contentFetchOpts });
+
 function getAdminDb() {
-  // #region agent log
-  fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:12',message:'getAdminDb entry',data:{hasCachedDb:!!cachedDb,hasAdminToken:!!process.env.INSTANT_ADMIN_TOKEN,hasAppId:!!(process.env.NEXT_PUBLIC_INSTANT_APP_ID || process.env.INSTANT_APP_ID)},timestamp:Date.now(),sessionId:'debug-session',runId:'perf-opt',hypothesisId:'H2'})}).catch(()=>{});
-  // #endregion
   
   // OPTIMIZATION: Reuse cached connection
   if (cachedDb) {
-    // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:getAdminDb',message:'getAdminDb using cached connection',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'perf-opt',hypothesisId:'H2'})}).catch(()=>{});
-    // #endregion
     return cachedDb;
   }
   
   if (!process.env.INSTANT_ADMIN_TOKEN) {
-    // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:15',message:'getAdminDb missing token error',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-    // #endregion
     throw new Error('INSTANT_ADMIN_TOKEN is required for server-side data fetching');
   }
 
@@ -42,14 +47,8 @@ function getAdminDb() {
       schema: schema.default || schema,
     });
     const dbInitDuration = Date.now() - dbInitStart;
-    // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:30',message:'getAdminDb init new connection',data:{dbInitDurationMs:dbInitDuration},timestamp:Date.now(),sessionId:'debug-session',runId:'perf-opt',hypothesisId:'H2'})}).catch(()=>{});
-    // #endregion
     return cachedDb;
   } catch (error) {
-    // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:30',message:'getAdminDb init error',data:{errorMessage:error instanceof Error ? error.message : String(error)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-    // #endregion
     throw error;
   }
 }
@@ -408,97 +407,70 @@ export function clearCache() {
   console.log('[data-instantdb] Cache cleared (including JSON parse cache)');
 }
 
+// ---------------------------------------------------------------------------
+// unstable_cache wrapper: ensures the heavy "fetch everything" query runs at
+// most once during `next build` (shared across workers via the Data Cache on
+// disk). At runtime the result is revalidated every hour.
+//
+// Inside unstable_cache the SDK's `cache:"no-store"` fetch is harmless:
+// unstable_cache caches the *function return value*, not the fetch response.
+// ---------------------------------------------------------------------------
+const _fetchAllDataFromDB = async (): Promise<{ cities: any[]; buffets: any[] }> => {
+  const db = getAdminDb();
+
+  console.log('[data-instantdb] Fetching cities...');
+  const citiesStart = Date.now();
+  const citiesResult = await db.query({ cities: {} });
+  const cities = citiesResult.cities || [];
+  console.log(`[data-instantdb] Fetched ${cities.length} cities in ${Date.now() - citiesStart}ms`);
+
+  console.log('[data-instantdb] Fetching buffets...');
+  let buffets: any[] = [];
+  const buffetsStart = Date.now();
+  try {
+    const buffetsResult = await db.query({
+      buffets: {
+        $: { limit: 10000 },
+        city: {},
+      },
+    });
+    buffets = buffetsResult.buffets || [];
+    console.log(`[data-instantdb] Fetched ${buffets.length} buffets in ${Date.now() - buffetsStart}ms`);
+  } catch (e) {
+    console.error('[data-instantdb] Error with buffets query:', e);
+  }
+
+  return { cities, buffets };
+};
+
+const fetchAllDataCached = unstable_cache(
+  _fetchAllDataFromDB,
+  ['instantdb-all-data'],
+  { revalidate: 3600 },
+);
+
 async function getCachedData() {
-  const startTime = Date.now();
   const now = Date.now();
+
+  // Fast path: in-memory cache (same process, avoids deserialization)
   if (requestCache && requestCache.timestamp && (now - requestCache.timestamp) < CACHE_TTL) {
-    console.log(`[data-instantdb] Using cached data: ${requestCache.cities?.length || 0} cities, ${requestCache.buffets?.length || 0} buffets`);
-    // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:128',message:'getCachedData using cache',data:{citiesCount:requestCache.cities?.length,buffetsCount:requestCache.buffets?.length,durationMs:Date.now()-startTime},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'P'})}).catch(()=>{});
-    // #endregion
     return requestCache;
   }
 
+  // Dedup within the same process (parallel calls share one promise)
   if (requestCachePromise) {
-    // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:getCachedData',message:'awaiting in-flight cache promise',data:{timestamp:requestCachePromise ? true : false},timestamp:Date.now(),sessionId:'debug-session',runId:'perf1',hypothesisId:'H3'})}).catch(()=>{});
-    // #endregion
     return requestCachePromise;
   }
 
-  const db = getAdminDb();
-  
-  // #region agent log
-  fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:135',message:'getCachedData fetching from DB',data:{hasAdminToken:!!process.env.INSTANT_ADMIN_TOKEN},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-  // #endregion
-  
   requestCachePromise = (async () => {
     try {
-    // Fetch all cities
-    console.log('[data-instantdb] Fetching cities...');
-    const citiesQueryStart = Date.now();
-    const citiesResult = await db.query({ cities: {} });
-    const citiesQueryDuration = Date.now() - citiesQueryStart;
-    const cities = citiesResult.cities || [];
-    console.log(`[data-instantdb] Fetched ${cities.length} cities`);
-    
-    // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:281',message:'getCachedData cities query complete',data:{citiesCount:cities.length,citiesQueryDurationMs:citiesQueryDuration,sampleCitySlugs:cities.slice(0,3).map((c:any)=>c.slug)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'H1'})}).catch(()=>{});
-    // #endregion
-    
-    // Fetch all buffets with city links
-    // Try multiple query approaches to ensure we get all records
-    console.log('[data-instantdb] Fetching buffets...');
-    
-    // OPTIMIZATION: Use explicit limit and ordering for better performance
-    // Fetch all buffets with city links in a single optimized query
-    let buffetsResult;
-    const buffetsQueryStart = Date.now();
-    try {
-      buffetsResult = await db.query({
-        buffets: {
-          $: {
-            limit: 10000, // Explicit limit for performance
-            // No order needed for cache - will sort later if needed
-          },
-          city: {}
-        }
-      });
-      const buffetsQueryDuration = Date.now() - buffetsQueryStart;
-      console.log(`[data-instantdb] Buffets query returned ${buffetsResult.buffets?.length || 0} buffets in ${buffetsQueryDuration}ms`);
-      // #region agent log
-      fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:296',message:'getCachedData buffets query complete (optimized)',data:{buffetsCount:buffetsResult.buffets?.length || 0,buffetsQueryDurationMs:buffetsQueryDuration},timestamp:Date.now(),sessionId:'debug-session',runId:'perf-opt',hypothesisId:'H1'})}).catch(()=>{});
-      // #endregion
-    } catch (e) {
-      console.error('[data-instantdb] Error with buffets query:', e);
-      buffetsResult = { buffets: [] };
-    }
-    
-    const buffets = buffetsResult.buffets || [];
-    
-    // Log detailed info
-    console.log(`[data-instantdb] Final result: ${cities.length} cities and ${buffets.length} buffets`);
-    if (buffets.length > 0) {
-      console.log(`[data-instantdb] Sample buffet IDs: ${buffets.slice(0, 3).map((b: any) => b.id).join(', ')}`);
-      console.log(`[data-instantdb] Buffets with city links: ${buffets.filter((b: any) => b.city).length}`);
-    }
-    
-    // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:187',message:'getCachedData final result',data:{citiesCount:cities.length,buffetsCount:buffets.length,buffetsWithCityLinks:buffets.filter((b:any)=>b.city).length,durationMs:Date.now()-startTime},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'P'})}).catch(()=>{});
-    // #endregion
+      // Uses unstable_cache → disk-based Data Cache → shared across build workers
+      const { cities, buffets } = await fetchAllDataCached();
 
-    requestCache = {
-      cities,
-      buffets,
-      timestamp: now,
-    };
-
-    return requestCache;
-  } catch (error) {
-    console.error('[data-instantdb] Error fetching data:', error);
-    // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:201',message:'getCachedData error',data:{errorMessage:error instanceof Error ? error.message : String(error),errorStack:error instanceof Error ? error.stack : undefined},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-    // #endregion
+      requestCache = { cities, buffets, timestamp: now };
+      return requestCache;
+    } catch (error) {
+      console.error('[data-instantdb] Error fetching data:', error);
       throw error;
     }
   })();
@@ -512,16 +484,10 @@ async function getCachedData() {
 
 export async function getBuffetsByCity(): Promise<Record<string, any>> {
   const functionStartTime = Date.now();
-  // #region agent log
-  fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:365',message:'getBuffetsByCity entry',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'H3'})}).catch(()=>{});
-  // #endregion
   
   const getCachedDataStart = Date.now();
   const { cities, buffets } = await getCachedData();
   const getCachedDataDuration = Date.now() - getCachedDataStart;
-  // #region agent log
-  fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:370',message:'getBuffetsByCity after getCachedData',data:{citiesCount:cities.length,buffetsCount:buffets.length,getCachedDataDurationMs:getCachedDataDuration},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'H3'})}).catch(()=>{});
-  // #endregion
   
   const buffetsByCity: Record<string, any> = {};
   let buffetsWithoutCity = 0;
@@ -570,9 +536,6 @@ export async function getBuffetsByCity(): Promise<Record<string, any>> {
   const sortDuration = Date.now() - sortStart;
   
   const totalDuration = Date.now() - functionStartTime;
-  // #region agent log
-  fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:420',message:'getBuffetsByCity return',data:{totalCities:Object.keys(buffetsByCity).length,buffetsWithoutCity,transformDurationMs:transformDuration,sortDurationMs:sortDuration,totalDurationMs:totalDuration},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'H3'})}).catch(()=>{});
-  // #endregion
   
   console.log(`[data-instantdb] getBuffetsByCity: ${Object.keys(buffetsByCity).length} cities with buffets`);
   
@@ -596,13 +559,10 @@ export async function getBuffetsById(): Promise<Record<string, any>> {
 
 export async function getCityBySlug(citySlug: string): Promise<any | null> {
   const startTime = Date.now();
-  // #region agent log
-  fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:188',message:'getCityBySlug entry',data:{citySlug},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'P'})}).catch(()=>{});
-  // #endregion
 
   try {
     const db = getAdminDb();
-    const result = await db.query({
+    const result = await adminQuery(db, {
       cities: {
         $: { where: { slug: citySlug } },
         buffets: {
@@ -613,9 +573,6 @@ export async function getCityBySlug(citySlug: string): Promise<any | null> {
 
     const cityRaw = result.cities?.[0];
     if (!cityRaw) {
-      // #region agent log
-      fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:205',message:'getCityBySlug city not found',data:{citySlug},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'P'})}).catch(()=>{});
-      // #endregion
       return null;
     }
 
@@ -623,15 +580,9 @@ export async function getCityBySlug(citySlug: string): Promise<any | null> {
     const buffets = buffetsRaw.map((b: any) => transformBuffet({ ...b, city: { slug: citySlug } }, citySlug));
     const city = transformCity(cityRaw, buffets);
 
-    // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:214',message:'getCityBySlug return',data:{found:true,cityName:city.city,buffetsCount:city.buffets.length,durationMs:Date.now()-startTime},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'P'})}).catch(()=>{});
-    // #endregion
 
     return city;
   } catch (error) {
-    // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:220',message:'getCityBySlug error',data:{citySlug,errorMessage:error instanceof Error ? error.message : String(error)},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'P'})}).catch(()=>{});
-    // #endregion
     throw error;
   }
 }
@@ -641,7 +592,7 @@ export async function getReviewsForBuffet(buffetId: string): Promise<any[]> {
   try {
     const db = getAdminDb();
     // Query the buffet with its linked reviews
-    const result = await db.query({
+    const result = await adminQuery(db, {
       buffets: {
         $: { where: { id: buffetId } },
         reviewRecords: {
@@ -665,7 +616,7 @@ export async function getMenuForBuffet(placeId: string): Promise<any | null> {
   try {
     const db = getAdminDb();
     // Query menus with linked menuItems
-    const result = await db.query({
+    const result = await adminQuery(db, {
       menus: {
         $: {
           where: { placeId: placeId }
@@ -830,7 +781,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
   
   try {
     // Query the buffet with structuredData link - fetch all structuredData to filter by group in code
-    const result = await db.query({
+    const result = await adminQuery(db, {
       cities: {
         $: { where: { slug: citySlug } },
         buffets: {
@@ -1117,7 +1068,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
     
     // First, try to get reviews from the linked reviewRecords table
     try {
-      const reviewsResult = await db.query({
+      const reviewsResult = await adminQuery(db, {
         buffets: {
           $: { where: { id: buffet.id } },
           reviewRecords: {
@@ -1810,14 +1761,11 @@ export async function getBuffetBySlug(citySlug: string, buffetSlug: string, incl
         };
       }
       
-      const result = await db.query(query);
+      const result = await adminQuery(db, query);
       const queryDuration = Date.now() - queryStart;
       
       const buffetRaw = result.cities?.[0]?.buffets?.[0];
       if (!buffetRaw) {
-        // #region agent log
-        fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:getBuffetBySlug',message:'getBuffetBySlug not found',data:{citySlug,buffetSlug,queryDurationMs:queryDuration},timestamp:Date.now(),sessionId:'debug-session',runId:'perf-opt',hypothesisId:'H7'})}).catch(()=>{});
-        // #endregion
         return null;
       }
       
@@ -1828,9 +1776,6 @@ export async function getBuffetBySlug(citySlug: string, buffetSlug: string, incl
         const menuStart = Date.now();
         const menu = await getMenuForBuffet(transformedBuffet.placeId);
         const menuDuration = Date.now() - menuStart;
-        // #region agent log
-        fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:getBuffetBySlug',message:'getBuffetBySlug menu fetch',data:{menuFound:!!menu,menuDurationMs:menuDuration},timestamp:Date.now(),sessionId:'debug-session',runId:'perf-opt',hypothesisId:'H7'})}).catch(()=>{});
-        // #endregion
         if (menu) {
           transformedBuffet.menu = menu.structuredData || {
             sourceUrl: menu.sourceUrl,
@@ -1842,16 +1787,10 @@ export async function getBuffetBySlug(citySlug: string, buffetSlug: string, incl
         }
       }
       
-      // #region agent log
-      fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:getBuffetBySlug',message:'getBuffetBySlug success (optimized)',data:{citySlug,buffetSlug,includeReviews,includeMenu,queryDurationMs:queryDuration,hasReviews:!!transformedBuffet.reviews?.length},timestamp:Date.now(),sessionId:'debug-session',runId:'perf-opt',hypothesisId:'H7'})}).catch(()=>{});
-      // #endregion
       
       return transformedBuffet;
     } catch (error) {
       console.error('[data-instantdb] Error fetching buffet with links:', error);
-      // #region agent log
-      fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:getBuffetBySlug',message:'getBuffetBySlug error',data:{errorMessage:error instanceof Error ? error.message : String(error)},timestamp:Date.now(),sessionId:'debug-session',runId:'perf-opt',hypothesisId:'H7'})}).catch(()=>{});
-      // #endregion
       // Fallback to regular fetch
     }
   }
@@ -1859,7 +1798,7 @@ export async function getBuffetBySlug(citySlug: string, buffetSlug: string, incl
   // OPTIMIZATION: For non-linked queries, use direct query instead of full city fetch
   try {
     const db = getAdminDb();
-    const result = await db.query({
+    const result = await adminQuery(db, {
       cities: {
         $: { where: { slug: citySlug } },
         buffets: {
@@ -1903,9 +1842,6 @@ export async function getAllCitySlugs(): Promise<string[]> {
 // Neighborhood helpers
 export function buildNeighborhoodsFromBuffets(buffets: any[], citySlug: string, cityName?: string, stateAbbr?: string): any[] {
   const startTime = Date.now();
-  // #region agent log
-  fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:buildNeighborhoodsFromBuffets',message:'buildNeighborhoodsFromBuffets entry',data:{buffetsCount:buffets?.length || 0,citySlug},timestamp:Date.now(),sessionId:'debug-session',runId:'perf1',hypothesisId:'H1'})}).catch(()=>{});
-  // #endregion
 
   const neighborhoods: Record<string, any> = {};
 
@@ -1933,9 +1869,6 @@ export function buildNeighborhoodsFromBuffets(buffets: any[], citySlug: string, 
     }))
     .sort((a: any, b: any) => b.buffetCount - a.buffetCount);
 
-  // #region agent log
-  fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:buildNeighborhoodsFromBuffets',message:'buildNeighborhoodsFromBuffets exit',data:{neighborhoodCount:Object.keys(neighborhoods).length,durationMs:Date.now()-startTime,citySlug},timestamp:Date.now(),sessionId:'debug-session',runId:'perf1',hypothesisId:'H1'})}).catch(()=>{});
-  // #endregion
 }
 
 // Legacy neighborhood fetch (uses full cache)
@@ -2082,13 +2015,13 @@ async function searchAllLegacy(query: string, limit: number = 20) {
   const results: Array<{ type: 'city' | 'buffet'; slug: string; name: string; citySlug?: string; score: number }> = [];
   try {
     const [buffetsResult, citiesResult] = await Promise.all([
-      db.query({
+      adminQuery(db, {
         buffets: {
           $: { limit: 500 },
           city: {},
         },
       }),
-      db.query({
+      adminQuery(db, {
         cities: {
           $: { limit: 200 },
         },
@@ -2208,10 +2141,12 @@ export async function searchAll(query: string, limit: number = 20): Promise<Arra
 
 // Lightweight function to get buffet pins for homepage map - no cache, direct minimal query
 // Limit ~150-200 for performance; clustering handles display
-export async function getBuffetsForMap(limit: number = 150): Promise<Array<{ id: string; name: string; slug: string; lat: number; lng: number; rating?: number; citySlug: string }>> {
+export async function getBuffetsForMap(
+  limit: number = 150,
+): Promise<Array<{ id: string; name: string; slug: string; lat: number; lng: number; rating?: number; citySlug: string }>> {
   const db = getAdminDb();
   try {
-    const result = await db.query({
+    const result = await adminQuery(db, {
       buffets: {
         $: { limit: limit * 2 }, // Fetch extra to account for filtering out invalid coords
         city: {},
@@ -2251,7 +2186,7 @@ export async function getTopRatedBuffets(limit: number = 10): Promise<Array<{
 }>> {
   const db = getAdminDb();
   try {
-    const result = await db.query({
+    const result = await adminQuery(db, {
       buffets: {
         $: {
           limit: 200,
@@ -2304,7 +2239,6 @@ function firstPhotoReferenceFromImages(imagesJson: unknown): string | undefined 
 export async function getTopRatedBuffetsForHomepage(limit: number = 12): Promise<Array<{
   name: string;
   slug: string;
-  citySlug: string;
   city: string;
   stateAbbr: string;
   rating: number;
@@ -2313,7 +2247,7 @@ export async function getTopRatedBuffetsForHomepage(limit: number = 12): Promise
 }>> {
   const db = getAdminDb();
   try {
-    const result = await db.query({
+    const result = await adminQuery(db, {
       buffets: {
         $: {
           limit: 200,
@@ -2329,7 +2263,6 @@ export async function getTopRatedBuffetsForHomepage(limit: number = 12): Promise
       .map((b: any) => ({
         name: b.name || '',
         slug: b.slug || '',
-        citySlug: b.city?.slug || '',
         city: b.cityName || b.city?.city || '',
         stateAbbr: b.stateAbbr || b.state || '',
         rating: b.rating ?? 0,
@@ -2358,7 +2291,7 @@ export async function getMostReviewedBuffets(limit: number = 10): Promise<Array<
 }>> {
   const db = getAdminDb();
   try {
-    const result = await db.query({
+    const result = await adminQuery(db, {
       buffets: {
         $: { limit: 500 },
         city: {},
@@ -2390,7 +2323,7 @@ export async function getSampleBuffets(count: number = 2): Promise<any[]> {
   const db = getAdminDb();
   
   try {
-    const result = await db.query({
+    const result = await adminQuery(db, {
       buffets: {
         $: { limit: count },
         city: {},
@@ -2418,9 +2351,6 @@ export async function getSummary(): Promise<any> {
   const functionStartTime = Date.now();
   // Use shared cache - this allows parallel calls to share the same data fetch
   const { cities, buffets } = await getCachedData();
-  // #region agent log
-  fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:758',message:'getSummary using shared cache',data:{citiesCount:cities.length,buffetsCount:buffets.length},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'H1'})}).catch(()=>{});
-  // #endregion
   
   // Count buffets per city without full transformation
   const cityBuffetCounts: Record<string, number> = {};
@@ -2458,9 +2388,6 @@ export async function getSummary(): Promise<any> {
   
   const totalDuration = Date.now() - functionStartTime;
   console.log(`[data-instantdb] getSummary: ${cities.length} total cities, ${citiesWithBuffets} with buffets, ${totalBuffets} total buffets`);
-  // #region agent log
-  fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:799',message:'getSummary return (using shared cache)',data:{totalCities:cities.length,totalBuffets,citiesWithBuffets,totalDurationMs:totalDuration},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'H1'})}).catch(()=>{});
-  // #endregion
   
   return {
     totalCities: cities.length,
@@ -2497,7 +2424,9 @@ export async function getLatestBuffetUpdateTimestamp(): Promise<string | null> {
 
 // Lightweight function to get top cities with buffet counts - uses cached summary data
 // This is more efficient as it reuses already-fetched data
-export async function getTopCities(limit: number = 10): Promise<Array<{ slug: string; city: string; state: string; buffetCount: number }>> {
+export async function getTopCities(
+  limit: number = 10,
+): Promise<Array<{ slug: string; city: string; state: string; buffetCount: number }>> {
   try {
     // Use getSummary which has caching, but only get the cities part
     // This reuses the shared cache from getCachedData
@@ -2550,7 +2479,7 @@ function stateKey(state: string): string {
  */
 export async function getTopCitiesWithDiversity(
   limit: number = 24,
-  maxPerState: number = 3
+  maxPerState: number = 3,
 ): Promise<Array<{ slug: string; city: string; state: string; buffetCount: number }>> {
   try {
     const summary = await getSummary();
@@ -2628,9 +2557,6 @@ export async function getStateCounts(): Promise<Record<string, number>> {
   const functionStartTime = Date.now();
   // Use shared cache to avoid duplicate queries - counts from already-fetched buffets
   const { buffets } = await getCachedData();
-  // #region agent log
-  fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:827',message:'getStateCounts using shared cache',data:{buffetsCount:buffets.length},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'H1'})}).catch(()=>{});
-  // #endregion
   
   const stateCounts: Record<string, number> = {};
   
@@ -2642,9 +2568,6 @@ export async function getStateCounts(): Promise<Record<string, number>> {
   });
   
   const totalDuration = Date.now() - functionStartTime;
-  // #region agent log
-  fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:843',message:'getStateCounts return',data:{statesCount:Object.keys(stateCounts).length,totalDurationMs:totalDuration},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'H1'})}).catch(()=>{});
-  // #endregion
   
   return stateCounts;
 }
@@ -2655,9 +2578,6 @@ export async function getBuffetsByState(): Promise<Record<string, any>> {
   const getCachedDataStart = Date.now();
   const { cities, buffets } = await getCachedData();
   const getCachedDataDuration = Date.now() - getCachedDataStart;
-  // #region agent log
-  fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:777',message:'getBuffetsByState after getCachedData',data:{citiesCount:cities.length,buffetsCount:buffets.length,getCachedDataDurationMs:getCachedDataDuration},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'H3'})}).catch(()=>{});
-  // #endregion
   
   const buffetsByState: Record<string, any> = {};
   
@@ -2697,9 +2617,6 @@ export async function getBuffetsByState(): Promise<Record<string, any>> {
   
   const totalDuration = Date.now() - functionStartTime;
   console.log(`[data-instantdb] getBuffetsByState: ${Object.keys(buffetsByState).length} states with buffets`);
-  // #region agent log
-  fetch('http://127.0.0.1:7243/ingest/3414c9ad-1916-418f-95a0-d25b9c44aa1a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/data-instantdb.ts:810',message:'getBuffetsByState return',data:{statesCount:Object.keys(buffetsByState).length,transformDurationMs:transformDuration,sortDurationMs:sortDuration,totalDurationMs:totalDuration},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'H3'})}).catch(()=>{});
-  // #endregion
   
   return buffetsByState;
 }

@@ -12,6 +12,7 @@
 import { unstable_cache } from 'next/cache';
 import { getCachedBuffet } from '@/lib/data-instantdb';
 import { getCachedPageTransforms } from '@/lib/buffet-page-transforms';
+import { getSiteUrl } from '@/lib/site-url';
 import {
   buildRestaurantJsonLd,
   buildReviewsJsonLd,
@@ -34,7 +35,7 @@ export interface CachedSeoSchemas {
 }
 
 function buildSchemas(buffet: any, cityStateSlug: string, nearbyPOIs: Array<{ name: string; category?: string; lat?: number; lng?: number; address?: string; distance?: string }>): CachedSeoSchemas {
-  const siteBaseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yoursite.com';
+  const siteBaseUrl = getSiteUrl();
   const pageUrl = `${siteBaseUrl}/chinese-buffets/${cityStateSlug}/${buffet.slug}`;
 
   const restaurantSchema = buildRestaurantJsonLd(buffet, siteBaseUrl, cityStateSlug);

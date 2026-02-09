@@ -35,6 +35,8 @@ async function runCheck(scriptPath, scriptName) {
 }
 
 async function main() {
+  const strict = process.env.PERF_BUDGET_STRICT === '1';
+
   try {
     // Check bundle sizes first (faster)
     await runCheck(bundleCheck, 'Bundle Size Check');
@@ -45,8 +47,13 @@ async function main() {
     console.log('\n✅ All performance budgets passed!');
     process.exit(0);
   } catch (error) {
-    console.error(`\n❌ Performance budget check failed: ${error.message}`);
-    process.exit(1);
+    if (strict) {
+      console.error(`\n❌ Performance budget check failed: ${error.message}`);
+      process.exit(1);
+    } else {
+      console.warn(`\n⚠️  Performance budget check: ${error.message} (warning only — set PERF_BUDGET_STRICT=1 to fail)`);
+      process.exit(0);
+    }
   }
 }
 

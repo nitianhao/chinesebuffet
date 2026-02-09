@@ -1,30 +1,14 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { getSummary } from '@/lib/data-instantdb';
+import { getCitiesRollup } from '@/lib/rollups';
 
 export const metadata: Metadata = {
   title: 'All Cities - Chinese Buffets Directory',
   description: 'Browse Chinese buffets by city across the USA. Find all-you-can-eat Chinese buffets in your city.',
 };
 
-async function withTimeout<T>(promise: Promise<T>, ms: number, fallback: T): Promise<T> {
-  let timeoutId: ReturnType<typeof setTimeout>;
-  const timeout = new Promise<T>((_, reject) => {
-    timeoutId = setTimeout(() => reject(new Error('Timeout')), ms);
-  });
-  try {
-    const result = await Promise.race([promise, timeout]);
-    clearTimeout(timeoutId!);
-    return result;
-  } catch {
-    clearTimeout(timeoutId!);
-    return fallback;
-  }
-}
-
 export default async function CitiesPage() {
-  const summary = await withTimeout(getSummary(), 8000, null);
-  const cities = summary?.cities || [];
+  const { cities } = await getCitiesRollup();
 
   return (
     <div className="min-h-screen bg-[var(--bg)]">

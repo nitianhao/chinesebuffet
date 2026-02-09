@@ -1,8 +1,17 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { getStatesRollup, STATE_ABBR_TO_NAME } from '@/lib/rollups';
+import { REGION_LABELS, VALID_REGIONS } from '@/lib/regions';
+import { getSiteUrl, getCanonicalUrl } from '@/lib/site-url';
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://yoursite.com';
+const POI_LINKS = [
+  { slug: 'parking', label: 'With parking' },
+  { slug: 'shopping-malls', label: 'Near shopping malls' },
+  { slug: 'highways', label: 'Near highways' },
+  { slug: 'gas-stations', label: 'Near gas stations' },
+] as const;
+
+const BASE_URL = getSiteUrl();
 const isDev = process.env.NODE_ENV !== 'production';
 
 // ISR: Revalidate every 6 hours in prod, 1 hour in dev
@@ -12,8 +21,9 @@ export const metadata: Metadata = {
   title: 'Chinese Buffets by State - All 50 States Directory',
   description: 'Browse Chinese buffets in every US state. Find all-you-can-eat Chinese restaurants near you with hours, prices, ratings, and reviews.',
   alternates: {
-    canonical: `${BASE_URL}/chinese-buffets/states`,
+    canonical: getCanonicalUrl('/chinese-buffets/states'),
   },
+  robots: { index: true, follow: true },
 };
 
 export default async function StatesIndexPage() {
@@ -94,6 +104,44 @@ export default async function StatesIndexPage() {
               ))}
             </div>
           )}
+        </div>
+      </section>
+
+      {/* Browse by nearby places */}
+      <section className="bg-[var(--surface)] py-8 border-t border-[var(--border)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-xl font-semibold text-[var(--text)] mb-4">Browse by nearby places</h2>
+          <ul className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {POI_LINKS.map((poi) => (
+              <li key={poi.slug}>
+                <Link
+                  href={`/chinese-buffets/near/${poi.slug}`}
+                  className="block rounded-lg border border-[var(--border)] bg-[var(--surface2)] px-4 py-3 text-sm font-medium text-[var(--text)] hover:border-[var(--accent1)] hover:text-[var(--accent1)] transition-colors text-center"
+                >
+                  {poi.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* Browse by region */}
+      <section className="bg-[var(--surface2)] py-8 border-t border-[var(--border)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-xl font-semibold text-[var(--text)] mb-4">Browse by region</h2>
+          <ul className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {VALID_REGIONS.map((region) => (
+              <li key={region}>
+                <Link
+                  href={`/chinese-buffets/regions/${region}`}
+                  className="block rounded-lg border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm font-medium text-[var(--text)] hover:border-[var(--accent1)] hover:text-[var(--accent1)] transition-colors text-center"
+                >
+                  {REGION_LABELS[region]}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 

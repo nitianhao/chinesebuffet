@@ -1,5 +1,3 @@
-'use client';
-
 interface QnAItem {
   question?: string;
   answer?: string;

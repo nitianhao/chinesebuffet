@@ -22,6 +22,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { init } from '@instantdb/admin';
 import schema from '@/src/instant.schema';
 import type { SearchSuggestionsResponse, SearchSuggestionPlace } from '@/lib/searchTypes';
+import { createServerTiming } from '@/lib/server-timing';
 
 export const runtime = 'nodejs';
 
@@ -70,36 +71,44 @@ function setCachedResponse(cacheKey: string, data: SearchSuggestionsResponse) {
 }
 
 export async function GET(request: NextRequest) {
+  const timing = createServerTiming('api/search-suggestions');
   const { searchParams } = new URL(request.url);
   const citySlug = searchParams.get('citySlug') || null;
   const cacheKey = citySlug || 'global';
   const cached = getCachedResponse(cacheKey);
 
   if (cached) {
+    timing.add('cache', 0.1, 'memory');
+    timing.add('total', 0.1);
+    timing.log();
     return NextResponse.json(cached, {
       headers: {
         'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+        'Server-Timing': timing.header(),
       },
     });
   }
 
   let popularPlaces: SearchSuggestionPlace[] = [];
 
+  const start = Date.now();
   try {
     const db = getAdminDb();
     const whereClause = citySlug ? { 'city.slug': citySlug } : undefined;
     const fetchLimit = Math.min(SUGGESTION_LIMIT * 3, 50);
 
-    const result = await db.query({
-      buffets: {
-        $: {
-          ...(whereClause ? { where: whereClause } : {}),
-          limit: fetchLimit,
-          // Sort in JS to avoid DB validation issues with order clause
+    const result = await timing.time('db.query', () =>
+      db.query({
+        buffets: {
+          $: {
+            ...(whereClause ? { where: whereClause } : {}),
+            limit: fetchLimit,
+            // Sort in JS to avoid DB validation issues with order clause
+          },
+          city: {},
         },
-        city: {},
-      },
-    });
+      })
+    );
 
     const candidates = (result.buffets || [])
       .filter((buffet: any) => buffet?.name && buffet?.slug)
@@ -121,9 +130,13 @@ export async function GET(request: NextRequest) {
       })
       .slice(0, SUGGESTION_LIMIT)
       .map(({ reviewCount: _reviews, rating: _rating, ...place }) => place);
+    timing.add('total', Date.now() - start);
+    timing.log();
   } catch (err) {
     console.error('[search-suggestions] failed', err);
     popularPlaces = [];
+    timing.add('error', Date.now() - start);
+    timing.log();
   }
 
   const response: SearchSuggestionsResponse = {
@@ -139,6 +152,7 @@ export async function GET(request: NextRequest) {
   return NextResponse.json(response, {
     headers: {
       'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+      'Server-Timing': timing.header(),
     },
   });
 }

@@ -220,7 +220,7 @@ export default function TableOfContents({ sections, headerOffset = 80 }: TableOf
   return (
     <>
       {/* Mobile: Sticky trigger button */}
-      <div className="lg:hidden fixed bottom-4 right-4 z-40">
+      <div className="lg:hidden fixed right-4 z-[10000] bottom-[calc(var(--bottom-nav-height)+1rem)]">
         <button
           onClick={() => setIsMobileMenuOpen(true)}
           className="bg-[var(--accent1)] text-white px-4 py-3 rounded-full shadow-lg hover:bg-[var(--accent2)] transition-colors flex items-center gap-2 min-h-[48px] min-w-[48px]"
@@ -248,7 +248,7 @@ export default function TableOfContents({ sections, headerOffset = 80 }: TableOf
       {/* Mobile: Bottom sheet overlay */}
       {isMobileMenuOpen && (
         <div
-          className="lg:hidden fixed inset-0 z-50"
+          className="lg:hidden fixed inset-0 z-[10002]"
           onClick={handleBackdropClick}
           aria-modal="true"
           role="dialog"

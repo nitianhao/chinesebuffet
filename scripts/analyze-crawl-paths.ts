@@ -44,7 +44,7 @@ interface CrawlMap {
   urlInconsistencies: Array<{ page: string; issue: string }>;
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://yoursite.com';
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, '') || 'http://localhost:3000';
 const POI_TYPES = ['parking', 'shopping-malls', 'highways', 'gas-stations'];
 
 // Helper to create city slug from cityName and stateAbbr

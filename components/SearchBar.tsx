@@ -38,6 +38,7 @@ import { generateSlug } from '@/lib/utils';
 import type { SearchResponse, SearchResult, SearchCityResult, SearchNeighborhoodResult, SearchSuggestionsResponse } from '@/lib/searchTypes';
 import { CityIcon } from '@/components/search/CityIcon';
 import { NeighborhoodIcon } from '@/components/search/NeighborhoodIcon';
+import { BuffetIcon } from '@/components/search/BuffetIcon';
 
 type SearchBarProps = {
   variant?: 'desktop' | 'mobile';
@@ -428,22 +429,14 @@ export default function SearchBar({
       }
       const data = (await response.json()) as SearchResponse;
       
-      // DEBUG STEP 2: Log raw API response
-      console.log(
-        "[search-ui-debug]",
-        {
+      if (requestId !== requestIdRef.current) return;
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[search-ui-debug]', {
           query: searchText,
           citiesLength: data?.cities?.length,
           resultsLength: data?.results?.length,
           keys: Object.keys(data || {}),
-          citiesRaw: data?.cities,
-        }
-      );
-      
-      if (requestId !== requestIdRef.current) return;
-      // DEBUG: Log response shape (remove after confirmed)
-      if (process.env.NODE_ENV !== 'production') {
-        console.log(`[search-ui] response: cities=${data.cities?.length ?? 0} buffets=${data.results?.length ?? 0}`);
+        });
       }
       setCachedResult(cacheKey, data);
       const newResults = Array.isArray(data.results) ? data.results : [];
@@ -875,7 +868,7 @@ export default function SearchBar({
                                 loading="lazy"
                               />
                             ) : (
-                              <div className="h-10 w-10 flex-shrink-0 rounded-lg bg-gray-100" />
+                              <BuffetIcon name={result.name} size="md" isHighlighted={isHighlighted} />
                             )}
                             <div className="min-w-0 flex-1">
                               <div className={`truncate text-sm font-semibold ${isHighlighted ? 'text-[var(--accent1)]' : 'text-gray-900'}`}>

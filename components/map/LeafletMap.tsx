@@ -1,5 +1,14 @@
 'use client';
 
+/**
+ * Core Leaflet map component.
+ *
+ * ALL Leaflet + MarkerCluster imports live here.  This file is the ONLY
+ * place in the project that references the "leaflet" package.  It must
+ * always be loaded via `next/dynamic` with `ssr: false` so Leaflet is
+ * never bundled into the shared initial JS.
+ */
+
 import { useEffect, useRef, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
@@ -15,7 +24,7 @@ export interface BuffetMarker {
   slug?: string;
 }
 
-interface MapProps {
+interface LeafletMapProps {
   markers: BuffetMarker[];
   center?: [number, number];
   zoom?: number;
@@ -24,14 +33,14 @@ interface MapProps {
   showClusters?: boolean;
 }
 
-export default function Map({
+export default function LeafletMap({
   markers,
   center = [39.8283, -98.5795], // Center of USA
   zoom = 4,
   height = '500px',
   onMarkerClick,
   showClusters = true,
-}: MapProps) {
+}: LeafletMapProps) {
   const [isMounted, setIsMounted] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
   const mapRef = useRef<any>(null);
@@ -57,12 +66,12 @@ export default function Map({
       if (!isActive || !mapContainerRef.current) return;
 
       const L = LModule.default;
-      
+
       // Make L available globally for leaflet.markercluster
       if (typeof window !== 'undefined') {
         (window as any).L = L;
       }
-      
+
       LRef.current = L;
 
       // Fix for default marker icons in Next.js
@@ -170,7 +179,7 @@ export default function Map({
           <h3 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600; color: #111;">${markerData.name}</h3>
           ${markerData.rating ? `<p style="margin: 0 0 8px 0; font-size: 13px; color: #666;">⭐ ${markerData.rating.toFixed(1)}</p>` : ''}
           ${markerData.citySlug && markerData.slug ? `
-            <a href="/chinese-buffets/${markerData.citySlug}/${markerData.slug}" 
+            <a href="/chinese-buffets/${markerData.citySlug}/${markerData.slug}"
                style="color: #C1121F; text-decoration: none; font-size: 13px; font-weight: 500;">
               View Details →
             </a>

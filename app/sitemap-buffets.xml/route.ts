@@ -4,13 +4,17 @@ import { getAllCitySlugs, getCityBySlug } from '@/lib/data-instantdb';
 import { createSitemapEntry, filterIndexableEntries, getLastModified } from '@/lib/sitemap-utils';
 import { PageType, IndexTier } from '@/lib/index-tier';
 import { isCityIndexable, getStagedIndexingConfig } from '@/lib/staged-indexing';
+import { getBaseUrlForRobotsAndSitemaps } from '@/lib/site-url';
+
+// ISR: regenerate sitemap at most once per hour at runtime
+export const revalidate = 3600;
 
 /**
  * Buffet Pages Sitemap
- * Only includes indexable buffet pages (all buffet pages should be indexable per rules).
+ * Only includes indexable buffet pages. All URLs are absolute.
  */
 export async function GET(): Promise<NextResponse> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yoursite.com';
+  const baseUrl = getBaseUrlForRobotsAndSitemaps();
   const citySlugs = await getAllCitySlugs();
   
   // Check staged indexing config

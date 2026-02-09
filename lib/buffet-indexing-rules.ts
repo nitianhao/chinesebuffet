@@ -11,6 +11,7 @@
  */
 
 import { Metadata } from 'next';
+import { getSiteUrl } from '@/lib/site-url';
 
 export interface BuffetIndexingValidation {
   hasIndexFollow: boolean;
@@ -27,7 +28,7 @@ export interface BuffetIndexingValidation {
 export function validateBuffetIndexing(
   metadata: Metadata,
   expectedPath: string,
-  baseUrl: string = process.env.NEXT_PUBLIC_SITE_URL || 'https://yoursite.com'
+  baseUrl: string = getSiteUrl()
 ): BuffetIndexingValidation {
   const errors: string[] = [];
   const warnings: string[] = [];
@@ -97,7 +98,7 @@ export function createBuffetMetadata(
   title: string,
   description: string,
   path: string,
-  baseUrl: string = process.env.NEXT_PUBLIC_SITE_URL || 'https://yoursite.com'
+  baseUrl: string = getSiteUrl()
 ): Metadata {
   const canonicalUrl = `${baseUrl.replace(/\/$/, '')}${path}`;
   
@@ -138,7 +139,7 @@ export async function verifyBuffetInSitemap(
   buffetPath: string,
   sitemapUrls: string[]
 ): Promise<{ inSitemap: boolean; sitemapUrl?: string }> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yoursite.com';
+  const baseUrl = getSiteUrl();
   const expectedUrl = `${baseUrl.replace(/\/$/, '')}${buffetPath}`;
   
   const inSitemap = sitemapUrls.includes(expectedUrl);

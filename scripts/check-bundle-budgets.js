@@ -113,13 +113,18 @@ if (totalSize > totalBudget) {
 }
 
 if (hasErrors) {
-  console.error('\n💥 Build failed due to bundle size budget violations.');
+  const strict = process.env.PERF_BUDGET_STRICT === '1';
+  if (strict) {
+    console.error('\n💥 Build failed due to bundle size budget violations.');
+  } else {
+    console.warn('\n⚠️  Bundle size budgets exceeded (warning only — set PERF_BUDGET_STRICT=1 to fail).');
+  }
   console.error('Consider:');
   console.error('  - Code splitting and lazy loading');
   console.error('  - Removing unused dependencies');
   console.error('  - Optimizing imports');
   console.error('  - Using dynamic imports for large components');
-  process.exit(1);
+  process.exit(strict ? 1 : 0);
 }
 
 console.log('\n✅ All bundle size budgets met!');

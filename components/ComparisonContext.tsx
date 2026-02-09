@@ -1,7 +1,3 @@
-'use client';
-
-import { useMemo } from 'react';
-
 interface NearbyBuffet {
   id: string;
   rating: number;
@@ -125,15 +121,8 @@ export default function ComparisonContext({
   nearbyBuffets,
   cityName,
 }: ComparisonContextProps) {
-  const ratingComparison = useMemo(
-    () => generateRatingComparison(currentRating || 0, nearbyBuffets),
-    [currentRating, nearbyBuffets]
-  );
-
-  const priceComparison = useMemo(
-    () => generatePriceComparison(currentPrice, nearbyBuffets, cityName),
-    [currentPrice, nearbyBuffets, cityName]
-  );
+  const ratingComparison = generateRatingComparison(currentRating || 0, nearbyBuffets);
+  const priceComparison = generatePriceComparison(currentPrice, nearbyBuffets, cityName);
 
   if (!ratingComparison && !priceComparison) {
     return null;

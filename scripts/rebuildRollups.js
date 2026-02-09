@@ -12,6 +12,7 @@
  *   node scripts/rebuildRollups.js --state-cities-only   # State detail pages
  *   node scripts/rebuildRollups.js --city-buffets-only   # City detail pages
  *   node scripts/rebuildRollups.js --neighborhood-buffets-only   # Neighborhood detail pages
+ *   node scripts/rebuildRollups.js --city-facets-only           # Pre-aggregated facet counts per city
  * 
  * This script:
  * 1. Queries buffets with ONLY scalar fields (no nested relations)
@@ -102,6 +103,8 @@ async function fetchBuffetsForState(stateAbbr) {
           phone: b.phone || null,
           website: b.website || null,
           imagesCount: b.imagesCount || null,
+          // facetIndex for cityFacets rollup (pre-computed JSON blob)
+          facetIndex: b.facetIndex || null,
         });
       }
       
@@ -631,6 +634,179 @@ async function buildNeighborhoodBuffetsRollups(buffets, cityMap) {
 }
 
 // ============================================================================
+// Build City Facets Rollups (pre-aggregated filter counts per city)
+// ============================================================================
+
+// Taxonomy keys — mirrored from lib/facets/taxonomy.ts (plain JS, no TS imports)
+const FACET_AMENITY_KEYS = [
+  'parking', 'wheelchair_accessible', 'kids_friendly', 'reservations',
+  'takeout', 'delivery', 'wifi', 'alcohol', 'credit_cards_accepted',
+  'outdoor_seating', 'private_dining',
+];
+const FACET_NEARBY_CATEGORY_KEYS = [
+  'grocery', 'hotel', 'tourist_attraction', 'shopping', 'education',
+  'repair', 'nightlife', 'park', 'transit', 'restaurant', 'gas_station',
+  'parking_lot',
+];
+const FACET_DISTANCE_BUCKET_KEYS = ['within025', 'within05', 'within1'];
+const FACET_PRICE_BUCKET_KEYS = ['price_1', 'price_2', 'price_3', 'price_unknown'];
+const FACET_RATING_BUCKET_KEYS = ['rating_45', 'rating_40', 'rating_35'];
+const FACET_REVIEW_COUNT_BUCKET_KEYS = ['reviews_100', 'reviews_500', 'reviews_1000'];
+const FACET_DINE_OPTION_KEYS = ['dine_in', 'takeout', 'delivery'];
+const FACET_STANDOUT_TAG_KEYS = [
+  'fresh_food', 'hot_food', 'good_variety', 'large_selection', 'quality_food',
+  'crab_legs', 'sushi', 'seafood', 'mongolian_grill', 'hibachi', 'dim_sum', 'desserts',
+  'friendly_staff', 'fast_service', 'clean', 'spacious', 'family_friendly', 'good_for_groups',
+  'good_value', 'affordable', 'generous_portions',
+  'all_you_can_eat', 'lunch_buffet', 'dinner_buffet', 'weekend_buffet',
+];
+const FACET_MIN_NEIGHBORHOOD_COUNT = 2;
+
+/**
+ * Aggregate an array of parsed BuffetFacetData objects into AggregatedFacets.
+ * Pure JS version of lib/facets/aggregateFacets.ts::aggregateFacets().
+ */
+function aggregateFacetsJS(facetDataList) {
+  // Initialise empty counts
+  const amenityCounts = {};
+  for (const k of FACET_AMENITY_KEYS) amenityCounts[k] = 0;
+  const nearbyCounts = {};
+  for (const cat of FACET_NEARBY_CATEGORY_KEYS) {
+    for (const b of FACET_DISTANCE_BUCKET_KEYS) nearbyCounts[`${cat}_${b}`] = 0;
+  }
+  const priceCounts = {};
+  for (const k of FACET_PRICE_BUCKET_KEYS) priceCounts[k] = 0;
+  const ratingCounts = {};
+  for (const k of FACET_RATING_BUCKET_KEYS) ratingCounts[k] = 0;
+  const reviewCountCounts = {};
+  for (const k of FACET_REVIEW_COUNT_BUCKET_KEYS) reviewCountCounts[k] = 0;
+  const dineOptionCounts = {};
+  for (const k of FACET_DINE_OPTION_KEYS) dineOptionCounts[k] = 0;
+  const standoutTagCounts = {};
+  for (const k of FACET_STANDOUT_TAG_KEYS) standoutTagCounts[k] = 0;
+
+  let totalBuffets = 0;
+  let buffetsWithHours = 0;
+  const rawNeighborhoods = {};
+
+  for (const fd of facetDataList) {
+    if (!fd) continue;
+    totalBuffets++;
+    if (fd.hasHours) buffetsWithHours++;
+
+    // Amenities
+    if (fd.amenities) {
+      for (const k of FACET_AMENITY_KEYS) {
+        if (fd.amenities[k] === true) amenityCounts[k]++;
+      }
+    }
+    // Nearby
+    if (fd.nearby) {
+      for (const cat of FACET_NEARBY_CATEGORY_KEYS) {
+        const catData = fd.nearby[cat];
+        if (!catData) continue;
+        for (const b of FACET_DISTANCE_BUCKET_KEYS) {
+          if (catData[b] === true) nearbyCounts[`${cat}_${b}`]++;
+        }
+      }
+    }
+    // Neighborhoods
+    if (fd.neighborhood) {
+      rawNeighborhoods[fd.neighborhood] = (rawNeighborhoods[fd.neighborhood] || 0) + 1;
+    }
+    // Price
+    if (fd.priceBucket) priceCounts[fd.priceBucket] = (priceCounts[fd.priceBucket] || 0) + 1;
+    // Rating
+    if (fd.ratingBuckets) {
+      for (const k of FACET_RATING_BUCKET_KEYS) {
+        if (fd.ratingBuckets[k] === true) ratingCounts[k]++;
+      }
+    }
+    // Reviews
+    if (fd.reviewCountBuckets) {
+      for (const k of FACET_REVIEW_COUNT_BUCKET_KEYS) {
+        if (fd.reviewCountBuckets[k] === true) reviewCountCounts[k]++;
+      }
+    }
+    // Dine options
+    if (fd.dineOptions) {
+      for (const k of FACET_DINE_OPTION_KEYS) {
+        if (fd.dineOptions[k] === true) dineOptionCounts[k]++;
+      }
+    }
+    // Standout tags
+    if (fd.standoutTags && Array.isArray(fd.standoutTags)) {
+      for (const tag of fd.standoutTags) {
+        if (tag && standoutTagCounts[tag] !== undefined) standoutTagCounts[tag]++;
+      }
+    }
+  }
+
+  // Filter neighborhoods
+  const neighborhoodCounts = {};
+  for (const [n, c] of Object.entries(rawNeighborhoods)) {
+    if (c >= FACET_MIN_NEIGHBORHOOD_COUNT) neighborhoodCounts[n] = c;
+  }
+
+  return {
+    amenityCounts,
+    nearbyCounts,
+    neighborhoodCounts,
+    priceCounts,
+    ratingCounts,
+    reviewCountCounts,
+    dineOptionCounts,
+    standoutTagCounts,
+    totalBuffets,
+    buffetsWithHours,
+  };
+}
+
+async function buildCityFacetsRollups(buffets) {
+  console.log('🔨 Building city facets rollups...');
+
+  // Group buffets by city slug, parse their facetIndex
+  const cityFacetMap = new Map(); // citySlug -> { parsed: BuffetFacetData[] }
+
+  let withFacetIndex = 0;
+  let withoutFacetIndex = 0;
+
+  for (const b of buffets) {
+    if (!b.cityName || !b.stateAbbr) continue;
+    const citySlug = `${b.cityName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${b.stateAbbr.toLowerCase()}`;
+
+    if (!cityFacetMap.has(citySlug)) {
+      cityFacetMap.set(citySlug, []);
+    }
+
+    if (b.facetIndex) {
+      try {
+        const parsed = JSON.parse(b.facetIndex);
+        cityFacetMap.get(citySlug).push(parsed);
+        withFacetIndex++;
+      } catch {
+        withoutFacetIndex++;
+      }
+    } else {
+      withoutFacetIndex++;
+    }
+  }
+
+  console.log(`  Buffets with facetIndex: ${withFacetIndex}, without: ${withoutFacetIndex}`);
+
+  // Aggregate per city
+  const rollups = [];
+  for (const [citySlug, facetDataList] of cityFacetMap) {
+    if (facetDataList.length === 0) continue;
+    const aggregated = aggregateFacetsJS(facetDataList);
+    rollups.push({ key: citySlug, data: aggregated });
+  }
+
+  console.log(`✅ City facets rollups: ${rollups.length} cities with facet data`);
+  return rollups;
+}
+
+// ============================================================================
 // Save Rollup to Database
 // ============================================================================
 
@@ -699,9 +875,10 @@ async function main() {
   const stateCitiesOnly = args.includes('--state-cities-only');
   const cityBuffetsOnly = args.includes('--city-buffets-only');
   const neighborhoodBuffetsOnly = args.includes('--neighborhood-buffets-only');
+  const cityFacetsOnly = args.includes('--city-facets-only');
   
   // Determine what to build
-  const hasSpecificFlag = statesOnly || citiesOnly || neighborhoodsOnly || stateCitiesOnly || cityBuffetsOnly || neighborhoodBuffetsOnly || hubsOnly;
+  const hasSpecificFlag = statesOnly || citiesOnly || neighborhoodsOnly || stateCitiesOnly || cityBuffetsOnly || neighborhoodBuffetsOnly || cityFacetsOnly || hubsOnly;
   const buildAll = !hasSpecificFlag;
   
   // Hub pages rollups
@@ -713,6 +890,7 @@ async function main() {
   const buildStateCities = buildAll || stateCitiesOnly;
   const buildCityBuffets = buildAll || cityBuffetsOnly;
   const buildNeighborhoodBuffets = buildAll || neighborhoodBuffetsOnly;
+  const buildCityFacets = buildAll || cityFacetsOnly;
   
   console.log('');
   console.log('🚀 Rebuilding directory rollups...');
@@ -837,6 +1015,31 @@ async function main() {
       }
       
       console.log(`✅ Saved ${saved}/${neighborhoodBuffetsRollups.length} neighborhood buffets rollups`);
+      console.log('');
+    }
+    
+    // Build and save city facets rollups (pre-aggregated filter counts)
+    if (buildCityFacets) {
+      const cityFacetsRollups = await buildCityFacetsRollups(buffets);
+      
+      console.log(`  Saving ${cityFacetsRollups.length} city facets rollups...`);
+      
+      let saved = 0;
+      for (const rollup of cityFacetsRollups) {
+        try {
+          await saveRollup('cityFacets', rollup.key, rollup.data);
+          saved++;
+        } catch (error) {
+          console.error(`  ❌ Failed to save cityFacets/${rollup.key}:`, error.message);
+        }
+        
+        // Progress indicator
+        if (saved % 100 === 0) {
+          console.log(`  Progress: ${saved}/${cityFacetsRollups.length}`);
+        }
+      }
+      
+      console.log(`✅ Saved ${saved}/${cityFacetsRollups.length} city facets rollups`);
       console.log('');
     }
     

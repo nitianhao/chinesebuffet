@@ -3,13 +3,17 @@ import { MetadataRoute } from 'next';
 import { getAllStateAbbrs, getStateByAbbr } from '@/lib/data-instantdb';
 import { createSitemapEntry, filterIndexableEntries, getLastModified } from '@/lib/sitemap-utils';
 import { PageType, IndexTier } from '@/lib/index-tier';
+import { getBaseUrlForRobotsAndSitemaps } from '@/lib/site-url';
+
+// ISR: regenerate sitemap at most once per hour at runtime
+export const revalidate = 3600;
 
 /**
  * State Pages Sitemap
- * Only includes indexable state pages.
+ * Only includes indexable state pages. All URLs are absolute.
  */
 export async function GET(): Promise<NextResponse> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yoursite.com';
+  const baseUrl = getBaseUrlForRobotsAndSitemaps();
   const stateAbbrs = await getAllStateAbbrs();
   
   const entries = [];

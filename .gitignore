@@ -54,6 +54,7 @@ Return the full updated script.
 
 # production
 /build
+/dist
 
 # misc
 .DS_Store
@@ -65,6 +66,8 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
+.env
+.env.*
 .env*.local
 .env.local
 
@@ -96,6 +99,7 @@ Research/
 
 # script outputs
 /scripts/output/
+perf-snapshot-deep-results.json
 
 # menu batch clean checkpoint (resume state)
 .menu-clean-checkpoint.json

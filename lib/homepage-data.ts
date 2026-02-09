@@ -4,6 +4,7 @@
  * No client components required.
  */
 
+import 'server-only';
 import { unstable_cache } from 'next/cache';
 import { getStatesRollup, getCitiesRollup } from '@/lib/rollups';
 import { getTopRatedBuffetsForHomepage } from '@/lib/data-instantdb';
@@ -27,7 +28,6 @@ export interface PopularState {
 export interface TopRatedBuffet {
   name: string;
   slug: string;
-  citySlug: string;
   city: string;
   stateAbbr: string;
   rating: number;

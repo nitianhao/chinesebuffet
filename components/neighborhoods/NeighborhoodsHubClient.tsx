@@ -53,9 +53,15 @@ export default function NeighborhoodsHubClient({
     setIsSheetOpen(false);
   };
 
+  const getBestFor = (count: number) => {
+    if (count >= 30) return 'Best for variety';
+    if (count >= 15) return 'Best for groups';
+    return 'Best for quick picks';
+  };
+
   return (
     <>
-      <div className="sticky top-[var(--header-offset-mobile,48px)] md:top-0 z-30 bg-[var(--surface)] border-b border-[var(--border)]">
+      <div className="sticky top-[var(--header-offset-mobile)] md:top-0 z-30 bg-[var(--surface)] border-b border-[var(--border)]">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center justify-between gap-3">
             <div className="text-sm text-[var(--muted)]">
@@ -95,24 +101,36 @@ export default function NeighborhoodsHubClient({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
         {filtered.map((neighborhood) => (
           <Link
             key={neighborhood.slug}
             href={`/chinese-buffets/${citySlug}/neighborhoods/${neighborhood.slug}`}
-            className="bg-[var(--surface)] border border-[var(--border)] rounded-lg p-4 hover:shadow-md hover:border-[var(--accent1)] transition-all group"
+            className="group flex min-h-[72px] items-center gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 transition-all hover:border-[var(--accent1)] hover:shadow-md"
           >
-            <div className="flex justify-between items-center">
-              <div>
-                <h2 className="font-semibold text-lg text-[var(--text)] group-hover:text-[var(--accent1)]">
+            <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-[var(--surface2)]">
+              <div className="flex h-full w-full items-center justify-center text-xs font-semibold text-[var(--muted)]">
+                {neighborhood.neighborhood.slice(0, 2).toUpperCase()}
+              </div>
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center justify-between gap-3">
+                <h2 className="text-sm font-semibold text-[var(--text)] line-clamp-2">
                   {neighborhood.neighborhood}
                 </h2>
-                <p className="text-[var(--muted)] text-sm mt-1">
+                <span className="text-xs text-[var(--muted)]">
                   {neighborhood.buffetCount} {neighborhood.buffetCount === 1 ? 'buffet' : 'buffets'}
-                </p>
+                </span>
               </div>
-              <span className="text-[var(--accent1)]">→</span>
+              <div className="mt-1 text-xs text-[var(--muted)]">
+                {getBestFor(neighborhood.buffetCount)}
+              </div>
             </div>
+            <span className="text-[var(--muted)]">
+              <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+              </svg>
+            </span>
           </Link>
         ))}
       </div>

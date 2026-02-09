@@ -11,6 +11,10 @@ import { createIndexTierConfig, toMetadataRobots } from '@/lib/index-tier';
 import { assessPOIPageQuality, logExcludedPOIPage } from '@/lib/poi-page-quality';
 import { createPageSignature, logDuplicateDetection } from '@/lib/duplicate-detection';
 import { registerPageSignature, checkForDuplicates } from '@/lib/page-signature-store';
+import { getSiteUrl } from '@/lib/site-url';
+
+// ISR: revalidate POI pages once per hour
+export const revalidate = 3600;
 
 // Page type and index tier declaration
 const PAGE_TYPE = 'poi' as const;
@@ -67,10 +71,10 @@ export async function generateMetadata({ params }: POILandingPageProps): Promise
   const pagePath = `/chinese-buffets/near/${params['poi-type']}`;
 
   if (!config) {
-    const indexTierConfig = createIndexTierConfig(PAGE_TYPE, INDEX_TIER, false, pagePath);
+    // Invalid POI type — hard noindex + nofollow (not a real page)
     return {
       title: 'Page Not Found',
-      robots: toMetadataRobots(indexTierConfig),
+      robots: { index: false, follow: false },
     };
   }
 
@@ -127,34 +131,32 @@ export async function generateMetadata({ params }: POILandingPageProps): Promise
     qualityResult.indexable, // Conditional: true if quality checks pass
     pagePath
   );
-  let canonicalUrl: string | undefined;
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yoursite.com';
-  
+  const baseUrl = getSiteUrl().replace(/\/$/, '');
+  let canonicalUrl: string;
   if (duplicateResult.action === 'canonical' && duplicateResult.primaryPage) {
-    // Set canonical to primary page
-    canonicalUrl = `${baseUrl.replace(/\/$/, '')}${duplicateResult.primaryPage}`;
-  } else if (duplicateResult.action === 'noindex') {
+    canonicalUrl = `${baseUrl}${duplicateResult.primaryPage}`;
+  } else {
+    // Always set self canonical (required for SEO even when noindex)
+    canonicalUrl = `${baseUrl}${pagePath}`;
+  }
+  if (duplicateResult.action === 'noindex') {
     // Apply noindex for high-risk duplicates (overrides quality check)
     robotsConfig = createIndexTierConfig(PAGE_TYPE, INDEX_TIER, false, pagePath);
   }
 
-  const metadata: Metadata = {
+  return {
     title: config.title,
     description: config.metaDescription,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title: config.title,
       description: config.metaDescription,
+      url: canonicalUrl,
     },
     robots: toMetadataRobots(robotsConfig),
   };
-  
-  if (canonicalUrl) {
-    metadata.alternates = {
-      canonical: canonicalUrl,
-    };
-  }
-
-  return metadata;
 }
 
 export default async function POILandingPage({ params }: POILandingPageProps) {

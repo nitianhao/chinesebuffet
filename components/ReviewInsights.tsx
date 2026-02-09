@@ -1,5 +1,3 @@
-'use client';
-
 import { Review } from '@/lib/data';
 
 interface ReviewInsightsProps {

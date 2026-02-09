@@ -29,6 +29,40 @@ body {
   background-attachment: fixed;
 }
 
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+@media (max-width: 768px) {
+  table {
+    width: 100%;
+    display: block;
+    overflow-x: auto;
+  }
+
+  th,
+  td {
+    word-break: break-word;
+  }
+}
+
+/* Opt-in layout debug: add data-debug-overflow="true" to <body> to show outlines. Disabled by default. */
+body[data-debug-overflow="true"] * {
+  outline: 1px solid rgba(255, 0, 0, 0.15);
+}
+body[data-debug-overflow="true"] *:hover {
+  outline-color: rgba(255, 0, 0, 0.6);
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
@@ -62,10 +96,9 @@ body {
   animation: fade-in 0.2s ease-out;
 }
 
-/* Leaflet styles */
-@import 'leaflet/dist/leaflet.css';
-@import 'leaflet.markercluster/dist/MarkerCluster.css';
-@import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
+/* Leaflet CSS removed from global scope — it is loaded on-demand inside
+   components/Map.tsx which is dynamically imported with ssr:false.
+   This keeps ~145KB of Leaflet out of the shared initial bundle. */
 
 /* Hide placeholder on focus and ensure caret is visible */
 .search-input:focus::placeholder {

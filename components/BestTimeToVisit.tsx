@@ -1,7 +1,3 @@
-'use client';
-
-import { useMemo } from 'react';
-
 interface BestTimeToVisitProps {
   popularTimesHistogram?: any;
   hours?: any;
@@ -213,31 +209,26 @@ export default function BestTimeToVisit({
   hours,
   reviews,
 }: BestTimeToVisitProps) {
-  const { daysData, isInferred, busyTimes, quietTimes, guidance } = useMemo(() => {
-    // Try to use actual popular times data
-    const normalized = normalizePopularTimes(popularTimesHistogram);
-    
-    if (normalized.length > 0) {
-      const guidance = generateGuidance(normalized, false);
-      return {
+  // Compute on the server — no useMemo needed (no re-renders).
+  const normalized = normalizePopularTimes(popularTimesHistogram);
+  const { daysData, isInferred, busyTimes, quietTimes, guidance } = normalized.length > 0
+    ? {
         daysData: normalized,
         isInferred: false,
-        busyTimes: [],
-        quietTimes: [],
-        guidance,
-      };
-    }
-
-    // Fall back to inferring from reviews
-    const inferred = inferFromReviews(reviews);
-    return {
-      daysData: [],
-      isInferred: true,
-      busyTimes: inferred.busyTimes,
-      quietTimes: inferred.quietTimes,
-      guidance: { busyText: null, quietText: null },
-    };
-  }, [popularTimesHistogram, reviews]);
+        busyTimes: [] as string[],
+        quietTimes: [] as string[],
+        guidance: generateGuidance(normalized, false),
+      }
+    : (() => {
+        const inferred = inferFromReviews(reviews);
+        return {
+          daysData: [] as DayData[],
+          isInferred: true,
+          busyTimes: inferred.busyTimes,
+          quietTimes: inferred.quietTimes,
+          guidance: { busyText: null as string | null, quietText: null as string | null },
+        };
+      })();
 
   // Don't render if we have no data at all
   if (daysData.length === 0 && busyTimes.length === 0 && quietTimes.length === 0 && !guidance.busyText && !guidance.quietText) {

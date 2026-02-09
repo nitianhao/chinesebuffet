@@ -1,6 +1,3 @@
-'use client';
-
-import { useMemo } from 'react';
 import { extractThemes, Review as ReviewType } from '@/lib/reviewThemes';
 
 interface Review {
@@ -284,10 +281,8 @@ function clusterReviewsByThemes(reviews: Review[]): ThemeCluster[] {
 }
 
 export default function ReviewThemes({ reviews }: ReviewThemesProps) {
-  const clusters = useMemo(() => {
-    if (!reviews || reviews.length === 0) return [];
-    return clusterReviewsByThemes(reviews);
-  }, [reviews]);
+  // Computed on the server — no useMemo needed (no re-renders).
+  const clusters = (!reviews || reviews.length === 0) ? [] : clusterReviewsByThemes(reviews);
 
   if (clusters.length === 0) {
     return null;

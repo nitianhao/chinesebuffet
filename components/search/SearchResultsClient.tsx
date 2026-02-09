@@ -6,6 +6,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { CityIcon } from './CityIcon';
 import { NeighborhoodIcon } from './NeighborhoodIcon';
+import { BuffetIcon } from './BuffetIcon';
+import SaveButton from '@/components/saved/SaveButton';
 
 // =============================================================================
 // TYPES
@@ -138,28 +140,41 @@ function BuffetResultCard({ result }: { result: SearchResult }) {
   ].filter(Boolean);
 
   return (
-    <Link
-      href={href}
-      className="group flex gap-4 p-4 bg-[var(--surface)] border border-[var(--border)] rounded-xl hover:border-[var(--accent1)]/50 hover:shadow-md transition-all"
-    >
-      {/* Thumbnail */}
-      <div className="relative w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 rounded-lg overflow-hidden bg-[var(--surface2)]">
-        {result.thumbUrl ? (
-          <Image
-            src={result.thumbUrl}
-            alt={result.name}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
-            sizes="(max-width: 640px) 96px, 128px"
+    <div className="relative group flex gap-4 p-4 bg-[var(--surface)] border border-[var(--border)] rounded-xl hover:border-[var(--accent1)]/50 hover:shadow-md transition-all">
+      {result.citySlug && result.slug && (
+        <div className="absolute right-3 top-3">
+          <SaveButton
+            item={{
+              slug: result.slug,
+              citySlug: result.citySlug,
+              name: result.name,
+              city: result.city,
+              stateAbbr: result.state,
+              rating: result.rating,
+              reviewCount: result.reviewCount,
+              price: result.price,
+            }}
           />
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center text-[var(--muted)]">
-            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-          </div>
-        )}
-      </div>
+        </div>
+      )}
+      <Link href={href} className="flex w-full gap-4 pr-12">
+        {/* Thumbnail */}
+        <div className="relative w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 rounded-lg overflow-hidden bg-[var(--surface2)]">
+          {result.thumbUrl ? (
+            <Image
+              src={result.thumbUrl}
+              alt={result.name}
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-300"
+              sizes="(max-width: 640px) 96px, 128px"
+              quality={60}
+            />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <BuffetIcon name={result.name} size="lg" />
+            </div>
+          )}
+        </div>
 
       {/* Content */}
       <div className="flex-1 min-w-0 flex flex-col">
@@ -206,7 +221,8 @@ function BuffetResultCard({ result }: { result: SearchResult }) {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
         </svg>
       </div>
-    </Link>
+      </Link>
+    </div>
   );
 }
 
@@ -312,19 +328,15 @@ function NeighborhoodCardSkeleton() {
 // MAIN COMPONENT
 // =============================================================================
 
-interface SearchResultsClientProps {
-  initialQuery: string;
-}
-
-export default function SearchResultsClient({ initialQuery }: SearchResultsClientProps) {
+export default function SearchResultsClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const abortRef = useRef<AbortController | null>(null);
   
-  // State - sync query with URL
+  // State - sync query with URL (all search state is client-side)
   const urlQuery = searchParams.get('q') || '';
-  const [query, setQuery] = useState(initialQuery || urlQuery);
+  const [query, setQuery] = useState(urlQuery);
   const [results, setResults] = useState<SearchResult[]>([]);
   const [cities, setCities] = useState<SearchCityResult[]>([]);
   const [neighborhoods, setNeighborhoods] = useState<SearchNeighborhoodResult[]>([]);

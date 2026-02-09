@@ -10,12 +10,14 @@
 import { cache } from 'react';
 import { init } from '@instantdb/admin';
 import schema from '@/src/instant.schema';
+import { perfMark, perfMs, queryDb, PERF_ENABLED } from '@/lib/perf';
+import type { AggregatedFacets } from '@/lib/facets/aggregateFacets';
 
 // ============================================================================
 // Types
 // ============================================================================
 
-export type RollupType = 'states' | 'cities' | 'cityNeighborhoods' | 'stateCities' | 'cityBuffets' | 'neighborhoodBuffets';
+export type RollupType = 'states' | 'cities' | 'cityNeighborhoods' | 'stateCities' | 'cityBuffets' | 'neighborhoodBuffets' | 'cityFacets';
 
 export interface StateRollupRow {
   stateAbbr: string;
@@ -123,6 +125,10 @@ export const STATE_ABBR_TO_NAME: Record<string, string> = {
 
 let cachedDb: ReturnType<typeof init> | null = null;
 
+// Override InstantDB's default `cache: "no-store"` to allow SSG.
+// Page-level ISR is configured via `export const revalidate` in each route file.
+const rollupFetchOpts: RequestInit = { cache: 'force-cache' };
+
 function getDb() {
   if (cachedDb) return cachedDb;
   
@@ -158,7 +164,9 @@ async function fetchRollupInternal(
   found: boolean;
   stale: boolean;
 }> {
+  const tTotal = perfMark();
   const db = getDb();
+  const label = `rollup:${type}/${key ?? 'global'}`;
   
   try {
     // Build query based on type and key
@@ -167,22 +175,24 @@ async function fetchRollupInternal(
       whereClause.key = key;
     }
     
-    const result = await db.query({
-      directoryRollups: {
-        $: { where: whereClause, limit: 1 }
-      }
-    });
+    const result = await queryDb(
+      db,
+      { directoryRollups: { $: { where: whereClause, limit: 1 } } },
+      { fetchOpts: rollupFetchOpts },
+      label,
+    );
     
     const rollups = result.directoryRollups || [];
     
     if (rollups.length === 0) {
       // Try without key constraint for global rollups
       if (key === null) {
-        const globalResult = await db.query({
-          directoryRollups: {
-            $: { where: { type }, limit: 10 }
-          }
-        });
+        const globalResult = await queryDb(
+          db,
+          { directoryRollups: { $: { where: { type }, limit: 10 } } },
+          { fetchOpts: rollupFetchOpts },
+          `${label}:fallback`,
+        );
         const globalRollups = (globalResult.directoryRollups || []).filter(
           (r: any) => !r.key || r.key === '' || r.key === 'null'
         );
@@ -192,12 +202,8 @@ async function fetchRollupInternal(
           const isStale = updatedAt 
             ? Date.now() - new Date(updatedAt).getTime() > STALE_THRESHOLD_MS 
             : true;
-          return {
-            data: rollup.data ? JSON.parse(rollup.data) : null,
-            updatedAt,
-            found: true,
-            stale: isStale,
-          };
+          const data = rollup.data ? JSON.parse(rollup.data) : null;
+          return { data, updatedAt, found: true, stale: isStale };
         }
       }
       
@@ -210,14 +216,12 @@ async function fetchRollupInternal(
       ? Date.now() - new Date(updatedAt).getTime() > STALE_THRESHOLD_MS 
       : true;
     
-    return {
-      data: rollup.data ? JSON.parse(rollup.data) : null,
-      updatedAt,
-      found: true,
-      stale: isStale,
-    };
+    const data = rollup.data ? JSON.parse(rollup.data) : null;
+
+    return { data, updatedAt, found: true, stale: isStale };
   } catch (error) {
-    console.error(`[Rollups] Error fetching rollup ${type}/${key}:`, error);
+    const totalMs = perfMs(tTotal);
+    console.error(`[Rollups] Error fetching rollup ${type}/${key} (${totalMs}ms):`, error);
     return { data: null, updatedAt: null, found: false, stale: true };
   }
 }
@@ -289,11 +293,62 @@ export async function getCityBuffetsRollup(citySlug: string): Promise<{
 /**
  * Get neighborhood buffets rollup for /chinese-buffets/[city-state]/neighborhoods/[neighborhood]
  */
-export async function getNeighborhoodBuffetsRollup(citySlug: string, neighborhoodSlug: string): Promise<{
+export async function getNeighborhoodBuffetsRollup(
+  citySlug: string,
+  neighborhoodSlug: string,
+  options?: { limit?: number; offset?: number; topRatedLimit?: number }
+): Promise<{
   data: NeighborhoodBuffetsRollup | null;
+  topRatedBuffets?: CityBuffetRow[];
 }> {
   const rollupKey = `${citySlug}/${neighborhoodSlug}`;
   const result = await getRollup('neighborhoodBuffets', rollupKey);
-  const data = result.data as NeighborhoodBuffetsRollup | null;
+  const rollupData = result.data as NeighborhoodBuffetsRollup | null;
+  if (!rollupData) {
+    return { data: rollupData };
+  }
+
+  const topRatedLimit = Math.max(0, options?.topRatedLimit ?? 0);
+  const topRatedBuffets = topRatedLimit
+    ? [...rollupData.buffets]
+        .filter((buffet) => buffet.rating != null)
+        .sort((a, b) => {
+          const ratingDiff = (b.rating || 0) - (a.rating || 0);
+          if (ratingDiff !== 0) return ratingDiff;
+          return (b.reviewsCount || 0) - (a.reviewsCount || 0);
+        })
+        .slice(0, topRatedLimit)
+    : undefined;
+
+  if (!options || options.limit == null) {
+    return { data: rollupData, topRatedBuffets };
+  }
+
+  const offset = Math.max(0, options.offset ?? 0);
+  const limit = Math.max(0, options.limit);
+  const pagedBuffets = rollupData.buffets.slice(offset, offset + limit);
+
+  return {
+    data: {
+      ...rollupData,
+      buffets: pagedBuffets,
+    },
+    topRatedBuffets,
+  };
+}
+
+/**
+ * Get pre-aggregated facets rollup for /api/facets/city.
+ *
+ * This replaces the slow InstantDB cities→buffets query (21MB / 34s)
+ * with a single small rollup read (~5KB).
+ *
+ * Rollup is generated by: node scripts/rebuildRollups.js --city-facets-only
+ */
+export async function getCityFacetsRollup(citySlug: string): Promise<{
+  data: AggregatedFacets | null;
+}> {
+  const result = await getRollup('cityFacets', citySlug);
+  const data = result.data as AggregatedFacets | null;
   return { data };
 }

@@ -1,23 +1,32 @@
 import { Suspense } from 'react';
 import { Metadata } from 'next';
 import SearchResultsClient from '@/components/search/SearchResultsClient';
+import { getCanonicalUrl } from '@/lib/site-url';
+
+const isDev = process.env.NODE_ENV !== 'production';
+
+// ---------------------------------------------------------------------------
+// Caching — the page shell is static.  All search logic runs client-side
+// via useSearchParams() + fetch('/api/search'), so the server component
+// does NOT access searchParams (which would force dynamic rendering and
+// send "private, no-cache, no-store" headers).
+// ---------------------------------------------------------------------------
+export const revalidate = isDev ? 3600 : 21600;
+export const fetchCache = 'force-cache';
 
 export const metadata: Metadata = {
   title: 'Search Chinese Buffets | Find All-You-Can-Eat Restaurants',
   description: 'Search for Chinese buffet restaurants near you. Find the best all-you-can-eat Chinese food with ratings, reviews, and prices.',
+  alternates: {
+    canonical: getCanonicalUrl('/search'),
+  },
+  robots: { index: false, follow: true },
 };
 
-interface SearchPageProps {
-  searchParams: Promise<{ q?: string }>;
-}
-
-export default async function SearchPage({ searchParams }: SearchPageProps) {
-  const params = await searchParams;
-  const query = params.q || '';
-
+export default function SearchPage() {
   return (
     <Suspense fallback={<SearchPageSkeleton />}>
-      <SearchResultsClient initialQuery={query} />
+      <SearchResultsClient />
     </Suspense>
   );
 }

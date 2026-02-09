@@ -372,12 +372,12 @@ function FilterDrawer({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50">
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+      <div className="fixed inset-0 z-50">
+        {/* Backdrop */}
+        <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       
-      {/* Drawer */}
-      <div className="absolute inset-x-0 bottom-0 max-h-[85vh] bg-[var(--surface)] rounded-t-2xl overflow-hidden flex flex-col animate-slide-up">
+        {/* Drawer */}
+        <div className="absolute inset-x-0 bottom-0 max-h-[85vh] bg-[var(--surface)] rounded-t-2xl overflow-hidden flex flex-col animate-slide-up pb-[calc(var(--bottom-nav-height)+env(safe-area-inset-bottom))]">
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)] shrink-0">
           <div className="flex items-center gap-2">
@@ -418,6 +418,23 @@ function FilterDrawer({
                 <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition ${activeFilters.openNow ? 'translate-x-5' : 'translate-x-0'}`} />
               </button>
             </div>
+          )}
+
+          {/* Neighborhoods */}
+          {neighborhoodOptions.length >= 2 && (
+            <FilterSection title="Neighborhood">
+              <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+                {neighborhoodOptions.map((opt) => (
+                  <FilterChipButton
+                    key={opt.slug}
+                    label={opt.label}
+                    count={opt.count}
+                    active={activeFilters.neighborhoods.includes(opt.slug)}
+                    onClick={() => onToggleNeighborhood(opt.slug)}
+                  />
+                ))}
+              </div>
+            </FilterSection>
           )}
 
           {/* Price */}
@@ -476,23 +493,6 @@ function FilterDrawer({
               })}
             </div>
           </FilterSection>
-
-          {/* Neighborhoods */}
-          {neighborhoodOptions.length >= 2 && (
-            <FilterSection title="Neighborhood">
-              <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
-                {neighborhoodOptions.map((opt) => (
-                  <FilterChipButton
-                    key={opt.slug}
-                    label={opt.label}
-                    count={opt.count}
-                    active={activeFilters.neighborhoods.includes(opt.slug)}
-                    onClick={() => onToggleNeighborhood(opt.slug)}
-                  />
-                ))}
-              </div>
-            </FilterSection>
-          )}
 
           {/* Service Type */}
           {dineOptions.length > 0 && (
@@ -572,21 +572,23 @@ function FilterDrawer({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center gap-3 px-4 py-3 border-t border-[var(--border)] shrink-0 bg-[var(--surface)]">
-          <button
-            type="button"
-            onClick={onClearAll}
-            className="flex-1 py-2.5 text-sm font-medium text-[var(--text)] hover:bg-[var(--surface2)] rounded-lg transition-colors"
-          >
-            Clear all
-          </button>
-          <button
-            type="button"
-            onClick={onApply}
-            className="flex-1 py-2.5 text-sm font-medium text-white bg-[var(--accent1)] rounded-lg hover:opacity-90 transition-opacity"
-          >
-            Show results
-          </button>
+        <div className="sticky bottom-0 mt-auto border-t border-[var(--border)] bg-[var(--surface)]/95 px-4 py-3 backdrop-blur">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={onClearAll}
+              className="flex-1 py-2.5 text-sm font-medium text-[var(--text)] hover:bg-[var(--surface2)] rounded-lg transition-colors"
+            >
+              Clear all
+            </button>
+            <button
+              type="button"
+              onClick={onApply}
+              className="flex-1 py-2.5 text-sm font-medium text-white bg-[var(--accent1)] rounded-lg hover:opacity-90 transition-opacity"
+            >
+              Show results
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -854,7 +856,7 @@ export default function CityFilterBar({
     <>
       <div
         className={`
-          sticky top-0 z-40 bg-[var(--surface)] border-b border-[var(--border)] shadow-sm
+          sticky top-[var(--header-offset-mobile)] md:top-0 z-40 bg-[var(--surface)] border-b border-[var(--border)] shadow-sm
           ${isPending ? 'opacity-70' : ''}
         `}
       >
@@ -962,7 +964,7 @@ export default function CityFilterBar({
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
               </svg>
-              Filters
+              Filter
               {activeCount > 0 && (
                 <span className="flex items-center justify-center min-w-[18px] h-[18px] text-xs rounded-full bg-white/20">
                   {activeCount}

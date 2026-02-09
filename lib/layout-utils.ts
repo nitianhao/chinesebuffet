@@ -18,4 +18,4 @@ export const h2 =
 
 /** Muted/secondary text (uses design system var if present) */
 export const muted =
-  'text-sm text-[var(--muted)]';
+  'text-sm text-muted-foreground';

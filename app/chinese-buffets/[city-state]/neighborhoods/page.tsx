@@ -3,12 +3,20 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getCityNeighborhoodsRollup, STATE_ABBR_TO_NAME } from '@/lib/rollups';
 import NeighborhoodsHubClient from '@/components/neighborhoods/NeighborhoodsHubClient';
+import { getSiteUrl } from '@/lib/site-url';
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://yoursite.com';
+const BASE_URL = getSiteUrl();
 const isDev = process.env.NODE_ENV !== 'production';
 
 // ISR: Revalidate every 6 hours in prod, 1 hour in dev
 export const revalidate = isDev ? 3600 : 21600;
+export const fetchCache = 'force-cache';
+
+// generateStaticParams enables ISR for dynamic [city-state] segments.
+// Return empty array: pages are generated on-demand and cached via ISR.
+export async function generateStaticParams() {
+  return [];
+}
 
 interface NeighborhoodsIndexPageProps {
   params: {
@@ -20,9 +28,12 @@ export async function generateMetadata({ params }: NeighborhoodsIndexPageProps):
   const citySlug = params['city-state'];
   const { data } = await getCityNeighborhoodsRollup(citySlug);
   
+  const selfCanonical = `${BASE_URL}/chinese-buffets/${citySlug}/neighborhoods`;
   if (!data) {
     return {
       title: 'Neighborhoods Not Found',
+      robots: { index: false, follow: true },
+      alternates: { canonical: selfCanonical },
     };
   }
 
@@ -32,8 +43,9 @@ export async function generateMetadata({ params }: NeighborhoodsIndexPageProps):
     title: `Chinese Buffets by Neighborhood in ${data.cityName}, ${data.stateAbbr}`,
     description: `Browse Chinese buffets in ${neighborhoodCount} neighborhoods across ${data.cityName}, ${data.stateAbbr}. Find all-you-can-eat restaurants with hours, prices, and reviews.`,
     alternates: {
-      canonical: `${BASE_URL}/chinese-buffets/${citySlug}/neighborhoods`,
+      canonical: selfCanonical,
     },
+    robots: { index: true, follow: true },
   };
 }
 

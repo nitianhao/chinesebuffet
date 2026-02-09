@@ -19,8 +19,10 @@
  * - Dev mode logs warnings for incomplete schemas
  */
 
-// Base URL configuration - should match your production domain
-const DEFAULT_BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://yoursite.com';
+import { getSiteUrl } from '@/lib/site-url';
+
+// Base URL configuration — single source of truth via getSiteUrl()
+const DEFAULT_BASE_URL = getSiteUrl();
 
 /**
  * Schema validation result interface
@@ -189,11 +191,64 @@ export function parseAddress(addressString: string | null | undefined): {
   return result;
 }
 
+/** Day name to schema.org DayOfWeek (full name) */
+const DAY_TO_FULL: Record<string, string> = {
+  Mon: 'Monday', Tue: 'Tuesday', Wed: 'Wednesday', Thu: 'Thursday',
+  Fri: 'Friday', Sat: 'Saturday', Sun: 'Sunday',
+  Monday: 'Monday', Tuesday: 'Tuesday', Wednesday: 'Wednesday', Thursday: 'Thursday',
+  Friday: 'Friday', Saturday: 'Saturday', Sunday: 'Sunday',
+};
+
+/**
+ * Get PostalAddress-shaped object from buffet (handles address as string or object with street, city, stateAbbr, postalCode, full).
+ */
+function getAddressForSchema(buffet: any): {
+  '@type': 'PostalAddress';
+  streetAddress?: string;
+  addressLocality?: string;
+  addressRegion?: string;
+  postalCode?: string;
+  addressCountry: string;
+} | null {
+  const country = 'US';
+  if (!buffet?.address) return null;
+
+  const addr = buffet.address;
+  if (typeof addr === 'object' && addr !== null) {
+    const street = addr.street ?? addr.streetAddress ?? '';
+    const locality = addr.city ?? addr.addressLocality ?? '';
+    const region = addr.stateAbbr ?? addr.addressRegion ?? addr.state ?? '';
+    const postal = addr.postalCode ?? '';
+    if (!street && !locality) {
+      const fromFull = typeof addr.full === 'string' ? parseAddress(addr.full) : null;
+      if (fromFull && (fromFull.streetAddress || fromFull.addressLocality)) {
+        return { '@type': 'PostalAddress', ...fromFull, addressCountry: country };
+      }
+      return null;
+    }
+    return {
+      '@type': 'PostalAddress',
+      ...(street && { streetAddress: String(street).trim() }),
+      ...(locality && { addressLocality: String(locality).trim() }),
+      ...(region && { addressRegion: String(region).trim() }),
+      ...(postal && { postalCode: String(postal).trim() }),
+      addressCountry: country,
+    };
+  }
+  if (typeof addr === 'string') {
+    const parts = parseAddress(addr);
+    if (parts.streetAddress || parts.addressLocality) {
+      return { '@type': 'PostalAddress', ...parts, addressCountry: country };
+    }
+  }
+  return null;
+}
+
 /**
  * Build Restaurant JSON-LD schema
  * 
  * @param buffet - Buffet data object
- * @param siteBaseUrl - Base URL of the site (e.g., "https://yoursite.com")
+ * @param siteBaseUrl - Base URL of the site (e.g., "https://chinesebuffetdirectory.com")
  * @param cityStateSlug - City-state slug for URL construction (e.g., "los-angeles-ca")
  * @returns JSON-LD object or null if insufficient data
  */
@@ -215,15 +270,10 @@ export function buildRestaurantJsonLd(
     url: pageUrl,
   };
   
-  // Address - parse from string if available
-  if (buffet.address) {
-    const addressParts = parseAddress(buffet.address);
-    if (addressParts.streetAddress || addressParts.addressLocality) {
-      schema.address = {
-        '@type': 'PostalAddress',
-        ...addressParts,
-      };
-    }
+  // Address - PostalAddress (from string or object)
+  const addressForSchema = getAddressForSchema(buffet);
+  if (addressForSchema) {
+    schema.address = addressForSchema;
   }
   
   // Geo coordinates - only if we have valid lat/lng
@@ -274,34 +324,37 @@ export function buildRestaurantJsonLd(
     });
   }
   
+  // Image: array of absolute URLs (omit if none; schema.org accepts URL or array)
   if (images.length > 0) {
-    schema.image = images.length === 1 ? images[0] : images;
+    schema.image = images;
   }
-  
-  // Cuisine type - hardcode "Chinese" since this is a Chinese buffet directory
+
+  // Cuisine type - required for Restaurant
   schema.servesCuisine = ['Chinese'];
-  
-  // Opening hours - only if we have reliable hours structure
-  // Note: The hours format from getBuffetNameBySlug may need parsing
-  // For now, omit if uncertain
-  if (buffet.hours?.hours && Array.isArray(buffet.hours.hours)) {
+
+  // Opening hours - support buffet.hours as array or buffet.hours.hours
+  const hoursArray = Array.isArray(buffet.hours)
+    ? buffet.hours
+    : buffet.hours?.hours && Array.isArray(buffet.hours.hours)
+      ? buffet.hours.hours
+      : [];
+  if (hoursArray.length > 0) {
     const openingHours: any[] = [];
-    buffet.hours.hours.forEach((dayHours: any) => {
-      if (dayHours?.day && dayHours?.hours) {
-        // Parse hours string like "9:00 AM - 10:00 PM"
-        const hoursStr = String(dayHours.hours);
-        const match = hoursStr.match(/(\d{1,2}:\d{2}\s*(?:AM|PM))\s*-\s*(\d{1,2}:\d{2}\s*(?:AM|PM))/i);
-        if (match) {
-          openingHours.push({
-            '@type': 'OpeningHoursSpecification',
-            dayOfWeek: `https://schema.org/${dayHours.day}`,
-            opens: match[1].trim(),
-            closes: match[2].trim(),
-          });
-        }
+    for (const dayHours of hoursArray) {
+      const day = dayHours?.day;
+      const ranges = dayHours?.hours ?? dayHours?.ranges ?? '';
+      if (!day || !ranges) continue;
+      // Parse "9:00 AM - 10:00 PM" or "11 AM – 9 PM"
+      const match = String(ranges).match(/(\d{1,2}(?::\d{2})?\s*(?:AM|PM))\s*[–-]\s*(\d{1,2}(?::\d{2})?\s*(?:AM|PM))/i);
+      if (match) {
+        openingHours.push({
+          '@type': 'OpeningHoursSpecification',
+          dayOfWeek: DAY_TO_FULL[day] ?? day,
+          opens: match[1].trim(),
+          closes: match[2].trim(),
+        });
       }
-    });
-    
+    }
     if (openingHours.length > 0) {
       schema.openingHoursSpecification = openingHours;
     }
@@ -340,15 +393,14 @@ export function buildRestaurantJsonLd(
     schema.sameAs = sameAsLinks.length === 1 ? sameAsLinks[0] : sameAsLinks;
   }
   
-  // AggregateRating - only if we have valid rating and count
+  // AggregateRating - only if we have valid rating and review count
   const rating = clampRating(buffet.rating);
   const reviewCount = asNumber(buffet.reviewsCount);
-  
   if (rating !== null && reviewCount !== null && reviewCount > 0) {
     schema.aggregateRating = {
       '@type': 'AggregateRating',
       ratingValue: rating.toString(),
-      reviewCount: Math.floor(reviewCount).toString(),
+      reviewCount: Math.floor(reviewCount),
       bestRating: '5',
       worstRating: '1',
     };

@@ -1,5 +1,3 @@
-'use client';
-
 import ChipGridWithExpand, { ChipItem } from '@/components/ui/ChipGridWithExpand';
 
 interface ParkingProps {

@@ -4,13 +4,18 @@ import { getAllCitySlugs, getCityBySlug } from '@/lib/data-instantdb';
 import { createSitemapEntry, filterIndexableEntries, getLastModified } from '@/lib/sitemap-utils';
 import { PageType, IndexTier } from '@/lib/index-tier';
 import { isCityIndexable, getStagedIndexingConfig } from '@/lib/staged-indexing';
+import { getBaseUrlForRobotsAndSitemaps } from '@/lib/site-url';
+import { CITY_FILTERS } from '@/lib/city-filter-pages';
+
+// ISR: regenerate sitemap at most once per hour at runtime
+export const revalidate = 3600;
 
 /**
  * City Pages Sitemap
- * Only includes indexable city pages.
+ * Only includes indexable city pages. All URLs are absolute.
  */
 export async function GET(): Promise<NextResponse> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yoursite.com';
+  const baseUrl = getBaseUrlForRobotsAndSitemaps();
   const citySlugs = await getAllCitySlugs();
   
   const entries = [];
@@ -53,6 +58,25 @@ export async function GET(): Promise<NextResponse> {
     // Only add if entry is indexable (createSitemapEntry returns null for noindex)
     if (entry) {
       entries.push(entry);
+
+      // Also add curated filter pages for indexable cities with enough buffets
+      const buffetCount = city.buffets?.length || 0;
+      if (buffetCount >= 5) {
+        for (const filter of CITY_FILTERS) {
+          const filterEntry = createSitemapEntry(
+            `${baseUrl}/chinese-buffets/${slug}/${filter}`,
+            'city' as PageType,
+            'tier-2' as IndexTier,
+            lastModified,
+            'weekly',
+            0.6,
+            true
+          );
+          if (filterEntry) {
+            entries.push(filterEntry);
+          }
+        }
+      }
     }
   }
   

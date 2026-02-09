@@ -40,7 +40,7 @@ export default function Accordion({
         aria-expanded={isExpanded}
         className={`w-full text-left flex items-center justify-between gap-3 transition-colors hover:bg-neutral-50 ${
           compactMode ? 'px-3 py-2.5' : 'px-4 py-3'
-        }`}
+        } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C1121F] focus-visible:ring-offset-2`}
       >
         <div className="flex-1 min-w-0 flex items-center gap-2.5">
           {icon && (

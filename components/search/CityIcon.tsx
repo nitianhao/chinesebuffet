@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 
 // ============================================================================
@@ -10,24 +8,37 @@ import React from 'react';
 // 3. Colors are still unique per city for visual variety
 // ============================================================================
 
-// Vibrant color palette
+// Chinese-themed color palette matching the design system
 const CITY_COLORS = [
-  { bg: 'linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%)', text: '#fff' },
-  { bg: 'linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%)', text: '#fff' },
-  { bg: 'linear-gradient(135deg, #667EEA 0%, #764BA2 100%)', text: '#fff' },
-  { bg: 'linear-gradient(135deg, #F093FB 0%, #F5576C 100%)', text: '#fff' },
-  { bg: 'linear-gradient(135deg, #4FACFE 0%, #00F2FE 100%)', text: '#fff' },
-  { bg: 'linear-gradient(135deg, #43E97B 0%, #38F9D7 100%)', text: '#fff' },
-  { bg: 'linear-gradient(135deg, #FA709A 0%, #FEE140 100%)', text: '#fff' },
-  { bg: 'linear-gradient(135deg, #30CFD0 0%, #330867 100%)', text: '#fff' },
-  { bg: 'linear-gradient(135deg, #FFD89B 0%, #19547B 100%)', text: '#fff' },
-  { bg: 'linear-gradient(135deg, #F6D365 0%, #FDA085 100%)', text: '#fff' },
-  { bg: 'linear-gradient(135deg, #FCCB90 0%, #D57EEB 100%)', text: '#fff' },
-  { bg: 'linear-gradient(135deg, #A8EDEA 0%, #FED6E3 100%)', text: '#555' },
-  { bg: 'linear-gradient(135deg, #96FBC4 0%, #F9F586 100%)', text: '#555' },
-  { bg: 'linear-gradient(135deg, #E0C3FC 0%, #8EC5FC 100%)', text: '#555' },
-  { bg: 'linear-gradient(135deg, #D299C2 0%, #FEF9D7 100%)', text: '#555' },
-  { bg: 'linear-gradient(135deg, #F5F7FA 0%, #C3CFE2 100%)', text: '#444' },
+  // Chinese Reds (primary)
+  { bg: 'linear-gradient(135deg, #C1121F 0%, #7F0A12 100%)', text: '#fff' },  // Primary Chinese Red
+  { bg: 'linear-gradient(135deg, #9B1B1B 0%, #C1121F 100%)', text: '#fff' },  // Deep to bright red
+  { bg: 'linear-gradient(135deg, #B91C1C 0%, #DC2626 100%)', text: '#fff' },  // Vibrant red
+  
+  // Red + Gold combinations
+  { bg: 'linear-gradient(135deg, #C1121F 0%, #D4A84B 100%)', text: '#fff' },  // Red to gold
+  { bg: 'linear-gradient(135deg, #8B0000 0%, #DAA520 100%)', text: '#fff' },  // Dark red to gold
+  
+  // Imperial Gold/Amber
+  { bg: 'linear-gradient(135deg, #D4A84B 0%, #B8860B 100%)', text: '#fff' },  // Gold gradient
+  { bg: 'linear-gradient(135deg, #CD853F 0%, #996515 100%)', text: '#fff' },  // Amber
+  { bg: 'linear-gradient(135deg, #DAA520 0%, #B8860B 100%)', text: '#fff' },  // Golden rod
+  
+  // Jade Green
+  { bg: 'linear-gradient(135deg, #2E8B57 0%, #1B5E3C 100%)', text: '#fff' },  // Jade
+  { bg: 'linear-gradient(135deg, #3D7A5D 0%, #1F4E3D 100%)', text: '#fff' },  // Deep jade
+  
+  // Imperial Navy/Blue
+  { bg: 'linear-gradient(135deg, #1E3A5F 0%, #0B1929 100%)', text: '#fff' },  // Imperial navy
+  { bg: 'linear-gradient(135deg, #2C3E50 0%, #1A252F 100%)', text: '#fff' },  // Deep slate
+  
+  // Black/Charcoal (matches header)
+  { bg: 'linear-gradient(135deg, #2D2D2D 0%, #0B0B0C 100%)', text: '#fff' },  // Charcoal
+  { bg: 'linear-gradient(135deg, #3D3D3D 0%, #1A1A1A 100%)', text: '#fff' },  // Dark slate
+  
+  // Warm neutrals (design system)
+  { bg: 'linear-gradient(135deg, #6B625A 0%, #4A4540 100%)', text: '#fff' },  // Warm gray
+  { bg: 'linear-gradient(135deg, #7D6B5D 0%, #4E4239 100%)', text: '#fff' },  // Taupe
 ];
 
 function hashString(str: string): number {

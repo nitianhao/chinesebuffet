@@ -5,12 +5,14 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import ModalDrawer from '@/components/ui/ModalDrawer';
 import SearchBar from '@/components/SearchBar';
+import MobileSearchDrawer from '@/components/search/MobileSearchDrawer';
 import AddBuffetModal from '@/components/AddBuffetModal';
 
 const navLinks = [
   { label: 'Cities', href: '/chinese-buffets/cities' },
   { label: 'States', href: '/chinese-buffets/states' },
   { label: 'Neighborhoods', href: '/chinese-buffets/neighborhoods' },
+  { label: 'Saved', href: '/saved' },
 ];
 
 
@@ -81,7 +83,6 @@ function HeaderIconButton({
 export default function Header() {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAddBuffetOpen, setIsAddBuffetOpen] = useState(false);
 
@@ -95,19 +96,52 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
-    setIsSearchOpen(false);
     setIsMenuOpen(false);
   }, [pathname]);
 
   const headerClasses = [
-    'sticky top-0 z-[9999] w-full border-b backdrop-blur-xl transition',
+    'fixed top-0 z-[9999] w-full border-b backdrop-blur-xl transition pt-[env(safe-area-inset-top)] md:sticky',
     isScrolled
       ? 'bg-[#0B0B0C]/95 border-white/10 shadow-lg'
       : 'bg-[#0B0B0C]/90 border-white/5 shadow-md',
   ].join(' ');
 
+  const getBackHref = (path: string | null) => {
+    if (!path || path === '/') return null;
+    if (path.startsWith('/search')) return null;
+    if (path === '/chinese-buffets/states' || path === '/chinese-buffets/cities') {
+      return '/';
+    }
+    if (path === '/chinese-buffets/neighborhoods') {
+      return '/chinese-buffets/cities';
+    }
+    if (path.startsWith('/chinese-buffets/states/')) {
+      return '/chinese-buffets/states';
+    }
+    if (path.startsWith('/chinese-buffets/') && path.includes('/neighborhoods/')) {
+      const parts = path.split('/');
+      const citySlug = parts[2];
+      return citySlug ? `/chinese-buffets/${citySlug}/neighborhoods` : '/chinese-buffets/neighborhoods';
+    }
+    if (path.startsWith('/chinese-buffets/') && path.endsWith('/neighborhoods')) {
+      const parts = path.split('/');
+      const citySlug = parts[2];
+      return citySlug ? `/chinese-buffets/${citySlug}` : '/chinese-buffets/cities';
+    }
+    if (path.startsWith('/chinese-buffets/')) {
+      const parts = path.split('/');
+      const citySlug = parts[2];
+      return citySlug ? `/chinese-buffets/${citySlug}` : '/chinese-buffets/cities';
+    }
+    return '/';
+  };
+
+  const backHref = getBackHref(pathname);
+
   return (
-    <header className={headerClasses}>
+    <>
+      <div className="md:hidden h-[var(--header-offset-mobile)]" aria-hidden="true" />
+      <header className={headerClasses}>
       <div className="relative">
         {/* Subtle red gradient hairline */}
         <div
@@ -119,19 +153,27 @@ export default function Header() {
         />
 
         <div className="container mx-auto px-4">
-          <div className="flex h-14 items-center justify-between gap-3 md:h-16">
+          <div className="flex h-[var(--header-mobile-height)] items-center justify-between gap-3 md:h-16">
             {/* Left: Brand + Nav */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
+              {backHref && (
+                <Link
+                  href={backHref}
+                  aria-label="Back"
+                  className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/80 transition hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C1121F] focus-visible:ring-offset-2 md:hidden"
+                >
+                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 18l-6-6 6-6" />
+                  </svg>
+                </Link>
+              )}
               <Link
                 href="/"
                 className="flex items-center gap-2.5 transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C1121F] rounded-md"
               >
-                <BrandMark className="h-8 w-8 text-base" />
-                <span className="text-sm font-semibold text-white sm:text-base">
-                  <span className="hidden sm:inline">
-                    Chinese Buffet Directory
-                  </span>
-                  <span className="sm:hidden">Chinese Buffet</span>
+                <BrandMark className="h-7 w-7 text-sm sm:h-8 sm:w-8 sm:text-base" />
+                <span className="hidden text-sm font-semibold text-white sm:inline sm:text-base">
+                  Chinese Buffet Directory
                 </span>
               </Link>
 
@@ -148,6 +190,29 @@ export default function Header() {
               </div>
             </div>
 
+            {/* Mobile search (inline) */}
+            <div className="flex-1 min-w-0 px-2 md:hidden relative z-0">
+              <MobileSearchDrawer
+                triggerAriaLabel="Open search"
+                triggerClassName="w-full min-h-[44px] rounded-full border border-white/10 bg-white/5 px-3 py-2 text-left text-sm text-white/80 shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C1121F] focus-visible:ring-offset-2"
+                placeholder="Search City, Neighborhood, Buffets"
+                triggerChildren={
+                  <span className="inline-flex items-center gap-2 w-full min-w-0">
+                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <span className="relative flex-1 min-w-0 overflow-hidden whitespace-nowrap text-ellipsis">
+                      Search City, Neighborhood, Buffets
+                      <span
+                        aria-hidden="true"
+                        className="pointer-events-none absolute right-0 top-0 h-full w-6 bg-gradient-to-l from-white/10 to-transparent"
+                      />
+                    </span>
+                  </span>
+                }
+              />
+            </div>
+
             {/* Center: Search (desktop) */}
             <div className="hidden md:flex flex-1 justify-center px-4">
               <div className="relative w-full max-w-xl">
@@ -156,40 +221,18 @@ export default function Header() {
             </div>
 
             {/* Right: CTA + Mobile controls */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 relative z-10">
               {/* Primary CTA - Red gradient */}
               <button
                 type="button"
                 onClick={() => setIsAddBuffetOpen(true)}
-                className="inline-flex items-center rounded-full bg-gradient-to-r from-[#C1121F] to-[#7F0A12] px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:shadow-md hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C1121F] sm:px-4 sm:text-sm"
+                className="hidden md:inline-flex items-center rounded-full bg-gradient-to-r from-[#C1121F] to-[#7F0A12] px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:shadow-md hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C1121F] sm:px-4 sm:text-sm"
               >
                 Add a buffet
               </button>
 
               {/* Mobile controls */}
               <div className="flex items-center gap-2 md:hidden">
-                <button
-                  type="button"
-                  onClick={() => setIsSearchOpen(true)}
-                  className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-white/70 shadow-sm transition hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C1121F]"
-                  aria-label="Open search"
-                  aria-expanded={isSearchOpen}
-                >
-                  <svg
-                    className="h-4 w-4"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
-                  Search
-                </button>
                 <HeaderIconButton
                   label="Open menu"
                   onClick={() => setIsMenuOpen(true)}
@@ -231,74 +274,6 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile Search Drawer */}
-      <ModalDrawer
-        isOpen={isSearchOpen}
-        onClose={() => setIsSearchOpen(false)}
-        title="Search"
-        side="top"
-      >
-        <div className="space-y-5">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-[var(--text)]">Search</h2>
-            <button
-              type="button"
-              aria-label="Close search"
-              onClick={() => setIsSearchOpen(false)}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface2)] text-[var(--muted)] transition hover:bg-[var(--surface)] hover:text-[var(--text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C1121F]"
-            >
-              <svg
-                className="h-4 w-4"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-          </div>
-
-          <div className="relative">
-            <SearchBar
-              variant="mobile"
-              autoFocus
-              onNavigate={() => setIsSearchOpen(false)}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">
-              Quick links
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <Link
-                href="/"
-                className="inline-flex items-center rounded-full border border-[var(--border)] bg-[var(--surface2)] px-3 py-1.5 text-sm font-medium text-[var(--muted)] transition hover:bg-[var(--surface)] hover:text-[var(--text)]"
-              >
-                Popular cities
-              </Link>
-              <Link
-                href="/chinese-buffets/states"
-                className="inline-flex items-center rounded-full border border-[var(--border)] bg-[var(--surface2)] px-3 py-1.5 text-sm font-medium text-[var(--muted)] transition hover:bg-[var(--surface)] hover:text-[var(--text)]"
-              >
-                States
-              </Link>
-              <Link
-                href="/chinese-buffets/near/parking"
-                className="inline-flex items-center rounded-full border border-[var(--border)] bg-[var(--surface2)] px-3 py-1.5 text-sm font-medium text-[var(--muted)] transition hover:bg-[var(--surface)] hover:text-[var(--text)]"
-              >
-                Near me
-              </Link>
-            </div>
-          </div>
-        </div>
-      </ModalDrawer>
-
       {/* Mobile Menu Drawer */}
       <ModalDrawer
         isOpen={isMenuOpen}
@@ -316,7 +291,7 @@ export default function Header() {
               type="button"
               aria-label="Close menu"
               onClick={() => setIsMenuOpen(false)}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface2)] text-[var(--muted)] transition hover:bg-[var(--surface)] hover:text-[var(--text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C1121F]"
+                className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface2)] text-[var(--muted)] transition hover:bg-[var(--surface)] hover:text-[var(--text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C1121F] focus-visible:ring-offset-2"
             >
               <svg
                 className="h-4 w-4"
@@ -366,6 +341,7 @@ export default function Header() {
         isOpen={isAddBuffetOpen}
         onClose={() => setIsAddBuffetOpen(false)}
       />
-    </header>
+      </header>
+    </>
   );
 }

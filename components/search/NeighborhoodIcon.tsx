@@ -1,28 +1,37 @@
-'use client';
-
 import React from 'react';
 
 // ============================================================================
 // NEIGHBORHOOD ICON
 // 
 // Generates unique, colorful icons for neighborhoods based on their name.
-// Uses a house/building theme to distinguish from city skyline icons.
+// Uses a house/building theme with Chinese-themed colors.
 // ============================================================================
 
-// Vibrant color palette - different shades than cities
+// Chinese-themed color palette matching the design system
 const NEIGHBORHOOD_COLORS = [
-  { bg: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)', text: '#fff' }, // Indigo to Purple
-  { bg: 'linear-gradient(135deg, #EC4899 0%, #F472B6 100%)', text: '#fff' }, // Pink
-  { bg: 'linear-gradient(135deg, #14B8A6 0%, #2DD4BF 100%)', text: '#fff' }, // Teal
-  { bg: 'linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)', text: '#fff' }, // Amber
-  { bg: 'linear-gradient(135deg, #EF4444 0%, #F87171 100%)', text: '#fff' }, // Red
-  { bg: 'linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%)', text: '#fff' }, // Blue
-  { bg: 'linear-gradient(135deg, #10B981 0%, #34D399 100%)', text: '#fff' }, // Emerald
-  { bg: 'linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%)', text: '#fff' }, // Violet
-  { bg: 'linear-gradient(135deg, #F97316 0%, #FB923C 100%)', text: '#fff' }, // Orange
-  { bg: 'linear-gradient(135deg, #06B6D4 0%, #22D3EE 100%)', text: '#fff' }, // Cyan
-  { bg: 'linear-gradient(135deg, #84CC16 0%, #A3E635 100%)', text: '#fff' }, // Lime
-  { bg: 'linear-gradient(135deg, #D946EF 0%, #E879F9 100%)', text: '#fff' }, // Fuchsia
+  // Chinese Reds
+  { bg: 'linear-gradient(135deg, #C1121F 0%, #8B0A14 100%)', text: '#fff' },  // Chinese red
+  { bg: 'linear-gradient(135deg, #A51C1C 0%, #D43D3D 100%)', text: '#fff' },  // Bright red
+  
+  // Gold/Amber (prosperity)
+  { bg: 'linear-gradient(135deg, #D4A84B 0%, #996515 100%)', text: '#fff' },  // Gold
+  { bg: 'linear-gradient(135deg, #CD853F 0%, #A0522D 100%)', text: '#fff' },  // Amber
+  
+  // Jade Green
+  { bg: 'linear-gradient(135deg, #2E8B57 0%, #1B5E3C 100%)', text: '#fff' },  // Jade
+  { bg: 'linear-gradient(135deg, #3CB371 0%, #228B22 100%)', text: '#fff' },  // Forest jade
+  
+  // Imperial Blue/Navy
+  { bg: 'linear-gradient(135deg, #1E3A5F 0%, #0D1F33 100%)', text: '#fff' },  // Navy
+  { bg: 'linear-gradient(135deg, #34495E 0%, #1A252F 100%)', text: '#fff' },  // Slate blue
+  
+  // Black/Charcoal
+  { bg: 'linear-gradient(135deg, #2D2D2D 0%, #111111 100%)', text: '#fff' },  // Charcoal
+  { bg: 'linear-gradient(135deg, #3D3D3D 0%, #1E1E1E 100%)', text: '#fff' },  // Dark gray
+  
+  // Warm neutrals
+  { bg: 'linear-gradient(135deg, #6B625A 0%, #4A4540 100%)', text: '#fff' },  // Warm gray
+  { bg: 'linear-gradient(135deg, #7D6B5D 0%, #5C4D3D 100%)', text: '#fff' },  // Taupe
 ];
 
 function hashString(str: string): number {

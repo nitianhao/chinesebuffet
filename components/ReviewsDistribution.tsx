@@ -1,5 +1,3 @@
-'use client';
-
 interface ReviewsDistributionProps {
   distribution: {
     oneStar?: number;

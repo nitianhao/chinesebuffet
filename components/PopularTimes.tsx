@@ -1,5 +1,3 @@
-'use client';
-
 interface PopularTimesProps {
   histogram?: {
     [key: string]: Array<{

@@ -15,20 +15,26 @@
 
 import { getCachedSeoSchemas } from '@/lib/seo-jsonld-cached';
 
+export type SeoSchemas = Awaited<ReturnType<typeof getCachedSeoSchemas>>;
+
 interface SeoJsonLdProps {
   cityState: string;
   slug: string;
+  /** When provided, skip fetching; use these schemas and do not render restaurant (handled by page). */
+  initialSchemas?: SeoSchemas | null;
+  /** When true, do not render Restaurant schema (page renders it with markers). */
+  skipRestaurant?: boolean;
 }
 
-export default async function SeoJsonLd({ cityState, slug }: SeoJsonLdProps) {
-  const schemas = await getCachedSeoSchemas(cityState, slug);
+export default async function SeoJsonLd({ cityState, slug, initialSchemas, skipRestaurant }: SeoJsonLdProps) {
+  const schemas = initialSchemas ?? (await getCachedSeoSchemas(cityState, slug));
   if (!schemas) return null;
 
   const { restaurantSchema, faqSchema, breadcrumbSchema, poiSchemas } = schemas;
 
   return (
     <>
-      {restaurantSchema && (
+      {!skipRestaurant && restaurantSchema && (
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

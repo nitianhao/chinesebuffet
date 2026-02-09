@@ -2,14 +2,15 @@ import { NextResponse } from 'next/server';
 import { MetadataRoute } from 'next';
 import { createSitemapEntry, filterIndexableEntries } from '@/lib/sitemap-utils';
 import { PageType, IndexTier } from '@/lib/index-tier';
+import { getBaseUrlForRobotsAndSitemaps } from '@/lib/site-url';
 
 /**
  * Homepage Sitemap
  */
 export async function GET(): Promise<NextResponse> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yoursite.com';
+  const baseUrl = getBaseUrlForRobotsAndSitemaps();
   
-  // Homepage is always indexable (tier-1)
+  // Homepage is always indexable (tier-1); baseUrl is absolute (no trailing slash)
   const entries = [
     createSitemapEntry(
       baseUrl,

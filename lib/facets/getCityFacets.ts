@@ -12,6 +12,7 @@ import { isOpenNow } from './buildFacetIndex';
 import type { AmenityKey, NearbyCategoryKey, PriceBucketKey, RatingBucketKey, ReviewCountBucketKey, DineOptionKey, StandoutTagKey } from './taxonomy';
 import { AMENITY_KEYS, NEARBY_CATEGORY_KEYS, PRICE_BUCKET_KEYS, RATING_BUCKET_KEYS, REVIEW_COUNT_BUCKET_KEYS, DINE_OPTION_KEYS, STANDOUT_TAG_KEYS } from './taxonomy';
 import { nearbyKey, type DistanceBucketKey } from './aggregateFacets';
+import { perfMark, perfMs, queryDb, PERF_ENABLED } from '@/lib/perf';
 
 // =============================================================================
 // OPEN NOW CACHE (60-second TTL)
@@ -142,6 +143,9 @@ const VALID_SORT_OPTIONS: SortOption[] = ['relevance', 'rating', 'reviews', 'pri
 
 let cachedDb: ReturnType<typeof init> | null = null;
 
+// Override InstantDB's default `cache: "no-store"` to allow ISR/SSG caching.
+const facetFetchOpts: RequestInit = { cache: 'force-cache' };
+
 function getDb() {
   if (cachedDb) return cachedDb;
 
@@ -172,18 +176,24 @@ function getDb() {
 async function fetchCityFacetsInternal(
   citySlug: string
 ): Promise<CityFacetsResult> {
+  const tTotal = perfMark();
   const db = getDb();
 
   try {
-    // Query city with buffets, only fetching id and facetIndex
-    const result = await db.query({
-      cities: {
-        $: { where: { slug: citySlug } },
-        buffets: {
-          $: {},
+    // Query city with buffets, only fetching id and facetIndex.
+    // IMPORTANT: pass fetchOpts to override InstantDB's default no-store,
+    // otherwise this call makes the page dynamic and sends no-cache headers.
+    const result = await queryDb(
+      db,
+      {
+        cities: {
+          $: { where: { slug: citySlug } },
+          buffets: { $: {} },
         },
       },
-    });
+      { fetchOpts: facetFetchOpts },
+      `facets:${citySlug}`,
+    );
 
     const city = result.cities?.[0];
     if (!city?.buffets) {
@@ -206,6 +216,7 @@ async function fetchCityFacetsInternal(
     }
 
     const buffets = city.buffets as Array<{ id: string; facetIndex?: string | null }>;
+    const tParse = perfMark();
     const facetDataList: BuffetFacetData[] = [];
     const facetsByBuffetId = new Map<string, BuffetFacetData>();
     const allBuffetIds: string[] = [];
@@ -223,8 +234,15 @@ async function fetchCityFacetsInternal(
         }
       }
     }
+    const parseMs = perfMs(tParse);
 
+    const tAgg = perfMark();
     const aggregated = aggregateFacets(facetDataList);
+    const aggMs = perfMs(tAgg);
+
+    if (PERF_ENABLED) {
+      console.log(`[perf][facets] ${JSON.stringify({ city: citySlug, parseMs, aggMs, totalMs: perfMs(tTotal), buffets: buffets.length, withFacets: facetDataList.length })}`);
+    }
 
     return {
       aggregated,
@@ -232,7 +250,8 @@ async function fetchCityFacetsInternal(
       allBuffetIds,
     };
   } catch (error) {
-    console.error(`[getCityFacets] Error fetching facets for ${citySlug}:`, error);
+    const totalMs = perfMs(tTotal);
+    console.error(`[getCityFacets] Error fetching facets for ${citySlug} (${totalMs}ms):`, error);
     return {
       aggregated: {
         amenityCounts: {} as Record<AmenityKey, number>,

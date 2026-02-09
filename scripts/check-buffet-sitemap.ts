@@ -6,6 +6,7 @@
  */
 
 import { getAllCitySlugs, getCityBySlug } from '@/lib/data-instantdb';
+import { getSiteUrl } from '@/lib/site-url';
 
 interface SitemapCheckResult {
   totalBuffets: number;
@@ -23,7 +24,7 @@ export async function checkBuffetSitemapInclusion(): Promise<SitemapCheckResult>
   let totalBuffets = 0;
 
   const citySlugs = await getAllCitySlugs();
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yoursite.com';
+  const baseUrl = getSiteUrl();
 
   for (const citySlug of citySlugs) {
     try {

@@ -8,6 +8,13 @@
     "build:skip-budgets": "next build",
     "start": "next start",
     "lint": "next lint",
+    "perf:chunks": "node scripts/analyze-chunks.mjs",
+    "perf:snapshot": "node scripts/perf-snapshot.mjs",
+    "perf:snapshot:deep": "node scripts/perf-snapshot-deep.mjs",
+    "perf:snapshot:deep:base": "BASE_URL=http://localhost:3000 node scripts/perf-snapshot-deep.mjs",
+    "smoke:routes": "npx tsx scripts/smoke-routes.ts",
+    "seo:check": "node scripts/seo-check.mjs",
+    "test:e2e": "playwright test",
     "validate-headings": "node scripts/validate-headings.js",
     "validate-schemas": "npx ts-node scripts/validate-schemas.ts",
     "validate-schemas:verbose": "npx ts-node scripts/validate-schemas.ts --verbose",
@@ -118,6 +125,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.1",
     "@types/leaflet": "^1.9.8",
     "@types/leaflet.markercluster": "^1.5.4",
     "@types/node": "^20.8.0",

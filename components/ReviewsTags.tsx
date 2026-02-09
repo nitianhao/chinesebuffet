@@ -1,5 +1,3 @@
-'use client';
-
 interface ReviewTag {
   title: string;
   count: number;

@@ -56,7 +56,7 @@ interface ValidationReport {
   }>;
 }
 
-const SITE_BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://yoursite.com';
+const SITE_BASE_URL = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, '') || 'http://localhost:3000';
 
 async function validateAllBuffets(verbose: boolean = false): Promise<ValidationReport> {
   const report: ValidationReport = {

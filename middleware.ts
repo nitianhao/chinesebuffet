@@ -7,21 +7,17 @@ import type { NextRequest } from 'next/server';
  * Handles:
  * 1. Trailing slash removal (redirect /path/ to /path)
  * 2. Tracking query param removal (utm_*, gclid, fbclid, ref, etc.)
+ * 3. PERF_LOG=1 timing instrumentation (Server-Timing + x-perf-* headers)
  * 
  * Note: This runs on every request, so keep it lightweight.
  */
 
+// Perf instrumentation is ~0 cost (two performance.now() calls + header set)
+// so we always compute it, but only attach headers when PERF_LOG=1.
+const PERF = process.env.PERF_LOG === '1';
+
 /**
  * List of tracking query params to strip (case-insensitive)
- * 
- * These params are removed from URLs and users are redirected to the clean canonical URL:
- * - utm_*: Google Analytics UTM parameters (utm_source, utm_medium, utm_campaign, utm_term, utm_content)
- * - gclid: Google Click ID (Google Ads tracking)
- * - fbclid: Facebook Click ID (Facebook Ads tracking)
- * - ref: Generic referrer parameter
- * - source, campaign, medium, term, content: Generic marketing parameters
- * 
- * Params are matched case-insensitively and also match variants (e.g., utm_source_foo matches utm_source)
  */
 const TRACKING_PARAMS = [
   'utm_source',
@@ -40,6 +36,8 @@ const TRACKING_PARAMS = [
 ];
 
 export function middleware(request: NextRequest) {
+  const mwStart = performance.now();
+
   const url = request.nextUrl.clone();
   let hasChanges = false;
 
@@ -80,10 +78,28 @@ export function middleware(request: NextRequest) {
   // If we made changes, redirect to clean URL
   // Use 308 (Permanent Redirect) to preserve POST method if needed
   if (hasChanges) {
-    return NextResponse.redirect(url, 308);
+    const res = NextResponse.redirect(url, 308);
+    if (PERF) addPerfHeaders(res, mwStart);
+    return res;
   }
 
-  return NextResponse.next();
+  const res = NextResponse.next();
+  if (PERF) addPerfHeaders(res, mwStart);
+  return res;
+}
+
+// ---------------------------------------------------------------------------
+// Perf helpers – kept inline to avoid extra imports in middleware bundle
+// ---------------------------------------------------------------------------
+
+function addPerfHeaders(res: NextResponse, mwStart: number) {
+  const mwMs = (performance.now() - mwStart).toFixed(2);
+  const requestStartEpoch = Date.now(); // epoch ms — lets perf script compute total server time
+
+  res.headers.set('x-perf-mw-ms', mwMs);
+  res.headers.set('x-request-start', String(requestStartEpoch));
+  // Server-Timing is visible in browser DevTools "Timing" tab
+  res.headers.append('server-timing', `mw;dur=${mwMs}`);
 }
 
 // Only run middleware on specific paths to avoid unnecessary processing

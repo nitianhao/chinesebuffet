@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { getBaseUrlForRobotsAndSitemaps } from '@/lib/site-url';
 
 /**
  * Sitemap Index
@@ -7,7 +8,7 @@ import { NextResponse } from 'next/server';
  * Only includes sitemaps that contain indexable pages.
  */
 export async function GET(): Promise<NextResponse> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yoursite.com';
+  const baseUrl = getBaseUrlForRobotsAndSitemaps();
   const now = new Date();
   
   // Sitemap index entries pointing to separate sitemaps by page type

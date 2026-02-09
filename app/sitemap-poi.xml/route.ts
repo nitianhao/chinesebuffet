@@ -9,6 +9,7 @@ import {
 import { createSitemapEntry, filterIndexableEntries } from '@/lib/sitemap-utils';
 import { assessPOIPageQuality } from '@/lib/poi-page-quality';
 import { PageType, IndexTier } from '@/lib/index-tier';
+import { getBaseUrlForRobotsAndSitemaps } from '@/lib/site-url';
 
 const POI_TYPES = {
   parking: {
@@ -37,12 +38,15 @@ const POI_TYPES = {
   },
 } as const;
 
+// ISR: regenerate sitemap at most once per hour at runtime
+export const revalidate = 3600;
+
 /**
  * POI Pages Sitemap
- * Only includes indexable POI pages (based on conditional indexing rules).
+ * Only includes indexable POI pages. All URLs are absolute.
  */
 export async function GET(): Promise<NextResponse> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yoursite.com';
+  const baseUrl = getBaseUrlForRobotsAndSitemaps();
   
   const entries = [];
   

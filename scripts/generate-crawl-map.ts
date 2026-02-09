@@ -20,7 +20,7 @@ const fs = require('fs');
 
 const APP_ID = process.env.INSTANT_APP_ID || process.env.NEXT_PUBLIC_INSTANT_APP_ID || '';
 const ADMIN_TOKEN = process.env.INSTANT_ADMIN_TOKEN || '';
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://yoursite.com';
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, '') || 'http://localhost:3000';
 
 const db = init({
   appId: APP_ID,

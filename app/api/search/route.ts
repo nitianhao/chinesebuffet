@@ -25,6 +25,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { init } from '@instantdb/admin';
 import schema from '@/src/instant.schema';
 import type { SearchResponse, SearchResult, SearchCityResult, SearchNeighborhoodResult } from '@/lib/searchTypes';
+import { createServerTiming } from '@/lib/server-timing';
 
 const MAX_CITIES = 5; // Limit cities in results (autocomplete)
 const MAX_CITIES_FULL = 15; // Limit cities for full search page
@@ -134,6 +135,7 @@ function setCachedResponse(cacheKey: string, data: SearchResponse) {
 
 export async function GET(request: NextRequest) {
   const start = Date.now();
+  const timing = createServerTiming('api/search');
   const { searchParams } = new URL(request.url);
   const rawQuery = searchParams.get('q') || '';
   const trimmedQuery = rawQuery.trim().slice(0, 80);
@@ -150,14 +152,18 @@ export async function GET(request: NextRequest) {
   if (normalizedQuery.length < 2) {
     const tookMs = Date.now() - start;
     const response: SearchResponse = { q: normalizedQuery, tookMs, results: [], cities: [] };
+    timing.add('total', tookMs);
+    timing.add('cache', 0.1, 'short-circuit');
     if (process.env.NODE_ENV !== 'production') {
       console.log(
         `[search-api] q=${trimmedQuery} normalized=${normalizedQuery} candidates=0 deduped=0 returned=0 cacheHit=false tookMs=${tookMs}`
       );
     }
+    timing.log();
     return NextResponse.json(response, {
       headers: {
         'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        'Server-Timing': timing.header(),
       },
     });
   }
@@ -170,9 +176,13 @@ export async function GET(request: NextRequest) {
         `[search-api] q=${trimmedQuery} normalized=${normalizedQuery} candidates=0 deduped=0 returned=${cached.results.length} cacheHit=true tookMs=${Date.now() - start}`
       );
     }
+    timing.add('cache', 0.1, 'memory');
+    timing.add('total', Date.now() - start);
+    timing.log();
     return NextResponse.json(cached, {
       headers: {
         'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        'Server-Timing': timing.header(),
       },
     });
   }
@@ -193,39 +203,41 @@ export async function GET(request: NextRequest) {
       : (normalizedQuery.length >= 3 ? 100 : MAX_NEIGHBORHOODS * 3);
     const useContains = normalizedQuery.length >= 3;
     const pattern = useContains ? `%${normalizedQuery}%` : `${normalizedQuery}%`;
-    const [buffetResult, cityResult, neighborhoodResult] = await Promise.all([
-      db.query({
-        buffets: {
-          $: {
-            where: {
-              searchName: { $like: pattern },
+    const [buffetResult, cityResult, neighborhoodResult] = await timing.time('db.query', () =>
+      Promise.all([
+        db.query({
+          buffets: {
+            $: {
+              where: {
+                searchName: { $like: pattern },
+              },
+              limit: buffetFetchLimit,
             },
-            limit: buffetFetchLimit,
+            city: {},
           },
-          city: {},
-        },
-      }),
-      db.query({
-        cities: {
-          $: {
-            where: {
-              city: { $ilike: pattern },
+        }),
+        db.query({
+          cities: {
+            $: {
+              where: {
+                city: { $ilike: pattern },
+              },
+              limit: cityFetchLimit,
             },
-            limit: cityFetchLimit,
           },
-        },
-      }),
-      db.query({
-        neighborhoods: {
-          $: {
-            where: {
-              searchName: { $like: pattern },
+        }),
+        db.query({
+          neighborhoods: {
+            $: {
+              where: {
+                searchName: { $like: pattern },
+              },
+              limit: neighborhoodFetchLimit,
             },
-            limit: neighborhoodFetchLimit,
           },
-        },
-      }),
-    ]);
+        }),
+      ])
+    );
     const queryMs = Date.now() - queryStart;
 
     if (process.env.NODE_ENV !== 'production') {
@@ -538,6 +550,8 @@ export async function GET(request: NextRequest) {
       ...(isFullMode && { total: totalBuffets, hasMore, offset, limit }),
     };
     setCachedResponse(cacheKey, response);
+    timing.add('total', tookMs);
+    timing.log();
     if (process.env.NODE_ENV !== 'production') {
       console.log(
         `[search-api] q=${trimmedQuery} normalized=${normalizedQuery} buffets=${deduped.length} cities=${cities.length} cacheHit=false tookMs=${tookMs} queryMs=${queryMs}`
@@ -553,12 +567,15 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(response, {
       headers: {
         'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        'Server-Timing': timing.header(),
       },
     });
   } catch (error) {
     console.error('[search-api] error', error);
     const tookMs = Date.now() - start;
     const response: SearchResponse = { q: normalizedQuery, tookMs, results: [], cities: [] };
+    timing.add('error', tookMs);
+    timing.log();
     if (process.env.NODE_ENV !== 'production') {
       console.log(
         `[search-api] q=${trimmedQuery} normalized=${normalizedQuery} cacheHit=false tookMs=${tookMs} resultCount=0`
@@ -568,6 +585,7 @@ export async function GET(request: NextRequest) {
       status: 500,
       headers: {
         'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        'Server-Timing': timing.header(),
       },
     });
   }

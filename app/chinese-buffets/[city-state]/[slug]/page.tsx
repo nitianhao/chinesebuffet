@@ -8,6 +8,9 @@ import {
   getMenuForBuffet,
 } from '@/lib/data-instantdb';
 import { getCachedPageTransforms, computeTransforms } from '@/lib/buffet-page-transforms';
+import { getSiteUrl } from '@/lib/site-url';
+import { getCachedSeoSchemas } from '@/lib/seo-jsonld-cached';
+import { JsonLdServer } from '@/components/seo/JsonLdServer';
 
 /** In-request memoization: dedupe city fetch */
 const getCachedCity = cache(getCityBySlug);
@@ -15,9 +18,8 @@ const getCachedCity = cache(getCityBySlug);
 const getCachedMenu = cache(getMenuForBuffet);
 import Menu from '@/components/Menu';
 import { computeBuffetPageQuality } from '@/lib/pageQuality';
-import { createIndexTierConfig, toMetadataRobots } from '@/lib/index-tier';
 import { enforceBuffetIndexingRules } from '@/lib/buffet-indexing-rules';
-import { formatAddress, getStateName } from '@/lib/utils';
+import { formatAddress, getStateName, generateSlug } from '@/lib/utils';
 import Accessibility from '@/components/Accessibility';
 import Amenities from '@/components/Amenities';
 import Atmosphere from '@/components/Atmosphere';
@@ -33,17 +35,15 @@ import SeoJsonLd from '@/components/SeoJsonLd';
 import VerdictModule from '@/components/VerdictModule';
 import BestForSection from '@/components/BestForSection';
 import QuickFacts from '@/components/QuickFacts';
-import PageContainer from '@/components/ui/PageContainer';
 import SectionCard from '@/components/ui/SectionCard';
 import Chip from '@/components/ui/Chip';
 import StatRow, { StatItem } from '@/components/ui/StatRow';
-import Accordion from '@/components/ui/Accordion';
+import DisclosureCard from '@/components/ui/DisclosureCard';
 import KeyValueList from '@/components/ui/KeyValueList';
 import InlineMeter from '@/components/ui/InlineMeter';
 import ShowMore from '@/components/ui/ShowMore';
 import JumpToNav from '@/components/ui/JumpToNav';
 import SignatureCard from '@/components/ui/SignatureCard';
-import PillChip from '@/components/ui/PillChip';
 import IconLabel from '@/components/ui/IconLabel';
 import ActionButton from '@/components/ui/ActionButton';
 import SectionDivider from '@/components/ui/SectionDivider';
@@ -51,7 +51,7 @@ import { generateModifierTexts } from '@/components/NaturalModifiers';
 import AttributesSummary from '@/components/AttributesSummary';
 import BestTimeToVisit from '@/components/BestTimeToVisit';
 import ComparisonContext from '@/components/ComparisonContext';
-import BuffetLocationMap from '@/components/BuffetLocationMap';
+import BuffetLocationMap from '@/components/map/BuffetLocationMap';
 import AboveTheFold from '@/components/AboveTheFold';
 import BuffetHeroHeader from '@/components/BuffetHeroHeader';
 import QuickVerdict from '@/components/QuickVerdict';
@@ -65,12 +65,17 @@ import DeferredReviews from '@/components/DeferredReviews';
 import ReviewsBundle from '@/components/bundles/ReviewsBundle';
 import POIBundle from '@/components/bundles/POIBundle';
 import ComparisonBundle from '@/components/bundles/ComparisonBundle';
+import BuffetInternalLinksServer from '@/components/BuffetInternalLinksServer';
 import SEOContentBundle from '@/components/bundles/SEOContentBundle';
 import Breadcrumb from '@/components/Breadcrumb';
 import MobileActionBar from '@/components/MobileActionBar';
 import StreamableSection from '@/components/StreamableSection';
 import SectionFallback from '@/components/SectionFallback';
 import PageSection from '@/components/ui/PageSection';
+import SiteShell from '@/components/layout/SiteShell';
+import TableOfContents from '@/components/TableOfContents';
+import SaveButton from '@/components/saved/SaveButton';
+import BuffetPhotoGallery from '@/components/photos/BuffetPhotoGallery';
 
 import { perfReset, perfStart, perfSummary } from '@/lib/perf-logger';
 
@@ -80,6 +85,15 @@ const INDEX_TIER = 'tier-2' as const;
 
 /** ISR: cache page output, revalidate every 24h. On-demand: first request generates & caches. */
 export const revalidate = 86400; // 24 hours
+// Force all fetch() calls (including InstantDB SDK) to use cache, preventing
+// the SDK's default no-store from making the page dynamic.
+export const fetchCache = 'force-cache';
+
+// generateStaticParams enables ISR for dynamic [slug] segments.
+// Return empty array: pages are generated on-demand and cached via ISR.
+export async function generateStaticParams() {
+  return [];
+}
 
 interface BuffetPageProps {
   params: {
@@ -92,49 +106,67 @@ interface BuffetPageProps {
  * Generate a concise, quotable description for answer engines
  */
 function generateMetaDescription(buffet: any): string {
+  const year = new Date().getFullYear();
   const parts: string[] = [];
-  
-  // Start with type and location
-  const location = buffet.cityName && buffet.state 
-    ? `in ${buffet.cityName}, ${buffet.state}` 
-    : '';
-  parts.push(`${buffet.name} is a Chinese buffet${location ? ' ' + location : ''}`);
-  
-  // Add rating if available
+  const city = buffet.cityName ? ` in ${buffet.cityName}` : '';
+  parts.push(`${buffet.name} – Chinese buffet${city}. Menu, prices, hours.`);
   if (buffet.rating && buffet.reviewsCount) {
-    parts.push(`Rated ${buffet.rating.toFixed(1)} stars (${buffet.reviewsCount} reviews)`);
+    parts.push(`Rated ${buffet.rating.toFixed(1)} (${buffet.reviewsCount} reviews).`);
   }
-  
-  // Add price if available
   if (buffet.price) {
-    const dollarCount = (buffet.price.match(/\$/g) || []).length;
-    const priceDesc = dollarCount === 1 ? 'Budget-friendly' : 
-                      dollarCount === 2 ? 'Moderately priced' : 
-                      dollarCount >= 3 ? 'Higher-priced' : '';
-    if (priceDesc) {
-      parts.push(priceDesc);
-    }
+    parts.push(`Prices: ${buffet.price}.`);
   }
-  
-  return parts.join('. ') + '.';
+  parts.push(`Updated ${year}.`);
+  return parts.join(' ');
 }
 
 export async function generateMetadata({ params }: BuffetPageProps): Promise<Metadata> {
   const buffet = await getCachedBuffet(params['city-state'], params.slug);
   
+  const baseUrl = getSiteUrl().replace(/\/$/, '');
+  const selfCanonical = `${baseUrl}/chinese-buffets/${params['city-state']}/${params.slug}`;
   if (!buffet) {
+    const robots = { index: false as const, follow: true as const };
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[seo] buffet robots decided:', robots, '(buffet not found)');
+    }
     return {
       title: 'Buffet Not Found',
+      robots,
+      alternates: { canonical: selfCanonical },
     };
   }
 
-  // Get base URL from environment variable
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yoursite.com';
-  
-  // Build canonical URL (strip query params, ensure no trailing slash)
-  const canonicalPath = `/chinese-buffets/${params['city-state']}/${params.slug}`;
-  const canonicalUrl = `${baseUrl.replace(/\/$/, '')}${canonicalPath}`;
-  
+  // Only noindex when buffet is clearly invalid: missing name AND missing location
+  const hasName = Boolean(buffet.name && String(buffet.name).trim());
+  const hasAddress = Boolean(
+    (typeof buffet.address === 'string' && String(buffet.address).trim()) ||
+    (buffet.address && (buffet.address.city || buffet.address.state || buffet.address.full || buffet.address.street))
+  );
+  const hasLocation = Boolean(buffet.location && (buffet.location.lat != null || buffet.location.lng != null));
+  const clearlyInvalid = !hasName && !hasAddress && !hasLocation;
+  if (clearlyInvalid) {
+    const robots = { index: false as const, follow: true as const };
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[seo] buffet robots decided:', robots, '(clearly invalid: no name, address, or location)');
+    }
+    return {
+      title: buffet.name ? String(buffet.name) : 'Invalid Listing',
+      robots,
+      alternates: { canonical: selfCanonical },
+    };
+  }
+
+  // Valid buffet: page-level robots are authoritative (no tier override)
+  const robots = {
+    index: true as const,
+    follow: true as const,
+    googleBot: { index: true as const, follow: true as const },
+  };
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[seo] buffet robots decided:', robots, '(valid buffet)');
+  }
+
   // Compute page quality (for logging/debugging, but NOT for indexing decision)
   const quality = computeBuffetPageQuality(buffet);
   
@@ -147,43 +179,28 @@ export async function generateMetadata({ params }: BuffetPageProps): Promise<Met
     });
   }
 
-  // Validate and create index tier configuration
-  // NOTE: Buffet pages ALWAYS index, follow (enforced by buffet-indexing-rules)
   const pagePath = `/chinese-buffets/${params['city-state']}/${params.slug}`;
-  const indexTierConfig = createIndexTierConfig(
-    PAGE_TYPE,
-    INDEX_TIER,
-    true, // Buffet pages ALWAYS index (enforced by indexing rules)
-    pagePath
-  );
 
   // Generate quotable description for answer engines
   const description = generateMetaDescription(buffet);
 
+  const cityName = buffet.cityName || '';
+  const title = cityName
+    ? `${buffet.name} – Chinese Buffet in ${cityName} (Menu, Prices, Hours)`
+    : `${buffet.name} – Chinese Buffet (Menu, Prices, Hours)`;
   const metadata = {
-    title: `${buffet.name} - Chinese Buffet${buffet.cityName ? ` in ${buffet.cityName}` : ''}`,
+    title,
     description,
-    // Canonical URL - always present, points to clean URL without query params
     alternates: {
-      canonical: canonicalUrl,
+      canonical: selfCanonical,
     },
-    // OpenGraph URL matches canonical
     openGraph: {
-      url: canonicalUrl,
+      url: selfCanonical,
     },
-    // Twitter URL matches canonical (if using Twitter cards)
     twitter: {
       card: 'summary_large_image',
     },
-    // Robots directive: ALWAYS index, follow for buffet pages
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-      },
-    },
+    robots,
   };
 
   // Enforce buffet indexing rules - throws error if validation fails
@@ -256,6 +273,16 @@ function getOpenClosedStatus(regularHours: Array<{ day: string; ranges: string }
   return 'Hours available';
 }
 
+function getDirectionsUrl(buffet: any, addressString: string): string | null {
+  if (buffet?.location?.lat && buffet?.location?.lng) {
+    return `https://www.google.com/maps/dir/?api=1&destination=${buffet.location.lat},${buffet.location.lng}`;
+  }
+  if (addressString) {
+    return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(addressString)}`;
+  }
+  return null;
+}
+
 export default async function BuffetPage({ params }: BuffetPageProps) {
   perfReset();
   const pageStart = performance.now();
@@ -270,20 +297,24 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
     notFound();
   }
 
-  // Parallel fetch: menu + city + transforms (no waterfall)
+  // Parallel fetch: menu + city + transforms + SEO schemas (no waterfall)
   const menuPromise = buffet.placeId
     ? getCachedMenu(buffet.placeId)
     : Promise.resolve(null);
   const cityPromise = getCachedCity(params['city-state']);
   const transformsPromise = getCachedPageTransforms(params['city-state'], params.slug);
+  const seoSchemasPromise = getCachedSeoSchemas(params['city-state'], params.slug);
 
   const endParallel = perfStart('parallel_menu_city_transforms');
-  const [menuResult, cityResult, transformsResult] = await Promise.allSettled([
+  const [menuResult, cityResult, transformsResult, seoSchemasResult] = await Promise.allSettled([
     menuPromise,
     cityPromise,
     transformsPromise,
+    seoSchemasPromise,
   ]);
   endParallel();
+
+  const seoSchemas = seoSchemasResult.status === 'fulfilled' ? seoSchemasResult.value : null;
 
   const transforms = transformsResult.status === 'fulfilled'
     ? transformsResult.value
@@ -446,10 +477,15 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
   // Define Jump To sections - POIBundle handles actual content check internally
   const hasNearbyPlaces = buffet.transportationAutomotive || buffet.retailShopping || buffet.recreationEntertainment;
   const hasMenu = menuData && ((menuData.categories?.length ?? 0) > 0 || (menuData.items?.length ?? 0) > 0);
+  const hasMenuPrices =
+    !!menuData?.items?.some((item) => item.price) ||
+    !!menuData?.categories?.some((category) => category.items?.some((item) => item.price));
+  const hasPricing = !!buffet.price || hasMenuPrices;
   const jumpToSections = [
-    { id: 'overview', label: 'Overview' },
+    { id: 'overview', label: 'At a glance' },
     sortedImages && sortedImages.length > 0 ? { id: 'photos', label: 'Photos' } : null,
     buffet.hours ? { id: 'hours-location', label: 'Hours & Location' } : null,
+    hasPricing ? { id: 'pricing', label: 'Pricing' } : null,
     { id: 'accessibility-amenities', label: 'Amenities' },
     hasMenu ? { id: 'menu', label: 'Menu' } : null,
     buffet.reviews ? { id: 'reviews', label: 'Reviews' } : null,
@@ -497,19 +533,74 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
   perfSummary(totalMs);
   endPage();
 
+  const buffetAny = buffet as any;
+  const phone = buffetAny.contactInfo?.phone || buffetAny.phone || buffetAny.phoneUnformatted || '';
+  const phoneUnformatted = buffetAny.phoneUnformatted || (phone ? phone.replace(/\D/g, '') : '');
+  const addressString =
+    typeof buffetAny.address === 'string'
+      ? buffetAny.address
+      : buffetAny.address?.full || buffetAny.address?.street || '';
+  const directionsUrl = getDirectionsUrl(buffetAny, addressString);
+  const websiteUrl = buffetAny.contactInfo?.website || '';
+  const neighborhoodName: string = buffetAny.neighborhood || '';
+  const neighborhoodSlug = neighborhoodName ? generateSlug(neighborhoodName) : '';
+  const locationSnippet = [neighborhoodName, cityName, stateAbbr]
+    .filter(Boolean)
+    .join(', ');
+  const photoCount = sortedImages?.length ?? buffet.imageCount ?? 0;
+  const galleryImages = (sortedImages ?? [])
+    .map((image: any, index: number) => {
+      if (!image?.photoReference) return null;
+      const aspectRatio =
+        typeof image.widthPx === 'number' && typeof image.heightPx === 'number' && image.heightPx > 0
+          ? image.widthPx / image.heightPx
+          : 4 / 3;
+      return {
+        photoReference: image.photoReference,
+        aspectRatio,
+        alt: `${buffet.name} photo ${index + 1}`,
+      };
+    })
+    .filter(Boolean) as Array<{ photoReference: string; aspectRatio: number; alt: string }>;
+  const atAGlanceSummary =
+    [locationSnippet || null, buffet.price ? `Price ${buffet.price}` : null, buffet.rating ? `${buffet.rating.toFixed(1)}★` : null]
+      .filter(Boolean)
+      .join(' • ') || 'Key facts, address, and highlights';
+  const hoursSummary =
+    (openStatus ? `Status: ${openStatus}` : null) ||
+    (regularHours.length > 0 ? `${regularHours.length} days listed` : null) ||
+    'Hours and popular times';
+  const pricingSummary = buffet.price
+    ? `Price range ${buffet.price}`
+    : hasMenuPrices
+    ? 'Menu prices available'
+    : 'Pricing details';
+
   return (
     <>
+      {seoSchemas?.restaurantSchema && (
+        <>
+          <div style={{ display: 'none' }} aria-hidden suppressHydrationWarning dangerouslySetInnerHTML={{ __html: '<!-- JSONLD_START:restaurant -->' }} />
+          <JsonLdServer data={seoSchemas.restaurantSchema} />
+          <div style={{ display: 'none' }} aria-hidden suppressHydrationWarning dangerouslySetInnerHTML={{ __html: '<!-- JSONLD_END:restaurant -->' }} />
+        </>
+      )}
       <Suspense fallback={null}>
         <StreamableSection>
           <SeoJsonLd
             cityState={params['city-state']}
             slug={params.slug}
+            initialSchemas={seoSchemas ?? undefined}
+            skipRestaurant
           />
         </StreamableSection>
       </Suspense>
-      <div className="page-bg container mx-auto px-4 py-8 pb-24 md:pb-8">
+      <SiteShell className="page-bg" contentClassName="pb-24 md:pb-8">
         <Breadcrumb items={breadcrumbItems} />
-        
+        <div className="lg:hidden">
+          <TableOfContents sections={jumpToSections} headerOffset={96} />
+        </div>
+
         {/* 2-Column Layout: Mobile 1-col, Desktop 2-col with sticky sidebar */}
         <div className="lg:grid lg:grid-cols-[1fr_320px] lg:gap-8 xl:gap-12">
           {/* LEFT COLUMN: Main Content */}
@@ -523,24 +614,99 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
                 ============================================ */}
             <PageSection variant="base">
             <AboveTheFold>
-          {/* Hero Header - Mobile-first, Yelp/Google Maps quality */}
-          <BuffetHeroHeader buffet={buffet} openStatus={openStatus} />
+          {/* Mobile: Compact hero */}
+          <div className="md:hidden space-y-3">
+            <div className="space-y-2">
+              <h1 className="text-2xl font-bold text-[var(--text)] leading-tight">
+                {h1Text}
+              </h1>
+              <div className="flex flex-wrap items-center gap-2 text-sm text-[var(--muted)]">
+                {typeof buffet.rating === 'number' && buffet.reviewsCount && (
+                  <span className="inline-flex items-center gap-1 text-[var(--text)]">
+                    <svg className="h-4 w-4 text-amber-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                    {buffet.rating.toFixed(1)}
+                    <span className="text-[var(--muted)]">({buffet.reviewsCount.toLocaleString()})</span>
+                  </span>
+                )}
+                {buffet.price && <span>{buffet.price}</span>}
+                {locationSnippet && <span>{locationSnippet}</span>}
+              </div>
+            </div>
 
-          {/* Quick verdict - scannable summary from rating, reviews, amenities */}
-          <QuickVerdict buffet={buffet} precomputedAdditionalInfo={precomputedAdditionalInfo} />
-
-          {/* Map Section - Directly below hero */}
-          {buffet.location?.lat && buffet.location?.lng && (
-            <div className="mt-4 rounded-xl overflow-hidden shadow-[var(--shadow-soft)]">
-              <BuffetLocationMap
-                id={buffet.id}
-                name={buffet.name}
-                lat={buffet.location.lat}
-                lng={buffet.location.lng}
-                rating={buffet.rating}
+            <div className="flex flex-wrap gap-2">
+              {phoneUnformatted && (
+                <a
+                  href={`tel:${phoneUnformatted}`}
+                  className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface2)] px-3 py-2 text-sm font-medium text-[var(--text)]"
+                >
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                  Call
+                </a>
+              )}
+              {directionsUrl && (
+                <a
+                  href={directionsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface2)] px-3 py-2 text-sm font-medium text-[var(--text)]"
+                >
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                  </svg>
+                  Directions
+                </a>
+              )}
+              {websiteUrl && (
+                <a
+                  href={websiteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface2)] px-3 py-2 text-sm font-medium text-[var(--text)]"
+                >
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                  </svg>
+                  Website
+                </a>
+              )}
+              <SaveButton
+                variant="pill"
+                item={{
+                  slug: buffet.slug,
+                  citySlug: params['city-state'],
+                  name: buffet.name,
+                  city: buffet.address.city,
+                  stateAbbr: buffet.address.stateAbbr,
+                  rating: buffet.rating,
+                  reviewCount: buffet.reviewsCount,
+                  price: buffet.price,
+                }}
               />
             </div>
-          )}
+          </div>
+
+          {/* Desktop: Existing hero */}
+          <div className="hidden md:block space-y-4">
+            <BuffetHeroHeader buffet={buffet} openStatus={openStatus} />
+            <QuickVerdict buffet={buffet} precomputedAdditionalInfo={precomputedAdditionalInfo} />
+            {buffet.location?.lat && buffet.location?.lng && (
+              <div className="mt-4 rounded-xl overflow-hidden shadow-[var(--shadow-soft)]">
+                <BuffetLocationMap
+                  id={buffet.id}
+                  name={buffet.name}
+                  lat={buffet.location.lat}
+                  lng={buffet.location.lng}
+                  rating={buffet.rating}
+                  address={addressString}
+                  directionsUrl={directionsUrl}
+                />
+              </div>
+            )}
+          </div>
 
           {/* Quick Facts Card - No longer needed, will be merged into About */}
           <div className="hidden">
@@ -640,17 +806,16 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
           </div>
           
           {/* Should You Eat Here? Verdict Module - Critical for decision-making */}
-          <VerdictModule buffet={buffet} />
+          <div className="mt-4 md:mt-6">
+            <VerdictModule buffet={buffet} />
+          </div>
           
           {/* Best for / Not ideal for Section - Helps quick decision */}
-          <BestForSection buffet={buffet} />
+          <div className="mt-4 md:mt-6">
+            <BestForSection buffet={buffet} />
+          </div>
         </AboveTheFold>
         </PageSection>
-        
-        {/* Jump To Navigation - Mobile */}
-        <div className="lg:hidden mb-6">
-          <JumpToNav sections={jumpToSections} variant="dropdown" />
-        </div>
         
         <Suspense fallback={<SectionFallback />}>
           <StreamableSection>
@@ -663,125 +828,127 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
       <PageSection variant="base">
       {/* About Card - Signature Style */}
       <section id="overview" className="scroll-mt-24">
-        <SignatureCard
-          minimal
-          title="About"
-          titleIcon={
+        <DisclosureCard
+          title="At a glance"
+          summary={atAGlanceSummary}
+          defaultOpen
+          icon={
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           }
-          centerTitle
           className="page-block-gap"
         >
-            {/* Overview text */}
-            {(buffet.description2 || buffet.description) && (
-              <ShowMore 
-                initialLines={4}
-                className="mb-4"
-              >
-                <div className="text-sm md:text-base text-[var(--text-secondary)] leading-relaxed w-full">
-                  {renderBoldText(buffet.description2 || buffet.description || '')}
-                </div>
-              </ShowMore>
-            )}
+          {/* Overview text */}
+          {(buffet.description2 || buffet.description) && (
+            <ShowMore 
+              initialLines={4}
+              className="mb-4"
+            >
+              <div className="text-sm md:text-base text-[var(--text-secondary)] leading-relaxed w-full">
+                {renderBoldText(buffet.description2 || buffet.description || '')}
+              </div>
+            </ShowMore>
+          )}
+          
+          {/* Natural Modifier Text */}
+          {(() => {
+            const modifierTexts = generateModifierTexts(buffet);
+            const modifierParagraphs: string[] = [];
             
-            {/* Natural Modifier Text */}
-            {(() => {
-              const modifierTexts = generateModifierTexts(buffet);
-              const modifierParagraphs: string[] = [];
+            if (modifierTexts.familyFriendly) modifierParagraphs.push(modifierTexts.familyFriendly);
+            if (modifierTexts.budgetFriendly) modifierParagraphs.push(modifierTexts.budgetFriendly);
+            
+            if (modifierParagraphs.length > 0) {
+              return (
+                <div className="text-sm text-[var(--muted)] leading-relaxed bg-[var(--accent-light)] px-3 py-2 rounded-[var(--radius-md)] mb-4">
+                  {modifierParagraphs.join(' ')}
+                </div>
+              );
+            }
+            return null;
+          })()}
+          
+          {/* Key Facts Grid - full width, aligned with modifier text above */}
+          <SectionDivider className="!my-4" />
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 [&>*]:min-w-0 w-full max-w-full">
+            {buffet.address && (
+              <IconLabel
+                icon={
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                }
+                label="Address"
+                value={buffet.address}
+              />
+            )}
+            {buffet.contactInfo?.phone && (
+              <IconLabel
+                icon={
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                }
+                label="Phone"
+                value={buffet.contactInfo.phone}
+                href={`tel:${buffet.contactInfo.phone}`}
+              />
+            )}
+            {regularHours.length > 0 && (() => {
+              const now = new Date();
+              const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+              const currentDay = dayNames[now.getDay()];
+              const todayHours = regularHours.find((h: { day: string; ranges: string }) => 
+                h.day.toLowerCase().startsWith(currentDay.toLowerCase())
+              );
               
-              if (modifierTexts.familyFriendly) modifierParagraphs.push(modifierTexts.familyFriendly);
-              if (modifierTexts.budgetFriendly) modifierParagraphs.push(modifierTexts.budgetFriendly);
-              
-              if (modifierParagraphs.length > 0) {
+              if (todayHours) {
                 return (
-                  <div className="text-sm text-[var(--muted)] leading-relaxed bg-[var(--accent-light)] px-3 py-2 rounded-[var(--radius-md)] mb-4">
-                    {modifierParagraphs.join(' ')}
-                  </div>
+                  <IconLabel
+                    icon={
+                      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    }
+                    label="Today"
+                    value={todayHours.ranges}
+                  />
                 );
               }
               return null;
             })()}
-            
-            {/* Key Facts Grid - full width, aligned with modifier text above */}
-            <SectionDivider className="!my-4" />
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 [&>*]:min-w-0 w-full max-w-full">
-              {buffet.address && (
-                <IconLabel
-                  icon={
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                  }
-                  label="Address"
-                  value={buffet.address}
-                />
-              )}
-              {buffet.contactInfo?.phone && (
-                <IconLabel
-                  icon={
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                    </svg>
-                  }
-                  label="Phone"
-                  value={buffet.contactInfo.phone}
-                  href={`tel:${buffet.contactInfo.phone}`}
-                />
-              )}
-              {regularHours.length > 0 && (() => {
-                const now = new Date();
-                const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-                const currentDay = dayNames[now.getDay()];
-                const todayHours = regularHours.find((h: { day: string; ranges: string }) => 
-                  h.day.toLowerCase().startsWith(currentDay.toLowerCase())
-                );
-                
-                if (todayHours) {
-                  return (
-                    <IconLabel
-                      icon={
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      }
-                      label="Today"
-                      value={todayHours.ranges}
-                    />
-                  );
+            {buffet.price && (
+              <IconLabel
+                icon={
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
                 }
-                return null;
-              })()}
-              {buffet.price && (
-                <IconLabel
-                  icon={
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  }
-                  label="Price"
-                  value={buffet.price}
-                />
-              )}
-              {buffet.rating && buffet.reviewsCount && (
-                <IconLabel
-                  icon={
-                    <svg className="text-yellow-500 fill-current" viewBox="0 0 20 20">
-                      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                    </svg>
-                  }
-                  label="Rating"
-                  value={`${buffet.rating.toFixed(1)} (${buffet.reviewsCount.toLocaleString()} reviews)`}
-                />
-              )}
-            </div>
-        </SignatureCard>
+                label="Price"
+                value={buffet.price}
+              />
+            )}
+            {buffet.rating && buffet.reviewsCount && (
+              <IconLabel
+                icon={
+                  <svg className="text-yellow-500 fill-current" viewBox="0 0 20 20">
+                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                  </svg>
+                }
+                label="Rating"
+                value={`${buffet.rating.toFixed(1)} (${buffet.reviewsCount.toLocaleString()} reviews)`}
+              />
+            )}
+          </div>
+          
+          {/* Decision Helper Summary */}
+          <div className="mt-4 md:mt-6">
+            <BuffetSummaryPanel buffet={buffet} />
+          </div>
+        </DisclosureCard>
       </section>
-      
-      {/* Decision Helper Summary */}
-      <BuffetSummaryPanel buffet={buffet} />
       </PageSection>
         </StreamableSection>
       </Suspense>
@@ -789,92 +956,37 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
       <Suspense fallback={<SectionFallback />}>
         <StreamableSection>
       <PageSection variant="alt">
-      {sortedImages && sortedImages.length > 0 ? (
+      {galleryImages.length > 0 ? (
         <section id="photos" className="scroll-mt-24">
-          <SignatureCard 
-            minimal
+          <DisclosureCard
             title="Photos"
-            titleIcon={
+            summary={photoCount ? `${photoCount} photos` : 'Photo gallery'}
+            defaultOpen
+            icon={
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             }
-            centerTitle
             className="page-block-gap"
           >
-            {buffet.imageCategories && buffet.imageCategories.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-4">
-                {buffet.imageCategories.map((category: string, index: number) => (
-                  <PillChip key={index} variant="neutral">
-                    {category}
-                  </PillChip>
-                ))}
-              </div>
-            )}
-          {(() => {
-            const INITIAL_IMAGES = 12;
-            const visibleImages = sortedImages.slice(0, INITIAL_IMAGES);
-            const hiddenImages = sortedImages.slice(INITIAL_IMAGES);
-            const hasMoreImages = hiddenImages.length > 0;
-
-            const renderImage = (image: any, index: number, baseIndex: number) => {
-              const aspectRatio = (typeof image === 'object' && image.widthPx && image.heightPx)
-                ? image.widthPx / image.heightPx
-                : 4 / 3;
-              const isLCP = baseIndex === 0;
-              let proxiedUrl: string | null = null;
-              if (typeof image === 'object' && image?.photoReference) {
-                proxiedUrl = `/api/photo?photoReference=${encodeURIComponent(image.photoReference)}&w=800`;
-              }
-              if (!proxiedUrl) return null;
-              return (
-                <div
-                  key={baseIndex}
-                  className="relative overflow-hidden rounded-[var(--radius-md)] bg-[var(--accent-light)]"
-                  style={{ aspectRatio }}
-                >
-                  <img
-                    src={proxiedUrl}
-                    alt={`${buffet.name} image ${baseIndex + 1}`}
-                    loading={isLCP ? 'eager' : 'lazy'}
-                    className="absolute inset-0 h-full w-full object-cover"
-                  />
-                </div>
-              );
-            };
-
-            return (
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {visibleImages.map((image, index) => renderImage(image, index, index))}
-                </div>
-                {hasMoreImages && (
-                  <details className="mt-4">
-                    <summary className="cursor-pointer text-sm font-medium text-[var(--accent1)] hover:underline list-none py-2">
-                      Show {hiddenImages.length} more photos
-                    </summary>
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
-                      {hiddenImages.map((image, index) => renderImage(image, index, INITIAL_IMAGES + index))}
-                    </div>
-                  </details>
-                )}
-              </div>
-            );
-          })()}
-          </SignatureCard>
+            <BuffetPhotoGallery
+              images={galleryImages}
+              categoryLabels={buffet.imageCategories || []}
+            />
+          </DisclosureCard>
         </section>
       ) : null}
       {buffet.hours && (
         <section id="hours-location" className="scroll-mt-24">
-          <SignatureCard
-            minimal
+          <DisclosureCard
             title="Hours & Location"
-            titleIcon={
+            summary={hoursSummary}
+            defaultOpen
+            icon={
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             }
-            centerTitle
             className="page-block-gap"
           >
           {/* Late-night modifier text */}
@@ -892,7 +1004,7 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
           
           <div className="space-y-2">
             {regularHours.length > 0 && (
-              <Accordion
+              <DisclosureCard
                 title="Regular Hours"
                 summary={`${regularHours.length} days`}
                 icon={
@@ -900,8 +1012,10 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 }
-                defaultExpanded={false}
-                variant="compact"
+                size="compact"
+                titleAs="h3"
+                minimal={false}
+                className="rounded-xl ring-1 ring-[var(--border)] bg-[var(--surface)]"
               >
                 <div className="space-y-2 text-sm">
                   {regularHours.map((item) => (
@@ -911,10 +1025,10 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
                     </div>
                   ))}
                 </div>
-              </Accordion>
+              </DisclosureCard>
             )}
             {popularTimesSummary && popularTimes.length > 0 && (
-              <Accordion
+              <DisclosureCard
                 title="Popular Times"
                 summary="See when it's busiest"
                 icon={
@@ -922,8 +1036,10 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                   </svg>
                 }
-                defaultExpanded={false}
-                variant="compact"
+                size="compact"
+                titleAs="h3"
+                minimal={false}
+                className="rounded-xl ring-1 ring-[var(--border)] bg-[var(--surface)]"
               >
                 <div className="space-y-3">
                   {popularTimes.map((day) => (
@@ -945,10 +1061,10 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
                     </div>
                   ))}
                 </div>
-              </Accordion>
+              </DisclosureCard>
             )}
             {secondaryHours.length > 0 && (
-              <Accordion
+              <DisclosureCard
                 title="Secondary Hours"
                 summary={`${secondaryHours.length} days`}
                 icon={
@@ -956,8 +1072,10 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 }
-                defaultExpanded={false}
-                variant="compact"
+                size="compact"
+                titleAs="h3"
+                minimal={false}
+                className="rounded-xl ring-1 ring-[var(--border)] bg-[var(--surface)]"
               >
                 <div className="space-y-2 text-sm">
                   {secondaryHours.map((item) => (
@@ -967,10 +1085,42 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
                     </div>
                   ))}
                 </div>
-              </Accordion>
+              </DisclosureCard>
             )}
           </div>
-          </SignatureCard>
+          </DisclosureCard>
+        </section>
+      )}
+      {hasPricing && (
+        <section id="pricing" className="scroll-mt-24">
+          <DisclosureCard
+            title="Pricing"
+            summary={pricingSummary}
+            defaultOpen
+            icon={
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            }
+            className="page-block-gap"
+          >
+            <div className="space-y-3 text-sm text-[var(--muted)]">
+              {buffet.price && (
+                <div className="flex items-center gap-2 text-base font-semibold text-[var(--text)]">
+                  <span>Price range</span>
+                  <span>{buffet.price}</span>
+                </div>
+              )}
+              {hasMenuPrices && (
+                <div className="text-sm text-[var(--muted)]">
+                  Menu items include pricing. See the menu section for item details.
+                </div>
+              )}
+              {!buffet.price && !hasMenuPrices && (
+                <div className="text-sm text-[var(--muted)]">Pricing details are not available.</div>
+              )}
+            </div>
+          </DisclosureCard>
         </section>
       )}
       </PageSection>
@@ -1087,7 +1237,7 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
       <Suspense fallback={<SectionFallback />}>
         <StreamableSection>
       <PageSection variant="base">
-      {/* Accessibility & Amenities Section - Refactored with Accordions */}
+      {/* Accessibility & Amenities Section - Refactored with disclosures */}
       {(() => {
         // Check structuredData amenities/accessibility
         const hasStructuredAccessibility = buffet.accessibility && (
@@ -1126,21 +1276,21 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
         return hasStructuredAccessibility || hasStructuredAmenities || hasAdditionalAccessibility || hasAdditionalAmenities;
       })() ? (
         <section id="accessibility-amenities" className="scroll-mt-24">
-          <SignatureCard
-            minimal
+          <DisclosureCard
             title="Amenities & Services"
-            titleIcon={
+            summary="Accessibility, service options, and dining details"
+            defaultOpen={false}
+            icon={
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
               </svg>
             }
-            centerTitle
             className="page-block-gap"
           >
             <div className="space-y-2">
-            {/* Accessibility Accordion */}
+            {/* Accessibility disclosure */}
             {(buffet.accessibility || precomputedAdditionalInfo?.['Accessibility']) && (
-              <Accordion
+              <DisclosureCard
                 title="Accessibility"
                 summary="Wheelchair, parking, and more"
                 icon={
@@ -1148,16 +1298,18 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 }
-                defaultExpanded={false}
-                variant="compact"
+                size="compact"
+                titleAs="h3"
+                minimal={false}
+                className="rounded-xl ring-1 ring-[var(--border)] bg-[var(--surface)]"
               >
                 <Accessibility data={buffet.accessibility || precomputedAdditionalInfo?.['Accessibility'] || {}} />
-              </Accordion>
+              </DisclosureCard>
             )}
 
-            {/* Amenities Accordion */}
+            {/* Amenities disclosure */}
             {(buffet.amenities?.amenities || precomputedAdditionalInfo?.['Amenities']) && (
-              <Accordion
+              <DisclosureCard
                 title="Amenities"
                 summary="Available facilities and features"
                 icon={
@@ -1165,16 +1317,18 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                   </svg>
                 }
-                defaultExpanded={false}
-                variant="compact"
+                size="compact"
+                titleAs="h3"
+                minimal={false}
+                className="rounded-xl ring-1 ring-[var(--border)] bg-[var(--surface)]"
               >
                 <Amenities data={buffet.amenities || { amenities: precomputedAdditionalInfo?.['Amenities'] }} />
-              </Accordion>
+              </DisclosureCard>
             )}
 
-            {/* Atmosphere Accordion */}
+            {/* Atmosphere disclosure */}
             {(buffet.amenities?.atmosphere || precomputedAdditionalInfo?.['Atmosphere']) && (
-              <Accordion
+              <DisclosureCard
                 title="Atmosphere"
                 summary="Ambiance and setting"
                 icon={
@@ -1182,16 +1336,18 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                   </svg>
                 }
-                defaultExpanded={false}
-                variant="compact"
+                size="compact"
+                titleAs="h3"
+                minimal={false}
+                className="rounded-xl ring-1 ring-[var(--border)] bg-[var(--surface)]"
               >
                 <Atmosphere data={buffet.amenities?.atmosphere || precomputedAdditionalInfo?.['Atmosphere'] || {}} />
-              </Accordion>
+              </DisclosureCard>
             )}
 
-            {/* Food Options Accordion */}
+            {/* Food Options disclosure */}
             {(buffet.amenities?.['food options'] || precomputedAdditionalInfo?.['Dining options']) && (
-              <Accordion
+              <DisclosureCard
                 title="Dining Options"
                 summary="Food and beverage choices"
                 icon={
@@ -1199,16 +1355,18 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                   </svg>
                 }
-                defaultExpanded={false}
-                variant="compact"
+                size="compact"
+                titleAs="h3"
+                minimal={false}
+                className="rounded-xl ring-1 ring-[var(--border)] bg-[var(--surface)]"
               >
                 <FoodOptions data={buffet.amenities?.['food options'] || precomputedAdditionalInfo?.['Dining options'] || {}} />
-              </Accordion>
+              </DisclosureCard>
             )}
 
-            {/* Service Options Accordion */}
+            {/* Service Options disclosure */}
             {(buffet.amenities?.['service options'] || precomputedAdditionalInfo?.['Service options']) && (
-              <Accordion
+              <DisclosureCard
                 title="Service Options"
                 summary="Dine-in, takeout, delivery"
                 icon={
@@ -1216,8 +1374,10 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
                 }
-                defaultExpanded={false}
-                variant="compact"
+                size="compact"
+                titleAs="h3"
+                minimal={false}
+                className="rounded-xl ring-1 ring-[var(--border)] bg-[var(--surface)]"
               >
                 <ServiceOptionsSection data={buffet.amenities?.['service options'] || precomputedAdditionalInfo?.['Service options'] || {}} />
                 {(() => {
@@ -1234,12 +1394,12 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
                   }
                   return null;
                 })()}
-              </Accordion>
+              </DisclosureCard>
             )}
 
-            {/* Parking Accordion */}
+            {/* Parking disclosure */}
             {buffet.amenities?.parking && (
-              <Accordion
+              <DisclosureCard
                 title="Parking"
                 summary="Parking availability"
                 icon={
@@ -1247,8 +1407,10 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                   </svg>
                 }
-                defaultExpanded={false}
-                variant="compact"
+                size="compact"
+                titleAs="h3"
+                minimal={false}
+                className="rounded-xl ring-1 ring-[var(--border)] bg-[var(--surface)]"
               >
                 <Parking data={buffet.amenities.parking} />
                 {(() => {
@@ -1262,12 +1424,12 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
                   }
                   return null;
                 })()}
-              </Accordion>
+              </DisclosureCard>
             )}
 
-            {/* Payments Accordion */}
+            {/* Payments disclosure */}
             {(buffet.amenities?.payments || precomputedAdditionalInfo?.['Payments']) && (
-              <Accordion
+              <DisclosureCard
                 title="Payment Methods"
                 summary="Accepted payment types"
                 icon={
@@ -1275,16 +1437,18 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                   </svg>
                 }
-                defaultExpanded={false}
-                variant="compact"
+                size="compact"
+                titleAs="h3"
+                minimal={false}
+                className="rounded-xl ring-1 ring-[var(--border)] bg-[var(--surface)]"
               >
                 <Payment data={buffet.amenities?.payments || precomputedAdditionalInfo?.['Payments'] || {}} />
-              </Accordion>
+              </DisclosureCard>
             )}
 
-            {/* Highlights Accordion */}
+            {/* Highlights disclosure */}
             {(buffet.amenities?.highlights || precomputedAdditionalInfo?.['Highlights']) && (
-              <Accordion
+              <DisclosureCard
                 title="Highlights"
                 summary="Special features"
                 icon={
@@ -1292,16 +1456,18 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                   </svg>
                 }
-                defaultExpanded={false}
-                variant="compact"
+                size="compact"
+                titleAs="h3"
+                minimal={false}
+                className="rounded-xl ring-1 ring-[var(--border)] bg-[var(--surface)]"
               >
                 <Highlights data={buffet.amenities?.highlights || precomputedAdditionalInfo?.['Highlights'] || {}} />
-              </Accordion>
+              </DisclosureCard>
             )}
 
-            {/* Food & Drink Accordion */}
+            {/* Food & Drink disclosure */}
             {buffet.amenities?.['food and drink'] && (
-              <Accordion
+              <DisclosureCard
                 title="Food & Drink"
                 summary="Menu offerings"
                 icon={
@@ -1309,16 +1475,18 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                   </svg>
                 }
-                defaultExpanded={false}
-                variant="compact"
+                size="compact"
+                titleAs="h3"
+                minimal={false}
+                className="rounded-xl ring-1 ring-[var(--border)] bg-[var(--surface)]"
               >
                 <FoodAndDrink data={buffet.amenities['food and drink']} />
-              </Accordion>
+              </DisclosureCard>
             )}
 
-            {/* Planning Accordion */}
+            {/* Planning disclosure */}
             {(buffet.amenities?.planning || precomputedAdditionalInfo?.['Planning']) && (
-              <Accordion
+              <DisclosureCard
                 title="Planning"
                 summary="Reservations and groups"
                 icon={
@@ -1326,14 +1494,16 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 }
-                defaultExpanded={false}
-                variant="compact"
+                size="compact"
+                titleAs="h3"
+                minimal={false}
+                className="rounded-xl ring-1 ring-[var(--border)] bg-[var(--surface)]"
               >
                 <Planning data={buffet.amenities?.planning || precomputedAdditionalInfo?.['Planning'] || {}} />
-              </Accordion>
+              </DisclosureCard>
             )}
             </div>
-          </SignatureCard>
+          </DisclosureCard>
         </section>
       ) : null}
       </PageSection>
@@ -1348,19 +1518,23 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
           ============================================ */}
       {menuData && ((menuData.categories?.length ?? 0) > 0 || (menuData.items?.length ?? 0) > 0) && (
         <section id="menu" className="scroll-mt-24">
-          <SignatureCard
-            minimal
+          <DisclosureCard
             title="Menu"
-            titleIcon={
+            summary={
+              menuData.categories?.length
+                ? `${menuData.categories.length} categories`
+                : 'Menu items and pricing'
+            }
+            defaultOpen={false}
+            icon={
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             }
-            centerTitle
             className="page-block-gap"
           >
             <Menu menu={menuData} />
-          </SignatureCard>
+          </DisclosureCard>
         </section>
       )}
       </PageSection>
@@ -1375,7 +1549,22 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
           Shows summary immediately, loads full content when scrolling near
           ============================================ */}
       <section id="reviews" className="scroll-mt-24">
-        <SignatureCard minimal noPadding>
+        <DisclosureCard
+          title="Reviews"
+          summary={
+            buffet.reviewsCount
+              ? `${buffet.reviewsCount.toLocaleString()} reviews`
+              : 'Reviews and ratings'
+          }
+          defaultOpen={false}
+          icon={
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+          }
+          className="page-block-gap"
+          contentClassName="!p-0"
+        >
           <ReviewsBundle
             reviews={buffet.reviews}
             reviewsCount={buffet.reviewsCount}
@@ -1383,7 +1572,7 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
             reviewsDistribution={buffet.reviewsDistribution}
             reviewsTags={buffet.reviewsTags}
           />
-        </SignatureCard>
+        </DisclosureCard>
       </section>
       </PageSection>
         </StreamableSection>
@@ -1394,19 +1583,19 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
       <PageSection variant="alt">
       {/* FAQs Section - Includes Common Questions (Answer Engine Q&A) + Database Q&A */}
       <section id="faqs" aria-label="Frequently Asked Questions" className="scroll-mt-24">
-        <SignatureCard
-          minimal
+        <DisclosureCard
           title="Frequently Asked Questions"
-          titleIcon={
+          summary="Common answers about this buffet"
+          defaultOpen={false}
+          icon={
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           }
-          centerTitle
           className="page-block-gap"
         >
           <AnswerEngineQA buffet={buffet} />
-        </SignatureCard>
+        </DisclosureCard>
       </section>
       </PageSection>
         </StreamableSection>
@@ -1436,6 +1625,23 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
         stateAbbr={stateAbbr}
         citySlug={params['city-state']}
         buffetCount={cityData?.buffetCount}
+      />
+
+      {/* ============================================
+          SERVER-RENDERED INTERNAL LINKS
+          Plain <Link> elements in initial HTML for crawlers.
+          ComparisonBundle is ssr:false, so these ensure link
+          equity flows before JS loads.
+          ============================================ */}
+      <BuffetInternalLinksServer
+        citySlug={params['city-state']}
+        cityName={cityName}
+        stateAbbr={stateAbbr}
+        stateName={stateName}
+        buffetCount={cityData?.buffetCount}
+        sameCityBuffets={sameCityBuffets}
+        neighborhoodName={neighborhoodName}
+        neighborhoodSlug={neighborhoodSlug}
       />
       </PageSection>
         </StreamableSection>
@@ -1819,7 +2025,7 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
           {/* END RIGHT COLUMN */}
         </div>
         {/* END 2-COLUMN LAYOUT */}
-      </div>
+      </SiteShell>
       <MobileActionBar buffet={buffet} />
     </>
   );

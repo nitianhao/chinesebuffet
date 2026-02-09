@@ -1,0 +1,14 @@
+{
+  "description": "Routes used by perf-snapshot-deep.mjs for performance measurement.",
+  "routes": [
+    "/",
+    "/chinese-buffets/states",
+    "/chinese-buffets/states/ny",
+    "/chinese-buffets/los-angeles-ca",
+    "/chinese-buffets/los-angeles-ca/neighborhoods/downtown",
+    "/chinese-buffets/los-angeles-ca/china-buffet",
+    "/search",
+    "/chinese-buffets/near/parking",
+    "/chinese-buffets/cities"
+  ]
+}

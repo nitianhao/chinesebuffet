@@ -1,5 +1,3 @@
-'use client';
-
 interface OwnerUpdate {
   updateText?: string;
   updateDate?: string;

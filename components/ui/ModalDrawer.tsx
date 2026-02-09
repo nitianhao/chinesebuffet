@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 interface ModalDrawerProps {
   isOpen: boolean;
@@ -11,6 +12,12 @@ interface ModalDrawerProps {
 }
 
 export default function ModalDrawer({ isOpen, onClose, title, children, side = 'right' }: ModalDrawerProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     if (!isOpen) {
       return;
@@ -31,7 +38,7 @@ export default function ModalDrawer({ isOpen, onClose, title, children, side = '
     };
   }, [isOpen, onClose]);
 
-  if (!isOpen) {
+  if (!isOpen || !mounted) {
     return null;
   }
 
@@ -40,8 +47,8 @@ export default function ModalDrawer({ isOpen, onClose, title, children, side = '
       ? 'right-0 top-0 h-full w-[85%] max-w-sm rounded-l-2xl'
       : 'left-0 right-0 top-0 w-full max-h-[90vh] rounded-b-2xl';
 
-  return (
-    <div className="fixed inset-0 z-50">
+  const drawer = (
+    <div className="fixed inset-0 z-[10000]">
       <button
         type="button"
         aria-label="Close dialog"
@@ -58,4 +65,6 @@ export default function ModalDrawer({ isOpen, onClose, title, children, side = '
       </div>
     </div>
   );
+
+  return createPortal(drawer, document.body);
 }

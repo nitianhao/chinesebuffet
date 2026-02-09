@@ -4,13 +4,17 @@ import { getAllCitySlugs, getNeighborhoodsByCity, getCityBySlug } from '@/lib/da
 import { createSitemapEntry, filterIndexableEntries, getLastModified } from '@/lib/sitemap-utils';
 import { PageType, IndexTier } from '@/lib/index-tier';
 import { isCityIndexable, getStagedIndexingConfig } from '@/lib/staged-indexing';
+import { getBaseUrlForRobotsAndSitemaps } from '@/lib/site-url';
+
+// ISR: regenerate sitemap at most once per hour at runtime
+export const revalidate = 3600;
 
 /**
  * Neighborhood Pages Sitemap
- * Only includes indexable neighborhood pages.
+ * Only includes indexable neighborhood pages. All URLs are absolute.
  */
 export async function GET(): Promise<NextResponse> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yoursite.com';
+  const baseUrl = getBaseUrlForRobotsAndSitemaps();
   const citySlugs = await getAllCitySlugs();
   
   const entries = [];

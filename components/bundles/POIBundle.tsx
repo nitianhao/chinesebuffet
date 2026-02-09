@@ -1,4 +1,4 @@
-import SignatureCard from '@/components/ui/SignatureCard';
+import DisclosureCard from '@/components/ui/DisclosureCard';
 import NearbyHighlights from '@/components/NearbyHighlights';
 import { hasNearbyHighlightsContent } from '@/lib/poiUtils';
 
@@ -48,20 +48,20 @@ export default function POIBundle({ buffet }: POIBundleProps) {
 
   return (
     <section id="nearby-places" className="scroll-mt-24">
-      <SignatureCard
-        minimal
+      <DisclosureCard
         title="Nearby Places"
-        titleIcon={
+        summary="Local services, shops, and points of interest"
+        defaultOpen={false}
+        icon={
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
         }
-        centerTitle
         className="page-block-gap"
       >
         <NearbyHighlights {...poiData} />
-      </SignatureCard>
+      </DisclosureCard>
     </section>
   );
 }
