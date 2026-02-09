@@ -223,6 +223,7 @@ export default async function CityPage({ params }: CityPageProps) {
   }
 
   // ---- 2. State rollup for cross-links (other cities, nearby) ----
+  const stateAbbr = data.stateAbbr;
   const stateRollup = await getStateCitiesCached(stateAbbr);
   const stateCities = stateRollup?.data?.cities ?? [];
   const otherCitiesInState: StateCityRow[] = stateCities
@@ -259,7 +260,7 @@ export default async function CityPage({ params }: CityPageProps) {
   // ---- 3. Render prep (sorting, formatting, pagination) ----
   const tPrep = perfMark();
 
-  const { cityName, state, stateAbbr, buffets, neighborhoods, buffetCount } = data;
+  const { cityName, state, buffets, neighborhoods, buffetCount } = data;
   
   // NOTE: No server-side filtering — filters are applied client-side by
   // CityBuffetList. The server always renders the unfiltered list. This is
