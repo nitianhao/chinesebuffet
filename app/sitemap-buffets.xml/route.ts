@@ -4,78 +4,88 @@ import { getAllCitySlugs, getCityBySlug } from '@/lib/data-instantdb';
 import { createSitemapEntry, filterIndexableEntries, getLastModified } from '@/lib/sitemap-utils';
 import { PageType, IndexTier } from '@/lib/index-tier';
 import { isCityIndexable, getStagedIndexingConfig } from '@/lib/staged-indexing';
-import { getBaseUrlForRobotsAndSitemaps } from '@/lib/site-url';
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
-// ISR: regenerate sitemap at most once per hour at runtime
-export const revalidate = 3600;
+const XML_HEADERS = { 'Content-Type': 'application/xml; charset=utf-8' } as const;
 
 /**
  * Buffet Pages Sitemap
  * Only includes indexable buffet pages. All URLs are absolute.
  */
+function getBaseUrlSafe(): string | null {
+  const raw = process.env.NEXT_PUBLIC_SITE_URL;
+  if (!raw || typeof raw !== 'string') return null;
+  return raw.replace(/\/+$/, '');
+}
+
 export async function GET(): Promise<NextResponse> {
-  const baseUrl = getBaseUrlForRobotsAndSitemaps();
-  const citySlugs = await getAllCitySlugs();
-  
-  // Check staged indexing config
-  const stagedConfig = getStagedIndexingConfig();
-  
-  const entries = [];
-  
-  for (const slug of citySlugs) {
-    const city = await getCityBySlug(slug);
-    if (!city) continue;
-    
-    // Check if city is indexable in current phase
-    const cityIndexable = isCityIndexable(
-      {
-        slug: city.slug,
-        city: city.city,
-        state: city.state,
-        rank: city.rank,
-        population: city.population,
-        buffetCount: city.buffets?.length || 0,
-      },
-      stagedConfig
-    );
-    
-    // Only include buffets from indexable cities
-    if (!cityIndexable) continue;
-    
-    for (const buffet of city.buffets) {
-      const pagePath = `/chinese-buffets/${slug}/${buffet.slug}`;
-      // Get last modified from buffet data (updatedAt, lastModified, or current date)
-      const lastModified = getLastModified(buffet);
-      
-      // All buffet pages should be indexable (enforced by buffet indexing rules)
-      // Only include if indexable (excludes noindex pages)
-      const entry = createSitemapEntry(
-        `${baseUrl}${pagePath}`,
-        'buffet' as PageType,
-        'tier-2' as IndexTier,
-        lastModified,
-        'monthly',
-        0.6,
-        true // Buffet pages are always indexable per rules (if city is in phase)
+  try {
+    const baseUrl = getBaseUrlSafe();
+    if (!baseUrl) {
+      console.error('sitemap-buffets.xml', 'NEXT_PUBLIC_SITE_URL is not set');
+      return new NextResponse(generateSitemapXML([]), { headers: XML_HEADERS, status: 200 });
+    }
+    const citySlugs = await getAllCitySlugs();
+
+    // Check staged indexing config
+    const stagedConfig = getStagedIndexingConfig();
+
+    const entries = [];
+
+    for (const slug of citySlugs) {
+      const city = await getCityBySlug(slug);
+      if (!city) continue;
+
+      // Check if city is indexable in current phase
+      const cityIndexable = isCityIndexable(
+        {
+          slug: city.slug,
+          city: city.city,
+          state: city.state,
+          rank: city.rank,
+          population: city.population,
+          buffetCount: city.buffets?.length || 0,
+        },
+        stagedConfig
       );
-      
-      // Only add if entry is indexable (createSitemapEntry returns null for noindex)
-      if (entry) {
-        entries.push(entry);
+
+      // Only include buffets from indexable cities
+      if (!cityIndexable) continue;
+
+      for (const buffet of city.buffets) {
+        const pagePath = `/chinese-buffets/${slug}/${buffet.slug}`;
+        // Get last modified from buffet data (updatedAt, lastModified, or current date)
+        const lastModified = getLastModified(buffet);
+
+        // All buffet pages should be indexable (enforced by buffet indexing rules)
+        // Only include if indexable (excludes noindex pages)
+        const entry = createSitemapEntry(
+          `${baseUrl}${pagePath}`,
+          'buffet' as PageType,
+          'tier-2' as IndexTier,
+          lastModified,
+          'monthly',
+          0.6,
+          true // Buffet pages are always indexable per rules (if city is in phase)
+        );
+
+        // Only add if entry is indexable (createSitemapEntry returns null for noindex)
+        if (entry) {
+          entries.push(entry);
+        }
       }
     }
+
+    const routes = filterIndexableEntries(entries);
+    const xml = generateSitemapXML(routes);
+    return new NextResponse(xml, { headers: XML_HEADERS });
+  } catch (err) {
+    console.error('sitemap-buffets.xml', err instanceof Error ? err.message : String(err));
+    const emptyXml = generateSitemapXML([]);
+    return new NextResponse(emptyXml, { headers: XML_HEADERS, status: 200 });
   }
-  
-  const routes = filterIndexableEntries(entries);
-  
-  // Return XML sitemap
-  const xml = generateSitemapXML(routes);
-  
-  return new NextResponse(xml, {
-    headers: {
-      'Content-Type': 'application/xml',
-    },
-  });
 }
 
 function generateSitemapXML(routes: MetadataRoute.Sitemap): string {

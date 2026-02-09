@@ -4,92 +4,105 @@ import { getAllCitySlugs, getCityBySlug } from '@/lib/data-instantdb';
 import { createSitemapEntry, filterIndexableEntries, getLastModified } from '@/lib/sitemap-utils';
 import { PageType, IndexTier } from '@/lib/index-tier';
 import { isCityIndexable, getStagedIndexingConfig } from '@/lib/staged-indexing';
-import { getBaseUrlForRobotsAndSitemaps } from '@/lib/site-url';
-import { CITY_FILTERS } from '@/lib/city-filter-pages';
 
-// ISR: regenerate sitemap at most once per hour at runtime
-export const revalidate = 3600;
+// Inline to avoid loading city-filter-pages (which calls getSiteUrl() at module load and breaks build when env is unset)
+const CITY_FILTERS = ['best', 'cheap', 'open-now', 'top-rated'] as const;
+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+const XML_HEADERS = { 'Content-Type': 'application/xml; charset=utf-8' } as const;
 
 /**
  * City Pages Sitemap
  * Only includes indexable city pages. All URLs are absolute.
  */
-export async function GET(): Promise<NextResponse> {
-  const baseUrl = getBaseUrlForRobotsAndSitemaps();
-  const citySlugs = await getAllCitySlugs();
-  
-  const entries = [];
-  
-  // Check staged indexing config
-  const stagedConfig = getStagedIndexingConfig();
-  
-  for (const slug of citySlugs) {
-    const city = await getCityBySlug(slug);
-    if (!city) continue;
-    
-    // Check if city is indexable in current phase
-    const cityIndexable = isCityIndexable(
-      {
-        slug: city.slug,
-        city: city.city,
-        state: city.state,
-        rank: city.rank,
-        population: city.population,
-        buffetCount: city.buffets?.length || 0,
-      },
-      stagedConfig
-    );
-    
-    const pagePath = `/chinese-buffets/${slug}`;
-    // Get last modified from city data (updatedAt, lastModified, or current date)
-    const lastModified = getLastModified(city);
-    
-    // City pages are tier-1, but respect staged indexing rollout
-    const entry = createSitemapEntry(
-      `${baseUrl}${pagePath}`,
-      'city' as PageType,
-      'tier-1' as IndexTier,
-      lastModified,
-      'weekly',
-      0.8,
-      cityIndexable // Only indexable if in current phase
-    );
-    
-    // Only add if entry is indexable (createSitemapEntry returns null for noindex)
-    if (entry) {
-      entries.push(entry);
+function getBaseUrlSafe(): string | null {
+  const raw = process.env.NEXT_PUBLIC_SITE_URL;
+  if (!raw || typeof raw !== 'string') return null;
+  return raw.replace(/\/+$/, '');
+}
 
-      // Also add curated filter pages for indexable cities with enough buffets
-      const buffetCount = city.buffets?.length || 0;
-      if (buffetCount >= 5) {
-        for (const filter of CITY_FILTERS) {
-          const filterEntry = createSitemapEntry(
-            `${baseUrl}/chinese-buffets/${slug}/${filter}`,
-            'city' as PageType,
-            'tier-2' as IndexTier,
-            lastModified,
-            'weekly',
-            0.6,
-            true
-          );
-          if (filterEntry) {
-            entries.push(filterEntry);
+export async function GET(): Promise<NextResponse> {
+  try {
+    const baseUrl = getBaseUrlSafe();
+    if (!baseUrl) {
+      console.error('sitemap-cities.xml', 'NEXT_PUBLIC_SITE_URL is not set');
+      return new NextResponse(generateSitemapXML([]), { headers: XML_HEADERS, status: 200 });
+    }
+    const citySlugs = await getAllCitySlugs();
+
+    const entries = [];
+
+    // Check staged indexing config
+    const stagedConfig = getStagedIndexingConfig();
+
+    for (const slug of citySlugs) {
+      const city = await getCityBySlug(slug);
+      if (!city) continue;
+
+      // Check if city is indexable in current phase
+      const cityIndexable = isCityIndexable(
+        {
+          slug: city.slug,
+          city: city.city,
+          state: city.state,
+          rank: city.rank,
+          population: city.population,
+          buffetCount: city.buffets?.length || 0,
+        },
+        stagedConfig
+      );
+
+      const pagePath = `/chinese-buffets/${slug}`;
+      // Get last modified from city data (updatedAt, lastModified, or current date)
+      const lastModified = getLastModified(city);
+
+      // City pages are tier-1, but respect staged indexing rollout
+      const entry = createSitemapEntry(
+        `${baseUrl}${pagePath}`,
+        'city' as PageType,
+        'tier-1' as IndexTier,
+        lastModified,
+        'weekly',
+        0.8,
+        cityIndexable // Only indexable if in current phase
+      );
+
+      // Only add if entry is indexable (createSitemapEntry returns null for noindex)
+      if (entry) {
+        entries.push(entry);
+
+        // Also add curated filter pages for indexable cities with enough buffets
+        const buffetCount = city.buffets?.length || 0;
+        if (buffetCount >= 5) {
+          for (const filter of CITY_FILTERS) {
+            const filterEntry = createSitemapEntry(
+              `${baseUrl}/chinese-buffets/${slug}/${filter}`,
+              'city' as PageType,
+              'tier-2' as IndexTier,
+              lastModified,
+              'weekly',
+              0.6,
+              true
+            );
+            if (filterEntry) {
+              entries.push(filterEntry);
+            }
           }
         }
       }
     }
+
+    const routes = filterIndexableEntries(entries);
+    const xml = generateSitemapXML(routes);
+    return new NextResponse(xml, { headers: XML_HEADERS });
+  } catch (err) {
+    console.error('sitemap-cities.xml', err instanceof Error ? err.message : String(err));
+    const emptyXml = generateSitemapXML([]);
+    return new NextResponse(emptyXml, { headers: XML_HEADERS, status: 200 });
   }
-  
-  const routes = filterIndexableEntries(entries);
-  
-  // Return XML sitemap
-  const xml = generateSitemapXML(routes);
-  
-  return new NextResponse(xml, {
-    headers: {
-      'Content-Type': 'application/xml',
-    },
-  });
 }
 
 function generateSitemapXML(routes: MetadataRoute.Sitemap): string {
