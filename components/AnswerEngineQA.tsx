@@ -9,7 +9,7 @@
  * - Uses question-answer HTML structure
  * - Answers start with the direct answer (no preamble)
  * - Includes specific data points
- * - Schema.org FAQPage markup included
+ * - FAQPage JSON-LD schema is rendered by SeoJsonLd component
  */
 
 interface AnswerEngineQAProps {
@@ -57,7 +57,7 @@ interface QAItem {
 export default function AnswerEngineQA({ buffet }: AnswerEngineQAProps) {
   // Generate dynamic Q&A items from buffet data
   const generatedItems = generateQAItems(buffet);
-  
+
   // Get Q&A items from database (questionsAndAnswers field)
   const dbItems: QAItem[] = [];
   if (buffet.questionsAndAnswers && Array.isArray(buffet.questionsAndAnswers)) {
@@ -70,12 +70,12 @@ export default function AnswerEngineQA({ buffet }: AnswerEngineQAProps) {
       }
     });
   }
-  
+
   // Merge: database items first (more specific), then generated items
   // Deduplicate by checking if questions are similar
   const seenQuestions = new Set<string>();
   const qaItems: QAItem[] = [];
-  
+
   // Add database items first (they're more specific to this buffet)
   dbItems.forEach(item => {
     const normalizedQ = item.question.toLowerCase().trim();
@@ -84,7 +84,7 @@ export default function AnswerEngineQA({ buffet }: AnswerEngineQAProps) {
       qaItems.push(item);
     }
   });
-  
+
   // Add generated items that don't overlap
   generatedItems.forEach(item => {
     const normalizedQ = item.question.toLowerCase().trim();
@@ -96,7 +96,7 @@ export default function AnswerEngineQA({ buffet }: AnswerEngineQAProps) {
       const overlap = existingWords.filter(w => newWords.includes(w)).length;
       return overlap >= 2; // If 2+ significant words overlap, consider it duplicate
     });
-    
+
     if (!isDuplicate) {
       seenQuestions.add(normalizedQ);
       qaItems.push(item);
@@ -110,95 +110,75 @@ export default function AnswerEngineQA({ buffet }: AnswerEngineQAProps) {
   const hiddenItems = qaItems.slice(INITIAL_QA_LIMIT);
   const hasMoreQA = hiddenItems.length > 0;
 
-  // Generate JSON-LD for FAQPage (all items for SEO)
-  const faqSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: qaItems.map(item => ({
-      '@type': 'Question',
-      name: item.question,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: item.answer,
-      },
-    })),
-  };
 
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
-      
-      <div className="space-y-3">
-        {visibleItems.map((item, index) => (
-          <div
-            key={index}
-            className="border border-[var(--border)] rounded-lg p-4 hover:border-[var(--border-strong)] transition-colors"
-            itemScope
-            itemProp="mainEntity"
-            itemType="https://schema.org/Question"
-          >
-            <div className="flex items-start gap-2 mb-2">
-              <svg className="w-5 h-5 text-[#C1121F] flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    <div className="space-y-3">
+      {visibleItems.map((item, index) => (
+        <div
+          key={index}
+          className="border border-[var(--border)] rounded-lg p-4 hover:border-[var(--border-strong)] transition-colors"
+          itemScope
+          itemProp="mainEntity"
+          itemType="https://schema.org/Question"
+        >
+          <div className="flex items-start gap-2 mb-2">
+            <svg className="w-5 h-5 text-[#C1121F] flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h4 className="font-semibold text-[var(--text)]" itemProp="name">
+              {item.question}
+            </h4>
+          </div>
+          <div className="ml-7" itemScope itemProp="acceptedAnswer" itemType="https://schema.org/Answer">
+            <div className="flex items-start gap-2">
+              <svg className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <h4 className="font-semibold text-[var(--text)]" itemProp="name">
-                {item.question}
-              </h4>
-            </div>
-            <div className="ml-7" itemScope itemProp="acceptedAnswer" itemType="https://schema.org/Answer">
-              <div className="flex items-start gap-2">
-                <svg className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <p className="text-[var(--text-secondary)] leading-relaxed" itemProp="text">
-                  {item.answer}
-                </p>
-              </div>
+              <p className="text-[var(--text-secondary)] leading-relaxed" itemProp="text">
+                {item.answer}
+              </p>
             </div>
           </div>
-        ))}
-        {hasMoreQA && (
-          <details className="mt-3">
-            <summary className="cursor-pointer text-sm font-medium text-[var(--accent1)] hover:underline list-none py-2">
-              Show {hiddenItems.length} more questions
-            </summary>
-            <div className="space-y-3 mt-2 pl-2 border-l-2 border-[var(--border)]">
-              {hiddenItems.map((item, index) => (
-                <div
-                  key={index}
-                  className="border border-[var(--border)] rounded-lg p-4 hover:border-[var(--border-strong)] transition-colors"
-                  itemScope
-                  itemProp="mainEntity"
-                  itemType="https://schema.org/Question"
-                >
-                  <div className="flex items-start gap-2 mb-2">
-                    <svg className="w-5 h-5 text-[#C1121F] flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </div>
+      ))}
+      {hasMoreQA && (
+        <details className="mt-3">
+          <summary className="cursor-pointer text-sm font-medium text-[var(--accent1)] hover:underline list-none py-2">
+            Show {hiddenItems.length} more questions
+          </summary>
+          <div className="space-y-3 mt-2 pl-2 border-l-2 border-[var(--border)]">
+            {hiddenItems.map((item, index) => (
+              <div
+                key={index}
+                className="border border-[var(--border)] rounded-lg p-4 hover:border-[var(--border-strong)] transition-colors"
+                itemScope
+                itemProp="mainEntity"
+                itemType="https://schema.org/Question"
+              >
+                <div className="flex items-start gap-2 mb-2">
+                  <svg className="w-5 h-5 text-[#C1121F] flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <h4 className="font-semibold text-[var(--text)]" itemProp="name">
+                    {item.question}
+                  </h4>
+                </div>
+                <div className="ml-7" itemScope itemProp="acceptedAnswer" itemType="https://schema.org/Answer">
+                  <div className="flex items-start gap-2">
+                    <svg className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <h4 className="font-semibold text-[var(--text)]" itemProp="name">
-                      {item.question}
-                    </h4>
-                  </div>
-                  <div className="ml-7" itemScope itemProp="acceptedAnswer" itemType="https://schema.org/Answer">
-                    <div className="flex items-start gap-2">
-                      <svg className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <p className="text-[var(--text-secondary)] leading-relaxed" itemProp="text">
-                        {item.answer}
-                      </p>
-                    </div>
+                    <p className="text-[var(--text-secondary)] leading-relaxed" itemProp="text">
+                      {item.answer}
+                    </p>
                   </div>
                 </div>
-              ))}
-            </div>
-          </details>
-        )}
-      </div>
-    </>
+              </div>
+            ))}
+          </div>
+        </details>
+      )}
+    </div>
   );
 }
 
@@ -260,7 +240,7 @@ function generateQAItems(buffet: AnswerEngineQAProps['buffet']): QAItem[] {
     if (hasService(serviceOptions, ['delivery'])) services.push('delivery');
     if (hasService(serviceOptions, ['takeout', 'take-out'])) services.push('takeout');
     if (hasService(serviceOptions, ['dine-in'])) services.push('dine-in');
-    
+
     if (services.length > 0) {
       items.push({
         question: `Does ${name} offer delivery or takeout?`,
@@ -288,7 +268,7 @@ function generateQAItems(buffet: AnswerEngineQAProps['buffet']): QAItem[] {
  */
 function hasService(data: any, keywords: string[]): boolean {
   if (!data) return false;
-  
+
   const checkValue = (value: any): boolean => {
     if (typeof value === 'string') {
       return keywords.some(k => value.toLowerCase().includes(k.toLowerCase()));
@@ -305,7 +285,7 @@ function hasService(data: any, keywords: string[]): boolean {
     }
     return false;
   };
-  
+
   return checkValue(data);
 }
 
@@ -333,7 +313,7 @@ function getVerdictSentence(rating: number, reviewsCount: number, name: string):
  */
 function getPriceDescription(price: string): string {
   const dollarCount = (price.match(/\$/g) || []).length;
-  
+
   switch (dollarCount) {
     case 1:
       return 'budget-friendly';
