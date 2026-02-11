@@ -3,7 +3,7 @@
  *
  * Usage:
  *   import { getSiteUrl } from '@/lib/site-url';
- *   const url = getSiteUrl(); // e.g. "https://chinesebuffetdirectory.com"
+ *   const url = getSiteUrl(); // e.g. "https://buffetlocator.com"
  *
  * Rules:
  *   - In production builds: NEXT_PUBLIC_SITE_URL **must** be set; throws otherwise.
@@ -34,7 +34,7 @@ export function getSiteUrl(): string {
         'This environment variable is required for production builds so that ' +
         'robots.txt, sitemaps, canonicals, and OG URLs resolve to the correct domain. ' +
         'Set it in your .env.production or hosting environment, e.g.:\n' +
-        '  NEXT_PUBLIC_SITE_URL=https://chinesebuffetdirectory.com'
+        '  NEXT_PUBLIC_SITE_URL=https://buffetlocator.com'
     );
   }
 

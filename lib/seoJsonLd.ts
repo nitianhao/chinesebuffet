@@ -66,11 +66,11 @@ export function clampRating(value: any): number | null {
  */
 export function toIsoDate(value: any): string | null {
   if (!value) return null;
-  
+
   if (value instanceof Date) {
     return value.toISOString();
   }
-  
+
   if (typeof value === 'string') {
     // Try parsing as ISO date
     const date = new Date(value);
@@ -78,7 +78,7 @@ export function toIsoDate(value: any): string | null {
       return date.toISOString();
     }
   }
-  
+
   return null;
 }
 
@@ -106,7 +106,7 @@ export function truncate(text: string | null | undefined, maxLength: number): st
  */
 export function toAbsoluteUrl(url: string | null | undefined | any, baseUrl: string): string | null {
   if (!url) return null;
-  
+
   // Convert to string if it's not already
   let urlString: string;
   if (typeof url === 'string') {
@@ -118,14 +118,14 @@ export function toAbsoluteUrl(url: string | null | undefined | any, baseUrl: str
     // For functions or other types, skip
     return null;
   }
-  
+
   if (!urlString || typeof urlString !== 'string') return null;
-  
+
   // Already absolute
   if (urlString.startsWith('http://') || urlString.startsWith('https://')) {
     return urlString;
   }
-  
+
   // Relative URL - prepend base
   const base = baseUrl.replace(/\/$/, ''); // Remove trailing slash
   const path = urlString.startsWith('/') ? urlString : `/${urlString}`;
@@ -152,22 +152,22 @@ export function parseAddress(addressString: string | null | undefined): {
   } = {
     addressCountry: 'US', // Default for this site
   };
-  
+
   if (!addressString) return result;
-  
+
   // Try to parse common address formats
   // Format 1: "123 Main St, City, State 12345"
   // Format 2: "123 Main St, City, State"
   const parts = addressString.split(',').map(s => s.trim()).filter(Boolean);
-  
+
   if (parts.length >= 1) {
     result.streetAddress = parts[0];
   }
-  
+
   if (parts.length >= 2) {
     result.addressLocality = parts[1];
   }
-  
+
   if (parts.length >= 3) {
     // Last part might be "State ZIP" or just "State"
     const lastPart = parts[parts.length - 1];
@@ -187,7 +187,7 @@ export function parseAddress(addressString: string | null | undefined): {
       }
     }
   }
-  
+
   return result;
 }
 
@@ -248,7 +248,7 @@ function getAddressForSchema(buffet: any): {
  * Build Restaurant JSON-LD schema
  * 
  * @param buffet - Buffet data object
- * @param siteBaseUrl - Base URL of the site (e.g., "https://chinesebuffetdirectory.com")
+ * @param siteBaseUrl - Base URL of the site (e.g., "https://buffetlocator.com")
  * @param cityStateSlug - City-state slug for URL construction (e.g., "los-angeles-ca")
  * @returns JSON-LD object or null if insufficient data
  */
@@ -258,10 +258,10 @@ export function buildRestaurantJsonLd(
   cityStateSlug: string
 ): any | null {
   if (!buffet?.name) return null;
-  
+
   const pageUrl = `${siteBaseUrl}/chinese-buffets/${cityStateSlug}/${buffet.slug}`;
   const restaurantId = `${pageUrl}#restaurant`;
-  
+
   const schema: any = {
     '@context': 'https://schema.org',
     '@type': 'Restaurant',
@@ -269,18 +269,18 @@ export function buildRestaurantJsonLd(
     name: buffet.name,
     url: pageUrl,
   };
-  
+
   // Address - PostalAddress (from string or object)
   const addressForSchema = getAddressForSchema(buffet);
   if (addressForSchema) {
     schema.address = addressForSchema;
   }
-  
+
   // Geo coordinates - only if we have valid lat/lng
   // Check both buffet.location (transformed) and buffet.lat/lng (raw from DB)
   let lat: number | null = null;
   let lng: number | null = null;
-  
+
   if (buffet.location?.lat && buffet.location?.lng) {
     lat = asNumber(buffet.location.lat);
     lng = asNumber(buffet.location.lng);
@@ -289,7 +289,7 @@ export function buildRestaurantJsonLd(
     lat = asNumber(buffet.lat);
     lng = asNumber(buffet.lng);
   }
-  
+
   if (lat !== null && lng !== null && lat !== 0 && lng !== 0) {
     schema.geo = {
       '@type': 'GeoCoordinates',
@@ -297,7 +297,7 @@ export function buildRestaurantJsonLd(
       longitude: lng,
     };
   }
-  
+
   // Telephone
   if (buffet.contactInfo?.phone || buffet.phone) {
     const phone = buffet.contactInfo?.phone || buffet.phone;
@@ -305,15 +305,15 @@ export function buildRestaurantJsonLd(
       schema.telephone = phone.trim();
     }
   }
-  
+
   // Price range
   if (buffet.price && typeof buffet.price === 'string') {
     schema.priceRange = buffet.price.trim();
   }
-  
+
   // Image(s) - use photoReference via local proxy
   const images: string[] = [];
-  
+
   if (buffet.images && Array.isArray(buffet.images)) {
     buffet.images.slice(0, 5).forEach((img: any) => {
       if (img?.photoReference && typeof img.photoReference === 'string') {
@@ -323,7 +323,7 @@ export function buildRestaurantJsonLd(
       }
     });
   }
-  
+
   // Image: array of absolute URLs (omit if none; schema.org accepts URL or array)
   if (images.length > 0) {
     schema.image = images;
@@ -359,7 +359,7 @@ export function buildRestaurantJsonLd(
       schema.openingHoursSpecification = openingHours;
     }
   }
-  
+
   // Menu URL - ensure it's a string, not a function
   if (buffet.contactInfo?.menuUrl) {
     const menuUrlValue = buffet.contactInfo.menuUrl;
@@ -371,10 +371,10 @@ export function buildRestaurantJsonLd(
       }
     }
   }
-  
+
   // Website and sameAs links
   const sameAsLinks: string[] = [];
-  
+
   // Check for website in multiple possible locations
   const website = buffet.website || buffet.contactInfo?.website;
   if (website && typeof website === 'string') {
@@ -383,16 +383,16 @@ export function buildRestaurantJsonLd(
       sameAsLinks.push(websiteUrl);
     }
   }
-  
+
   // Add Google Maps URL if we have location
   if (lat !== null && lng !== null && lat !== 0 && lng !== 0) {
     sameAsLinks.push(`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`);
   }
-  
+
   if (sameAsLinks.length > 0) {
     schema.sameAs = sameAsLinks.length === 1 ? sameAsLinks[0] : sameAsLinks;
   }
-  
+
   // AggregateRating - only if we have valid rating and review count
   const rating = clampRating(buffet.rating);
   const reviewCount = asNumber(buffet.reviewsCount);
@@ -405,10 +405,10 @@ export function buildRestaurantJsonLd(
       worstRating: '1',
     };
   }
-  
+
   // Reviews - only include if we have complete review data
   // This will be handled separately by buildReviewsJsonLd
-  
+
   return schema;
 }
 
@@ -422,11 +422,11 @@ export function buildAggregateRatingJsonLd(
 ): any | null {
   const validRating = clampRating(rating);
   const validCount = asNumber(reviewCount);
-  
+
   if (validRating === null || validCount === null || validCount <= 0) {
     return null;
   }
-  
+
   return {
     '@type': 'AggregateRating',
     ratingValue: validRating.toString(),
@@ -451,21 +451,21 @@ export function buildReviewsJsonLd(
   if (!Array.isArray(reviews) || reviews.length === 0) {
     return [];
   }
-  
+
   const validReviews: any[] = [];
-  
+
   for (const review of reviews.slice(0, maxReviews)) {
     // Required fields: rating, text, datePublished
     const rating = clampRating(review.rating || review.stars);
     const reviewBody = stripHtml(review.text || review.reviewBody || '');
     const datePublished = toIsoDate(review.publishAt || review.publishedAtDate || review.date || review.time);
     const authorName = review.name || review.author || 'Anonymous';
-    
+
     // Skip if missing critical fields
     if (rating === null || !reviewBody || reviewBody.length < 10 || !datePublished) {
       continue;
     }
-    
+
     const reviewSchema: any = {
       '@type': 'Review',
       reviewRating: {
@@ -477,7 +477,7 @@ export function buildReviewsJsonLd(
       reviewBody: truncate(reviewBody, 1200),
       datePublished,
     };
-    
+
     // Author - include if we have a name
     if (authorName && authorName !== 'Anonymous') {
       reviewSchema.author = {
@@ -485,10 +485,10 @@ export function buildReviewsJsonLd(
         name: authorName,
       };
     }
-    
+
     validReviews.push(reviewSchema);
   }
-  
+
   return validReviews;
 }
 
@@ -508,18 +508,18 @@ export function buildFaqPageJsonLd(
   if (!Array.isArray(questionsAndAnswers) || questionsAndAnswers.length < 3) {
     return null;
   }
-  
+
   const mainEntity: any[] = [];
-  
+
   for (const qa of questionsAndAnswers.slice(0, maxItems)) {
     const question = stripHtml(qa.question);
     const answer = stripHtml(qa.answer);
-    
+
     // Skip if missing question or answer
     if (!question || question.length < 5 || !answer || answer.length < 10) {
       continue;
     }
-    
+
     mainEntity.push({
       '@type': 'Question',
       name: truncate(question, 200),
@@ -529,12 +529,12 @@ export function buildFaqPageJsonLd(
       },
     });
   }
-  
+
   // Need at least 3 valid Q&As
   if (mainEntity.length < 3) {
     return null;
   }
-  
+
   return {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -553,9 +553,9 @@ export function buildLocalBusinessJsonLd(
   cityStateSlug: string
 ): any | null {
   if (!buffet?.name) return null;
-  
+
   const pageUrl = `${siteBaseUrl}/chinese-buffets/${cityStateSlug}/${buffet.slug}`;
-  
+
   const schema: any = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
@@ -563,7 +563,7 @@ export function buildLocalBusinessJsonLd(
     name: buffet.name,
     url: pageUrl,
   };
-  
+
   // Address
   if (buffet.address) {
     const addressParts = parseAddress(buffet.address);
@@ -574,11 +574,11 @@ export function buildLocalBusinessJsonLd(
       };
     }
   }
-  
+
   // Geo coordinates
   let lat: number | null = null;
   let lng: number | null = null;
-  
+
   if (buffet.location?.lat && buffet.location?.lng) {
     lat = asNumber(buffet.location.lat);
     lng = asNumber(buffet.location.lng);
@@ -586,7 +586,7 @@ export function buildLocalBusinessJsonLd(
     lat = asNumber(buffet.lat);
     lng = asNumber(buffet.lng);
   }
-  
+
   if (lat !== null && lng !== null && lat !== 0 && lng !== 0) {
     schema.geo = {
       '@type': 'GeoCoordinates',
@@ -594,18 +594,18 @@ export function buildLocalBusinessJsonLd(
       longitude: lng,
     };
   }
-  
+
   // Telephone
   const phone = buffet.contactInfo?.phone || buffet.phone;
   if (phone && typeof phone === 'string' && phone.trim()) {
     schema.telephone = phone.trim();
   }
-  
+
   // Price range
   if (buffet.price && typeof buffet.price === 'string') {
     schema.priceRange = buffet.price.trim();
   }
-  
+
   return schema;
 }
 
@@ -625,24 +625,24 @@ export function buildPlaceJsonLd(
   index: number
 ): any | null {
   if (!poi?.name) return null;
-  
+
   // Only create Place schema if we have at least geo or address
   // This prevents warnings about missing location data
   const hasGeo = poi.lat && poi.lng;
   const hasAddress = poi.address && typeof poi.address === 'string' && poi.address.trim().length > 0;
-  
+
   if (!hasGeo && !hasAddress) {
     // Skip POIs without location data to avoid validation warnings
     return null;
   }
-  
+
   const schema: any = {
     '@context': 'https://schema.org',
     '@type': 'Place',
     '@id': `${parentPageUrl}#poi-${index}`,
     name: poi.name,
   };
-  
+
   // Add additional type based on category
   if (poi.category) {
     const categoryLower = poi.category.toLowerCase();
@@ -662,7 +662,7 @@ export function buildPlaceJsonLd(
       schema.additionalType = 'https://schema.org/FinancialService';
     }
   }
-  
+
   // Geo coordinates
   if (hasGeo) {
     const lat = asNumber(poi.lat);
@@ -675,12 +675,12 @@ export function buildPlaceJsonLd(
       };
     }
   }
-  
+
   // Address
   if (hasAddress) {
     schema.address = poi.address.trim();
   }
-  
+
   return schema;
 }
 
@@ -702,16 +702,16 @@ export function buildPOIsJsonLd(
   if (!Array.isArray(pois) || pois.length === 0) {
     return [];
   }
-  
+
   const schemas: any[] = [];
-  
+
   pois.slice(0, maxPois).forEach((poi, index) => {
     const schema = buildPlaceJsonLd(poi, parentPageUrl, index);
     if (schema) {
       schemas.push(schema);
     }
   });
-  
+
   return schemas;
 }
 
@@ -725,14 +725,14 @@ export function buildBreadcrumbJsonLd(
   if (!Array.isArray(items) || items.length === 0) {
     return null;
   }
-  
+
   const itemListElement = items.map((item, index) => ({
     '@type': 'ListItem',
     position: index + 1,
     name: item.name,
     item: item.url.startsWith('http') ? item.url : `${siteBaseUrl}${item.url}`,
   }));
-  
+
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -752,11 +752,11 @@ export function buildStandaloneReviewJsonLd(
   const reviewBody = stripHtml(review.text || review.reviewBody || '');
   const datePublished = toIsoDate(review.publishAt || review.publishedAtDate || review.date || review.time);
   const authorName = review.name || review.author || 'Anonymous';
-  
+
   if (rating === null || !reviewBody || reviewBody.length < 10 || !datePublished) {
     return null;
   }
-  
+
   const schema: any = {
     '@context': 'https://schema.org',
     '@type': 'Review',
@@ -774,14 +774,14 @@ export function buildStandaloneReviewJsonLd(
     reviewBody: truncate(reviewBody, 1200),
     datePublished,
   };
-  
+
   if (authorName && authorName !== 'Anonymous') {
     schema.author = {
       '@type': 'Person',
       name: authorName,
     };
   }
-  
+
   return schema;
 }
 
@@ -795,24 +795,24 @@ export function validateSchema(schema: any, schemaType: string): SchemaValidatio
     errors: [],
     warnings: [],
   };
-  
+
   if (!schema) {
     result.isValid = false;
     result.errors.push('Schema is null or undefined');
     return result;
   }
-  
+
   // Check required fields
   if (!schema['@context']) {
     result.isValid = false;
     result.errors.push('Missing @context');
   }
-  
+
   if (!schema['@type']) {
     result.isValid = false;
     result.errors.push('Missing @type');
   }
-  
+
   // Type-specific validation
   switch (schemaType) {
     case 'Restaurant':
@@ -835,7 +835,7 @@ export function validateSchema(schema: any, schemaType: string): SchemaValidatio
         }
       }
       break;
-      
+
     case 'Review':
       if (!schema.reviewRating?.ratingValue) {
         result.isValid = false;
@@ -849,7 +849,7 @@ export function validateSchema(schema: any, schemaType: string): SchemaValidatio
         result.warnings.push('Missing datePublished - recommended for reviews');
       }
       break;
-      
+
     case 'FAQPage':
       if (!schema.mainEntity || !Array.isArray(schema.mainEntity) || schema.mainEntity.length === 0) {
         result.isValid = false;
@@ -865,7 +865,7 @@ export function validateSchema(schema: any, schemaType: string): SchemaValidatio
         });
       }
       break;
-      
+
     case 'Place':
       if (!schema.name) {
         result.isValid = false;
@@ -875,7 +875,7 @@ export function validateSchema(schema: any, schemaType: string): SchemaValidatio
         result.warnings.push('Missing geo and address - at least one is recommended');
       }
       break;
-      
+
     case 'BreadcrumbList':
       if (!schema.itemListElement || !Array.isArray(schema.itemListElement) || schema.itemListElement.length === 0) {
         result.isValid = false;
@@ -892,12 +892,12 @@ export function validateSchema(schema: any, schemaType: string): SchemaValidatio
       }
       break;
   }
-  
+
   // Update isValid based on errors
   if (result.errors.length > 0) {
     result.isValid = false;
   }
-  
+
   return result;
 }
 
@@ -906,14 +906,14 @@ export function validateSchema(schema: any, schemaType: string): SchemaValidatio
  */
 export function validateJsonLd(schema: any, schemaName: string): void {
   if (process.env.NODE_ENV !== 'development') return;
-  
+
   const result = validateSchema(schema, schemaName);
-  
+
   if (!result.isValid) {
     console.warn(`[JSON-LD] ${schemaName}: Schema validation failed`);
     result.errors.forEach(err => console.warn(`  Error: ${err}`));
   }
-  
+
   result.warnings.forEach(warn => console.warn(`[JSON-LD] ${schemaName} Warning: ${warn}`));
 }
 
@@ -930,7 +930,7 @@ export function validateBuffetPageSchemas(
 } {
   const pageUrl = `${siteBaseUrl}/chinese-buffets/${cityStateSlug}/${buffet.slug}`;
   const results: SchemaValidationResult[] = [];
-  
+
   // Validate Restaurant schema
   const restaurantSchema = buildRestaurantJsonLd(buffet, siteBaseUrl, cityStateSlug);
   if (restaurantSchema) {
@@ -943,7 +943,7 @@ export function validateBuffetPageSchemas(
       warnings: [],
     });
   }
-  
+
   // Validate FAQ schema if Q&A exists
   if (buffet.questionsAndAnswers && Array.isArray(buffet.questionsAndAnswers)) {
     const faqSchema = buildFaqPageJsonLd(buffet.questionsAndAnswers, pageUrl);
@@ -951,7 +951,7 @@ export function validateBuffetPageSchemas(
       results.push(validateSchema(faqSchema, 'FAQPage'));
     }
   }
-  
+
   // Validate Reviews if they exist
   if (buffet.reviews && Array.isArray(buffet.reviews) && buffet.reviews.length > 0) {
     const reviewSchemas = buildReviewsJsonLd(buffet.reviews, 3);
@@ -961,8 +961,8 @@ export function validateBuffetPageSchemas(
       results.push(validateSchema({ '@context': 'https://schema.org', ...sampleReview }, 'Review'));
     }
   }
-  
+
   const overall = results.every(r => r.isValid);
-  
+
   return { overall, results };
 }
