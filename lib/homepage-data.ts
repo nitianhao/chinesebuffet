@@ -5,7 +5,7 @@
  */
 
 import 'server-only';
-import { unstable_cache } from 'next/cache';
+
 import { getStatesRollup, getCitiesRollup } from '@/lib/rollups';
 import { getTopRatedBuffetsForHomepage } from '@/lib/data-instantdb';
 
@@ -50,11 +50,23 @@ export interface HomePageData {
 
 const HOMEPAGE_REVALIDATE_SEC = 12 * 60 * 60; // 12 hours
 
+async function timed<T>(label: string, fn: () => Promise<T>): Promise<T> {
+  const t0 = Date.now();
+  try {
+    const res = await fn();
+    console.log(`[home] ${label} took`, Date.now() - t0, "ms");
+    return res;
+  } catch (e) {
+    console.log(`[home] ${label} failed in`, Date.now() - t0, "ms");
+    throw e;
+  }
+}
+
 async function getHomePageDataInternal(): Promise<HomePageData> {
   const [statesResult, citiesResult, topBuffets] = await Promise.all([
-    getStatesRollup(),
-    getCitiesRollup(),
-    getTopRatedBuffetsForHomepage(12),
+    timed("getStatesRollup", () => getStatesRollup()),
+    timed("getCitiesRollup", () => getCitiesRollup()),
+    timed("getTopRatedBuffetsForHomepage", () => getTopRatedBuffetsForHomepage(12)),
   ]);
 
   const states = statesResult.states ?? [];
@@ -100,8 +112,6 @@ async function getHomePageDataInternal(): Promise<HomePageData> {
  * Homepage data with 12h revalidation. Use in Server Components only.
  * Query count: 2 rollup reads + 1 small buffet query.
  */
-export const getHomePageData = unstable_cache(
-  getHomePageDataInternal,
-  ['homepage'],
-  { revalidate: HOMEPAGE_REVALIDATE_SEC }
-);
+export async function getHomePageData() {
+  return getHomePageDataInternal();
+}

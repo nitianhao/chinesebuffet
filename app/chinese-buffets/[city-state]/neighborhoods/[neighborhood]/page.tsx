@@ -123,7 +123,7 @@ export default async function NeighborhoodPage({ params }: NeighborhoodPageProps
   const query = '';
   const sort = '';
   const hasFilter = false;
-  
+
   const [rollupOutcome, cityNeighborhoodsOutcome] = await Promise.all([
     withTimeout(
       'neighborhood-rollup',
@@ -142,7 +142,7 @@ export default async function NeighborhoodPage({ params }: NeighborhoodPageProps
   if (rollupOutcome.timedOut) {
     return <NeighborhoodPageSkeleton />;
   }
-  
+
   // If no rollup data, 404
   if (!rollupData || rollupData.buffets.length === 0) {
     notFound();
@@ -170,7 +170,7 @@ export default async function NeighborhoodPage({ params }: NeighborhoodPageProps
   // Neighborhoods typically have a small number of buffets so no pagination needed.
   const buffets = [...rollupBuffets].sort((a, b) => (b.rating || 0) - (a.rating || 0));
   const totalCount = buffetCount;
-  
+
   // Sort by rating for top rated section
   const sortedByRating = [...buffets].sort((a, b) =>
     (b.rating || 0) - (a.rating || 0)
@@ -179,7 +179,7 @@ export default async function NeighborhoodPage({ params }: NeighborhoodPageProps
   const topBuffets = topRatedBuffets.length > 0
     ? topRatedBuffets
     : sortedByRating.slice(0, 5);
-  
+
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -202,36 +202,7 @@ export default async function NeighborhoodPage({ params }: NeighborhoodPageProps
     ],
   };
 
-  const faqJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: [
-      {
-        '@type': 'Question',
-        name: `How many Chinese buffets are in ${neighborhoodName}?`,
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: `There are ${buffetCount} Chinese buffets listed in ${neighborhoodName}.`,
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'What are the best rated buffets here?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'The top rated section highlights the highest-rated buffets in this neighborhood.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'Do listings include takeout or service options?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'When available, listings note service options like dine-in or takeout.',
-        },
-      },
-    ],
-  };
+
 
   const neighborhoodPageUrl = `${BASE_URL}/chinese-buffets/${citySlug}/neighborhoods/${neighborhoodSlug}`;
   const itemListItems = buffets.slice(0, 50);
@@ -261,10 +232,6 @@ export default async function NeighborhoodPage({ params }: NeighborhoodPageProps
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       <JsonLd data={itemListSchema} />
       <JsonLd data={webPageSchema} />

@@ -21,6 +21,12 @@
  * - Do NOT add Vary headers for user-specific data
  */
 
+/**
+ * COST GUARD:
+ * - This route is intentionally edge-cacheable.
+ * - Do not use cookies()/headers()/draftMode()/unstable_noStore() here.
+ * - Changing Cache-Control impacts Vercel Function Invocations.
+ */
 import { NextRequest, NextResponse } from 'next/server';
 import { init } from '@instantdb/admin';
 import schema from '@/src/instant.schema';
@@ -162,7 +168,7 @@ export async function GET(request: NextRequest) {
     timing.log();
     return NextResponse.json(response, {
       headers: {
-        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        'Cache-Control': 'public, s-maxage=600, stale-while-revalidate=86400',
         'Server-Timing': timing.header(),
       },
     });
@@ -181,7 +187,7 @@ export async function GET(request: NextRequest) {
     timing.log();
     return NextResponse.json(cached, {
       headers: {
-        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        'Cache-Control': 'public, s-maxage=600, stale-while-revalidate=86400',
         'Server-Timing': timing.header(),
       },
     });
@@ -192,14 +198,14 @@ export async function GET(request: NextRequest) {
   try {
     const queryStart = Date.now();
     // In full mode, fetch more results for pagination
-    const buffetFetchLimit = isFullMode 
-      ? Math.min((limit + offset) * 2, MAX_BUFFETS_FULL * 2) 
+    const buffetFetchLimit = isFullMode
+      ? Math.min((limit + offset) * 2, MAX_BUFFETS_FULL * 2)
       : Math.min(limit * 5, 50);
-    const cityFetchLimit = isFullMode 
-      ? MAX_CITIES_FULL * 3 
+    const cityFetchLimit = isFullMode
+      ? MAX_CITIES_FULL * 3
       : (normalizedQuery.length >= 3 ? 100 : MAX_CITIES * 3);
-    const neighborhoodFetchLimit = isFullMode 
-      ? MAX_NEIGHBORHOODS_FULL * 3 
+    const neighborhoodFetchLimit = isFullMode
+      ? MAX_NEIGHBORHOODS_FULL * 3
       : (normalizedQuery.length >= 3 ? 100 : MAX_NEIGHBORHOODS * 3);
     const useContains = normalizedQuery.length >= 3;
     const pattern = useContains ? `%${normalizedQuery}%` : `${normalizedQuery}%`;
@@ -265,7 +271,7 @@ export async function GET(request: NextRequest) {
     if (cityRows.length === 0 || buffetRows.length === 0) {
       const needsCityFallback = cityRows.length === 0;
       const needsBuffetFallback = buffetRows.length === 0;
-      
+
       const fallbackPromises: Promise<any>[] = [];
       if (needsCityFallback) {
         fallbackPromises.push(db.query({ cities: { $: { limit: 100 } } }));
@@ -273,10 +279,10 @@ export async function GET(request: NextRequest) {
       if (needsBuffetFallback) {
         fallbackPromises.push(db.query({ buffets: { $: { limit: 100 }, city: {} } }));
       }
-      
+
       const fallbackResults = await Promise.all(fallbackPromises);
       let fallbackIdx = 0;
-      
+
       if (needsCityFallback) {
         const fallbackCities = fallbackResults[fallbackIdx++];
         cityRows = (fallbackCities.cities || []).filter((city: any) => {
@@ -340,14 +346,14 @@ export async function GET(request: NextRequest) {
       } else if (useContains && searchName.includes(qn)) {
         score += 30;
       }
-      
+
       // Boost by rank (lower rank = more important city)
       score += Math.max(0, 10 - city.rank / 100);
-      
+
       // Boost by population (higher = more relevant)
       score += Math.min(city.population / 100000, 10);
       score += Math.min((city.population || 0) / 1_000_000, 25);
-      
+
       return { city, score };
     });
 
@@ -365,7 +371,7 @@ export async function GET(request: NextRequest) {
         slug: city.slug,
         population: city.population,
       }));
-    
+
     if (process.env.NODE_ENV !== 'production') {
       console.log(
         '[city-rank-debug]',
@@ -418,10 +424,10 @@ export async function GET(request: NextRequest) {
       } else if (useContains && searchName.includes(qn)) {
         score += 30;
       }
-      
+
       // Boost by buffet count (more buffets = more relevant)
       score += Math.min(n.buffetCount / 5, 15);
-      
+
       return { neighborhood: n, score };
     });
 
@@ -533,17 +539,17 @@ export async function GET(request: NextRequest) {
         return a.candidate.name.localeCompare(b.candidate.name);
       })
       .map((entry) => entry.candidate);
-    
+
     // Apply pagination (offset + limit)
     const totalBuffets = allSorted.length;
     const deduped = allSorted.slice(offset, offset + limit);
     const hasMore = offset + limit < totalBuffets;
 
     const tookMs = Date.now() - start;
-    const response: SearchResponse = { 
-      q: normalizedQuery, 
-      tookMs, 
-      results: deduped, 
+    const response: SearchResponse = {
+      q: normalizedQuery,
+      tookMs,
+      results: deduped,
       cities,
       neighborhoods,
       // Include pagination info in full mode
@@ -566,7 +572,7 @@ export async function GET(request: NextRequest) {
     }
     return NextResponse.json(response, {
       headers: {
-        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        'Cache-Control': 'public, s-maxage=600, stale-while-revalidate=86400',
         'Server-Timing': timing.header(),
       },
     });
@@ -584,7 +590,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(response, {
       status: 500,
       headers: {
-        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        'Cache-Control': 'public, s-maxage=600, stale-while-revalidate=86400',
         'Server-Timing': timing.header(),
       },
     });

@@ -5,12 +5,12 @@ import { createSitemapEntry, filterIndexableEntries, getLastModified } from '@/l
 import { PageType, IndexTier } from '@/lib/index-tier';
 import { isCityIndexable, getStagedIndexingConfig } from '@/lib/staged-indexing';
 
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+// Note: Removed revalidate export - now using force-dynamic with edge caching via Cache-Control
+
 // Inline to avoid loading city-filter-pages (which calls getSiteUrl() at module load and breaks build when env is unset)
 const CITY_FILTERS = ['best', 'cheap', 'open-now', 'top-rated'] as const;
-
-export const runtime = 'nodejs';
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
 
 const XML_HEADERS = { 'Content-Type': 'application/xml; charset=utf-8' } as const;
 
@@ -29,7 +29,10 @@ export async function GET(): Promise<NextResponse> {
     const baseUrl = getBaseUrlSafe();
     if (!baseUrl) {
       console.error('sitemap-cities.xml', 'NEXT_PUBLIC_SITE_URL is not set');
-      return new NextResponse(generateSitemapXML([]), { headers: XML_HEADERS, status: 200 });
+      return new NextResponse(generateSitemapXML([]), {
+        headers: { ...XML_HEADERS, 'Cache-Control': 'no-store' },
+        status: 200
+      });
     }
     const citySlugs = await getAllCitySlugs();
 
@@ -97,11 +100,19 @@ export async function GET(): Promise<NextResponse> {
 
     const routes = filterIndexableEntries(entries);
     const xml = generateSitemapXML(routes);
-    return new NextResponse(xml, { headers: XML_HEADERS });
+    return new NextResponse(xml, {
+      headers: {
+        ...XML_HEADERS,
+        'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800'
+      }
+    });
   } catch (err) {
     console.error('sitemap-cities.xml', err instanceof Error ? err.message : String(err));
     const emptyXml = generateSitemapXML([]);
-    return new NextResponse(emptyXml, { headers: XML_HEADERS, status: 200 });
+    return new NextResponse(emptyXml, {
+      headers: { ...XML_HEADERS, 'Cache-Control': 'no-store' },
+      status: 200
+    });
   }
 }
 

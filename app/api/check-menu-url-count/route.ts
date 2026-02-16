@@ -2,9 +2,11 @@ import { NextResponse } from 'next/server';
 import { init } from '@instantdb/admin';
 import schema from '@/src/instant.schema';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   if (!process.env.INSTANT_ADMIN_TOKEN) {
-    return NextResponse.json({ error: 'INSTANT_ADMIN_TOKEN is required' }, { status: 500 });
+    return NextResponse.json({ error: 'INSTANT_ADMIN_TOKEN is required' }, { status: 500, headers: { 'Cache-Control': 'no-store' } });
   }
 
   try {
@@ -15,15 +17,22 @@ export async function GET() {
     });
 
     console.log('Fetching all buffets...');
-    
+
+    // Override InstantDB's default cache: "no-store" so Vercel/Next doesn't throw
+    // DYNAMIC_SERVER_USAGE when this route runs in the edge/serverless build.
+    const fetchOpts: RequestInit = { cache: 'force-cache' };
+
     // Fetch all buffets with a high limit
-    const result = await db.query({
-      buffets: {
-        $: {
-          limit: 10000,
+    const result = await db.query(
+      {
+        buffets: {
+          $: {
+            limit: 10000,
+          }
         }
-      }
-    });
+      },
+      { fetchOpts }
+    );
 
     const buffets = result.buffets || [];
     console.log(`Total buffets: ${buffets.length}`);
@@ -45,14 +54,14 @@ export async function GET() {
           continue;
         }
       }
-      
+
       // Check for direct menu_url field (legacy, will be removed after migration)
       if ((buffet as any).menu_url && (buffet as any).menu_url.trim()) {
         countWithDirectMenuUrl++;
         countWithMenuUrl++;
         continue;
       }
-      
+
       // Check for menuUrl field (legacy, will be removed after migration)
       if ((buffet as any).menuUrl && (buffet as any).menuUrl.trim()) {
         countWithDirectMenuUrl++;
@@ -63,17 +72,17 @@ export async function GET() {
       // Check inside yelpData JSON
       if (buffet.yelpData) {
         try {
-          const yelpData = typeof buffet.yelpData === 'string' 
-            ? JSON.parse(buffet.yelpData) 
+          const yelpData = typeof buffet.yelpData === 'string'
+            ? JSON.parse(buffet.yelpData)
             : buffet.yelpData;
-          
+
           // Check various possible locations for menu_url
           if (yelpData?.menu_url && yelpData.menu_url.trim()) {
             countWithMenuUrlInYelp++;
             countWithMenuUrl++;
             continue;
           }
-          
+
           if (yelpData?.details?.menu_url && yelpData.details.menu_url.trim()) {
             countWithMenuUrlInYelp++;
             countWithMenuUrl++;
@@ -104,12 +113,12 @@ export async function GET() {
     console.log(`Buffets without menu_url: ${results.countWithoutMenuUrl}`);
     console.log(`Percentage with menu_url: ${results.percentage}`);
 
-    return NextResponse.json(results);
+    return NextResponse.json(results, { headers: { 'Cache-Control': 'no-store' } });
   } catch (error) {
     console.error('Error counting menu URLs:', error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Unknown error' },
-      { status: 500 }
+      { status: 500, headers: { 'Cache-Control': 'no-store' } }
     );
   }
 }

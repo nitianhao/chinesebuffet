@@ -11,7 +11,6 @@
 
 import { getAllCitySlugs, getCityBySlug, getStateByAbbr, getAllStateAbbrs } from './data-instantdb';
 import { isPageIndexable, PageType, IndexTier } from './index-tier';
-import { assessPOIPageQuality } from './poi-page-quality';
 
 export interface PageNode {
   path: string;
@@ -87,87 +86,6 @@ export async function buildPageGraph(): Promise<Map<string, PageNode>> {
     });
     // Homepage links to state pages
     graph.get('/')!.linksTo.push(statePath);
-  }
-  
-  // POI pages
-  const poiTypes = ['parking', 'shopping-malls', 'highways', 'gas-stations'];
-  const { 
-    getBuffetsWithParking, 
-    getBuffetsNearShoppingMalls, 
-    getBuffetsNearHighways, 
-    getBuffetsNearGasStations 
-  } = await import('./data-instantdb');
-  
-  const poiConfigs = {
-    'parking': {
-      title: 'Chinese Buffets with Parking',
-      description: 'Find Chinese buffets with convenient parking nearby.',
-      metaDescription: 'Discover Chinese buffets with parking available nearby.',
-      fetchFunction: getBuffetsWithParking,
-    },
-    'shopping-malls': {
-      title: 'Chinese Buffets Near Shopping Malls',
-      description: 'Chinese buffets conveniently located near shopping malls.',
-      metaDescription: 'Find Chinese buffets near shopping malls and retail centers.',
-      fetchFunction: getBuffetsNearShoppingMalls,
-    },
-    'highways': {
-      title: 'Chinese Buffets Near Highways',
-      description: 'Chinese buffets located near major highways and freeways.',
-      metaDescription: 'Discover Chinese buffets near major highways and freeways.',
-      fetchFunction: getBuffetsNearHighways,
-    },
-    'gas-stations': {
-      title: 'Chinese Buffets Near Gas Stations',
-      description: 'Chinese buffets conveniently located near gas stations.',
-      metaDescription: 'Find Chinese buffets near gas stations.',
-      fetchFunction: getBuffetsNearGasStations,
-    },
-  };
-  
-  for (const poiType of poiTypes) {
-    const poiPath = `/chinese-buffets/near/${poiType}`;
-    
-    // Check if indexable (conditional indexing)
-    try {
-      const config = poiConfigs[poiType as keyof typeof poiConfigs];
-      const buffets = await config.fetchFunction(100);
-      const qualityResult = assessPOIPageQuality(
-        poiType,
-        buffets.length,
-        config.title,
-        config.description,
-        config.metaDescription,
-        config.description,
-        5,
-        200
-      );
-      
-      graph.set(poiPath, {
-        path: poiPath,
-        pageType: 'poi',
-        tier: 'tier-2',
-        isIndexable: qualityResult.indexable,
-        linksTo: [],
-        linkedFrom: ['/'], // Linked from homepage
-      });
-      
-      if (qualityResult.indexable) {
-        graph.get('/')!.linksTo.push(poiPath);
-      }
-    } catch (error) {
-      console.error(`Error checking POI page ${poiType}:`, error);
-      // Default to indexable if check fails (assume it's indexable)
-      graph.set(poiPath, {
-        path: poiPath,
-        pageType: 'poi',
-        tier: 'tier-2',
-        isIndexable: true,
-        linksTo: [],
-        linkedFrom: ['/'],
-      });
-      graph.get('/')!.linksTo.push(poiPath);
-    }
   }
   
   // City pages and their buffets

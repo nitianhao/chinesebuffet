@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { init } from '@instantdb/admin';
 import schema from '@/src/instant.schema';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   if (!process.env.INSTANT_ADMIN_TOKEN) {
     return NextResponse.json({ error: 'INSTANT_ADMIN_TOKEN is required' }, { status: 500 });
@@ -15,7 +17,7 @@ export async function GET() {
     });
 
     console.log('Fetching all structuredData records...');
-    
+
     // Fetch all structuredData records
     const result = await db.query({
       structuredData: {
@@ -34,7 +36,7 @@ export async function GET() {
 
     for (const record of records) {
       const type = record.type || '(null/undefined)';
-      
+
       if (!typeCounts[type]) {
         typeCounts[type] = 0;
         typeExamples[type] = record;
@@ -50,7 +52,7 @@ export async function GET() {
     const typesInfo = sortedTypes.map(([type, count]) => {
       const example = typeExamples[type];
       let sampleKeys: string[] = [];
-      
+
       if (example && example.data) {
         try {
           const parsedData = JSON.parse(example.data);

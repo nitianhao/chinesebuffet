@@ -13,15 +13,9 @@ import { generateSlug } from '@/lib/utils';
 import { getSiteUrl, getCanonicalUrl } from '@/lib/site-url';
 import { JsonLdServer } from '@/components/seo/JsonLdServer';
 
-/** Lightweight POI link data — no DB calls needed */
-const POI_LINKS = [
-  { slug: 'parking', label: 'With parking' },
-  { slug: 'shopping-malls', label: 'Near shopping malls' },
-  { slug: 'highways', label: 'Near highways' },
-  { slug: 'gas-stations', label: 'Near gas stations' },
-] as const;
 
 export const revalidate = 43200;
+export const fetchCache = "force-no-store";
 
 export const metadata: Metadata = {
   title: 'Chinese Buffets Directory - Find All-You-Can-Eat Chinese Buffets Near You',
@@ -73,24 +67,24 @@ export default async function HomePage() {
           <p className={`${muted} mt-4`}>
             Find Chinese buffets by city, neighborhood, rating, price, and dine-in/takeout options.
           </p>
-          <div className="mt-6 w-full max-w-xl md:max-w-xl">
+          <div className="mt-6 w-full max-w-xl md:max-w-2xl">
             <div className="md:hidden">
               <MobileSearchDrawer
                 triggerAriaLabel="Open search"
-                placeholder="Search City, Neighborhood, Buffets"
-                triggerClassName="w-full rounded-full border border-[var(--border)] bg-[var(--surface2)] px-4 py-3 text-left text-[var(--text-secondary)] shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent1)]"
+                placeholder="Search buffets, cities..."
+                triggerClassName="w-full rounded-full border border-[var(--border)] bg-[var(--surface2)] px-4 py-3 text-left text-sm text-[var(--text-secondary)] shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent1)]"
                 triggerChildren={
                   <span className="inline-flex items-center gap-2">
-                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <svg className="h-4 w-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
-                    Search City, Neighborhood, Buffets
+                    Search buffets, cities...
                   </span>
                 }
               />
             </div>
             <div className="hidden md:block">
-              <SearchBar />
+              <SearchBar size="lg" showButton placeholder="Search by city, neighborhood, or buffet name..." />
             </div>
           </div>
         </div>
@@ -117,6 +111,25 @@ export default async function HomePage() {
             </ul>
           </div>
         </div>
+      </section>
+
+      <section
+        className="rounded-[var(--section-radius)] border border-[var(--border)] bg-[var(--surface)] p-[var(--section-pad)]"
+        aria-label="Directory stats"
+      >
+        <p className={`${muted} text-sm sm:text-base`}>
+          <span className="font-medium text-[var(--text)]">
+            {data.totalBuffets.toLocaleString()} buffets
+          </span>
+          <span aria-hidden="true" className="mx-2">·</span>
+          <span className="font-medium text-[var(--text)]">
+            {data.totalCities.toLocaleString()} cities
+          </span>
+          <span aria-hidden="true" className="mx-2">·</span>
+          <span className="font-medium text-[var(--text)]">
+            {data.totalStates.toLocaleString()} states
+          </span>
+        </p>
       </section>
 
       {data.popularCities.length > 0 && (
@@ -147,25 +160,6 @@ export default async function HomePage() {
         </section>
       )}
 
-      <section
-        className="rounded-[var(--section-radius)] border border-[var(--border)] bg-[var(--surface)] p-[var(--section-pad)]"
-        aria-label="Directory stats"
-      >
-        <p className={`${muted} text-sm sm:text-base`}>
-          <span className="font-medium text-[var(--text)]">
-            {data.totalBuffets.toLocaleString()} buffets
-          </span>
-          <span aria-hidden="true" className="mx-2">·</span>
-          <span className="font-medium text-[var(--text)]">
-            {data.totalCities.toLocaleString()} cities
-          </span>
-          <span aria-hidden="true" className="mx-2">·</span>
-          <span className="font-medium text-[var(--text)]">
-            {data.totalStates.toLocaleString()} states
-          </span>
-        </p>
-      </section>
-
       {data.popularStates.length > 0 && (
         <section
           className="rounded-[var(--section-radius)] border border-[var(--border)] bg-[var(--surface)] p-[var(--section-pad)]"
@@ -193,26 +187,6 @@ export default async function HomePage() {
           </ul>
         </section>
       )}
-
-      {/* Browse by nearby places — server-rendered POI links */}
-      <section
-        className="rounded-[var(--section-radius)] border border-[var(--border)] bg-[var(--surface)] p-[var(--section-pad)]"
-        aria-label="Browse by nearby places"
-      >
-        <SectionHeader title="Browse by nearby places" />
-        <ul className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {POI_LINKS.map((poi) => (
-            <li key={poi.slug}>
-              <Link
-                href={`/chinese-buffets/near/${poi.slug}`}
-                className="block rounded-lg border border-[var(--border)] bg-[var(--surface2)] px-4 py-3 text-sm font-medium text-[var(--text)] hover:border-[var(--accent1)] hover:text-[var(--accent1)] transition-colors text-center"
-              >
-                {poi.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </section>
 
       {/* Browse by region — server-rendered region links */}
       <section

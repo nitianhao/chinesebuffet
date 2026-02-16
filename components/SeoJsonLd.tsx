@@ -14,6 +14,7 @@
  */
 
 import { getCachedSeoSchemas } from '@/lib/seo-jsonld-cached';
+import JsonLdClient from '@/components/seo/JsonLdClient';
 
 export type SeoSchemas = Awaited<ReturnType<typeof getCachedSeoSchemas>>;
 
@@ -43,11 +44,9 @@ export default async function SeoJsonLd({ cityState, slug, initialSchemas, skipR
         />
       )}
       {faqSchema && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(faqSchema, null, 0),
-          }}
+        <JsonLdClient
+          id="faq-jsonld"
+          dataBase64={Buffer.from(JSON.stringify(faqSchema)).toString('base64')}
         />
       )}
       {breadcrumbSchema && (

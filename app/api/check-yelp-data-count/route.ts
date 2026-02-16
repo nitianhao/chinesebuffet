@@ -2,9 +2,11 @@ import { NextResponse } from 'next/server';
 import { init } from '@instantdb/admin';
 import schema from '@/src/instant.schema';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   if (!process.env.INSTANT_ADMIN_TOKEN) {
-    return NextResponse.json({ error: 'INSTANT_ADMIN_TOKEN is required' }, { status: 500 });
+    return NextResponse.json({ error: 'INSTANT_ADMIN_TOKEN is required' }, { status: 500, headers: { 'Cache-Control': 'no-store' } });
   }
 
   try {
@@ -15,15 +17,22 @@ export async function GET() {
     });
 
     console.log('Fetching all buffets...');
-    
+
+    // Override InstantDB's default cache: "no-store" so Vercel/Next doesn't throw
+    // DYNAMIC_SERVER_USAGE when this route runs in the edge/serverless build.
+    const fetchOpts: RequestInit = { cache: 'force-cache' };
+
     // Fetch all buffets with a high limit
-    const result = await db.query({
-      buffets: {
-        $: {
-          limit: 10000,
+    const result = await db.query(
+      {
+        buffets: {
+          $: {
+            limit: 10000,
+          }
         }
-      }
-    });
+      },
+      { fetchOpts }
+    );
 
     const buffets = result.buffets || [];
     console.log(`Total buffets: ${buffets.length}`);
@@ -37,11 +46,11 @@ export async function GET() {
       // Check if yelpData field exists and is not null/empty
       if (buffet.yelpData) {
         const yelpDataStr = buffet.yelpData.trim();
-        
+
         // Check if it's not just an empty string
         if (yelpDataStr.length > 0) {
           countWithYelpData++;
-          
+
           // Try to parse as JSON to check if it's valid
           try {
             const yelpData = JSON.parse(yelpDataStr);
@@ -76,12 +85,12 @@ export async function GET() {
     console.log(`Buffets without yelpData: ${results.countWithoutYelpData}`);
     console.log(`Percentage with yelpData: ${results.percentage}`);
 
-    return NextResponse.json(results);
+    return NextResponse.json(results, { headers: { 'Cache-Control': 'no-store' } });
   } catch (error) {
     console.error('Error counting yelpData:', error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Unknown error' },
-      { status: 500 }
+      { status: 500, headers: { 'Cache-Control': 'no-store' } }
     );
   }
 }

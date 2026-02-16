@@ -45,8 +45,6 @@ interface CrawlMap {
 }
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, '') || 'http://localhost:3000';
-const POI_TYPES = ['parking', 'shopping-malls', 'highways', 'gas-stations'];
-
 // Helper to create city slug from cityName and stateAbbr
 function createCitySlug(cityName: string, stateAbbr: string): string {
   const slug = cityName
@@ -111,25 +109,7 @@ async function analyzeCrawlPaths(): Promise<CrawlMap> {
   }
 
   // ========================================
-  // 3. POI PAGES (Depth 1)
-  // ========================================
-  for (const poiType of POI_TYPES) {
-    const poiUrl = `${BASE_URL}/chinese-buffets/near/${poiType}`;
-    const poiPage: PageNode = {
-      url: poiUrl,
-      depth: 1,
-      type: 'poi',
-      incomingLinks: 1,
-      outgoingLinks: [],
-      isOrphan: false, // Now linked from homepage
-      priority: 0.7,
-    };
-    pages.set(poiUrl, poiPage);
-    homePage.outgoingLinks.push(poiUrl);
-  }
-
-  // ========================================
-  // 4. CITY PAGES (Depth 2)
+  // 3. CITY PAGES (Depth 2)
   // ========================================
   try {
     const cityResult = await db.query({

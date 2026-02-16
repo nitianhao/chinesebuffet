@@ -4,12 +4,6 @@ import { getStatesRollup, STATE_ABBR_TO_NAME } from '@/lib/rollups';
 import { REGION_LABELS, VALID_REGIONS } from '@/lib/regions';
 import { getSiteUrl, getCanonicalUrl } from '@/lib/site-url';
 
-const POI_LINKS = [
-  { slug: 'parking', label: 'With parking' },
-  { slug: 'shopping-malls', label: 'Near shopping malls' },
-  { slug: 'highways', label: 'Near highways' },
-  { slug: 'gas-stations', label: 'Near gas stations' },
-] as const;
 
 const BASE_URL = getSiteUrl();
 const isDev = process.env.NODE_ENV !== 'production';
@@ -26,9 +20,20 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
+async function timed<T>(label: string, fn: () => Promise<T>): Promise<T> {
+  const t0 = Date.now();
+  try {
+    return await fn();
+  } finally {
+    console.log(`[states-hub] ${label} took`, Date.now() - t0, "ms");
+  }
+}
+
 export default async function StatesIndexPage() {
-  const { states } = await getStatesRollup();
-  
+  const data = await timed("getStatesRollup", () => getStatesRollup());
+  const { states } = data;
+  console.log("[states-hub] payload bytes", Buffer.byteLength(JSON.stringify(data), "utf8"));
+
   // Calculate totals
   const totalBuffets = states.reduce((sum, s) => sum + s.buffetCount, 0);
   const totalCities = states.reduce((sum, s) => sum + s.cityCount, 0);
@@ -57,8 +62,8 @@ export default async function StatesIndexPage() {
       <section className="bg-[var(--surface)] py-8 border-b border-[var(--border)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-[var(--text-secondary)] max-w-3xl">
-            Find Chinese buffets in any US state. Our directory covers {totalBuffets.toLocaleString()} all-you-can-eat 
-            Chinese restaurants in {totalCities.toLocaleString()} cities. Select a state below to browse local listings 
+            Find Chinese buffets in any US state. Our directory covers {totalBuffets.toLocaleString()} all-you-can-eat
+            Chinese restaurants in {totalCities.toLocaleString()} cities. Select a state below to browse local listings
             with hours, prices, ratings, and customer reviews.
           </p>
         </div>
@@ -104,25 +109,6 @@ export default async function StatesIndexPage() {
               ))}
             </div>
           )}
-        </div>
-      </section>
-
-      {/* Browse by nearby places */}
-      <section className="bg-[var(--surface)] py-8 border-t border-[var(--border)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-xl font-semibold text-[var(--text)] mb-4">Browse by nearby places</h2>
-          <ul className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {POI_LINKS.map((poi) => (
-              <li key={poi.slug}>
-                <Link
-                  href={`/chinese-buffets/near/${poi.slug}`}
-                  className="block rounded-lg border border-[var(--border)] bg-[var(--surface2)] px-4 py-3 text-sm font-medium text-[var(--text)] hover:border-[var(--accent1)] hover:text-[var(--accent1)] transition-colors text-center"
-                >
-                  {poi.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
         </div>
       </section>
 

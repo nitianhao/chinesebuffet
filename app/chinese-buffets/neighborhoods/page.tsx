@@ -9,15 +9,13 @@ import { getSiteUrl, getCanonicalUrl } from '@/lib/site-url';
 const BASE_URL = getSiteUrl();
 const isDev = process.env.NODE_ENV !== 'production';
 
-// ISR: Revalidate every 6 hours in prod, 1 hour in dev
-export const revalidate = isDev ? 3600 : 21600;
+export const dynamic = 'force-static';
 
 const ROLLUP_TIMEOUT_MS = isDev ? 12000 : 8000;
 
 const getCitiesCached = unstable_cache(
   async () => getCitiesRollup(),
-  ['cities-rollup'],
-  { revalidate }
+  ['cities-rollup']
 );
 
 export const metadata: Metadata = {
@@ -80,7 +78,7 @@ export default async function NeighborhoodsIndexPage() {
     return <NeighborhoodsIndexSkeleton />;
   }
   const { cities } = result;
-  
+
   // Get cities that have neighborhoods, sorted by buffet count
   const citiesWithNeighborhoods = cities
     .filter(c => c.buffetCount >= 3) // Only cities with enough buffets likely have neighborhood data
@@ -95,46 +93,13 @@ export default async function NeighborhoodsIndexPage() {
     ],
   };
 
-  const faqJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: [
-      {
-        '@type': 'Question',
-        name: 'How do I browse neighborhoods?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Select a city to view its neighborhoods and buffet listings.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'Which cities have the most neighborhood data?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'The list prioritizes cities with higher buffet counts where neighborhood data is available.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'Do neighborhood pages include reviews and prices?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Yes. Neighborhood pages include ratings, reviews, and pricing when available.',
-        },
-      },
-    ],
-  };
+
 
   return (
     <SiteShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       <header className="rounded-[var(--section-radius)] border border-[var(--border)] bg-[var(--surface)] p-[var(--section-pad)]">
         <nav className="text-sm text-[var(--muted)] mb-4">

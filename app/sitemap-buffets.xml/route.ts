@@ -4,11 +4,13 @@ import { getAllCitySlugs, getCityBySlug } from '@/lib/data-instantdb';
 import { createSitemapEntry, filterIndexableEntries, getLastModified } from '@/lib/sitemap-utils';
 import { PageType, IndexTier } from '@/lib/index-tier';
 import { isCityIndexable, getStagedIndexingConfig } from '@/lib/staged-indexing';
-export const runtime = 'nodejs';
+
 export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const runtime = 'nodejs';
+// Note: Removed revalidate export - now using force-dynamic with edge caching via Cache-Control
 
 const XML_HEADERS = { 'Content-Type': 'application/xml; charset=utf-8' } as const;
+const MAX_SITEMAP_URLS = 50000; // Cap to prevent timeout; Google supports up to 50k URLs per sitemap
 
 /**
  * Buffet Pages Sitemap
@@ -25,7 +27,10 @@ export async function GET(): Promise<NextResponse> {
     const baseUrl = getBaseUrlSafe();
     if (!baseUrl) {
       console.error('sitemap-buffets.xml', 'NEXT_PUBLIC_SITE_URL is not set');
-      return new NextResponse(generateSitemapXML([]), { headers: XML_HEADERS, status: 200 });
+      return new NextResponse(generateSitemapXML([]), {
+        headers: { ...XML_HEADERS, 'Cache-Control': 'no-store' },
+        status: 200
+      });
     }
     const citySlugs = await getAllCitySlugs();
 
@@ -74,17 +79,36 @@ export async function GET(): Promise<NextResponse> {
         // Only add if entry is indexable (createSitemapEntry returns null for noindex)
         if (entry) {
           entries.push(entry);
+
+          // Cap at MAX_SITEMAP_URLS to prevent timeout
+          if (entries.length >= MAX_SITEMAP_URLS) {
+            console.warn(`sitemap-buffets.xml: Reached ${MAX_SITEMAP_URLS} URL limit. Consider splitting into multiple sitemaps.`);
+            break;
+          }
         }
+      }
+
+      // Break outer loop if we've hit the cap
+      if (entries.length >= MAX_SITEMAP_URLS) {
+        break;
       }
     }
 
     const routes = filterIndexableEntries(entries);
     const xml = generateSitemapXML(routes);
-    return new NextResponse(xml, { headers: XML_HEADERS });
+    return new NextResponse(xml, {
+      headers: {
+        ...XML_HEADERS,
+        'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800'
+      }
+    });
   } catch (err) {
     console.error('sitemap-buffets.xml', err instanceof Error ? err.message : String(err));
     const emptyXml = generateSitemapXML([]);
-    return new NextResponse(emptyXml, { headers: XML_HEADERS, status: 200 });
+    return new NextResponse(emptyXml, {
+      headers: { ...XML_HEADERS, 'Cache-Control': 'no-store' },
+      status: 200
+    });
   }
 }
 

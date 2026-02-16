@@ -42,6 +42,8 @@ import { BuffetIcon } from '@/components/search/BuffetIcon';
 
 type SearchBarProps = {
   variant?: 'desktop' | 'mobile';
+  size?: 'default' | 'lg';
+  showButton?: boolean;
   placeholder?: string;
   autoFocus?: boolean;
   onNavigate?: () => void;
@@ -184,6 +186,8 @@ function ChevronRight({ className }: { className?: string }) {
 
 export default function SearchBar({
   variant = 'desktop',
+  size = 'default',
+  showButton = false,
   placeholder = 'Search buffets, cities, neighborhoods...',
   autoFocus = false,
   onNavigate,
@@ -225,10 +229,14 @@ export default function SearchBar({
   }, [pathname]);
 
   const inputClasses = useMemo(() => {
-    return variant === 'desktop'
-      ? 'w-full rounded-full border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 shadow-sm transition focus:border-[var(--accent1)] focus:outline-none focus:ring-2 focus:ring-[var(--accent1)]/20'
-      : 'w-full rounded-full border border-gray-200 bg-white py-3 pl-11 pr-4 text-base text-gray-900 shadow-sm focus:border-[var(--accent1)] focus:outline-none focus:ring-2 focus:ring-[var(--accent1)]/20';
-  }, [variant]);
+    if (variant === 'mobile') {
+      return 'w-full rounded-full border border-gray-200 bg-white py-3 pl-11 pr-4 text-base text-gray-900 shadow-sm focus:border-[var(--accent1)] focus:outline-none focus:ring-2 focus:ring-[var(--accent1)]/20';
+    }
+    if (size === 'lg') {
+      return `w-full rounded-2xl border-2 border-gray-200 bg-white py-4 pl-12 ${showButton ? 'pr-28' : 'pr-5'} text-base text-gray-900 shadow-md transition placeholder:text-gray-400 focus:border-[var(--accent1)] focus:outline-none focus:ring-4 focus:ring-[var(--accent1)]/15`;
+    }
+    return 'w-full rounded-full border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 shadow-sm transition focus:border-[var(--accent1)] focus:outline-none focus:ring-2 focus:ring-[var(--accent1)]/20';
+  }, [variant, size, showButton]);
 
   const panelClasses = useMemo(() => {
     return 'absolute z-[9999] mt-2 w-full rounded-2xl border border-gray-200/80 bg-white shadow-xl shadow-gray-200/60';
@@ -577,13 +585,23 @@ export default function SearchBar({
   const footerIdx = cities.length + neighborhoods.length + results.length;
   const isFooterHighlighted = highlightedIndex === footerIdx;
 
+  const handleSearchButtonClick = useCallback(() => {
+    if (trimmedQuery.length >= MIN_QUERY_LENGTH) {
+      router.push(`/search?q=${encodeURIComponent(trimmedQuery)}`);
+      setIsOpen(false);
+      onNavigate?.();
+    } else {
+      inputRef.current?.focus();
+    }
+  }, [trimmedQuery, router, onNavigate]);
+
   return (
     <div className="relative w-full">
         <span
-          className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+          className={`pointer-events-none absolute ${size === 'lg' ? 'left-4 top-1/2 -translate-y-1/2' : 'left-4 top-1/2 -translate-y-1/2'} text-gray-400`}
           aria-hidden="true"
         >
-          <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <svg className={size === 'lg' ? 'h-5 w-5' : 'h-4 w-4'} viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -612,6 +630,18 @@ export default function SearchBar({
           role="combobox"
           autoComplete="off"
         />
+        {showButton && (
+          <button
+            type="button"
+            onClick={handleSearchButtonClick}
+            className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-[#C1121F] to-[#9B0F1A] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:shadow-md hover:brightness-110 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C1121F] focus-visible:ring-offset-2"
+          >
+            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            Search
+          </button>
+        )}
 
         {showDropdown && (
           <div 

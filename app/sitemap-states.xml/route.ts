@@ -5,8 +5,8 @@ import { createSitemapEntry, filterIndexableEntries, getLastModified } from '@/l
 import { PageType, IndexTier } from '@/lib/index-tier';
 import { getBaseUrlForRobotsAndSitemaps } from '@/lib/site-url';
 
-// ISR: regenerate sitemap at most once per hour at runtime
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
+// Note: Removed revalidate export - now using force-dynamic with edge caching via Cache-Control
 
 /**
  * State Pages Sitemap
@@ -15,17 +15,17 @@ export const revalidate = 3600;
 export async function GET(): Promise<NextResponse> {
   const baseUrl = getBaseUrlForRobotsAndSitemaps();
   const stateAbbrs = await getAllStateAbbrs();
-  
+
   const entries = [];
-  
+
   for (const stateAbbr of stateAbbrs) {
     const stateData = await getStateByAbbr(stateAbbr);
     if (!stateData) continue;
-    
+
     const pagePath = `/chinese-buffets/states/${stateAbbr.toLowerCase()}`;
     // Get last modified from state data (updatedAt, lastModified, or current date)
     const lastModified = getLastModified(stateData);
-    
+
     // State pages are tier-1 (always indexable)
     const entry = createSitemapEntry(
       `${baseUrl}${pagePath}`,
@@ -36,21 +36,22 @@ export async function GET(): Promise<NextResponse> {
       0.8,
       true // State pages are always indexable (tier-1)
     );
-    
+
     // Only add if entry is indexable (createSitemapEntry returns null for noindex)
     if (entry) {
       entries.push(entry);
     }
   }
-  
+
   const routes = filterIndexableEntries(entries);
-  
+
   // Return XML sitemap
   const xml = generateSitemapXML(routes);
-  
+
   return new NextResponse(xml, {
     headers: {
       'Content-Type': 'application/xml',
+      'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800',
     },
   });
 }

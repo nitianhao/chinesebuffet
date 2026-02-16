@@ -23,18 +23,19 @@ let cachedDb: ReturnType<typeof init> | null = null;
 // override with `force-cache` so SSG can cache individual POST responses.
 // Page-level ISR is handled via `export const revalidate` in each route file.
 const contentFetchOpts: RequestInit = { cache: 'force-cache' };
-const adminQuery = <Q>(
+export const adminQuery = <Q>(
   db: ReturnType<typeof init>,
   query: Q,
-) => db.query(query as any, { fetchOpts: contentFetchOpts });
+  fetchOptsOverride?: RequestInit,
+) => db.query(query as any, { fetchOpts: { ...contentFetchOpts, ...fetchOptsOverride } });
 
-function getAdminDb() {
-  
+export function getAdminDb() {
+
   // OPTIMIZATION: Reuse cached connection
   if (cachedDb) {
     return cachedDb;
   }
-  
+
   if (!process.env.INSTANT_ADMIN_TOKEN) {
     throw new Error('INSTANT_ADMIN_TOKEN is required for server-side data fetching');
   }
@@ -84,13 +85,13 @@ function parseJsonField(value: any): any {
 function safeParseJsonObject(value: any): any {
   if (!value) return null;
   if (typeof value !== 'string') return value;
-  
+
   const trimmed = value.trim();
   // Only parse if it looks like JSON (starts with { or [)
   if (!trimmed.startsWith('{') && !trimmed.startsWith('[')) {
     return null;
   }
-  
+
   try {
     const parsed = JSON.parse(trimmed);
     if (parsed && typeof parsed === 'object') {
@@ -105,14 +106,14 @@ function safeParseJsonObject(value: any): any {
 // Format Arts & Culture JSON data into HTML
 function formatArtsCultureHtml(data: any): string | null {
   if (!data || typeof data !== 'object') return null;
-  
+
   let html = '';
-  
+
   // Add summary paragraph if it exists
   if (data.summary && typeof data.summary === 'string') {
     html += `<p>${data.summary}</p>`;
   }
-  
+
   // Add highlights if they exist
   if (data.highlights && Array.isArray(data.highlights) && data.highlights.length > 0) {
     data.highlights.forEach((group: any) => {
@@ -135,21 +136,21 @@ function formatArtsCultureHtml(data: any): string | null {
       }
     });
   }
-  
+
   return html || null;
 }
 
 // Format Communications & Technology JSON data into HTML (if stored as JSON)
 function formatCommunicationsTechnologyHtml(data: any): string | null {
   if (!data || typeof data !== 'object') return null;
-  
+
   let html = '';
-  
+
   // Add summary paragraph if it exists
   if (data.summary && typeof data.summary === 'string') {
     html += `<p>${data.summary}</p>`;
   }
-  
+
   // Add highlights if they exist
   if (data.highlights && Array.isArray(data.highlights) && data.highlights.length > 0) {
     data.highlights.forEach((group: any) => {
@@ -172,12 +173,12 @@ function formatCommunicationsTechnologyHtml(data: any): string | null {
       }
     });
   }
-  
+
   // If it has HTML directly, use that
   if (data.html && typeof data.html === 'string') {
     return data.html;
   }
-  
+
   return html || null;
 }
 
@@ -223,14 +224,14 @@ function transformBuffet(buffet: any, citySlug?: string, reviewsFromLink?: any[]
   const parsedImages = parseJsonField(buffet.images) || [];
   const images = Array.isArray(parsedImages)
     ? parsedImages.filter(
-        (img) =>
-          img &&
-          typeof img === 'object' &&
-          typeof img.photoReference === 'string' &&
-          img.photoReference.startsWith('places/')
-      )
+      (img) =>
+        img &&
+        typeof img === 'object' &&
+        typeof img.photoReference === 'string' &&
+        img.photoReference.startsWith('places/')
+    )
     : [];
-  
+
   return {
     id: buffet.id,
     name: buffet.name || '',
@@ -269,7 +270,7 @@ function transformBuffet(buffet: any, citySlug?: string, reviewsFromLink?: any[]
     description: buffet.description || null,
     subTitle: buffet.subTitle || null,
     // Prefer reviews from link relationship, fallback to JSON field for backward compatibility
-    reviews: reviewsFromLink 
+    reviews: reviewsFromLink
       ? reviewsFromLink.map(transformReview)
       : (parseJsonField(buffet.reviews) || []),
     reviewsDistribution: parseJsonField(buffet.reviewsDistribution) || null,
@@ -420,7 +421,7 @@ const _fetchAllDataFromDB = async (): Promise<{ cities: any[]; buffets: any[] }>
 
   console.log('[data-instantdb] Fetching cities...');
   const citiesStart = Date.now();
-  const citiesResult = await db.query({ cities: {} });
+  const citiesResult = await adminQuery(db, { cities: {} });
   const cities = citiesResult.cities || [];
   console.log(`[data-instantdb] Fetched ${cities.length} cities in ${Date.now() - citiesStart}ms`);
 
@@ -428,7 +429,7 @@ const _fetchAllDataFromDB = async (): Promise<{ cities: any[]; buffets: any[] }>
   let buffets: any[] = [];
   const buffetsStart = Date.now();
   try {
-    const buffetsResult = await db.query({
+    const buffetsResult = await adminQuery(db, {
       buffets: {
         $: { limit: 10000 },
         city: {},
@@ -484,26 +485,26 @@ async function getCachedData() {
 
 export async function getBuffetsByCity(): Promise<Record<string, any>> {
   const functionStartTime = Date.now();
-  
+
   const getCachedDataStart = Date.now();
   const { cities, buffets } = await getCachedData();
   const getCachedDataDuration = Date.now() - getCachedDataStart;
-  
+
   const buffetsByCity: Record<string, any> = {};
   let buffetsWithoutCity = 0;
-  
+
   // Initialize cities
   cities.forEach((city: any) => {
     buffetsByCity[city.slug] = transformCity(city, []);
   });
-  
+
   // OPTIMIZATION: Build city lookup map for O(1) matching instead of O(n) find()
   const cityLookupMap = new Map<string, any>();
   cities.forEach((city: any) => {
     const key = `${city.city.toLowerCase()}|${city.stateAbbr}`;
     cityLookupMap.set(key, city);
   });
-  
+
   // Add buffets to cities
   const transformStart = Date.now();
   buffets.forEach((buffet: any) => {
@@ -523,37 +524,37 @@ export async function getBuffetsByCity(): Promise<Record<string, any>> {
     }
   });
   const transformDuration = Date.now() - transformStart;
-  
+
   if (buffetsWithoutCity > 0) {
     console.log(`[data-instantdb] Warning: ${buffetsWithoutCity} buffets without city links`);
   }
-  
+
   // Sort buffets within each city by rating
   const sortStart = Date.now();
   Object.values(buffetsByCity).forEach((city: any) => {
     city.buffets.sort((a: any, b: any) => (b.rating || 0) - (a.rating || 0));
   });
   const sortDuration = Date.now() - sortStart;
-  
+
   const totalDuration = Date.now() - functionStartTime;
-  
+
   console.log(`[data-instantdb] getBuffetsByCity: ${Object.keys(buffetsByCity).length} cities with buffets`);
-  
+
   return buffetsByCity;
 }
 
 export async function getBuffetsById(): Promise<Record<string, any>> {
   const { buffets } = await getCachedData();
-  
+
   const buffetsById: Record<string, any> = {};
-  
+
   buffets.forEach((buffet: any) => {
     const citySlug = buffet.city?.slug;
     buffetsById[buffet.id] = transformBuffet(buffet, citySlug);
   });
-  
+
   console.log(`[data-instantdb] getBuffetsById: transformed ${Object.keys(buffetsById).length} buffets`);
-  
+
   return buffetsById;
 }
 
@@ -600,7 +601,7 @@ export async function getReviewsForBuffet(buffetId: string): Promise<any[]> {
         },
       },
     });
-    
+
     const buffet = result.buffets?.[0];
     const reviews = buffet?.reviewRecords || [];
     return reviews.map(transformReview);
@@ -612,7 +613,7 @@ export async function getReviewsForBuffet(buffetId: string): Promise<any[]> {
 
 export async function getMenuForBuffet(placeId: string): Promise<any | null> {
   if (!placeId) return null;
-  
+
   try {
     const db = getAdminDb();
     // Query menus with linked menuItems
@@ -624,17 +625,17 @@ export async function getMenuForBuffet(placeId: string): Promise<any | null> {
         menuItems: {} // Fetch linked menuItems
       }
     });
-    
+
     const menus = result.menus || [];
     if (menus.length === 0) return null;
-    
+
     // Sort by scrapedAt in code (descending - most recent first)
     const sortedMenus = menus.sort((a: any, b: any) => {
       const aTime = a.scrapedAt ? new Date(a.scrapedAt).getTime() : 0;
       const bTime = b.scrapedAt ? new Date(b.scrapedAt).getTime() : 0;
       return bTime - aTime;
     });
-    
+
     const menu = sortedMenus[0];
     const menuItems = (menu.menuItems || []) as Array<{
       id: string;
@@ -645,7 +646,7 @@ export async function getMenuForBuffet(placeId: string): Promise<any | null> {
       categoryName?: string;
       itemOrder?: number;
     }>;
-    
+
     // If we have linked menuItems, build structured categories from them
     if (menuItems.length > 0) {
       // Group items by categoryName
@@ -656,7 +657,7 @@ export async function getMenuForBuffet(placeId: string): Promise<any | null> {
         priceNumber?: number | null;
         itemOrder?: number;
       }>>();
-      
+
       for (const item of menuItems) {
         const categoryName = item.categoryName || 'Menu Items';
         if (!categoriesMap.has(categoryName)) {
@@ -670,13 +671,13 @@ export async function getMenuForBuffet(placeId: string): Promise<any | null> {
           itemOrder: item.itemOrder,
         });
       }
-      
+
       // Sort items within each category by itemOrder
       const categories = Array.from(categoriesMap.entries()).map(([name, items]) => ({
         name,
         items: items.sort((a, b) => (a.itemOrder || 0) - (b.itemOrder || 0)),
       }));
-      
+
       return {
         id: menu.id,
         placeId: menu.placeId,
@@ -697,7 +698,7 @@ export async function getMenuForBuffet(placeId: string): Promise<any | null> {
         _source: 'menuItems', // Flag to indicate data came from linked table
       };
     }
-    
+
     // Fall back to JSON fields if no menuItems linked
     return {
       id: menu.id,
@@ -720,32 +721,32 @@ export async function getMenuForBuffet(placeId: string): Promise<any | null> {
 }
 
 // Lightweight function to get buffet data - minimal query, minimal transformation
-export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string): Promise<{ 
-  name: string; 
+export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string): Promise<{
+  name: string;
   id?: string;
   slug?: string;
   placeId?: string; // Google Places ID for menu lookup
-  categories: string[]; 
-  address: string; 
+  categories: string[];
+  address: string;
   cityName?: string;
   state?: string;
   stateAbbr?: string;
   location?: { lat: number; lng: number };
-  description?: string; 
-  description2?: string; 
-  images: Array<{ photoReference: string; widthPx?: number; heightPx?: number }>; 
-  imageCount: number; 
-  imageCategories: string[]; 
-  hours?: any; 
-  contactInfo?: { menuUrl?: string; orderBy?: any; phone?: string; website?: string }; 
-  price?: string; 
-  rating?: number; 
+  description?: string;
+  description2?: string;
+  images: Array<{ photoReference: string; widthPx?: number; heightPx?: number }>;
+  imageCount: number;
+  imageCategories: string[];
+  hours?: any;
+  contactInfo?: { menuUrl?: string; orderBy?: any; phone?: string; website?: string };
+  price?: string;
+  rating?: number;
   reviews?: any[];
   reviewsCount?: number;
   reviewsDistribution?: { [key: string]: number };
   reviewsTags?: Array<{ title: string; count?: number }>;
   webResults?: Array<{ title: string; displayedUrl?: string; url: string; description?: string }>;
-  questionsAndAnswers?: Array<{ question?: string; answer?: string; [key: string]: any }>;
+  questionsAndAnswers?: Array<{ question?: string; answer?: string;[key: string]: any }>;
   accessibility?: any; // Parsed accessibility data from structuredData table
   amenities?: any; // Parsed amenities data from structuredData table
   accommodationLodging?: string; // HTML string for accommodation & lodging section
@@ -778,7 +779,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
   communicationsTechnology?: { summary: string; highlights: Array<{ label: string; items: Array<{ name: string; distanceText: string; category: string; addressText: string | null; hoursText: string | null; phone: string | null; website: string | null }> }>; poiCount: number; generatedAt: string; model: string }; // Communications & Technology data from buffets table
 } | null> {
   const db = getAdminDb();
-  
+
   try {
     // Query the buffet with structuredData link - fetch all structuredData to filter by group in code
     const result = await adminQuery(db, {
@@ -792,32 +793,32 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         },
       },
     });
-    
+
     const buffet = result.cities?.[0]?.buffets?.[0];
     if (!buffet) {
       console.error('[getBuffetNameBySlug] Buffet not found:', { citySlug, buffetSlug });
       return null;
     }
-    
+
     // Log placeId availability for menu lookup
     console.log('[getBuffetNameBySlug] Buffet found, placeId:', buffet.placeId || 'NOT AVAILABLE');
-    
+
     // Parse all structuredData into organized groups
     let accessibility: any | undefined;
     let amenities: any = {}; // Will collect all amenity-related data by group
-    
+
     // Log what we got
     console.log('[getBuffetNameBySlug] Checking structuredData:', {
       hasStructuredData: !!buffet.structuredData,
       isArray: Array.isArray(buffet.structuredData),
       count: buffet.structuredData ? (Array.isArray(buffet.structuredData) ? buffet.structuredData.length : 1) : 0,
     });
-    
+
     // Check if structuredData was returned (could be array or single object)
-    const structuredDataList = buffet.structuredData 
+    const structuredDataList = buffet.structuredData
       ? (Array.isArray(buffet.structuredData) ? buffet.structuredData : [buffet.structuredData])
       : [];
-    
+
     if (structuredDataList.length > 0) {
       console.log('[getBuffetNameBySlug] Found structuredData records:', {
         count: structuredDataList.length,
@@ -828,29 +829,29 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
       // Process all structuredData records
       for (const record of structuredDataList) {
         if (!record || !record.data) continue;
-        
+
         try {
           const parsed = typeof record.data === 'string' ? JSON.parse(record.data) : record.data;
           const group = record.group ?? null;
           const recordType = record.type || 'unknown';
-          
+
           // Check if this is accessibility data
           if (group === 'accessibility') {
             accessibility = parsed;
             console.log('[getBuffetNameBySlug] ✅ Found accessibility');
             continue;
           }
-          
+
           // List of all amenity-related groups to collect
           const amenityGroups = [
-            'amenities', 'service options', 'food options', 'parking', 
-            'payments', 'atmosphere', 'highlights', 'offerings', 
+            'amenities', 'service options', 'food options', 'parking',
+            'payments', 'atmosphere', 'highlights', 'offerings',
             'food and drink', 'planning'
           ];
-          
+
           // Handle records with null group - use the type to categorize
           const normalizedGroup = group ? group.toLowerCase() : null;
-          
+
           // If group is null, try to categorize by type (including non-amenity types)
           if (!normalizedGroup && recordType) {
             const category = mapRecordTypeToGroup(recordType);
@@ -863,7 +864,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
             if (!amenities[category]) {
               amenities[category] = {};
             }
-            
+
             if (typeof parsed === 'boolean' || typeof parsed === 'string' || typeof parsed === 'number') {
               amenities[category][recordType] = parsed;
             } else if (Array.isArray(parsed)) {
@@ -877,7 +878,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
               Object.assign(amenities[category], flattenedData);
             }
           }
-          
+
           // Collect all amenity-related groups - use the group name as the category
           if (normalizedGroup && amenityGroups.includes(normalizedGroup)) {
             // Use the group as the category
@@ -885,7 +886,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
             if (!amenities[category]) {
               amenities[category] = {};
             }
-            
+
             if (Array.isArray(parsed)) {
               // Array of strings like ["Restroom", "Free WiFi"] or ["Accepts reservations"]
               parsed.forEach((item: any) => {
@@ -938,65 +939,65 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
     } else {
       console.log('[getBuffetNameBySlug] ❌ No structuredData linked to buffet:', buffet.id);
     }
-    
+
     // Helper function to categorize amenities into groups
     function categorizeAmenity(type: string): string {
       const lower = type.toLowerCase();
-      
+
       // Service Options
-      if (['takeout', 'delivery', 'dinein', 'dine-in', 'reservable', 'curbsidepickup', 'curbside', 
-           'drivethrough', 'waiterservice', 'selfservice', 'tablereservation'].some(k => lower.includes(k.toLowerCase()))) {
+      if (['takeout', 'delivery', 'dinein', 'dine-in', 'reservable', 'curbsidepickup', 'curbside',
+        'drivethrough', 'waiterservice', 'selfservice', 'tablereservation'].some(k => lower.includes(k.toLowerCase()))) {
         return 'service options';
       }
-      
+
       // Food Options
-      if (['breakfast', 'brunch', 'lunch', 'dinner', 'beer', 'wine', 'cocktail', 'coffee', 
-           'dessert', 'vegetarian', 'vegan', 'menu', 'children', 'kids', 'serves'].some(k => lower.includes(k.toLowerCase()))) {
+      if (['breakfast', 'brunch', 'lunch', 'dinner', 'beer', 'wine', 'cocktail', 'coffee',
+        'dessert', 'vegetarian', 'vegan', 'menu', 'children', 'kids', 'serves'].some(k => lower.includes(k.toLowerCase()))) {
         return 'food options';
       }
-      
+
       // Parking
       if (['parking', 'valet', 'garage', 'lot', 'bike', 'street'].some(k => lower.includes(k.toLowerCase()))) {
         return 'parking';
       }
-      
+
       // Payments
       if (['credit', 'card', 'pay', 'cash', 'payment', 'applepay', 'googlepay', 'accepts'].some(k => lower.includes(k.toLowerCase()))) {
         return 'payments';
       }
-      
+
       // Atmosphere
-      if (['noise', 'quiet', 'loud', 'casual', 'romantic', 'trendy', 'hip', 'upscale', 
-           'classy', 'cozy', 'intimate', 'divey', 'touristy', 'ambiance', 'atmosphere'].some(k => lower.includes(k.toLowerCase()))) {
+      if (['noise', 'quiet', 'loud', 'casual', 'romantic', 'trendy', 'hip', 'upscale',
+        'classy', 'cozy', 'intimate', 'divey', 'touristy', 'ambiance', 'atmosphere'].some(k => lower.includes(k.toLowerCase()))) {
         return 'atmosphere';
       }
-      
+
       // Planning (Groups & Events)
-      if (['group', 'large', 'private', 'event', 'party', 'catering', 'goodforgroups', 
-           'goodforkids', 'reservation'].some(k => lower.includes(k.toLowerCase()))) {
+      if (['group', 'large', 'private', 'event', 'party', 'catering', 'goodforgroups',
+        'goodforkids', 'reservation'].some(k => lower.includes(k.toLowerCase()))) {
         return 'planning';
       }
-      
+
       // Highlights
       if (['highlight', 'feature', 'specialty', 'special', 'signature', 'popular'].some(k => lower.includes(k.toLowerCase()))) {
         return 'highlights';
       }
-      
+
       // Pets
       if (['dog', 'pet', 'animal', 'allowsdog'].some(k => lower.includes(k.toLowerCase()))) {
         return 'amenities';
       }
-      
+
       // Entertainment/Tech
       if (['tv', 'wifi', 'internet', 'music', 'live', 'entertainment'].some(k => lower.includes(k.toLowerCase()))) {
         return 'amenities';
       }
-      
+
       // Seating
       if (['outdoor', 'seating', 'patio', 'terrace', 'rooftop'].some(k => lower.includes(k.toLowerCase()))) {
         return 'amenities';
       }
-      
+
       // Default
       return 'amenities';
     }
@@ -1026,7 +1027,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
 
       return categorizeAmenity(type);
     }
-    
+
     // Helper function to flatten nested data like {allowsDogs: {allowsDogs: false}}
     function flattenNestedData(data: any): any {
       if (Array.isArray(data)) {
@@ -1035,7 +1036,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
       if (typeof data !== 'object' || data === null) {
         return data;
       }
-      
+
       const result: any = {};
       for (const [key, value] of Object.entries(data)) {
         if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
@@ -1054,10 +1055,10 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
       }
       return result;
     }
-    
+
     // Fetch reviews - try linked reviewRecords first, then fall back to JSON field
     let reviews: any[] = [];
-    
+
     console.log('[getBuffetNameBySlug] Checking for reviews:', {
       slug: buffetSlug,
       buffetId: buffet.id,
@@ -1065,7 +1066,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
       reviewsFieldType: typeof buffet.reviews,
       reviewsFieldLength: typeof buffet.reviews === 'string' ? buffet.reviews.length : 'N/A',
     });
-    
+
     // First, try to get reviews from the linked reviewRecords table
     try {
       const reviewsResult = await adminQuery(db, {
@@ -1084,7 +1085,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
     } catch (reviewError) {
       console.error('[getBuffetNameBySlug] Error fetching linked reviews:', reviewError);
     }
-    
+
     // If no linked reviews, fall back to JSON stringified reviews field in buffet
     if (reviews.length === 0 && buffet.reviews) {
       try {
@@ -1094,7 +1095,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         } else if (Array.isArray(buffet.reviews)) {
           parsedReviews = buffet.reviews;
         }
-        
+
         if (Array.isArray(parsedReviews) && parsedReviews.length > 0) {
           reviews = parsedReviews.slice(0, 10).map(transformReview);
           console.log('[getBuffetNameBySlug] Got reviews from JSON field:', reviews.length);
@@ -1103,9 +1104,9 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         console.error('[getBuffetNameBySlug] Error parsing reviews JSON:', parseError);
       }
     }
-    
+
     console.log('[getBuffetNameBySlug] Final reviews count:', reviews.length);
-    
+
     // Parse categories if it's a JSON string, otherwise use as-is
     let categories: string[] = [];
     if (buffet.categories) {
@@ -1119,7 +1120,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         categories = buffet.categories;
       }
     }
-    
+
     // Compile address from: address, neighborhood, city (cityName), state
     const addressParts: string[] = [];
     if (buffet.address) addressParts.push(buffet.address);
@@ -1127,7 +1128,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
     if (buffet.cityName) addressParts.push(buffet.cityName);
     if (buffet.state) addressParts.push(buffet.state);
     const address = addressParts.join(', ');
-    
+
     // Helper to parse JSON fields
     const parseJsonField = (value: any): any => {
       if (!value) return null;
@@ -1140,10 +1141,10 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
       }
       return value;
     };
-    
+
     // Parse images field (JSON stringified array)
     const photoObjects: Array<{ photoReference: string; widthPx?: number; heightPx?: number }> = [];
-    
+
     if (buffet.images) {
       let parsedImages: any[] = [];
       if (typeof buffet.images === 'string') {
@@ -1155,7 +1156,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
       } else if (Array.isArray(buffet.images)) {
         parsedImages = buffet.images;
       }
-      
+
       parsedImages.forEach((img: any) => {
         if (typeof img === 'string') {
           if (img.startsWith('places/')) {
@@ -1181,38 +1182,38 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         }
       });
     }
-    
+
     const allImages: Array<{ photoReference: string; widthPx?: number; heightPx?: number }> = [
       ...photoObjects,
     ];
-    
+
     // Get imageCount (use imagesCount field or actual count of images)
     const imageCount = buffet.imagesCount || allImages.length;
-    
+
     // Parse imageCategories
     const imageCategories = parseJsonField(buffet.imageCategories) || [];
-    
+
     // Combine hours from hours, popularTimesHistogram, and secondaryOpeningHours
     const hoursData: any = {};
-    
+
     // Parse hours
     const hours = parseJsonField(buffet.hours);
     if (hours && (Array.isArray(hours) || (typeof hours === 'object' && !Array.isArray(hours)))) {
       hoursData.hours = hours;
     }
-    
+
     // Parse popularTimesHistogram
     const popularTimesHistogram = parseJsonField(buffet.popularTimesHistogram);
     if (popularTimesHistogram) {
       hoursData.popularTimesHistogram = popularTimesHistogram;
     }
-    
+
     // Parse secondaryOpeningHours
     const secondaryOpeningHours = parseJsonField(buffet.secondaryOpeningHours);
     if (secondaryOpeningHours) {
       hoursData.secondaryOpeningHours = secondaryOpeningHours;
     }
-    
+
     console.log('[getBuffetNameBySlug] Images debug:', {
       slug: buffetSlug,
       photoObjectsCount: photoObjects.length,
@@ -1223,23 +1224,23 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
       imagesFieldType: typeof buffet.images,
       firstPhotoRef: photoObjects[0]?.photoReference?.substring(0, 50) || 'none',
     });
-    
+
     // Collect contact info
     const contactInfo: { menuUrl?: string; orderBy?: any; phone?: string; website?: string } = {};
-    
+
     // Check for menuUrl in various places - check ALL sources
     // Priority: buffet.menuUrl > buffet.menu field > menus table > buffet.url
-    
+
     // First, check direct menuUrl field
     if (buffet.menuUrl && typeof buffet.menuUrl === 'string') {
       contactInfo.menuUrl = buffet.menuUrl;
       console.log('[getBuffetNameBySlug] ✅ Set menuUrl from buffet.menuUrl field:', buffet.menuUrl.substring(0, 50));
     }
-    
+
     // Check buffet.menu field - can be a plain URL string or JSON object
     if (!contactInfo.menuUrl && buffet.menu) {
       console.log('[getBuffetNameBySlug] Checking buffet.menu field, type:', typeof buffet.menu);
-      
+
       // First check if it's a plain URL string (most common case)
       if (typeof buffet.menu === 'string') {
         const menuStr = buffet.menu.trim();
@@ -1263,10 +1264,10 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         }
       }
     }
-    
+
     // Menu URL from menus table: fetched in page (parallel with city) to avoid waterfall.
     // Page merges menu.sourceUrl into contactInfo.menuUrl when menu is loaded.
-    
+
     // Also check if there's a general URL field that might be a menu (lowest priority)
     if (!contactInfo.menuUrl && buffet.url && typeof buffet.url === 'string') {
       // Only use if it looks like a menu URL (contains menu, order, or food-related terms)
@@ -1275,16 +1276,16 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         contactInfo.menuUrl = buffet.url;
       }
     }
-    
+
     // Parse orderBy - it might be JSON stringified array of objects with service names and URLs
     if (buffet.orderBy) {
       const orderByData = parseJsonField(buffet.orderBy);
       contactInfo.orderBy = orderByData || buffet.orderBy;
     }
-    
+
     if (buffet.phone) contactInfo.phone = buffet.phone;
     if (buffet.website && typeof buffet.website === 'string') contactInfo.website = buffet.website;
-    
+
     // Parse reviewsDistribution
     let reviewsDistribution: { [key: string]: number } | undefined;
     if (buffet.reviewsDistribution) {
@@ -1293,7 +1294,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         reviewsDistribution = parsed;
       }
     }
-    
+
     // Parse reviewsTags - can be array of objects {title, count} or array of strings
     let reviewsTags: Array<{ title: string; count?: number }> | undefined;
     if (buffet.reviewsTags) {
@@ -1310,10 +1311,10 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         }).filter(Boolean);
       }
     }
-    
+
     // Get reviewsCount - prefer from buffet field, fallback to reviews array length
     const reviewsCount = buffet.reviewsCount || reviews.length || undefined;
-    
+
     // Parse webResults
     let webResults: Array<{ title: string; displayedUrl?: string; url: string; description?: string }> | undefined;
     if (buffet.webResults) {
@@ -1327,7 +1328,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         })).filter((item: any) => item.title && item.url);
       }
     }
-    
+
     console.log('[getBuffetNameBySlug] Reviews summary:', {
       slug: buffetSlug,
       reviewsArrayLength: reviews.length,
@@ -1336,27 +1337,27 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
       reviewsTagsCount: reviewsTags?.length || 0,
       webResultsCount: webResults?.length || 0,
     });
-    
-    const buffetData: { 
-      name: string; 
+
+    const buffetData: {
+      name: string;
       id: string;
       slug: string;
       placeId?: string;
-      categories: string[]; 
-      address: string; 
+      categories: string[];
+      address: string;
       cityName?: string;
       state?: string;
       stateAbbr?: string;
       location?: { lat: number; lng: number };
-      description?: string; 
-      description2?: string; 
-      images: Array<{ photoReference: string; widthPx?: number; heightPx?: number }>; 
-      imageCount: number; 
-      imageCategories: string[]; 
-      hours?: any; 
-      contactInfo?: { menuUrl?: string; orderBy?: any; phone?: string; website?: string }; 
-      price?: string; 
-      rating?: number; 
+      description?: string;
+      description2?: string;
+      images: Array<{ photoReference: string; widthPx?: number; heightPx?: number }>;
+      imageCount: number;
+      imageCategories: string[];
+      hours?: any;
+      contactInfo?: { menuUrl?: string; orderBy?: any; phone?: string; website?: string };
+      price?: string;
+      rating?: number;
       reviews?: any[];
       reviewsCount?: number;
       reviewsDistribution?: { [key: string]: number };
@@ -1392,7 +1393,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
       accomodationLodging?: { summary: string; highlights: Array<{ label: string; items: Array<{ name: string; distanceText: string; category: string; addressText: string | null; hoursText: string | null; phone: string | null; website: string | null }> }>; poiCount: number; generatedAt: string; model: string };
       artsCulture?: { summary: string; highlights: Array<{ label: string; items: Array<{ name: string; distanceText: string; category: string; addressText: string | null; hoursText: string | null; phone: string | null; website: string | null }> }>; poiCount: number; generatedAt: string; model: string };
       communicationsTechnology?: { summary: string; highlights: Array<{ label: string; items: Array<{ name: string; distanceText: string; category: string; addressText: string | null; hoursText: string | null; phone: string | null; website: string | null }> }>; poiCount: number; generatedAt: string; model: string };
-    } = { 
+    } = {
       name: buffet.name || '',
       id: buffet.id || '',
       slug: buffet.slug || '',
@@ -1407,27 +1408,27 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
       imageCount: imageCount,
       imageCategories: imageCategories
     };
-    
+
     // Only include description if it exists
     if (buffet.description) {
       buffetData.description = buffet.description;
     }
-    
+
     // Only include description2 if it exists
     if (buffet.description2) {
       buffetData.description2 = buffet.description2;
     }
-    
+
     // Include price if it exists
     if (buffet.price) {
       buffetData.price = buffet.price;
     }
-    
+
     // Include rating if it exists and is a valid number
     if (buffet.rating && typeof buffet.rating === 'number' && buffet.rating > 0) {
       buffetData.rating = buffet.rating;
     }
-    
+
     // Include reviews data
     if (reviews.length > 0) {
       buffetData.reviews = reviews;
@@ -1444,12 +1445,12 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
     if (webResults && webResults.length > 0) {
       buffetData.webResults = webResults;
     }
-    
+
     // Include questionsAndAnswers if it exists
     // The data can be either an array directly or an object with { items: [...] }
     const questionsAndAnswersRaw = parseJsonField(buffet.questionsAndAnswers);
-    let questionsAndAnswers: Array<{ question?: string; answer?: string; [key: string]: any }> | undefined;
-    
+    let questionsAndAnswers: Array<{ question?: string; answer?: string;[key: string]: any }> | undefined;
+
     if (questionsAndAnswersRaw) {
       if (Array.isArray(questionsAndAnswersRaw)) {
         // Direct array format
@@ -1459,7 +1460,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         questionsAndAnswers = questionsAndAnswersRaw.items;
       }
     }
-    
+
     if (questionsAndAnswers && questionsAndAnswers.length > 0) {
       buffetData.questionsAndAnswers = questionsAndAnswers;
     }
@@ -1470,23 +1471,23 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
     if (amenities && Object.keys(amenities).length > 0) {
       buffetData.amenities = amenities;
     }
-    
+
     // Include additionalInfo if it exists (contains original Google Places amenity/accessibility data)
     const additionalInfo = parseJsonField(buffet.additionalInfo);
     if (additionalInfo && typeof additionalInfo === 'object' && Object.keys(additionalInfo).length > 0) {
       (buffetData as any).additionalInfo = additionalInfo;
     }
-    
+
     // Include accommodationLodging if it exists (HTML string)
     if (buffet.accommodationLodging && typeof buffet.accommodationLodging === 'string' && buffet.accommodationLodging.trim().length > 0) {
       buffetData.accommodationLodging = buffet.accommodationLodging;
     }
-    
+
     // Include agriculturalFarming if it exists (HTML string)
     if (buffet.agriculturalFarming && typeof buffet.agriculturalFarming === 'string' && buffet.agriculturalFarming.trim().length > 0) {
       buffetData.agriculturalFarming = buffet.agriculturalFarming;
     }
-    
+
     // Include artsCulture if it exists (JSON string)
     if (buffet.artsCulture && typeof buffet.artsCulture === 'string' && buffet.artsCulture.trim().length > 0) {
       const artsCultureData = safeParseJsonObject(buffet.artsCulture);
@@ -1495,7 +1496,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         console.log('[getBuffetNameBySlug] ✅ Found artsCulture');
       }
     }
-    
+
     // Include communicationsTechnology if it exists (can be JSON string or HTML)
     if (buffet.communicationsTechnology && typeof buffet.communicationsTechnology === 'string' && buffet.communicationsTechnology.trim().length > 0) {
       const communicationsTechnologyData = safeParseJsonObject(buffet.communicationsTechnology);
@@ -1504,7 +1505,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         console.log('[getBuffetNameBySlug] ✅ Found communicationsTechnology');
       }
     }
-    
+
     // Include educationLearning if it exists (JSON string that needs to be formatted)
     if (buffet.educationLearning && typeof buffet.educationLearning === 'string' && buffet.educationLearning.trim().length > 0) {
       const educationLearningData = safeParseJsonObject(buffet.educationLearning);
@@ -1519,7 +1520,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         buffetData.educationLearning = buffet.educationLearning;
       }
     }
-    
+
     // Include financialServices if it exists (JSON string)
     if (buffet.financialServices && typeof buffet.financialServices === 'string' && buffet.financialServices.trim().length > 0) {
       const financialServicesData = safeParseJsonObject(buffet.financialServices);
@@ -1528,7 +1529,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         console.log('[getBuffetNameBySlug] ✅ Found financialServices');
       }
     }
-    
+
     // Include foodDining if it exists (JSON string)
     if (buffet.foodDining && typeof buffet.foodDining === 'string' && buffet.foodDining.trim().length > 0) {
       const foodDiningData = safeParseJsonObject(buffet.foodDining);
@@ -1537,7 +1538,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         console.log('[getBuffetNameBySlug] ✅ Found foodDining');
       }
     }
-    
+
     // Include governmentPublicServices if it exists (JSON string)
     if (buffet.governmentPublicServices && typeof buffet.governmentPublicServices === 'string' && buffet.governmentPublicServices.trim().length > 0) {
       const governmentPublicServicesData = safeParseJsonObject(buffet.governmentPublicServices);
@@ -1546,7 +1547,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         console.log('[getBuffetNameBySlug] ✅ Found governmentPublicServices');
       }
     }
-    
+
     // Include healthcareMedicalServices if it exists (JSON string)
     if (buffet.healthcareMedicalServices && typeof buffet.healthcareMedicalServices === 'string' && buffet.healthcareMedicalServices.trim().length > 0) {
       const healthcareMedicalServicesData = safeParseJsonObject(buffet.healthcareMedicalServices);
@@ -1555,7 +1556,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         console.log('[getBuffetNameBySlug] ✅ Found healthcareMedicalServices');
       }
     }
-    
+
     // Include homeImprovementGarden if it exists (JSON string)
     if (buffet.homeImprovementGarden && typeof buffet.homeImprovementGarden === 'string' && buffet.homeImprovementGarden.trim().length > 0) {
       const homeImprovementGardenData = safeParseJsonObject(buffet.homeImprovementGarden);
@@ -1564,7 +1565,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         console.log('[getBuffetNameBySlug] ✅ Found homeImprovementGarden');
       }
     }
-    
+
     // Include industrialManufacturing if it exists (JSON string)
     if (buffet.industrialManufacturing && typeof buffet.industrialManufacturing === 'string' && buffet.industrialManufacturing.trim().length > 0) {
       const industrialManufacturingData = safeParseJsonObject(buffet.industrialManufacturing);
@@ -1573,7 +1574,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         console.log('[getBuffetNameBySlug] ✅ Found industrialManufacturing');
       }
     }
-    
+
     // Include miscellaneousServices if it exists (JSON string)
     if (buffet.miscellaneousServices && typeof buffet.miscellaneousServices === 'string' && buffet.miscellaneousServices.trim().length > 0) {
       const miscellaneousServicesData = safeParseJsonObject(buffet.miscellaneousServices);
@@ -1582,7 +1583,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         console.log('[getBuffetNameBySlug] ✅ Found miscellaneousServices');
       }
     }
-    
+
     // Include neighborhoodContext if it exists (JSON string)
     if (buffet.neighborhoodContext && typeof buffet.neighborhoodContext === 'string' && buffet.neighborhoodContext.trim().length > 0) {
       const neighborhoodContextData = safeParseJsonObject(buffet.neighborhoodContext);
@@ -1591,7 +1592,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         console.log('[getBuffetNameBySlug] ✅ Found neighborhoodContext');
       }
     }
-    
+
     // Include personalCareBeauty if it exists (JSON string)
     if (buffet.personalCareBeauty && typeof buffet.personalCareBeauty === 'string' && buffet.personalCareBeauty.trim().length > 0) {
       const personalCareBeautyData = safeParseJsonObject(buffet.personalCareBeauty);
@@ -1600,13 +1601,13 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         console.log('[getBuffetNameBySlug] ✅ Found personalCareBeauty');
       }
     }
-    
+
     // Include petCareVeterinary if it exists (HTML string)
     if (buffet.petCareVeterinary && typeof buffet.petCareVeterinary === 'string' && buffet.petCareVeterinary.trim().length > 0) {
       buffetData.petCareVeterinary = buffet.petCareVeterinary;
       console.log('[getBuffetNameBySlug] ✅ Found petCareVeterinary');
     }
-    
+
     // Include professionalBusinessServices if it exists (JSON string)
     if (buffet.professionalBusinessServices && typeof buffet.professionalBusinessServices === 'string' && buffet.professionalBusinessServices.trim().length > 0) {
       const professionalBusinessServicesData = safeParseJsonObject(buffet.professionalBusinessServices);
@@ -1615,7 +1616,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         console.log('[getBuffetNameBySlug] ✅ Found professionalBusinessServices');
       }
     }
-    
+
     // Include recreationEntertainment if it exists (JSON string)
     if (buffet.recreationEntertainment && typeof buffet.recreationEntertainment === 'string' && buffet.recreationEntertainment.trim().length > 0) {
       const recreationEntertainmentData = safeParseJsonObject(buffet.recreationEntertainment);
@@ -1624,7 +1625,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         console.log('[getBuffetNameBySlug] ✅ Found recreationEntertainment');
       }
     }
-    
+
     // Include religiousSpiritual if it exists (JSON string)
     if (buffet.religiousSpiritual && typeof buffet.religiousSpiritual === 'string' && buffet.religiousSpiritual.trim().length > 0) {
       const religiousSpiritualData = safeParseJsonObject(buffet.religiousSpiritual);
@@ -1633,13 +1634,13 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         console.log('[getBuffetNameBySlug] ✅ Found religiousSpiritual');
       }
     }
-    
+
     // Include repairMaintenance if it exists (HTML string)
     if (buffet.repairMaintenance && typeof buffet.repairMaintenance === 'string' && buffet.repairMaintenance.trim().length > 0) {
       buffetData.repairMaintenance = buffet.repairMaintenance;
       console.log('[getBuffetNameBySlug] ✅ Found repairMaintenance');
     }
-    
+
     // Include retailShopping if it exists (JSON string)
     if (buffet.retailShopping && typeof buffet.retailShopping === 'string' && buffet.retailShopping.trim().length > 0) {
       const retailShoppingData = safeParseJsonObject(buffet.retailShopping);
@@ -1648,7 +1649,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         console.log('[getBuffetNameBySlug] ✅ Found retailShopping');
       }
     }
-    
+
     // Include communitySocialServices if it exists (JSON string)
     if (buffet.communitySocialServices && typeof buffet.communitySocialServices === 'string' && buffet.communitySocialServices.trim().length > 0) {
       const communitySocialServicesData = safeParseJsonObject(buffet.communitySocialServices);
@@ -1657,7 +1658,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         console.log('[getBuffetNameBySlug] ✅ Found communitySocialServices');
       }
     }
-    
+
     // Include sportsFitness if it exists (JSON string)
     if (buffet.sportsFitness && typeof buffet.sportsFitness === 'string' && buffet.sportsFitness.trim().length > 0) {
       const sportsFitnessData = safeParseJsonObject(buffet.sportsFitness);
@@ -1666,7 +1667,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         console.log('[getBuffetNameBySlug] ✅ Found sportsFitness');
       }
     }
-    
+
     // Include transportationAutomotive if it exists (JSON string)
     if (buffet.transportationAutomotive && typeof buffet.transportationAutomotive === 'string' && buffet.transportationAutomotive.trim().length > 0) {
       const transportationAutomotiveData = safeParseJsonObject(buffet.transportationAutomotive);
@@ -1675,7 +1676,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         console.log('[getBuffetNameBySlug] ✅ Found transportationAutomotive');
       }
     }
-    
+
     // Include travelTourismServices if it exists (JSON string)
     if (buffet.travelTourismServices && typeof buffet.travelTourismServices === 'string' && buffet.travelTourismServices.trim().length > 0) {
       const travelTourismServicesData = safeParseJsonObject(buffet.travelTourismServices);
@@ -1684,7 +1685,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         console.log('[getBuffetNameBySlug] ✅ Found travelTourismServices');
       }
     }
-    
+
     // Include utilitiesInfrastructure if it exists (JSON string)
     if (buffet.utilitiesInfrastructure && typeof buffet.utilitiesInfrastructure === 'string' && buffet.utilitiesInfrastructure.trim().length > 0) {
       const utilitiesInfrastructureData = safeParseJsonObject(buffet.utilitiesInfrastructure);
@@ -1693,7 +1694,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         console.log('[getBuffetNameBySlug] ✅ Found utilitiesInfrastructure');
       }
     }
-    
+
     // Include accomodationLodging if it exists (JSON string)
     if (buffet.accomodationLodging && typeof buffet.accomodationLodging === 'string' && buffet.accomodationLodging.trim().length > 0) {
       const accomodationLodgingData = safeParseJsonObject(buffet.accomodationLodging);
@@ -1702,25 +1703,25 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         console.log('[getBuffetNameBySlug] ✅ Found accomodationLodging');
       }
     }
-    
+
     // Only include hours if any hours data exists
     if (Object.keys(hoursData).length > 0) {
       buffetData.hours = hoursData;
     }
-    
+
     // Only include contactInfo if any contact info exists
     if (Object.keys(contactInfo).length > 0) {
       buffetData.contactInfo = contactInfo;
-      console.log('[getBuffetNameBySlug] Final contactInfo:', { 
-        hasPhone: !!contactInfo.phone, 
+      console.log('[getBuffetNameBySlug] Final contactInfo:', {
+        hasPhone: !!contactInfo.phone,
         hasMenuUrl: !!contactInfo.menuUrl,
         menuUrl: contactInfo.menuUrl?.substring(0, 50),
-        hasOrderBy: !!contactInfo.orderBy 
+        hasOrderBy: !!contactInfo.orderBy
       });
     } else {
       console.log('[getBuffetNameBySlug] No contactInfo to include');
     }
-    
+
     return buffetData;
   } catch (e) {
     console.error('[data-instantdb] getBuffetNameBySlug error:', e);
@@ -1742,7 +1743,7 @@ export async function getBuffetBySlug(citySlug: string, buffetSlug: string, incl
     try {
       const db = getAdminDb();
       const queryStart = Date.now();
-      
+
       // OPTIMIZATION: Single query with all needed links
       const query: any = {
         cities: {
@@ -1753,24 +1754,24 @@ export async function getBuffetBySlug(citySlug: string, buffetSlug: string, incl
           },
         },
       };
-      
+
       // Add reviews link if needed
       if (includeReviews) {
         query.cities.buffets.reviewRecords = {
           $: { order: [{ field: 'publishAt', direction: 'desc' }] },
         };
       }
-      
+
       const result = await adminQuery(db, query);
       const queryDuration = Date.now() - queryStart;
-      
+
       const buffetRaw = result.cities?.[0]?.buffets?.[0];
       if (!buffetRaw) {
         return null;
       }
-      
+
       const transformedBuffet = transformBuffet(buffetRaw, citySlug, buffetRaw.reviewRecords);
-      
+
       // OPTIMIZATION: Fetch menu in parallel if needed (could be optimized further with link relationship)
       if (includeMenu && transformedBuffet.placeId) {
         const menuStart = Date.now();
@@ -1786,15 +1787,15 @@ export async function getBuffetBySlug(citySlug: string, buffetSlug: string, incl
           };
         }
       }
-      
-      
+
+
       return transformedBuffet;
     } catch (error) {
       console.error('[data-instantdb] Error fetching buffet with links:', error);
       // Fallback to regular fetch
     }
   }
-  
+
   // OPTIMIZATION: For non-linked queries, use direct query instead of full city fetch
   try {
     const db = getAdminDb();
@@ -1807,12 +1808,12 @@ export async function getBuffetBySlug(citySlug: string, buffetSlug: string, incl
         },
       },
     });
-    
+
     const buffetRaw = result.cities?.[0]?.buffets?.[0];
     if (!buffetRaw) return null;
-    
+
     const buffet = transformBuffet(buffetRaw, citySlug);
-    
+
     // If menu is requested, fetch it separately
     if (includeMenu && buffet.placeId) {
       const menu = await getMenuForBuffet(buffet.placeId);
@@ -1826,7 +1827,7 @@ export async function getBuffetBySlug(citySlug: string, buffetSlug: string, incl
         };
       }
     }
-    
+
     return buffet;
   } catch (error) {
     console.error('[data-instantdb] Error fetching buffet:', error);
@@ -1875,7 +1876,7 @@ export function buildNeighborhoodsFromBuffets(buffets: any[], citySlug: string, 
 // Legacy neighborhood fetch (uses full cache) - keep for compatibility under new name
 export async function getNeighborhoodsByCityLegacy(citySlug: string): Promise<any[]> {
   const buffetsByNeighborhood = await getBuffetsByNeighborhood();
-  
+
   const neighborhoods = Object.values(buffetsByNeighborhood)
     .filter((n: any) => n.citySlug === citySlug)
     .map((n: any) => ({
@@ -1884,7 +1885,7 @@ export async function getNeighborhoodsByCityLegacy(citySlug: string): Promise<an
       buffetCount: n.buffets.length,
     }))
     .sort((a, b) => b.buffetCount - a.buffetCount);
-  
+
   return neighborhoods;
 }
 
@@ -2232,6 +2233,10 @@ function firstPhotoReferenceFromImages(imagesJson: unknown): string | undefined 
   }
 }
 
+type TopRatedCache = { value: any[]; expiresAt: number } | null;
+let topRatedHomepageCache: TopRatedCache = null;
+let topRatedHomepageInFlight: Promise<any[]> | null = null;
+
 /**
  * Top-rated buffets for homepage: name, slug, city, stateAbbr, rating, reviewCount, optional thumb.
  * Uses same criteria as getTopRatedBuffets (rating >= 4.3, min 50 reviews). Direct DB query.
@@ -2246,30 +2251,93 @@ export async function getTopRatedBuffetsForHomepage(limit: number = 12): Promise
   thumbPhotoReference?: string;
 }>> {
   try {
-    const db = getAdminDb();
-    const result = await adminQuery(db, {
-      buffets: {
-        $: {
-          limit: 200,
-          where: { rating: { $gte: 4.3 } },
-          order: { rating: 'desc' },
+    const now = Date.now();
+    if (topRatedHomepageCache && topRatedHomepageCache.expiresAt > now) {
+      console.log("[home] topRated cache HIT");
+      return topRatedHomepageCache.value;
+    }
+
+    if (topRatedHomepageInFlight) {
+      console.log("[home] topRated await in-flight");
+      return await topRatedHomepageInFlight;
+    }
+
+    topRatedHomepageInFlight = (async () => {
+      const db = getAdminDb();
+
+      // Standard query shape without attempting scalar projection in the query itself
+      // because InstantDB returns all scalars by default for the Entity.
+      const queryObj = {
+        buffets: {
+          $: {
+            limit: 40, // Reduced limit
+            order: { rating: 'desc' },
+          },
         },
-        city: {},
-      },
-    });
-    const buffets = (result.buffets || [])
-      .filter((b: any) => (b.reviewsCount ?? 0) >= 50 && b.city?.slug)
-      .slice(0, limit)
-      .map((b: any) => ({
-        name: b.name || '',
-        slug: b.slug || '',
-        city: b.cityName || b.city?.city || '',
-        stateAbbr: b.stateAbbr || b.state || '',
-        rating: b.rating ?? 0,
-        reviewCount: b.reviewsCount ?? 0,
-        thumbPhotoReference: firstPhotoReferenceFromImages(b.images),
+      };
+
+      console.log("[home] topRated query", JSON.stringify(queryObj).slice(0, 2000));
+
+      const result = await adminQuery(db, queryObj, { cache: 'no-store' });
+
+      // Map to minimal object first to drop unnecessary fields
+      const minimal = (result.buffets || []).map((b: any) => ({
+        id: b.id,
+        name: b.name,
+        slug: b.slug,
+        cityName: b.cityName,
+        stateAbbr: b.stateAbbr,
+        neighborhood: b.neighborhood,
+        rating: b.rating,
+        reviewsCount: b.reviewsCount,
+        price: b.price || b.priceNumber,
+        imagesCount: b.images ? 1 : 0,
+        placeId: b.placeId,
+        lat: b.lat,
+        lng: b.lng,
+        // Need images specifically for thumbnail function later
+        images: b.images,
       }));
-    return buffets;
+
+      const filtered = minimal.filter((r: any) => (r.reviewsCount ?? 0) >= 50);
+
+      filtered.sort((a: any, b: any) => {
+        // Primary sort: rating (already done by DB but good to be explicit/consistent)
+        const ratingDiff = (b.rating ?? 0) - (a.rating ?? 0);
+        if (ratingDiff !== 0) return ratingDiff;
+        // Secondary sort: reviewsCount
+        return (b.reviewsCount ?? 0) - (a.reviewsCount ?? 0);
+      });
+
+      const finalResults = filtered.slice(0, 24);
+
+      console.log("[home] topRated payload bytes", Buffer.byteLength(JSON.stringify(finalResults), "utf8"));
+
+      const buffets = finalResults
+        .slice(0, limit) // Use function argument limit
+        .map((b: any) => ({
+          name: b.name || '',
+          slug: b.slug || '',
+          // Remap to match legacy format validation
+          city: b.cityName || '',
+          stateAbbr: b.stateAbbr || '',
+          rating: b.rating ?? 0,
+          // Remap to match legacy format validation
+          reviewCount: b.reviewsCount ?? 0,
+          thumbPhotoReference: firstPhotoReferenceFromImages(b.images),
+        }));
+
+      topRatedHomepageCache = { value: buffets, expiresAt: now + 60 * 60 * 1000 };
+      console.log("[home] topRated cache SET");
+
+      return buffets;
+    })();
+
+    try {
+      return await topRatedHomepageInFlight;
+    } finally {
+      topRatedHomepageInFlight = null;
+    }
   } catch (e) {
     console.error('[data-instantdb] getTopRatedBuffetsForHomepage error:', e);
     return [];
@@ -2321,7 +2389,7 @@ export async function getMostReviewedBuffets(limit: number = 10): Promise<Array<
 // Lightweight function to get first few buffets for homepage - no cache, direct minimal query
 export async function getSampleBuffets(count: number = 2): Promise<any[]> {
   const db = getAdminDb();
-  
+
   try {
     const result = await adminQuery(db, {
       buffets: {
@@ -2329,7 +2397,7 @@ export async function getSampleBuffets(count: number = 2): Promise<any[]> {
         city: {},
       },
     });
-    
+
     // Return minimal data needed for links
     return (result.buffets || []).map((b: any) => ({
       id: b.id,
@@ -2351,11 +2419,11 @@ export async function getSummary(): Promise<any> {
   const functionStartTime = Date.now();
   // Use shared cache - this allows parallel calls to share the same data fetch
   const { cities, buffets } = await getCachedData();
-  
+
   // Count buffets per city without full transformation
   const cityBuffetCounts: Record<string, number> = {};
   const cityData: Record<string, { slug: string; city: string; state: string }> = {};
-  
+
   cities.forEach((city: any) => {
     cityBuffetCounts[city.slug] = 0;
     cityData[city.slug] = {
@@ -2364,7 +2432,7 @@ export async function getSummary(): Promise<any> {
       state: city.state || '',
     };
   });
-  
+
   // Just count, don't transform - only iterate through buffets
   buffets.forEach((buffet: any) => {
     const citySlug = buffet.city?.slug;
@@ -2372,7 +2440,7 @@ export async function getSummary(): Promise<any> {
       cityBuffetCounts[citySlug]++;
     }
   });
-  
+
   const citiesList = Object.entries(cityBuffetCounts)
     .filter(([slug, count]) => count > 0)
     .map(([slug, count]) => ({
@@ -2382,13 +2450,13 @@ export async function getSummary(): Promise<any> {
       buffetCount: count,
     }))
     .sort((a, b) => b.buffetCount - a.buffetCount);
-  
+
   const totalBuffets = Object.values(cityBuffetCounts).reduce((sum, count) => sum + count, 0);
   const citiesWithBuffets = citiesList.length;
-  
+
   const totalDuration = Date.now() - functionStartTime;
   console.log(`[data-instantdb] getSummary: ${cities.length} total cities, ${citiesWithBuffets} with buffets, ${totalBuffets} total buffets`);
-  
+
   return {
     totalCities: cities.length,
     totalBuffets: totalBuffets,
@@ -2557,18 +2625,18 @@ export async function getStateCounts(): Promise<Record<string, number>> {
   const functionStartTime = Date.now();
   // Use shared cache to avoid duplicate queries - counts from already-fetched buffets
   const { buffets } = await getCachedData();
-  
+
   const stateCounts: Record<string, number> = {};
-  
+
   // Count buffets per state without transformation
   buffets.forEach((buffet: any) => {
     const stateAbbr = buffet.stateAbbr || '';
     if (!stateAbbr) return;
     stateCounts[stateAbbr] = (stateCounts[stateAbbr] || 0) + 1;
   });
-  
+
   const totalDuration = Date.now() - functionStartTime;
-  
+
   return stateCounts;
 }
 
@@ -2578,17 +2646,17 @@ export async function getBuffetsByState(): Promise<Record<string, any>> {
   const getCachedDataStart = Date.now();
   const { cities, buffets } = await getCachedData();
   const getCachedDataDuration = Date.now() - getCachedDataStart;
-  
+
   const buffetsByState: Record<string, any> = {};
-  
+
   // Group buffets by state
   const transformStart = Date.now();
   buffets.forEach((buffet: any) => {
     const stateAbbr = buffet.stateAbbr || '';
     const stateName = buffet.state || '';
-    
+
     if (!stateAbbr) return;
-    
+
     if (!buffetsByState[stateAbbr]) {
       buffetsByState[stateAbbr] = {
         state: stateName,
@@ -2597,15 +2665,15 @@ export async function getBuffetsByState(): Promise<Record<string, any>> {
         cities: new Set(),
       };
     }
-    
+
     buffetsByState[stateAbbr].buffets.push(transformBuffet(buffet, buffet.city?.slug));
-    
+
     if (buffet.city?.city) {
       buffetsByState[stateAbbr].cities.add(buffet.city.city);
     }
   });
   const transformDuration = Date.now() - transformStart;
-  
+
   // Convert Sets to arrays and sort
   const sortStart = Date.now();
   Object.keys(buffetsByState).forEach(stateAbbr => {
@@ -2614,19 +2682,19 @@ export async function getBuffetsByState(): Promise<Record<string, any>> {
     stateData.buffets.sort((a: any, b: any) => (b.rating || 0) - (a.rating || 0));
   });
   const sortDuration = Date.now() - sortStart;
-  
+
   const totalDuration = Date.now() - functionStartTime;
   console.log(`[data-instantdb] getBuffetsByState: ${Object.keys(buffetsByState).length} states with buffets`);
-  
+
   return buffetsByState;
 }
 
 export async function getStateByAbbr(stateAbbr: string): Promise<any | null> {
   const buffetsByState = await getBuffetsByState();
   const stateData = buffetsByState[stateAbbr.toUpperCase()];
-  
+
   if (!stateData) return null;
-  
+
   return {
     state: stateData.state,
     stateAbbr: stateData.stateAbbr,
@@ -2645,21 +2713,21 @@ export async function getAllStateAbbrs(): Promise<string[]> {
 // Neighborhood-level functions
 export async function getBuffetsByNeighborhood(): Promise<Record<string, any>> {
   const { cities, buffets } = await getCachedData();
-  
+
   const buffetsByNeighborhood: Record<string, any> = {};
-  
+
   // Group buffets by neighborhood within each city
   buffets.forEach((buffet: any) => {
     const neighborhood = buffet.neighborhood;
     const citySlug = buffet.city?.slug;
     const cityName = buffet.cityName || buffet.city?.city || '';
     const stateAbbr = buffet.stateAbbr || '';
-    
+
     if (!neighborhood || !citySlug) return;
-    
+
     // Create a unique key: citySlug-neighborhood
     const key = `${citySlug}-${neighborhood.toLowerCase().replace(/\s+/g, '-')}`;
-    
+
     if (!buffetsByNeighborhood[key]) {
       buffetsByNeighborhood[key] = {
         neighborhood: neighborhood,
@@ -2669,17 +2737,17 @@ export async function getBuffetsByNeighborhood(): Promise<Record<string, any>> {
         buffets: [],
       };
     }
-    
+
     buffetsByNeighborhood[key].buffets.push(transformBuffet(buffet, citySlug));
   });
-  
+
   // Sort buffets within each neighborhood by rating
   Object.values(buffetsByNeighborhood).forEach((neighborhood: any) => {
     neighborhood.buffets.sort((a: any, b: any) => (b.rating || 0) - (a.rating || 0));
   });
-  
+
   console.log(`[data-instantdb] getBuffetsByNeighborhood: ${Object.keys(buffetsByNeighborhood).length} neighborhoods with buffets`);
-  
+
   return buffetsByNeighborhood;
 }
 
@@ -2718,7 +2786,7 @@ export async function getTopNeighborhoods(limit: number = 12): Promise<Array<{
 
 export async function getNeighborhoodsByCity(citySlug: string): Promise<any[]> {
   const buffetsByNeighborhood = await getBuffetsByNeighborhood();
-  
+
   const neighborhoods = Object.values(buffetsByNeighborhood)
     .filter((n: any) => n.citySlug === citySlug)
     .map((n: any) => {
@@ -2731,13 +2799,13 @@ export async function getNeighborhoodsByCity(citySlug: string): Promise<any[]> {
       };
     })
     .sort((a, b) => b.buffetCount - a.buffetCount);
-  
+
   return neighborhoods;
 }
 
 export async function getNeighborhoodBySlug(citySlug: string, neighborhoodSlug: string): Promise<any | null> {
   const buffetsByNeighborhood = await getBuffetsByNeighborhood();
-  
+
   // Try to find by matching the slug pattern
   // The key format is: citySlug-neighborhood-slug
   // But we need to match by neighborhood slug
@@ -2757,7 +2825,7 @@ export async function getNeighborhoodBySlug(citySlug: string, neighborhoodSlug: 
       }
     }
   }
-  
+
   return null;
 }
 
@@ -2769,23 +2837,23 @@ export async function getNearbyBuffets(
 ): Promise<any[]> {
   const allBuffets = await getAllBuffets();
   const nearby: Array<{ buffet: any; distance: number }> = [];
-  
+
   for (const buffet of allBuffets) {
     if (excludeId && buffet.id === excludeId) continue;
     if (!buffet.location || !buffet.location.lat || !buffet.location.lng) continue;
-    
+
     const distance = calculateDistance(
       lat,
       lng,
       buffet.location.lat,
       buffet.location.lng
     );
-    
+
     if (distance <= maxDistance) {
       nearby.push({ buffet, distance });
     }
   }
-  
+
   return nearby
     .sort((a, b) => a.distance - b.distance)
     .slice(0, 10)
@@ -2821,7 +2889,7 @@ export async function getBuffetsInSameCity(
   try {
     const city = await getCityBySlug(citySlug);
     if (!city || !city.buffets) return [];
-    
+
     return city.buffets
       .filter((b: any) => !excludeId || b.id !== excludeId)
       .slice(0, limit);
@@ -2836,18 +2904,18 @@ export async function getBuffetsInSameCity(
  */
 function extractRoadName(address: string): string | null {
   if (!address || typeof address !== 'string') return null;
-  
+
   // Common road suffixes
   const roadSuffixes = [
     'St', 'Street', 'Ave', 'Avenue', 'Rd', 'Road', 'Blvd', 'Boulevard',
     'Dr', 'Drive', 'Ln', 'Lane', 'Pkwy', 'Parkway', 'Hwy', 'Highway',
     'Way', 'Ct', 'Court', 'Pl', 'Place', 'Cir', 'Circle'
   ];
-  
+
   // Try to match patterns like "123 Main St" or "Main Street"
   const parts = address.split(',').map(s => s.trim());
   const firstPart = parts[0] || '';
-  
+
   // Match road name patterns
   for (const suffix of roadSuffixes) {
     const regex = new RegExp(`\\b([A-Za-z0-9\\s]+)\\s+${suffix}\\b`, 'i');
@@ -2860,7 +2928,7 @@ function extractRoadName(address: string): string | null {
       }
     }
   }
-  
+
   // Fallback: try to extract first meaningful word sequence
   const words = firstPart.split(/\s+/);
   if (words.length >= 2) {
@@ -2870,7 +2938,7 @@ function extractRoadName(address: string): string | null {
       return roadWords;
     }
   }
-  
+
   return null;
 }
 
@@ -2884,15 +2952,15 @@ export async function getBuffetsOnSameRoad(
   try {
     if (!currentBuffet.location?.lat || !currentBuffet.location?.lng) return [];
     if (!currentBuffet.address) return [];
-    
+
     const currentRoad = extractRoadName(
-      typeof currentBuffet.address === 'string' 
-        ? currentBuffet.address 
+      typeof currentBuffet.address === 'string'
+        ? currentBuffet.address
         : currentBuffet.address.full || ''
     );
-    
+
     if (!currentRoad) return [];
-    
+
     // Get nearby buffets within 2 miles
     const nearby = await getNearbyBuffets(
       currentBuffet.location.lat,
@@ -2900,7 +2968,7 @@ export async function getBuffetsOnSameRoad(
       2, // 2 miles radius
       currentBuffet.id
     );
-    
+
     // Filter by same road name
     const sameRoad = nearby.filter((buffet: any) => {
       if (!buffet.address) return false;
@@ -2911,7 +2979,7 @@ export async function getBuffetsOnSameRoad(
       );
       return buffetRoad && buffetRoad.toLowerCase() === currentRoad.toLowerCase();
     });
-    
+
     return sameRoad.slice(0, limit);
   } catch (error) {
     console.error('[data-instantdb] Error fetching buffets on same road:', error);
@@ -2934,191 +3002,6 @@ export async function getBuffetsWithinRadius(
     return nearby.slice(0, limit);
   } catch (error) {
     console.error('[data-instantdb] Error fetching buffets within radius:', error);
-    return [];
-  }
-}
-
-/**
- * Get all buffets (for filtering by POI data)
- */
-async function getAllBuffetsForPOI(): Promise<any[]> {
-  const { buffets } = await getCachedData();
-  return buffets.map((b: any) => transformBuffet(b, b.city?.slug));
-}
-
-/**
- * Get buffets with parking nearby
- */
-export async function getBuffetsWithParking(limit: number = 50): Promise<any[]> {
-  try {
-    const allBuffets = await getAllBuffetsForPOI();
-    
-    return allBuffets
-      .filter((buffet: any) => {
-        // Check if buffet has parking in amenities
-        if (buffet.amenities?.parking) return true;
-        
-        // Check if buffet has parking in transportationAutomotive
-        if (buffet.transportationAutomotive?.highlights) {
-          for (const group of buffet.transportationAutomotive.highlights) {
-            const labelLower = (group.label || '').toLowerCase();
-            if (labelLower.includes('parking') || labelLower.includes('parking lot')) {
-              if (group.items && group.items.length > 0) {
-                return true;
-              }
-            }
-          }
-        }
-        
-        return false;
-      })
-      .slice(0, limit);
-  } catch (error) {
-    console.error('[data-instantdb] Error fetching buffets with parking:', error);
-    return [];
-  }
-}
-
-/**
- * Get buffets near shopping malls
- */
-export async function getBuffetsNearShoppingMalls(limit: number = 50): Promise<any[]> {
-  try {
-    const allBuffets = await getAllBuffetsForPOI();
-    
-    return allBuffets
-      .filter((buffet: any) => {
-        if (!buffet.retailShopping?.highlights) return false;
-        
-        // Check if any retail shopping group contains malls or large shopping centers
-        for (const group of buffet.retailShopping.highlights) {
-          const labelLower = (group.label || '').toLowerCase();
-          const hasMall = labelLower.includes('mall') || 
-                         labelLower.includes('shopping center') ||
-                         labelLower.includes('shopping centre');
-          
-          if (hasMall && group.items && group.items.length > 0) {
-            return true;
-          }
-          
-          // Also check item names for mall keywords
-          if (group.items) {
-            for (const item of group.items) {
-              const nameLower = (item.name || '').toLowerCase();
-              if (nameLower.includes('mall') || 
-                  nameLower.includes('shopping center') ||
-                  nameLower.includes('shopping centre')) {
-                return true;
-              }
-            }
-          }
-        }
-        
-        return false;
-      })
-      .slice(0, limit);
-  } catch (error) {
-    console.error('[data-instantdb] Error fetching buffets near shopping malls:', error);
-    return [];
-  }
-}
-
-/**
- * Get buffets near highways
- */
-export async function getBuffetsNearHighways(limit: number = 50): Promise<any[]> {
-  try {
-    const allBuffets = await getAllBuffetsForPOI();
-    
-    return allBuffets
-      .filter((buffet: any) => {
-        if (!buffet.transportationAutomotive?.highlights) return false;
-        
-        // Check if any transportation group contains highways or major roads
-        for (const group of buffet.transportationAutomotive.highlights) {
-          const labelLower = (group.label || '').toLowerCase();
-          const hasHighway = labelLower.includes('highway') || 
-                            labelLower.includes('freeway') ||
-                            labelLower.includes('interstate') ||
-                            labelLower.includes('major road');
-          
-          if (hasHighway && group.items && group.items.length > 0) {
-            return true;
-          }
-          
-          // Also check item names for highway keywords
-          if (group.items) {
-            for (const item of group.items) {
-              const nameLower = (item.name || '').toLowerCase();
-              const categoryLower = (item.category || '').toLowerCase();
-              if (nameLower.includes('highway') || 
-                  nameLower.includes('freeway') ||
-                  nameLower.includes('interstate') ||
-                  nameLower.includes('i-') ||
-                  nameLower.includes('us-') ||
-                  categoryLower.includes('highway')) {
-                return true;
-              }
-            }
-          }
-        }
-        
-        return false;
-      })
-      .slice(0, limit);
-  } catch (error) {
-    console.error('[data-instantdb] Error fetching buffets near highways:', error);
-    return [];
-  }
-}
-
-/**
- * Get buffets near gas stations
- */
-export async function getBuffetsNearGasStations(limit: number = 50): Promise<any[]> {
-  try {
-    const allBuffets = await getAllBuffetsForPOI();
-    
-    return allBuffets
-      .filter((buffet: any) => {
-        if (!buffet.transportationAutomotive?.highlights) return false;
-        
-        // Check if any transportation group contains gas stations
-        for (const group of buffet.transportationAutomotive.highlights) {
-          const labelLower = (group.label || '').toLowerCase();
-          const hasGas = labelLower.includes('gas') || 
-                        labelLower.includes('fuel') ||
-                        labelLower.includes('service station');
-          
-          if (hasGas && group.items && group.items.length > 0) {
-            return true;
-          }
-          
-          // Also check item names for gas station keywords
-          if (group.items) {
-            for (const item of group.items) {
-              const nameLower = (item.name || '').toLowerCase();
-              const categoryLower = (item.category || '').toLowerCase();
-              if (nameLower.includes('gas') || 
-                  nameLower.includes('fuel') ||
-                  nameLower.includes('shell') ||
-                  nameLower.includes('bp') ||
-                  nameLower.includes('chevron') ||
-                  nameLower.includes('exxon') ||
-                  nameLower.includes('mobil') ||
-                  categoryLower.includes('fuel') ||
-                  categoryLower.includes('gas')) {
-                return true;
-              }
-            }
-          }
-        }
-        
-        return false;
-      })
-      .slice(0, limit);
-  } catch (error) {
-    console.error('[data-instantdb] Error fetching buffets near gas stations:', error);
     return [];
   }
 }
@@ -3154,35 +3037,35 @@ async function withHubTimeout<T>(
 ): Promise<{ result: T; durationMs: number; timedOut: boolean; error?: string }> {
   const timeout = isDev ? HUB_TIMEOUT_DEV : HUB_TIMEOUT_PROD;
   const start = Date.now();
-  
+
   let timeoutId: NodeJS.Timeout | null = null;
-  
+
   const timeoutPromise = new Promise<never>((_, reject) => {
     timeoutId = setTimeout(() => {
       reject(new Error(`TIMEOUT: ${label} exceeded ${timeout}ms`));
     }, timeout);
   });
-  
+
   try {
     const result = await Promise.race([fn(), timeoutPromise]);
     if (timeoutId) clearTimeout(timeoutId);
-    
+
     const durationMs = Date.now() - start;
     if (isDev) {
       console.log(`[Hub] ${label}: ${durationMs}ms`);
     }
-    
+
     return { result, durationMs, timedOut: false };
   } catch (error) {
     if (timeoutId) clearTimeout(timeoutId);
     const durationMs = Date.now() - start;
     const errorMsg = error instanceof Error ? error.message : String(error);
-    
+
     if (errorMsg.startsWith('TIMEOUT:')) {
       console.warn(`[Hub] ${label}: TIMED OUT after ${durationMs}ms`);
       return { result: fallback, durationMs, timedOut: true, error: errorMsg };
     }
-    
+
     console.error(`[Hub] ${label}: ERROR after ${durationMs}ms`, error);
     return { result: fallback, durationMs, timedOut: false, error: errorMsg };
   }
@@ -3202,7 +3085,7 @@ export async function getAllStatesWithCounts(): Promise<{
   debug: HubDebugInfo;
 }> {
   const start = Date.now();
-  
+
   const { result: buffetsByState, durationMs, timedOut, error } = await withHubTimeout(
     'getAllStatesWithCounts',
     async () => {
@@ -3211,7 +3094,7 @@ export async function getAllStatesWithCounts(): Promise<{
     },
     {} as Record<string, any>
   );
-  
+
   // Get raw counts for debug info
   let rawCounts = { cities: 0, buffets: 0 };
   try {
@@ -3225,7 +3108,7 @@ export async function getAllStatesWithCounts(): Promise<{
   } catch (e) {
     // ignore
   }
-  
+
   const states = Object.entries(buffetsByState)
     .map(([stateAbbr, data]: [string, any]) => ({
       stateAbbr,
@@ -3269,7 +3152,7 @@ export async function getAllCitiesWithCounts(): Promise<{
   debug: HubDebugInfo;
 }> {
   const start = Date.now();
-  
+
   const { result: buffetsByCity, durationMs, timedOut, error } = await withHubTimeout(
     'getAllCitiesWithCounts',
     async () => {
@@ -3278,7 +3161,7 @@ export async function getAllCitiesWithCounts(): Promise<{
     },
     {} as Record<string, any>
   );
-  
+
   // Get raw counts for debug info
   let rawCounts = { cities: 0, buffets: 0 };
   try {
@@ -3292,7 +3175,7 @@ export async function getAllCitiesWithCounts(): Promise<{
   } catch (e) {
     // ignore
   }
-  
+
   const cities = Object.entries(buffetsByCity)
     .map(([slug, data]: [string, any]) => ({
       slug,
@@ -3338,7 +3221,7 @@ export async function getCityNeighborhoodsWithCounts(citySlug: string): Promise<
   debug: HubDebugInfo;
 } | null> {
   const start = Date.now();
-  
+
   const { result: city, durationMs, timedOut, error } = await withHubTimeout(
     `getCityNeighborhoodsWithCounts(${citySlug})`,
     async () => {
@@ -3347,18 +3230,18 @@ export async function getCityNeighborhoodsWithCounts(citySlug: string): Promise<
     },
     null
   );
-  
+
   if (!city) {
     return null;
   }
-  
+
   const neighborhoods = buildNeighborhoodsFromBuffets(
     city.buffets || [],
     citySlug,
     city.city,
     city.stateAbbr
   );
-  
+
   const filteredNeighborhoods = neighborhoods
     .filter((n: any) => n.neighborhood && n.buffetCount > 0)
     .sort((a: any, b: any) => b.buffetCount - a.buffetCount);
@@ -3366,7 +3249,7 @@ export async function getCityNeighborhoodsWithCounts(citySlug: string): Promise<
   if (isDev) {
     console.log(`[Hub] getCityNeighborhoodsWithCounts(${citySlug}): ${filteredNeighborhoods.length} neighborhoods from ${city.buffets?.length || 0} buffets`);
   }
-  
+
   return {
     cityName: city.city,
     stateAbbr: city.stateAbbr,

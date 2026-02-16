@@ -1,5 +1,12 @@
 import { NextRequest } from "next/server";
 
+/**
+ * COST GUARD:
+ * - This route is intentionally edge-cacheable.
+ * - Do not use cookies()/headers()/draftMode()/unstable_noStore() here.
+ * - Changing Cache-Control impacts Vercel Function Invocations.
+ */
+
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
@@ -12,7 +19,7 @@ export async function GET(req: NextRequest) {
         {
           error: "Invalid photoReference: must start with places/",
         },
-        { status: 400 }
+        { status: 400, headers: { 'Cache-Control': 'no-store' } }
       );
     }
 
@@ -23,7 +30,7 @@ export async function GET(req: NextRequest) {
     if (!key) {
       return Response.json(
         { error: "Missing GOOGLE_MAPS_API_KEY on server" },
-        { status: 500 }
+        { status: 500, headers: { 'Cache-Control': 'no-store' } }
       );
     }
 
@@ -46,7 +53,7 @@ export async function GET(req: NextRequest) {
           status: upstreamRes.status,
           body: bodyText.slice(0, 1200),
         },
-        { status: 502 }
+        { status: 502, headers: { 'Cache-Control': 'no-store' } }
       );
     }
 
@@ -59,13 +66,13 @@ export async function GET(req: NextRequest) {
       headers: {
         "Content-Type": contentType,
         // Strong browser caching
-        "Cache-Control": "public, max-age=31536000, immutable",
+        "Cache-Control": "public, s-maxage=31536000, max-age=31536000, immutable",
       },
     });
   } catch (err: any) {
     return Response.json(
       { error: "Unexpected error in /api/photo", message: String(err?.message ?? err) },
-      { status: 500 }
+      { status: 500, headers: { 'Cache-Control': 'no-store' } }
     );
   }
 }

@@ -93,22 +93,6 @@ async function generateCrawlMap(): Promise<string> {
     console.error('Error fetching states:', error);
   }
 
-  // POI pages
-  const poiTypes = ['parking', 'shopping-malls', 'highways', 'gas-stations'];
-  for (const poiType of poiTypes) {
-    const poiPath = `/chinese-buffets/near/${poiType}`;
-    pages.set(poiPath, {
-      url: `${BASE_URL}${poiPath}`,
-      path: poiPath,
-      depth: 1,
-      type: 'poi',
-      linksTo: [],
-      linkedFrom: [homePath], // Now linked from homepage
-      isOrphan: false,
-    });
-    pages.get(homePath)!.linksTo.push(poiPath);
-  }
-
   // Level 2: City pages
   try {
     const cityResult = await db.query({
@@ -326,9 +310,7 @@ function generateVisualization(pages: Map<string, PageInfo>): string {
   output += '-'.repeat(100) + '\n';
   output += 'Path 1: Home → State → City → Buffet (3 clicks)\n';
   output += '  / → /chinese-buffets/states/ca → /chinese-buffets/los-angeles-ca → /chinese-buffets/los-angeles-ca/china-buffet\n\n';
-  output += 'Path 2: Home → POI Page → Buffet (2 clicks)\n';
-  output += '  / → /chinese-buffets/near/parking → [buffet links]\n\n';
-  output += 'Path 3: Home → City → Buffet (2 clicks)\n';
+  output += 'Path 2: Home → City → Buffet (2 clicks)\n';
   output += '  / → /chinese-buffets/new-york-ny → /chinese-buffets/new-york-ny/china-buffet\n\n';
 
   // Recommendations

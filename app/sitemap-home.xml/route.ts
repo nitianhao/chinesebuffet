@@ -4,12 +4,14 @@ import { createSitemapEntry, filterIndexableEntries } from '@/lib/sitemap-utils'
 import { PageType, IndexTier } from '@/lib/index-tier';
 import { getBaseUrlForRobotsAndSitemaps } from '@/lib/site-url';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * Homepage Sitemap
  */
 export async function GET(): Promise<NextResponse> {
   const baseUrl = getBaseUrlForRobotsAndSitemaps();
-  
+
   // Homepage is always indexable (tier-1); baseUrl is absolute (no trailing slash)
   const entries = [
     createSitemapEntry(
@@ -25,13 +27,14 @@ export async function GET(): Promise<NextResponse> {
 
   // Filter to only include indexable pages (excludes noindex)
   const routes = filterIndexableEntries(entries);
-  
+
   // Return XML sitemap
   const xml = generateSitemapXML(routes);
-  
+
   return new NextResponse(xml, {
     headers: {
       'Content-Type': 'application/xml',
+      'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800',
     },
   });
 }

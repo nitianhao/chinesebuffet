@@ -18,7 +18,6 @@ const URLS = [
   { path: '/chinese-buffets/los-angeles-ca/china-buffet', label: 'Buffet detail' },
   { path: '/chinese-buffets/los-angeles-ca/does-not-exist', label: 'Buffet (nonsense slug)' },
   { path: '/chinese-buffets/los-angeles-ca/neighborhoods/downtown', label: 'Neighborhood' },
-  { path: '/chinese-buffets/near/parking', label: 'POI / Near' },
   { path: '/chinese-buffets/states/ca', label: 'State (CA)' },
 ];
 

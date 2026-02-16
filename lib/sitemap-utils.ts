@@ -7,7 +7,6 @@
 
 import { MetadataRoute } from 'next';
 import { IndexTierConfig, createIndexTierConfig, PageType, IndexTier } from './index-tier';
-import { assessPOIPageQuality } from './poi-page-quality';
 
 export interface SitemapEntry {
   url: string;

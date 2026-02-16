@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { init } from '@instantdb/admin';
 import schema from '@/src/instant.schema';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   if (!process.env.INSTANT_ADMIN_TOKEN) {
     return NextResponse.json({ error: 'INSTANT_ADMIN_TOKEN is required' }, { status: 500 });
@@ -15,7 +17,7 @@ export async function GET() {
     });
 
     console.log('Fetching all poiRecords to analyze group field...');
-    
+
     // Fetch all poiRecords in batches to handle large datasets
     const batchSize = 1000;
     let allRecords = [];
@@ -34,7 +36,7 @@ export async function GET() {
 
       const records = result.poiRecords || [];
       allRecords = allRecords.concat(records);
-      
+
       if (records.length < batchSize) {
         hasMore = false;
       } else {
@@ -51,7 +53,7 @@ export async function GET() {
 
     for (const record of allRecords) {
       const group = record.group || '(null/undefined)';
-      
+
       if (!groupCounts[group]) {
         groupCounts[group] = 0;
       }

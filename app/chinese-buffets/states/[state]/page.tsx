@@ -49,7 +49,7 @@ interface StatePageProps {
 export async function generateMetadata({ params }: StatePageProps): Promise<Metadata> {
   const stateAbbr = params.state.toUpperCase();
   const stateName = STATE_ABBR_TO_NAME[stateAbbr];
-  
+
   const statePath = `/chinese-buffets/states/${params.state.toLowerCase()}`;
   if (!stateName) {
     return {
@@ -58,7 +58,7 @@ export async function generateMetadata({ params }: StatePageProps): Promise<Meta
       alternates: { canonical: `${BASE_URL}${statePath}` },
     };
   }
-  
+
   const { result, timedOut } = await withTimeout(
     'state-rollup-metadata',
     () => getStateCitiesCached(stateAbbr),
@@ -76,7 +76,7 @@ export async function generateMetadata({ params }: StatePageProps): Promise<Meta
       robots: { index: true, follow: true },
     };
   }
-  
+
   if (!data || data.cities.length === 0) {
     return {
       title: `Chinese Buffets in ${stateName}`,
@@ -99,12 +99,12 @@ export async function generateMetadata({ params }: StatePageProps): Promise<Meta
 export default async function StatePage({ params }: StatePageProps) {
   const stateAbbr = params.state.toUpperCase();
   const stateName = STATE_ABBR_TO_NAME[stateAbbr];
-  
+
   // If invalid state abbreviation, 404
   if (!stateName) {
     notFound();
   }
-  
+
   const { result, timedOut } = await withTimeout(
     'state-rollup-page',
     () => getStateCitiesCached(stateAbbr),
@@ -115,14 +115,14 @@ export default async function StatePage({ params }: StatePageProps) {
   if (timedOut) {
     return <StatePageSkeleton stateName={stateName} />;
   }
-  
+
   // If no rollup data, 404
   if (!data || data.cities.length === 0) {
     notFound();
   }
 
   const { cities, buffetCount, cityCount } = data;
-  
+
   // Get top city for stats and for "Top buffets" cross-links
   const topCity = cities[0];
   let topBuffetsInState: Array<{ name: string; slug: string; citySlug: string }> = [];
@@ -149,37 +149,6 @@ export default async function StatePage({ params }: StatePageProps) {
         position: 3,
         name: stateName,
         item: `${BASE_URL}/chinese-buffets/states/${stateAbbr.toLowerCase()}`,
-      },
-    ],
-  };
-
-  const faqJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: [
-      {
-        '@type': 'Question',
-        name: `How many Chinese buffets are in ${stateName}?`,
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: `We list ${buffetCount.toLocaleString()} Chinese buffets across ${cityCount.toLocaleString()} cities in ${stateName}.`,
-        },
-      },
-      {
-        '@type': 'Question',
-        name: `What are the top cities for Chinese buffets in ${stateName}?`,
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: `The top cities section highlights the highest-count cities in ${stateName} so you can start with the most options.`,
-        },
-      },
-      {
-        '@type': 'Question',
-        name: `Do listings include hours and prices?`,
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Yes. City and buffet pages include hours, prices when available, ratings, and location details.',
-        },
       },
     ],
   };
@@ -212,10 +181,6 @@ export default async function StatePage({ params }: StatePageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       <JsonLd data={itemListSchema} />
       <JsonLd data={webPageSchema} />
@@ -316,7 +281,7 @@ export default async function StatePage({ params }: StatePageProps) {
       <section className="rounded-[var(--section-radius)] border border-[var(--border)] bg-[var(--surface)] p-[var(--section-pad)]">
         <div className="flex items-center justify-between gap-4 mb-4">
           <h2 className="text-2xl font-bold text-[var(--text)]">
-          Cities with Chinese Buffets in {stateName}
+            Cities with Chinese Buffets in {stateName}
           </h2>
           <span className="text-sm text-[var(--muted)]">
             Top cities first

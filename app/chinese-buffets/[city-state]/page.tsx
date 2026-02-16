@@ -2,11 +2,12 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { unstable_cache } from 'next/cache';
-import { getCityBuffetsRollup, getStateCitiesRollup, CityBuffetRow, StateCityRow } from '@/lib/rollups';
+import { getCityBuffetsRollup, getStateCitiesRollup, CityBuffetRow, StateCityRow, POI_LABELS, CityPoiSummary } from '@/lib/rollups';
 import CityFacetsLoader from '@/components/city/CityFacetsLoader';
 import SiteShell from '@/components/layout/SiteShell';
 import { withTimeout } from '@/lib/async-utils';
 import CityBuffetList from '@/components/city/CityBuffetList';
+import CityMoreBuffets from '@/components/city/CityMoreBuffets';
 import { perfMark, perfMs, PERF_ENABLED } from '@/lib/perf';
 import { getSiteUrl } from '@/lib/site-url';
 import { JsonLdServer } from '@/components/seo/JsonLdServer';
@@ -134,7 +135,7 @@ export async function generateMetadata({ params }: CityPageProps): Promise<Metad
       robots: { index: true, follow: true },
     };
   }
-  
+
   // Invalid slug — no city exists in DB
   if (!data) {
     return {
@@ -191,12 +192,14 @@ function toSlim(b: CityBuffetRow): SlimBuffet {
 }
 
 export default async function CityPage({ params }: CityPageProps) {
+  console.time("[city] total");
   const tTotal = perfMark();
   const citySlug = params['city-state'];
 
   // ---- 1. Data fetch — rollup only ----
   // Facets are loaded CLIENT-SIDE via /api/facets/city to avoid the 8s
   // InstantDB facet query blocking the initial HTML response.
+  console.time("[city] getCityRollupCached");
   const tFetch = perfMark();
   const rollupOutcome = await withTimeout(
     'city-rollup',
@@ -204,6 +207,7 @@ export default async function CityPage({ params }: CityPageProps) {
     { data: null },
     ROLLUP_TIMEOUT_MS,
   );
+  console.timeEnd("[city] getCityRollupCached");
   const fetchCityMs = perfMs(tFetch);
 
   const { data } = rollupOutcome.result;
@@ -258,19 +262,23 @@ export default async function CityPage({ params }: CityPageProps) {
   }
 
   // ---- 3. Render prep (sorting, formatting, pagination) ----
+  console.time("[city] buildText");
   const tPrep = perfMark();
 
-  const { cityName, state, buffets, neighborhoods, buffetCount } = data;
-  
+  const { cityName, state, buffets, neighborhoods, buffetCount, cityPoiSummary } = data;
+
   // NOTE: No server-side filtering — filters are applied client-side by
   // CityBuffetList. The server always renders the unfiltered list. This is
   // critical for ISR caching: accessing searchParams would force dynamic rendering.
-  
+
+  console.log("[city] has cityPoiSummary?", Boolean(data?.cityPoiSummary));
+  console.log("[city] cityPoiSummary sample", JSON.stringify(data?.cityPoiSummary?.topCategories?.slice(0, 3) ?? null));
+
   // Sort by rating for top rated section
   const topBuffets = [...buffets]
     .sort((a, b) => (b.rating || 0) - (a.rating || 0))
     .slice(0, 5);
-  
+
   // Calculate price range from all buffets (cheap)
   const prices = buffets
     .map(b => b.price)
@@ -280,8 +288,8 @@ export default async function CityPage({ params }: CityPageProps) {
       return match ? parseInt(match[1]) : null;
     })
     .filter((p): p is number => p !== null);
-  
-  const priceRange = prices.length > 0 
+
+  const priceRange = prices.length > 0
     ? `$${Math.min(...prices)}-$${Math.max(...prices)}`
     : 'Varies';
 
@@ -302,36 +310,7 @@ export default async function CityPage({ params }: CityPageProps) {
     ],
   };
 
-  const faqJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: [
-      {
-        '@type': 'Question',
-        name: `How many Chinese buffets are in ${cityName}?`,
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: `We list ${buffetCount} Chinese buffets in ${cityName}.`,
-        },
-      },
-      {
-        '@type': 'Question',
-        name: `Where can I browse neighborhoods in ${cityName}?`,
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: `Use the neighborhoods section to explore areas within ${cityName} that have buffet listings.`,
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'Do listings include hours and reviews?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Yes. Listings include hours when available, ratings, and review counts to compare options.',
-        },
-      },
-    ],
-  };
+
 
   const cityPageUrl = `${BASE_URL}/chinese-buffets/${citySlug}`;
   const itemListItems = buffets.slice(0, 50);
@@ -356,6 +335,9 @@ export default async function CityPage({ params }: CityPageProps) {
     mainEntity: { '@id': `${cityPageUrl}#itemlist` },
   };
 
+  console.timeEnd("[city] buildText");
+  console.timeEnd("[city] total");
+
   if (PERF_ENABLED) {
     console.log(`[perf][city-page] ${JSON.stringify({
       route: citySlug,
@@ -374,10 +356,7 @@ export default async function CityPage({ params }: CityPageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-      />
+
       <div style={{ display: 'none' }} aria-hidden suppressHydrationWarning dangerouslySetInnerHTML={{ __html: '<!-- JSONLD_START:itemlist -->' }} />
       <JsonLdServer data={itemListSchema} />
       <div style={{ display: 'none' }} aria-hidden suppressHydrationWarning dangerouslySetInnerHTML={{ __html: '<!-- JSONLD_END:itemlist -->' }} />
@@ -399,6 +378,7 @@ export default async function CityPage({ params }: CityPageProps) {
           <h1 className="text-3xl sm:text-4xl font-bold text-[var(--text)] mb-2">
             Chinese Buffets in {cityName}, {state}
           </h1>
+
           <p className="text-base sm:text-lg text-[var(--muted)]">
             {buffetCount} {buffetCount === 1 ? 'location' : 'locations'} found
           </p>
@@ -451,12 +431,69 @@ export default async function CityPage({ params }: CityPageProps) {
       </section>
 
       <section className="rounded-[var(--section-radius)] border border-[var(--border)] bg-[var(--surface)] p-[var(--section-pad)]">
-        <p className="text-[var(--text-secondary)]">
-          Looking for Chinese buffets in {cityName}, {state}? Our directory
-          features {buffetCount} {buffetCount === 1 ? 'Chinese buffet' : 'Chinese buffets'} in {cityName},
-          offering all-you-can-eat dining experiences throughout the city.
+        <h2 className="text-xl font-bold text-[var(--text)] mb-2">City guide</h2>
+        <p className="text-[var(--text-secondary)] leading-relaxed">
+          {buffetCount > 2 ? (
+            <>
+              {cityName} has {buffetCount} Chinese {buffetCount === 1 ? 'buffet' : 'buffets'} listed.
+              {topBuffets.length > 0 && topBuffets[0].rating && topBuffets[0].reviewsCount && (
+                <> The top-rated option is <Link href={`/chinese-buffets/${citySlug}/${topBuffets[0].slug}`} className="text-[var(--accent1)] hover:underline">{topBuffets[0].name}</Link>, satisfying diners with a {topBuffets[0].rating.toFixed(1)}★ rating from {topBuffets[0].reviewsCount} reviews.</>
+              )}
+              {cityPoiSummary && cityPoiSummary.topCategories && cityPoiSummary.topCategories.length >= 2 && (
+                <> Buffets here are most often near {POI_LABELS[cityPoiSummary.topCategories[0].name] || cityPoiSummary.topCategories[0].name.replace(/([A-Z])/g, ' $1').trim()} and {POI_LABELS[cityPoiSummary.topCategories[1].name] || cityPoiSummary.topCategories[1].name.replace(/([A-Z])/g, ' $1').trim()}.</>
+              )}
+              {neighborhoods.length > 0 && (
+                <> You can also browse options across specific neighborhoods like {neighborhoods[0].neighborhood}.</>
+              )}
+            </>
+          ) : (
+            <>
+              Options are limited in {cityName} right now, with {buffetCount} {buffetCount === 1 ? 'location' : 'locations'} listed.
+              {topBuffets.length > 0 && topBuffets[0].rating && topBuffets[0].reviewsCount && (
+                <> The main option is <Link href={`/chinese-buffets/${citySlug}/${topBuffets[0].slug}`} className="text-[var(--accent1)] hover:underline">{topBuffets[0].name}</Link>, rated {topBuffets[0].rating.toFixed(1)}★ ({topBuffets[0].reviewsCount} reviews).</>
+              )}
+              {nearbyCities.length > 0 && (
+                <> For more choices, check nearby cities like {nearbyCities.slice(0, 3).map((nc, idx, arr) => (
+                  <span key={nc.citySlug}>
+                    <Link href={`/chinese-buffets/${nc.citySlug}`} className="text-[var(--accent1)] hover:underline">{nc.cityName}</Link>
+                    {idx < arr.length - 1 ? ', ' : '.'}
+                  </span>
+                ))}</>
+              )}
+              {neighborhoods.length > 0 && (
+                <> You can also browse options in neighborhoods like {neighborhoods[0].neighborhood}.</>
+              )}
+            </>
+          )}
         </p>
       </section>
+
+      {/* City POI Summary - Places around buffets */}
+      {cityPoiSummary && cityPoiSummary.topCategories && cityPoiSummary.topCategories.length > 0 && (
+        <section className="rounded-[var(--section-radius)] border border-[var(--border)] bg-[var(--surface)] p-[var(--section-pad)]">
+          <h2 className="text-xl font-bold text-[var(--text)] mb-2">
+            Most common nearby place types
+          </h2>
+          <p className="text-sm text-[var(--text-secondary)] mb-6">
+            Buffets in {cityName} are most commonly located near the following types of places:
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-2">
+            {cityPoiSummary.topCategories.slice(0, 6).map((cat) => (
+              <div key={cat.name} className="flex justify-between items-center text-sm py-1 border-b border-[var(--border)] last:border-0 sm:last:border-b sm:nth-last-2:border-0">
+                <span className="font-medium text-[var(--text)]">
+                  {POI_LABELS[cat.name] || cat.name}
+                </span>
+                <span className="text-[var(--muted)] font-mono text-xs tabular-nums">
+                  <span className="font-semibold text-[var(--text)]">{cat.countTotal}</span>
+                  <span className="text-[var(--text-secondary)] ml-1 opacity-70">
+                    ({cat.buffetsWith} buffets)
+                  </span>
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Neighborhoods — kept lightweight, max 6 links */}
       {neighborhoods.length > 0 && (
@@ -524,47 +561,62 @@ export default async function CityPage({ params }: CityPageProps) {
         )}
       </section>
 
-      {/* SEO internal links — kept as simple text links, very small HTML */}
+      {/* SEO internal links — collapsed by default to avoid link spam */}
       {hasMore && (
-        <nav className="rounded-[var(--section-radius)] border border-[var(--border)] bg-[var(--surface)] p-[var(--section-pad)]">
-          <h2 className="sr-only">All buffet links in {cityName}</h2>
-          <ul className="columns-2 sm:columns-3 gap-x-4 text-sm text-[var(--accent1)]">
-            {remainingBuffets.map((b) => (
-              <li key={b.id} className="mb-1 break-inside-avoid">
-                <Link href={`/chinese-buffets/${citySlug}/${b.slug}`} className="hover:underline line-clamp-1">
-                  {b.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        <CityMoreBuffets
+          buffets={remainingBuffets.map((b) => ({ id: b.id, slug: b.slug, name: b.name }))}
+          cityName={cityName}
+          citySlug={citySlug}
+        />
       )}
 
       <section className="rounded-[var(--section-radius)] border border-[var(--border)] bg-[var(--surface)] p-[var(--section-pad)]">
         <h2 className="text-2xl font-bold text-[var(--text)] mb-4">FAQs</h2>
         <div className="space-y-3">
-          <details className="rounded-md border border-[var(--border)] bg-[var(--surface2)]">
+          <details className="rounded-md border border-[var(--border)] bg-[var(--surface2)] open:bg-[var(--surface)]">
             <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-[var(--text)]">
               How many Chinese buffets are in {cityName}?
             </summary>
             <p className="px-4 pb-4 text-sm text-[var(--text-secondary)]">
-              We list {buffetCount} Chinese buffets in {cityName}, {state}.
+              We found {buffetCount} Chinese {buffetCount === 1 ? 'buffet' : 'buffets'} in {cityName}.
             </p>
           </details>
-          <details className="rounded-md border border-[var(--border)] bg-[var(--surface2)]">
+          <details className="rounded-md border border-[var(--border)] bg-[var(--surface2)] open:bg-[var(--surface)]">
             <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-[var(--text)]">
-              Can I browse by neighborhood?
+              What’s the highest-rated Chinese buffet in {cityName}?
             </summary>
             <p className="px-4 pb-4 text-sm text-[var(--text-secondary)]">
-              Yes. Use the neighborhoods section above to explore areas with buffet listings.
+              {topBuffets.length > 0 ? (
+                <>Top-rated is {topBuffets[0].name} with {topBuffets[0].rating ? `${topBuffets[0].rating} stars` : 'positive reviews'}.</>
+              ) : (
+                <>Ratings vary. Check individual listings for reviews and photos.</>
+              )}
             </p>
           </details>
-          <details className="rounded-md border border-[var(--border)] bg-[var(--surface2)]">
+          {cityPoiSummary && cityPoiSummary.topCategories && cityPoiSummary.topCategories.length >= 2 && (
+            <details className="rounded-md border border-[var(--border)] bg-[var(--surface2)] open:bg-[var(--surface)]">
+              <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-[var(--text)]">
+                What areas around buffets are most common in {cityName}?
+              </summary>
+              <p className="px-4 pb-4 text-sm text-[var(--text-secondary)]">
+                Buffets are frequently located near {POI_LABELS[cityPoiSummary.topCategories[0].name] || cityPoiSummary.topCategories[0].name} ({cityPoiSummary.topCategories[0].countTotal} places) and {POI_LABELS[cityPoiSummary.topCategories[1].name] || cityPoiSummary.topCategories[1].name} ({cityPoiSummary.topCategories[1].countTotal} places).
+              </p>
+            </details>
+          )}
+          <details className="rounded-md border border-[var(--border)] bg-[var(--surface2)] open:bg-[var(--surface)]">
             <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-[var(--text)]">
-              Do listings include hours and reviews?
+              Where can I find more options near {cityName}?
             </summary>
             <p className="px-4 pb-4 text-sm text-[var(--text-secondary)]">
-              Listings include hours when available, ratings, and review counts to compare quality.
+              {nearbyCities.length > 0 ? (
+                <>Check out options in {nearbyCities.slice(0, 3).map((nc, i, arr) => (
+                  <span key={nc.citySlug}>
+                    {nc.cityName}{i < arr.length - 1 ? (i === arr.length - 2 ? ' or ' : ', ') : ''}
+                  </span>
+                ))}, or see the full list of nearby cities below.</>
+              ) : (
+                <>Check out the Nearby cities section below for more buffet options in the surrounding area.</>
+              )}
             </p>
           </details>
         </div>
@@ -601,45 +653,6 @@ export default async function CityPage({ params }: CityPageProps) {
           </ul>
         </section>
       )}
-
-      {/* Browse by nearby places — server-rendered POI links */}
-      <section className="rounded-[var(--section-radius)] border border-[var(--border)] bg-[var(--surface)] p-[var(--section-pad)]">
-        <h2 className="text-lg font-semibold text-[var(--text)] mb-3">Find buffets by nearby places</h2>
-        <ul className="flex flex-wrap gap-2">
-          <li>
-            <Link
-              href="/chinese-buffets/near/parking"
-              className="inline-flex rounded-full border border-[var(--border)] bg-[var(--surface2)] px-3 py-1.5 text-xs font-medium text-[var(--text)] hover:border-[var(--accent1)] hover:text-[var(--accent1)] transition-colors"
-            >
-              With parking
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/chinese-buffets/near/shopping-malls"
-              className="inline-flex rounded-full border border-[var(--border)] bg-[var(--surface2)] px-3 py-1.5 text-xs font-medium text-[var(--text)] hover:border-[var(--accent1)] hover:text-[var(--accent1)] transition-colors"
-            >
-              Near shopping malls
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/chinese-buffets/near/highways"
-              className="inline-flex rounded-full border border-[var(--border)] bg-[var(--surface2)] px-3 py-1.5 text-xs font-medium text-[var(--text)] hover:border-[var(--accent1)] hover:text-[var(--accent1)] transition-colors"
-            >
-              Near highways
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/chinese-buffets/near/gas-stations"
-              className="inline-flex rounded-full border border-[var(--border)] bg-[var(--surface2)] px-3 py-1.5 text-xs font-medium text-[var(--text)] hover:border-[var(--accent1)] hover:text-[var(--accent1)] transition-colors"
-            >
-              Near gas stations
-            </Link>
-          </li>
-        </ul>
-      </section>
 
       <section className="rounded-[var(--section-radius)] border border-[var(--border)] bg-[var(--surface)] p-[var(--section-pad)]">
         <Link

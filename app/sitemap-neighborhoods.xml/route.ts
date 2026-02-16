@@ -6,8 +6,8 @@ import { PageType, IndexTier } from '@/lib/index-tier';
 import { isCityIndexable, getStagedIndexingConfig } from '@/lib/staged-indexing';
 import { getBaseUrlForRobotsAndSitemaps } from '@/lib/site-url';
 
-// ISR: regenerate sitemap at most once per hour at runtime
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
+// Note: Removed revalidate export - now using force-dynamic with edge caching via Cache-Control
 
 /**
  * Neighborhood Pages Sitemap
@@ -16,18 +16,18 @@ export const revalidate = 3600;
 export async function GET(): Promise<NextResponse> {
   const baseUrl = getBaseUrlForRobotsAndSitemaps();
   const citySlugs = await getAllCitySlugs();
-  
+
   const entries = [];
-  
+
   // Check staged indexing config
   const stagedConfig = getStagedIndexingConfig();
-  
+
   for (const slug of citySlugs) {
     try {
       // Check if city is indexable in current phase
       const city = await getCityBySlug(slug);
       if (!city) continue;
-      
+
       const cityIndexable = isCityIndexable(
         {
           slug: city.slug,
@@ -39,17 +39,17 @@ export async function GET(): Promise<NextResponse> {
         },
         stagedConfig
       );
-      
+
       // Only process neighborhoods from indexable cities
       if (!cityIndexable) continue;
-      
+
       const neighborhoods = await getNeighborhoodsByCity(slug);
-      
+
       for (const neighborhood of neighborhoods) {
         const pagePath = `/chinese-buffets/${slug}/neighborhoods/${neighborhood.slug}`;
         // Get last modified from neighborhood data (updatedAt, lastModified, or current date)
         const lastModified = getLastModified(neighborhood);
-        
+
         // Neighborhood pages are tier-3 (conditional indexing)
         // Default is noindex, but can be overridden if they have good content
         // Only include if indexable (excludes noindex pages)
@@ -64,7 +64,7 @@ export async function GET(): Promise<NextResponse> {
           // createSitemapEntry will return null if this is false (noindex)
           (neighborhood.buffetCount || 0) > 0
         );
-        
+
         // Only add if entry is indexable (excludes noindex pages)
         if (entry) {
           entries.push(entry);
@@ -74,15 +74,16 @@ export async function GET(): Promise<NextResponse> {
       console.error(`[Sitemap] Error processing neighborhoods for city ${slug}:`, error);
     }
   }
-  
+
   const routes = filterIndexableEntries(entries);
-  
+
   // Return XML sitemap
   const xml = generateSitemapXML(routes);
-  
+
   return new NextResponse(xml, {
     headers: {
       'Content-Type': 'application/xml',
+      'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800',
     },
   });
 }

@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { init } from '@instantdb/admin';
 import schema from '@/src/instant.schema';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   if (!process.env.INSTANT_ADMIN_TOKEN) {
     return NextResponse.json({ error: 'INSTANT_ADMIN_TOKEN is required' }, { status: 500 });
@@ -15,7 +17,7 @@ export async function GET() {
     });
 
     console.log('Fetching all poiRecords...');
-    
+
     // Fetch all poiRecords
     const result = await db.query({
       poiRecords: {
@@ -33,7 +35,7 @@ export async function GET() {
 
     for (const record of records) {
       const category = record.category || '(null/undefined)';
-      
+
       if (!categoryCounts[category]) {
         categoryCounts[category] = 0;
       }

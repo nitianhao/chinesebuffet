@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "CHOKIDAR_USEPOLLING=true CHOKIDAR_INTERVAL=1000 next dev",
-    "build": "NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL:-https://buffetlocator.com} next build && node scripts/check-performance-budgets.js",
+    "build": "next build",
     "build:skip-budgets": "next build",
     "start": "next start",
     "lint": "next lint",

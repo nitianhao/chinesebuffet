@@ -159,7 +159,10 @@ export default function BuffetPhotoGallery({ images, categoryLabels = [] }: Buff
         />
       </button>
       {thumbImages.length > 1 && (
-        <div className="mt-4 flex gap-3 overflow-x-auto pb-1">
+        <div
+          className="mt-4 flex gap-3 overflow-x-auto overscroll-x-contain touch-pan-x pb-1"
+          style={{ WebkitOverflowScrolling: 'touch' }}
+        >
           {thumbImages.map((image, index) => (
             <button
               key={image.photoReference}

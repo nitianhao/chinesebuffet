@@ -13,6 +13,11 @@ export default function TableOfContents({ sections, headerOffset = 80 }: TableOf
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const sectionRefs = useRef<Map<string, HTMLElement>>(new Map());
+  // Ref mirrors activeId so callbacks can read the latest value without
+  // needing activeId in their dependency arrays (avoids re-creating the
+  // IntersectionObserver / scroll listener on every highlight change).
+  const activeIdRef = useRef(activeId);
+  activeIdRef.current = activeId;
 
   // Handle smooth scroll to section
   const scrollToSection = useCallback((id: string) => {
@@ -72,7 +77,7 @@ export default function TableOfContents({ sections, headerOffset = 80 }: TableOf
             }
           }
           
-          if (activeSectionId && activeSectionId !== activeId) {
+          if (activeSectionId && activeSectionId !== activeIdRef.current) {
             setActiveId(activeSectionId);
           }
           return;
@@ -91,7 +96,7 @@ export default function TableOfContents({ sections, headerOffset = 80 }: TableOf
         });
 
         const topEntry = intersectingEntries[0];
-        if (topEntry && topEntry.target.id && topEntry.target.id !== activeId) {
+        if (topEntry && topEntry.target.id && topEntry.target.id !== activeIdRef.current) {
           setActiveId(topEntry.target.id);
         }
       },
@@ -120,17 +125,6 @@ export default function TableOfContents({ sections, headerOffset = 80 }: TableOf
     const timeoutId = setTimeout(observeSections, 500);
     const timeoutId2 = setTimeout(observeSections, 1500); // Second retry for slow-loading content
 
-    // Check initial hash on mount
-    if (typeof window !== 'undefined') {
-      const hash = window.location.hash.slice(1);
-      if (hash && sections.some((s) => s.id === hash)) {
-        // Small delay to ensure DOM is ready
-        setTimeout(() => {
-          scrollToSection(hash);
-        }, 100);
-      }
-    }
-
     // Add scroll listener as fallback to ensure we track all sections
     let scrollTimeout: NodeJS.Timeout;
     const handleScroll = () => {
@@ -151,7 +145,7 @@ export default function TableOfContents({ sections, headerOffset = 80 }: TableOf
           }
         }
         
-        if (newActiveId && newActiveId !== activeId) {
+        if (newActiveId && newActiveId !== activeIdRef.current) {
           setActiveId(newActiveId);
         }
       }, 50);
@@ -168,7 +162,21 @@ export default function TableOfContents({ sections, headerOffset = 80 }: TableOf
       }
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [sections, headerOffset, activeId, scrollToSection]);
+  }, [sections, headerOffset, scrollToSection]);
+
+  // Scroll to hash section on initial mount only (not on every activeId change)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const hash = window.location.hash.slice(1);
+      if (hash && sections.some((s) => s.id === hash)) {
+        // Small delay to ensure DOM is ready
+        setTimeout(() => {
+          scrollToSection(hash);
+        }, 100);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Handle hash changes from browser navigation
   useEffect(() => {

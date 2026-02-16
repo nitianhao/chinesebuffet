@@ -80,6 +80,14 @@ export interface CityBuffetRow {
   imagesCount: number | null;
 }
 
+export interface CityPoiSummary {
+  topCategories: Array<{
+    name: string;
+    countTotal: number;
+    buffetsWith: number;
+  }>;
+}
+
 export interface CityBuffetsRollup {
   citySlug: string;
   cityName: string;
@@ -89,6 +97,7 @@ export interface CityBuffetsRollup {
   buffetCount: number;
   buffets: CityBuffetRow[];
   neighborhoods: NeighborhoodRollupRow[];
+  cityPoiSummary?: CityPoiSummary;
 }
 
 export interface NeighborhoodBuffetsRollup {
@@ -117,6 +126,37 @@ export const STATE_ABBR_TO_NAME: Record<string, string> = {
   OR: 'Oregon', PA: 'Pennsylvania', RI: 'Rhode Island', SC: 'South Carolina', SD: 'South Dakota',
   TN: 'Tennessee', TX: 'Texas', UT: 'Utah', VT: 'Vermont', VA: 'Virginia', WA: 'Washington',
   WV: 'West Virginia', WI: 'Wisconsin', WY: 'Wyoming', DC: 'District of Columbia',
+};
+
+// ============================================================================
+// POI Labels
+// ============================================================================
+
+export const POI_LABELS: Record<string, string> = {
+  accommodationLodging: 'Accommodation & Lodging',
+  agriculturalFarming: 'Agricultural & Farming',
+  artsCulture: 'Arts & Culture',
+  communicationsTechnology: 'Communications & Technology',
+  educationLearning: 'Education & Learning',
+  financialServices: 'Financial Services',
+  foodDining: 'Food & Dining',
+  governmentPublicServices: 'Government & Public Services',
+  healthcareMedicalServices: 'Healthcare & Medical',
+  homeImprovementGarden: 'Home & Garden',
+  industrialManufacturing: 'Industrial & Manufacturing',
+  miscellaneousServices: 'Miscellaneous Services',
+  personalCareBeauty: 'Personal Care & Beauty',
+  petCareVeterinary: 'Pet Care & Veterinary',
+  professionalBusinessServices: 'Professional Services',
+  recreationEntertainment: 'Recreation & Entertainment',
+  religiousSpiritual: 'Religious & Spiritual',
+  repairMaintenance: 'Repair & Maintenance',
+  retailShopping: 'Retail & Shopping',
+  socialCommunityServices: 'Social & Community Services',
+  sportsFitness: 'Sports & Fitness',
+  transportationAutomotive: 'Transportation & Automotive',
+  travelTourismServices: 'Travel & Tourism',
+  utilitiesInfrastructure: 'Utilities & Infrastructure',
 };
 
 // ============================================================================
@@ -181,16 +221,16 @@ async function fetchRollupInternal(
     if (key !== null) {
       whereClause.key = key;
     }
-    
+
     const result = await queryDb(
       db,
       { directoryRollups: { $: { where: whereClause, limit: 1 } } },
       { fetchOpts: rollupFetchOpts },
       label,
     );
-    
+
     const rollups = result.directoryRollups || [];
-    
+
     if (rollups.length === 0) {
       // Try without key constraint for global rollups
       if (key === null) {
@@ -206,23 +246,23 @@ async function fetchRollupInternal(
         if (globalRollups.length > 0) {
           const rollup = globalRollups[0] as any;
           const updatedAt = rollup.updatedAt || null;
-          const isStale = updatedAt 
-            ? Date.now() - new Date(updatedAt).getTime() > STALE_THRESHOLD_MS 
+          const isStale = updatedAt
+            ? Date.now() - new Date(updatedAt).getTime() > STALE_THRESHOLD_MS
             : true;
           const data = rollup.data ? JSON.parse(rollup.data) : null;
           return { data, updatedAt, found: true, stale: isStale };
         }
       }
-      
+
       return { data: null, updatedAt: null, found: false, stale: true };
     }
-    
+
     const rollup = rollups[0] as any;
     const updatedAt = rollup.updatedAt || null;
-    const isStale = updatedAt 
-      ? Date.now() - new Date(updatedAt).getTime() > STALE_THRESHOLD_MS 
+    const isStale = updatedAt
+      ? Date.now() - new Date(updatedAt).getTime() > STALE_THRESHOLD_MS
       : true;
-    
+
     const data = rollup.data ? JSON.parse(rollup.data) : null;
 
     return { data, updatedAt, found: true, stale: isStale };
@@ -318,13 +358,13 @@ export async function getNeighborhoodBuffetsRollup(
   const topRatedLimit = Math.max(0, options?.topRatedLimit ?? 0);
   const topRatedBuffets = topRatedLimit
     ? [...rollupData.buffets]
-        .filter((buffet) => buffet.rating != null)
-        .sort((a, b) => {
-          const ratingDiff = (b.rating || 0) - (a.rating || 0);
-          if (ratingDiff !== 0) return ratingDiff;
-          return (b.reviewsCount || 0) - (a.reviewsCount || 0);
-        })
-        .slice(0, topRatedLimit)
+      .filter((buffet) => buffet.rating != null)
+      .sort((a, b) => {
+        const ratingDiff = (b.rating || 0) - (a.rating || 0);
+        if (ratingDiff !== 0) return ratingDiff;
+        return (b.reviewsCount || 0) - (a.reviewsCount || 0);
+      })
+      .slice(0, topRatedLimit)
     : undefined;
 
   if (!options || options.limit == null) {
