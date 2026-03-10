@@ -54,8 +54,7 @@ let _cached: string | undefined;
  * 
  * Priority:
  * 1. NEXT_PUBLIC_SITE_URL (normalized)
- * 2. VERCEL_URL (Vercel build/runtime env)
- * 3. http://localhost:3000 (safe fallback)
+ * 2. https://buffetlocator.com (production domain fallback)
  * 
  * @returns Absolute base URL without trailing slash
  */
@@ -69,15 +68,8 @@ export function getBaseUrlSafe(): string {
     return _cached;
   }
 
-  // Try VERCEL_URL (available during Vercel builds and runtime)
-  const vercelUrl = normalizeBaseUrl(process.env.VERCEL_URL);
-  if (vercelUrl) {
-    _cached = vercelUrl;
-    return _cached;
-  }
-
-  // Safe fallback for local development and builds without env vars
-  _cached = 'http://localhost:3000';
+  // Production domain — used when NEXT_PUBLIC_SITE_URL is not set
+  _cached = 'https://buffetlocator.com';
   return _cached;
 }
 
