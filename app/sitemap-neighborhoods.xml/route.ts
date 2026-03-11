@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { MetadataRoute } from 'next';
-import { getAllCitySlugs, getNeighborhoodsByCity, getCityBySlug } from '@/lib/data-instantdb';
+import { getBuffetsByCity, getNeighborhoodsByCity } from '@/lib/data-instantdb';
 import { createSitemapEntry, filterIndexableEntries, getLastModified } from '@/lib/sitemap-utils';
 import { PageType, IndexTier } from '@/lib/index-tier';
 import { isCityIndexable, getStagedIndexingConfig } from '@/lib/staged-indexing';
@@ -13,79 +13,77 @@ export const dynamic = 'force-dynamic';
  * Neighborhood Pages Sitemap
  * Only includes indexable neighborhood pages. All URLs are absolute.
  */
+const XML_HEADERS = { 'Content-Type': 'application/xml; charset=utf-8' } as const;
+
 export async function GET(): Promise<NextResponse> {
-  const baseUrl = getBaseUrlForRobotsAndSitemaps();
-  const citySlugs = await getAllCitySlugs();
+  try {
+    const baseUrl = getBaseUrlForRobotsAndSitemaps();
+    const citiesBySlug = await getBuffetsByCity();
 
-  const entries = [];
+    const entries = [];
 
-  // Check staged indexing config
-  const stagedConfig = getStagedIndexingConfig();
+    // Check staged indexing config
+    const stagedConfig = getStagedIndexingConfig();
 
-  for (const slug of citySlugs) {
-    try {
-      // Check if city is indexable in current phase
-      const city = await getCityBySlug(slug);
-      if (!city) continue;
-
-      const cityIndexable = isCityIndexable(
-        {
-          slug: city.slug,
-          city: city.city,
-          state: city.state,
-          rank: city.rank,
-          population: city.population,
-          buffetCount: city.buffets?.length || 0,
-        },
-        stagedConfig
-      );
-
-      // Only process neighborhoods from indexable cities
-      if (!cityIndexable) continue;
-
-      const neighborhoods = await getNeighborhoodsByCity(slug);
-
-      for (const neighborhood of neighborhoods) {
-        const pagePath = `/chinese-buffets/${slug}/neighborhoods/${neighborhood.slug}`;
-        // Get last modified from neighborhood data (updatedAt, lastModified, or current date)
-        const lastModified = getLastModified(neighborhood);
-
-        // Neighborhood pages are tier-3 (conditional indexing)
-        // Default is noindex, but can be overridden if they have good content
-        // Only include if indexable (excludes noindex pages)
-        const entry = createSitemapEntry(
-          `${baseUrl}${pagePath}`,
-          'neighborhood' as PageType,
-          'tier-3' as IndexTier,
-          lastModified,
-          'monthly',
-          0.5,
-          // Only index if neighborhood has buffets (has content)
-          // createSitemapEntry will return null if this is false (noindex)
-          (neighborhood.buffetCount || 0) > 0
+    for (const [slug, city] of Object.entries(citiesBySlug)) {
+      try {
+        const cityIndexable = isCityIndexable(
+          {
+            slug: city.slug,
+            city: city.city,
+            state: city.state,
+            rank: city.rank,
+            population: city.population,
+            buffetCount: (city.buffets as any[])?.length || 0,
+          },
+          stagedConfig
         );
 
-        // Only add if entry is indexable (excludes noindex pages)
-        if (entry) {
-          entries.push(entry);
+        // Only process neighborhoods from indexable cities
+        if (!cityIndexable) continue;
+
+        // getNeighborhoodsByCity uses the shared bulk cache internally
+        const neighborhoods = await getNeighborhoodsByCity(slug);
+
+        for (const neighborhood of neighborhoods) {
+          const pagePath = `/chinese-buffets/${slug}/neighborhoods/${neighborhood.slug}`;
+          const lastModified = getLastModified(neighborhood);
+
+          const entry = createSitemapEntry(
+            `${baseUrl}${pagePath}`,
+            'neighborhood' as PageType,
+            'tier-3' as IndexTier,
+            lastModified,
+            'monthly',
+            0.5,
+            (neighborhood.buffetCount || 0) > 0
+          );
+
+          if (entry) {
+            entries.push(entry);
+          }
         }
+      } catch (error) {
+        console.error(`[Sitemap] Error processing neighborhoods for city ${slug}:`, error);
       }
-    } catch (error) {
-      console.error(`[Sitemap] Error processing neighborhoods for city ${slug}:`, error);
     }
+
+    const routes = filterIndexableEntries(entries);
+    const xml = generateSitemapXML(routes);
+
+    return new NextResponse(xml, {
+      headers: {
+        ...XML_HEADERS,
+        'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800',
+      },
+    });
+  } catch (err) {
+    console.error('sitemap-neighborhoods.xml', err instanceof Error ? err.message : String(err));
+    return new NextResponse(generateSitemapXML([]), {
+      headers: { ...XML_HEADERS, 'Cache-Control': 'no-store' },
+      status: 200,
+    });
   }
-
-  const routes = filterIndexableEntries(entries);
-
-  // Return XML sitemap
-  const xml = generateSitemapXML(routes);
-
-  return new NextResponse(xml, {
-    headers: {
-      'Content-Type': 'application/xml',
-      'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800',
-    },
-  });
 }
 
 function generateSitemapXML(routes: MetadataRoute.Sitemap): string {

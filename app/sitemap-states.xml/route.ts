@@ -12,48 +12,53 @@ export const dynamic = 'force-dynamic';
  * State Pages Sitemap
  * Only includes indexable state pages. All URLs are absolute.
  */
+const XML_HEADERS = { 'Content-Type': 'application/xml; charset=utf-8' } as const;
+
 export async function GET(): Promise<NextResponse> {
-  const baseUrl = getBaseUrlForRobotsAndSitemaps();
-  const stateAbbrs = await getAllStateAbbrs();
+  try {
+    const baseUrl = getBaseUrlForRobotsAndSitemaps();
+    const stateAbbrs = await getAllStateAbbrs();
 
-  const entries = [];
+    const entries = [];
 
-  for (const stateAbbr of stateAbbrs) {
-    const stateData = await getStateByAbbr(stateAbbr);
-    if (!stateData) continue;
+    for (const stateAbbr of stateAbbrs) {
+      const stateData = await getStateByAbbr(stateAbbr);
+      if (!stateData) continue;
 
-    const pagePath = `/chinese-buffets/states/${stateAbbr.toLowerCase()}`;
-    // Get last modified from state data (updatedAt, lastModified, or current date)
-    const lastModified = getLastModified(stateData);
+      const pagePath = `/chinese-buffets/states/${stateAbbr.toLowerCase()}`;
+      const lastModified = getLastModified(stateData);
 
-    // State pages are tier-1 (always indexable)
-    const entry = createSitemapEntry(
-      `${baseUrl}${pagePath}`,
-      'state' as PageType,
-      'tier-1' as IndexTier,
-      lastModified,
-      'weekly',
-      0.8,
-      true // State pages are always indexable (tier-1)
-    );
+      const entry = createSitemapEntry(
+        `${baseUrl}${pagePath}`,
+        'state' as PageType,
+        'tier-1' as IndexTier,
+        lastModified,
+        'weekly',
+        0.8,
+        true
+      );
 
-    // Only add if entry is indexable (createSitemapEntry returns null for noindex)
-    if (entry) {
-      entries.push(entry);
+      if (entry) {
+        entries.push(entry);
+      }
     }
+
+    const routes = filterIndexableEntries(entries);
+    const xml = generateSitemapXML(routes);
+
+    return new NextResponse(xml, {
+      headers: {
+        ...XML_HEADERS,
+        'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800',
+      },
+    });
+  } catch (err) {
+    console.error('sitemap-states.xml', err instanceof Error ? err.message : String(err));
+    return new NextResponse(generateSitemapXML([]), {
+      headers: { ...XML_HEADERS, 'Cache-Control': 'no-store' },
+      status: 200,
+    });
   }
-
-  const routes = filterIndexableEntries(entries);
-
-  // Return XML sitemap
-  const xml = generateSitemapXML(routes);
-
-  return new NextResponse(xml, {
-    headers: {
-      'Content-Type': 'application/xml',
-      'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800',
-    },
-  });
 }
 
 function generateSitemapXML(routes: MetadataRoute.Sitemap): string {

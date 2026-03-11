@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { MetadataRoute } from 'next';
-import { getAllCitySlugs, getCityBySlug } from '@/lib/data-instantdb';
+import { getBuffetsByCity } from '@/lib/data-instantdb';
 import { createSitemapEntry, filterIndexableEntries, getLastModified } from '@/lib/sitemap-utils';
 import { PageType, IndexTier } from '@/lib/index-tier';
 import { isCityIndexable, getStagedIndexingConfig } from '@/lib/staged-indexing';
@@ -34,17 +34,14 @@ export async function GET(): Promise<NextResponse> {
         status: 200
       });
     }
-    const citySlugs = await getAllCitySlugs();
+    const citiesBySlug = await getBuffetsByCity();
 
     const entries = [];
 
     // Check staged indexing config
     const stagedConfig = getStagedIndexingConfig();
 
-    for (const slug of citySlugs) {
-      const city = await getCityBySlug(slug);
-      if (!city) continue;
-
+    for (const [slug, city] of Object.entries(citiesBySlug)) {
       // Check if city is indexable in current phase
       const cityIndexable = isCityIndexable(
         {
@@ -53,7 +50,7 @@ export async function GET(): Promise<NextResponse> {
           state: city.state,
           rank: city.rank,
           population: city.population,
-          buffetCount: city.buffets?.length || 0,
+          buffetCount: (city.buffets as any[])?.length || 0,
         },
         stagedConfig
       );
@@ -78,7 +75,7 @@ export async function GET(): Promise<NextResponse> {
         entries.push(entry);
 
         // Also add curated filter pages for indexable cities with enough buffets
-        const buffetCount = city.buffets?.length || 0;
+        const buffetCount = (city.buffets as any[])?.length || 0;
         if (buffetCount >= 5) {
           for (const filter of CITY_FILTERS) {
             const filterEntry = createSitemapEntry(

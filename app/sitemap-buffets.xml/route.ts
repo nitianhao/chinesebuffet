@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { MetadataRoute } from 'next';
-import { getAllCitySlugs, getCityBySlug } from '@/lib/data-instantdb';
+import { getBuffetsByCity } from '@/lib/data-instantdb';
 import { createSitemapEntry, filterIndexableEntries, getLastModified } from '@/lib/sitemap-utils';
 import { PageType, IndexTier } from '@/lib/index-tier';
 import { isCityIndexable, getStagedIndexingConfig } from '@/lib/staged-indexing';
@@ -32,17 +32,14 @@ export async function GET(): Promise<NextResponse> {
         status: 200
       });
     }
-    const citySlugs = await getAllCitySlugs();
+    const citiesBySlug = await getBuffetsByCity();
 
     // Check staged indexing config
     const stagedConfig = getStagedIndexingConfig();
 
     const entries = [];
 
-    for (const slug of citySlugs) {
-      const city = await getCityBySlug(slug);
-      if (!city) continue;
-
+    for (const [slug, city] of Object.entries(citiesBySlug)) {
       // Check if city is indexable in current phase
       const cityIndexable = isCityIndexable(
         {
@@ -51,7 +48,7 @@ export async function GET(): Promise<NextResponse> {
           state: city.state,
           rank: city.rank,
           population: city.population,
-          buffetCount: city.buffets?.length || 0,
+          buffetCount: (city.buffets as any[])?.length || 0,
         },
         stagedConfig
       );
@@ -59,7 +56,7 @@ export async function GET(): Promise<NextResponse> {
       // Only include buffets from indexable cities
       if (!cityIndexable) continue;
 
-      for (const buffet of city.buffets) {
+      for (const buffet of (city.buffets as any[])) {
         const pagePath = `/chinese-buffets/${slug}/${buffet.slug}`;
         // Get last modified from buffet data (updatedAt, lastModified, or current date)
         const lastModified = getLastModified(buffet);
