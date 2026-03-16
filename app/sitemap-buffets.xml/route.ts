@@ -4,6 +4,7 @@ import { getBuffetsByCity } from '@/lib/data-instantdb';
 import { createSitemapEntry, filterIndexableEntries, getLastModified } from '@/lib/sitemap-utils';
 import { PageType, IndexTier } from '@/lib/index-tier';
 import { isCityIndexable, getStagedIndexingConfig } from '@/lib/staged-indexing';
+import { getBaseUrlForRobotsAndSitemaps } from '@/lib/site-url';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -16,22 +17,9 @@ const MAX_SITEMAP_URLS = 50000; // Cap to prevent timeout; Google supports up to
  * Buffet Pages Sitemap
  * Only includes indexable buffet pages. All URLs are absolute.
  */
-function getBaseUrlSafe(): string | null {
-  const raw = process.env.NEXT_PUBLIC_SITE_URL;
-  if (!raw || typeof raw !== 'string') return null;
-  return raw.replace(/\/+$/, '');
-}
-
 export async function GET(): Promise<NextResponse> {
   try {
-    const baseUrl = getBaseUrlSafe();
-    if (!baseUrl) {
-      console.error('sitemap-buffets.xml', 'NEXT_PUBLIC_SITE_URL is not set');
-      return new NextResponse(generateSitemapXML([]), {
-        headers: { ...XML_HEADERS, 'Cache-Control': 'no-store' },
-        status: 200
-      });
-    }
+    const baseUrl = getBaseUrlForRobotsAndSitemaps();
     const citiesBySlug = await getBuffetsByCity();
 
     // Check staged indexing config
