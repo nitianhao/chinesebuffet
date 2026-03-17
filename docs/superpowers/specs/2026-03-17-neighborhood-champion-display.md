@@ -54,6 +54,8 @@ Amber/yellow color differentiates the neighborhood badge from the violet hidden 
 
 The page already calls `computeHiddenGemScore`. Add a call to `computeNeighborhoodChampion` (importing from `lib/neighborhoodChampion.ts`) and pass `neighborhoodBadgeText` to `BuffetHeroHeader`.
 
+**Mobile hero:** The detail page has two hero render paths — the desktop `BuffetHeroHeader` component and a separate mobile inline block (around the `{/* Hidden gem badge */}` comment in the mobile section). Both must be updated. The mobile inline block renders the hidden gem badge directly; add the neighborhood badge immediately after it using the same amber pill style as the desktop version.
+
 ```tsx
 import { computeNeighborhoodChampion } from '@/lib/neighborhoodChampion';
 
@@ -70,7 +72,7 @@ const { neighborhoodBadgeText } = computeNeighborhoodChampion(buffet, cityBuffet
 />
 ```
 
-**`cityBuffets` source:** The detail page already loads city data. Inspect how `hiddenGemScore` gets `cityBuffets` — use the same source (likely from the rollup or a separate data fetch). If `cityBuffets` is not currently available, fetch it via `getCityBuffetsRollup(citySlug)` and map `buffets` from the rollup.
+**`cityBuffets` source:** Use `cityInfo?.buffets ?? [buffet]` — the same array already used for `computeHiddenGemScore` on this page. Do not add a separate fetch.
 
 ---
 
@@ -88,10 +90,16 @@ const { neighborhoodBadgeText } = computeNeighborhoodChampion(buffet, cityBuffet
 // In the page component (server-side):
 import { computeAllNeighborhoodChampions } from '@/lib/neighborhoodChampion';
 
-// Convert CityBuffetRows to minimal Buffet objects for computation:
+// Convert CityBuffetRows to minimal Buffet objects for computation.
+// CityBuffetRow.address is a flat string; Buffet.address is a nested object.
+// We supply address as a nested object here so city-grouping fallback works correctly.
+// rating and reviewsCount are coerced from null to 0 so the sort arithmetic in
+// rankBuffetsInGroup never encounters NaN (null - null = NaN breaks the sort).
 const buffetsForRanking = buffets.map(b => ({
   ...b,
-  address: { city: cityName, stateAbbr: stateAbbr },
+  rating: b.rating ?? 0,
+  reviewsCount: b.reviewsCount ?? 0,
+  address: { city: cityName, stateAbbr },
   citySlug,
 }));
 const ranked = computeAllNeighborhoodChampions(buffetsForRanking as any);
@@ -121,6 +129,8 @@ Pass `isChampion` to the card:
 ```
 
 Only rank-1 buffets (champions) show the emoji. No change for other ranks.
+
+**Scope note:** `BuffetCardSlim` is used only for the server-rendered initial batch (first 12 cards). Remaining buffets beyond that limit are passed to `CityBuffetList` (a client component) as `SlimBuffet[]`. Champion badges are intentionally **not** propagated to `CityBuffetList` — this is an accepted limitation. The 🏆 emoji appears only on the initial server-rendered cards. A future enhancement could serialize `championIds` into a JSON prop on `CityBuffetList` if full coverage is needed.
 
 ---
 
@@ -158,6 +168,8 @@ In the neighborhoods grid, append the champion name when available:
 ```
 
 The champion name appears on the second line alongside the buffet count, separated by `·`.
+
+**Neighborhood name matching:** Both `ranked[].neighborhood` (from `CityBuffetRow`, sourced from the rollup's `buffets` array) and `neighborhood.neighborhood` (from `NeighborhoodRollupRow`, sourced from the rollup's `neighborhoods` array) originate from the same `CityBuffetsRollup` object, so string values are expected to match exactly. If there is any concern about whitespace or casing inconsistency in the rollup, normalize both sides with `.trim()` when building/querying the map.
 
 ---
 
@@ -197,5 +209,5 @@ No new files. No new dependencies. No database changes.
 - **No neighborhood champion in a neighborhood** — neighborhood link renders without the champion line; no change to existing layout.
 - **`neighborhoodBadgeText` is null** — badge simply not rendered; hidden gem badge still works independently.
 - **`isChampion` is false or undefined** — neighborhood tag renders exactly as today.
-- **`computeAllNeighborhoodChampions` called with `CityBuffetRow` cast** — these rows have `id`, `name`, `neighborhood`, `rating`, `reviewsCount` which is all the champion computation needs. The `as any` cast is acceptable here since we only read those fields.
+- **Null rating/reviewsCount in sort** — `rating` and `reviewsCount` are coerced to `0` before passing to `computeAllNeighborhoodChampions` so the sort arithmetic never produces NaN. Without this coercion, `null - null` in the comparator returns NaN which breaks the sort.
 - **Buffet with no neighborhood** — `computeNeighborhoodChampion` returns `neighborhoodBadgeText: null`; no badge rendered.
