@@ -382,7 +382,7 @@ describe('computeAllNeighborhoodChampions', () => {
     const original = makeBuffet({ name: 'Merge Test', rating: 4.5, reviewsCount: 100, neighborhood: 'Test Hood', citySlug: 'test-tx' });
     const result = computeAllNeighborhoodChampions([original]);
     assert(result[0] !== original, 'result is a new object (spread, not mutation)');
-    assert(result[0].neighborhoodRank !== undefined, 'neighborhoodRank is set');
+    assertEqual(result[0].neighborhoodRank, 1, 'neighborhoodRank is 1 (sole buffet in neighborhood is rank 1)');
   });
 });
 
