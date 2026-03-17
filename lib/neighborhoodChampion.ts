@@ -81,7 +81,12 @@ export interface NeighborhoodChampionResult {
 export function rankBuffetsInGroup(
   buffets: Buffet[]
 ): Array<{ buffet: Buffet; rank: number }> {
-  throw new Error('not implemented');
+  const sorted = [...buffets].sort((a, b) => {
+    if (b.rating !== a.rating) return b.rating - a.rating;
+    if (b.reviewsCount !== a.reviewsCount) return b.reviewsCount - a.reviewsCount;
+    return a.name.localeCompare(b.name);
+  });
+  return sorted.map((buffet, index) => ({ buffet, rank: index + 1 }));
 }
 
 /**
