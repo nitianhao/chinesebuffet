@@ -187,6 +187,32 @@ export function computeNeighborhoodChampion(
  * @returns A new array of the same length with champion fields merged onto
  *   each buffet via object spread.
  */
+function getCityKey(buffet: Buffet): string {
+  if (buffet.citySlug && buffet.citySlug.trim() !== '') return buffet.citySlug;
+  const city = buffet.address?.city?.trim() ?? '';
+  const state = buffet.address?.stateAbbr?.trim() ?? '';
+  if (city || state) return `${city},${state}`;
+  return 'unknown';
+}
+
 export function computeAllNeighborhoodChampions(allBuffets: Buffet[]): Buffet[] {
-  throw new Error('not implemented');
+  // Group buffets by city
+  const cityGroups = new Map<string, Buffet[]>();
+  for (const buffet of allBuffets) {
+    const key = getCityKey(buffet);
+    const group = cityGroups.get(key) ?? [];
+    group.push(buffet);
+    cityGroups.set(key, group);
+  }
+
+  // Compute champion fields for every buffet and merge via spread
+  const results: Buffet[] = [];
+  for (const buffet of allBuffets) {
+    const key = getCityKey(buffet);
+    const cityGroup = cityGroups.get(key)!;
+    const championResult = computeNeighborhoodChampion(buffet, cityGroup);
+    results.push({ ...buffet, ...championResult });
+  }
+
+  return results;
 }
