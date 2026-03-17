@@ -99,11 +99,80 @@ export function rankBuffetsInGroup(
  *   subject error and the all-null/false result is returned.
  * @returns A NeighborhoodChampionResult with all 8 computed fields.
  */
+function nullResult(): NeighborhoodChampionResult {
+  return {
+    isNeighborhoodChampion: false,
+    neighborhoodRank: null,
+    neighborhoodBuffetCount: null,
+    ratingGap: null,
+    neighborhoodBadgeText: null,
+    neighborhoodBadgeEmoji: null,
+    neighborhoodRankText: null,
+    isOnlyInNeighborhood: false,
+  };
+}
+
 export function computeNeighborhoodChampion(
   buffet: Buffet,
   cityBuffets: Buffet[]
 ): NeighborhoodChampionResult {
-  throw new Error('not implemented');
+  // No neighborhood → all-null/false
+  if (!buffet.neighborhood) return nullResult();
+
+  // Filter to same neighborhood; defensively ensure the subject is included
+  const filtered = cityBuffets.filter(b => b.neighborhood === buffet.neighborhood);
+  const group = filtered.some(b => b.id === buffet.id) ? filtered : [buffet, ...filtered];
+
+  // Rank the group
+  const ranked = rankBuffetsInGroup(group);
+
+  // Find the subject buffet's entry by id (always present after the guard above)
+  const subjectEntry = ranked.find(r => r.buffet.id === buffet.id);
+  if (!subjectEntry) return nullResult(); // should never happen after guard
+
+  const rank = subjectEntry.rank;
+  const count = ranked.length;
+  const neighborhood = buffet.neighborhood;
+
+  // neighborhoodRankText — always set when neighborhood exists
+  const isOnlyInNeighborhood = count === 1;
+  const neighborhoodRankText = isOnlyInNeighborhood
+    ? `Only buffet in ${neighborhood}`
+    : `#${rank} of ${count} in ${neighborhood}`;
+
+  // Champion requires rank 1 AND count >= 2
+  const isNeighborhoodChampion = rank === 1 && count >= 2;
+
+  // ratingGap — champion only
+  let ratingGap: number | null = null;
+  if (isNeighborhoodChampion) {
+    const secondEntry = ranked.find(r => r.rank === 2);
+    if (secondEntry) {
+      ratingGap = Math.round((buffet.rating - secondEntry.buffet.rating) * 10) / 10;
+    }
+  }
+
+  // neighborhoodBadgeEmoji
+  let neighborhoodBadgeEmoji: string | null = null;
+  if (rank === 1 && count >= 2) neighborhoodBadgeEmoji = '🏆';
+  else if (rank === 2 && count >= 3) neighborhoodBadgeEmoji = '🥈';
+  else if (rank === 3 && count >= 4) neighborhoodBadgeEmoji = '🥉';
+
+  // neighborhoodBadgeText — champion only
+  const neighborhoodBadgeText = isNeighborhoodChampion
+    ? `#1 of ${count} in ${neighborhood} 🏆`
+    : null;
+
+  return {
+    isNeighborhoodChampion,
+    neighborhoodRank: rank,
+    neighborhoodBuffetCount: count,
+    ratingGap,
+    neighborhoodBadgeText,
+    neighborhoodBadgeEmoji,
+    neighborhoodRankText,
+    isOnlyInNeighborhood,
+  };
 }
 
 /**
