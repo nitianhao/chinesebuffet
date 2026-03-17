@@ -372,6 +372,91 @@ export interface Buffet {
   businessAcceptsApplePay?: boolean | null; // Whether the restaurant accepts Apple Pay
   acceptsGooglePay?: boolean | null; // Whether the restaurant accepts Google Pay
   openToAll?: boolean | null; // Whether the restaurant is open to all
+  /** Computed score (0–100) identifying high-quality, under-the-radar places. Null when rating < 4.3. */
+  hiddenGemScore?: number | null;
+  /** Tier label derived from hiddenGemScore. Null when score is 0–24 or ineligible. */
+  hiddenGemTier?: string | null;
+  /** Classification of the surrounding area's character based on nearby POIs. */
+  locationVibe?: string | null;
+  /** Display emoji for the locationVibe tag. */
+  locationVibeEmoji?: string | null;
+  /** One-sentence description of the surrounding area. */
+  locationVibeDescription?: string | null;
+  /** Total number of nearby POIs across all categories. */
+  nearbyTotalCount?: number | null;
+  /** The POI category with the highest count near this buffet. */
+  dominantCategory?: string | null;
+  /** POI count per category display name. */
+  categoryBreakdown?: Record<string, number> | null;
+  /** Extracted signature / popular dishes derived from FAQ answers, description, and menu data. */
+  signatureDishes?: import('./signatureDishes').SignatureDish[] | null;
+  /** Name of the top-ranked signature dish, or null if none were extracted. */
+  topDish?: string | null;
+  /** Total number of unique signature dishes extracted. */
+  dishCount?: number | null;
+  /** Composite authenticity score (0–100) derived from regional cuisine signals. */
+  authenticityScore?: number | null;
+  /** Tier label derived from authenticityScore. Null when score < 25. */
+  authenticityTier?: string | null;
+  /** Display emoji for the authenticityTier. Null when score < 25. */
+  authenticityTierEmoji?: string | null;
+  /** Unique list of detected regional Chinese cuisines (e.g. ["Sichuan", "Taiwanese"]). */
+  cuisineOrigins?: string[] | null;
+  /** The regional cuisine most frequently referenced across all signals, or null. */
+  primaryCuisine?: string | null;
+  /** All detected authenticity signals. */
+  authenticitySignals?: import('./authenticitySignals').AuthenticitySignal[] | null;
+  /** Total number of authenticity signals detected. */
+  authenticitySignalCount?: number | null;
+  /** Computed 5-axis Strength Profile (Food Quality, Service, Variety, Value, Atmosphere). */
+  strengthProfile?: import('./strengthProfile').StrengthProfileResult | null;
+  /** Composite date night score (0–100). Null when not yet computed. */
+  dateNightScore?: number | null;
+  /** Tier label derived from dateNightScore. Null when score is 0–24. */
+  dateNightTier?: string | null;
+  /** Display emoji for the dateNightTier. Null when score is 0–24. */
+  dateNightTierEmoji?: string | null;
+  /** Individual sub-scores that sum to dateNightScore. */
+  dateNightSubScores?: import('./dateNightScore').DateNightSubScores | null;
+  /** Human-readable signals that increase the date-worthiness. */
+  dateNightPositiveSignals?: string[] | null;
+  /** Human-readable signals that reduce the date-worthiness. */
+  dateNightNegativeSignals?: string[] | null;
+  /** Whether this buffet ranks #1 in its neighborhood AND has at least one competitor. */
+  isNeighborhoodChampion?: boolean | null;
+  /** 1-based rank within the neighborhood, sorted by rating desc → reviewsCount desc → name asc. Null when no neighborhood. */
+  neighborhoodRank?: number | null;
+  /** Total number of buffets sharing this neighborhood in the same city. Null when no neighborhood. */
+  neighborhoodBuffetCount?: number | null;
+  /**
+   * Rating gap between this buffet (#1) and the #2 buffet, rounded to 1 decimal.
+   * Set to 0.0 when champion and #2 are tied on rating.
+   * Null when not champion or no neighborhood.
+   */
+  ratingGap?: number | null;
+  /**
+   * Badge text for the champion only. E.g. "#1 of 9 in Montrose 🏆".
+   * The 🏆 emoji is embedded in this string as part of the display label.
+   * Null for all non-champion ranks.
+   */
+  neighborhoodBadgeText?: string | null;
+  /**
+   * Standalone medal emoji for use in compact/icon contexts (e.g. table cells, map pins).
+   * "🏆" for rank 1 (count≥2), "🥈" for rank 2 (count≥3), "🥉" for rank 3 (count≥4).
+   * Null for rank 2 with count=2, rank 4+, sole occupant, or no neighborhood.
+   * Note: for rank 1 this duplicates the emoji embedded in neighborhoodBadgeText — both
+   * fields serve different rendering purposes (full label vs. standalone icon).
+   */
+  neighborhoodBadgeEmoji?: string | null;
+  /**
+   * Human-readable rank string. Always set when `neighborhood` is non-null.
+   * - Sole occupant: "Only buffet in {neighborhood}"
+   * - Otherwise: "#{rank} of {count} in {neighborhood}"
+   * Null when no neighborhood.
+   */
+  neighborhoodRankText?: string | null;
+  /** True when this buffet is the sole occupant of its neighborhood in the city. */
+  isOnlyInNeighborhood?: boolean | null;
 }
 
 export interface City {
