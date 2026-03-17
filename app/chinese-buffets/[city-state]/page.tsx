@@ -11,6 +11,7 @@ import CityMoreBuffets from '@/components/city/CityMoreBuffets';
 import { perfMark, perfMs, PERF_ENABLED } from '@/lib/perf';
 import { getSiteUrl } from '@/lib/site-url';
 import { JsonLdServer } from '@/components/seo/JsonLdServer';
+import { computeAllNeighborhoodChampions } from '@/lib/neighborhoodChampion';
 
 const BASE_URL = getSiteUrl();
 const isDev = process.env.NODE_ENV !== 'production';
@@ -59,7 +60,7 @@ interface CityPageProps {
 // ---------------------------------------------------------------------------
 // Slim card — server component, no client JS, minimal HTML per item
 // ---------------------------------------------------------------------------
-function BuffetCardSlim({ buffet, citySlug }: { buffet: CityBuffetRow; citySlug: string }) {
+function BuffetCardSlim({ buffet, citySlug, isChampion }: { buffet: CityBuffetRow; citySlug: string; isChampion?: boolean }) {
   return (
     <div className="bg-[var(--surface)] border border-[var(--border)] rounded-lg p-4 hover:shadow-md hover:border-[var(--accent1)] transition-all group">
       <Link
@@ -79,7 +80,9 @@ function BuffetCardSlim({ buffet, citySlug }: { buffet: CityBuffetRow; citySlug:
         <p className="text-[var(--muted)] text-sm line-clamp-1 mb-2">{buffet.address}</p>
         <div className="flex flex-wrap gap-2 text-xs text-[var(--muted)]">
           {buffet.neighborhood && (
-            <span className="bg-[var(--surface2)] px-2 py-0.5 rounded">{buffet.neighborhood}</span>
+            <span className="bg-[var(--surface2)] px-2 py-0.5 rounded">
+              {isChampion ? `🏆 ${buffet.neighborhood}` : buffet.neighborhood}
+            </span>
           )}
           {buffet.price && (
             <span className="bg-[var(--surface2)] px-2 py-0.5 rounded">{buffet.price}</span>
@@ -298,6 +301,27 @@ export default async function CityPage({ params }: CityPageProps) {
   const remainingBuffets = buffets.slice(INITIAL_LIMIT);
   const hasMore = remainingBuffets.length > 0;
 
+  // Compute neighborhood champion data for cards and neighborhoods section
+  const buffetsForRanking = buffets.map(b => ({
+    ...b,
+    rating: b.rating ?? 0,
+    reviewsCount: b.reviewsCount ?? 0,
+    address: { city: cityName, stateAbbr },
+    citySlug,
+  }));
+  const rankedBuffets = computeAllNeighborhoodChampions(buffetsForRanking as any);
+
+  const championIds = new Set(
+    rankedBuffets.filter(b => b.isNeighborhoodChampion).map(b => b.id)
+  );
+
+  const championByNeighborhood = new Map<string, string>();
+  for (const b of rankedBuffets) {
+    if (b.isNeighborhoodChampion && b.neighborhood) {
+      championByNeighborhood.set(b.neighborhood, b.name);
+    }
+  }
+
   const transformMs = perfMs(tPrep);
 
   const breadcrumbJsonLd = {
@@ -513,6 +537,9 @@ export default async function CityPage({ params }: CityPageProps) {
                 </h3>
                 <p className="text-[var(--muted)] text-xs">
                   {neighborhood.buffetCount} {neighborhood.buffetCount === 1 ? 'buffet' : 'buffets'}
+                  {championByNeighborhood.has(neighborhood.neighborhood) && (
+                    <> · {championByNeighborhood.get(neighborhood.neighborhood)} 🏆</>
+                  )}
                 </p>
               </Link>
             ))}
@@ -546,7 +573,7 @@ export default async function CityPage({ params }: CityPageProps) {
         {/* Server-rendered initial batch */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {initialBuffets.map((buffet) => (
-            <BuffetCardSlim key={buffet.id} buffet={buffet} citySlug={citySlug} />
+            <BuffetCardSlim key={buffet.id} buffet={buffet} citySlug={citySlug} isChampion={championIds.has(buffet.id)} />
           ))}
         </div>
 
