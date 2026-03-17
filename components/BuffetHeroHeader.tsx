@@ -3,7 +3,17 @@ import { getHeroSummary } from '@/lib/summaryUtils';
 import ActionButton from '@/components/ui/ActionButton';
 import SignatureCard from '@/components/ui/SignatureCard';
 
+interface CuisineInfo {
+  cuisineType?: string | null;
+  prevalentDishType?: string | null;
+  isMixedCuisine?: boolean;
+  mixedCuisineTypes?: string[];
+  cuisineConfidence?: string | null;
+}
+
 interface BuffetHeroHeaderProps {
+  hiddenGemTier?: string | null;
+  neighborhoodBadgeText?: string | null;
   buffet: {
     id?: string | null;
     name: string;
@@ -23,6 +33,7 @@ interface BuffetHeroHeaderProps {
     description?: string | null;
   };
   openStatus: string | null;
+  cuisineInfo?: CuisineInfo | null;
 }
 
 const StarIcon = () => (
@@ -37,7 +48,7 @@ const KeyFactIcon = ({ children, className = '' }: { children: React.ReactNode; 
   </span>
 );
 
-export default function BuffetHeroHeader({ buffet, openStatus }: BuffetHeroHeaderProps) {
+export default function BuffetHeroHeader({ buffet, openStatus, cuisineInfo, hiddenGemTier, neighborhoodBadgeText }: BuffetHeroHeaderProps) {
   const heroSummary = getHeroSummary(buffet);
   const hasPhotos = Array.isArray(buffet.images) && buffet.images.length > 0;
   const cuisineTypes = (buffet.categories || [])
@@ -81,14 +92,30 @@ export default function BuffetHeroHeader({ buffet, openStatus }: BuffetHeroHeade
         </div>
       )}
 
-      {/* 3. Human-friendly summary (1–2 lines) */}
+      {/* 3. Badges - Hidden gem (violet) and Neighborhood champion (amber) */}
+      {(hiddenGemTier || neighborhoodBadgeText) && (
+        <div className="mb-3 -mt-1 flex flex-wrap gap-2">
+          {hiddenGemTier && (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-violet-50 ring-1 ring-violet-200 px-3 py-1 text-xs font-medium text-violet-700">
+              {hiddenGemTier}
+            </span>
+          )}
+          {neighborhoodBadgeText && (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 ring-1 ring-amber-200 px-3 py-1 text-xs font-medium text-amber-700">
+              {neighborhoodBadgeText}
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* 4. Human-friendly summary (1–2 lines) */}
       {heroSummary && (
         <p className="text-sm md:text-base text-[var(--text-secondary)] leading-snug mb-4 line-clamp-2">
           {heroSummary}
         </p>
       )}
 
-      {/* 4. Primary + Secondary CTAs */}
+      {/* 5. Primary + Secondary CTAs */}
       <div className="flex flex-wrap gap-2 mb-4">
         {buffet.location?.lat && buffet.location?.lng && (
           <ActionButton
@@ -120,7 +147,7 @@ export default function BuffetHeroHeader({ buffet, openStatus }: BuffetHeroHeade
         )}
       </div>
 
-      {/* 5. Key facts row - icons + short text */}
+      {/* 6. Key facts row - icons + short text */}
       <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-[var(--text-secondary)] border-t border-[var(--border)] pt-3">
         {buffet.price && (
           <div className="flex items-center gap-2">
@@ -170,6 +197,35 @@ export default function BuffetHeroHeader({ buffet, openStatus }: BuffetHeroHeade
           </div>
         )}
       </div>
+
+      {/* Cuisine tags - only shown when we have high/medium confidence data */}
+      {cuisineInfo?.cuisineType && cuisineInfo.cuisineConfidence !== 'Low' && (
+        <div className="flex flex-wrap gap-2 pt-3 mt-1 border-t border-[var(--border)]">
+          <span
+            className="inline-flex items-center gap-1.5 rounded-full bg-[var(--surface2)] ring-1 ring-[var(--border)] px-3 py-1 text-xs font-medium text-[var(--text)]"
+          >
+            <svg className="w-3.5 h-3.5 text-[var(--muted)] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            {cuisineInfo.cuisineType}
+          </span>
+          {cuisineInfo.prevalentDishType && (
+            <span
+              className="inline-flex items-center rounded-full bg-[var(--surface2)] ring-1 ring-[var(--border)] px-3 py-1 text-xs font-medium text-[var(--muted)]"
+            >
+              {cuisineInfo.prevalentDishType}
+            </span>
+          )}
+          {cuisineInfo.isMixedCuisine && (cuisineInfo.mixedCuisineTypes || []).map((t) => (
+            <span
+              key={t}
+              className="inline-flex items-center rounded-full bg-amber-50 ring-1 ring-amber-200 px-3 py-1 text-xs font-medium text-amber-700"
+            >
+              + {t}
+            </span>
+          ))}
+        </div>
+      )}
     </SignatureCard>
   );
 }
