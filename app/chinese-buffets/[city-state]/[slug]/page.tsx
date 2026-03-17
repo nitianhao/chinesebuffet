@@ -64,6 +64,13 @@ import ModifierVariants from '@/components/ModifierVariants';
 import DeferredReviews from '@/components/DeferredReviews';
 import ReviewsBundle from '@/components/bundles/ReviewsBundle';
 import POIBundle from '@/components/bundles/POIBundle';
+import LocationVibeSection from '@/components/LocationVibeSection';
+import SignatureDishesSection from '@/components/SignatureDishesSection';
+import AuthenticitySection from '@/components/AuthenticitySection';
+import DateNightSection from '@/components/DateNightSection';
+import QuickBiteSection from '@/components/QuickBiteSection';
+import StrengthProfileSection from '@/components/StrengthProfileSection';
+import { extractSignatureDishes } from '@/lib/signatureDishes';
 import ComparisonBundle from '@/components/bundles/ComparisonBundle';
 import BuffetInternalLinksServer from '@/components/BuffetInternalLinksServer';
 import SEOContentBundle from '@/components/bundles/SEOContentBundle';
@@ -78,6 +85,8 @@ import SaveButton from '@/components/saved/SaveButton';
 import BuffetPhotoGallery from '@/components/photos/BuffetPhotoGallery';
 
 import { perfReset, perfStart, perfSummary } from '@/lib/perf-logger';
+import { computeHiddenGemScore } from '@/lib/hiddenGemScore';
+import { computeNeighborhoodChampion } from '@/lib/neighborhoodChampion';
 
 // Page type and index tier declaration
 const PAGE_TYPE = 'buffet' as const;
@@ -327,11 +336,19 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
     categories?: Array<{ name: string; items: Array<{ name: string; description?: string | null; price?: string | null; }> }>;
     sourceUrl?: string;
     items?: Array<{ name: string; description?: string | null; price?: string | null; categoryName?: string }>;
+    cuisineType?: string | null;
+    prevalentDishType?: string | null;
+    isMixedCuisine?: boolean;
+    mixedCuisineTypes?: string[];
+    cuisineConfidence?: string | null;
   } | null = null;
 
   if (menuResult.status === 'fulfilled' && menuResult.value) {
     const menu = menuResult.value;
     if (menu.categories?.length > 0 || menu.items?.length > 0) {
+      menuData = menu;
+    } else if (menu.cuisineType) {
+      // Menu exists with cuisine data even if no items (e.g., scraped but empty)
       menuData = menu;
     }
     if (menu.sourceUrl && !buffet.contactInfo?.menuUrl) {
@@ -432,6 +449,17 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
       }));
   }
 
+  // Hidden gem score — computed from city peers (already fetched above)
+  const { hiddenGemScore, hiddenGemTier } = computeHiddenGemScore(
+    buffet as any,
+    cityInfo?.buffets ?? [buffet]
+  );
+
+  const { neighborhoodBadgeText } = computeNeighborhoodChampion(
+    buffet as any,
+    cityInfo?.buffets ?? [buffet]
+  );
+
   // Open status from cached regularHours
   const openStatus = getOpenClosedStatus(regularHours);
 
@@ -492,6 +520,16 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
     { id: 'faqs', label: 'FAQs' },
     hasNearbyPlaces ? { id: 'nearby-places', label: 'Nearby' } : null,
   ].filter(Boolean) as Array<{ id: string; label: string }>;
+
+  // Signature dishes — computed from FAQ Q&A + description + menu items
+  const menuItemsForDishes = (menuData?.items ?? menuData?.categories?.flatMap((c) => c.items) ?? []).map(
+    (item) => ({ name: item.name, price: typeof (item as any).priceNumber === 'number' ? (item as any).priceNumber : undefined })
+  );
+  const { signatureDishes } = extractSignatureDishes({
+    questionsAndAnswers: buffet.questionsAndAnswers,
+    description: buffet.description2 || buffet.description,
+    menuItems: menuItemsForDishes,
+  });
 
   const endPoiBreadcrumb = perfStart('transforms_poi_breadcrumb');
   // Build breadcrumb items: Home - State - City - Buffet
@@ -633,6 +671,39 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
                 {buffet.price && <span>{buffet.price}</span>}
                 {locationSnippet && <span>{locationSnippet}</span>}
               </div>
+              {/* Hidden gem badge */}
+              {(hiddenGemTier || neighborhoodBadgeText) && (
+                <div className="pt-1 flex flex-wrap gap-1.5">
+                  {hiddenGemTier && (
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-violet-50 ring-1 ring-violet-200 px-2.5 py-0.5 text-xs font-medium text-violet-700">
+                      {hiddenGemTier}
+                    </span>
+                  )}
+                  {neighborhoodBadgeText && (
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 ring-1 ring-amber-200 px-2.5 py-0.5 text-xs font-medium text-amber-700">
+                      {neighborhoodBadgeText}
+                    </span>
+                  )}
+                </div>
+              )}
+              {/* Mobile cuisine tags */}
+              {menuData?.cuisineType && menuData.cuisineConfidence !== 'Low' && (
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  <span className="inline-flex items-center rounded-full bg-[var(--surface2)] ring-1 ring-[var(--border)] px-2.5 py-0.5 text-xs font-medium text-[var(--text)]">
+                    {menuData.cuisineType}
+                  </span>
+                  {menuData.prevalentDishType && (
+                    <span className="inline-flex items-center rounded-full bg-[var(--surface2)] ring-1 ring-[var(--border)] px-2.5 py-0.5 text-xs font-medium text-[var(--muted)]">
+                      {menuData.prevalentDishType}
+                    </span>
+                  )}
+                  {menuData.isMixedCuisine && (menuData.mixedCuisineTypes || []).map((t: string) => (
+                    <span key={t} className="inline-flex items-center rounded-full bg-amber-50 ring-1 ring-amber-200 px-2.5 py-0.5 text-xs font-medium text-amber-700">
+                      + {t}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="flex flex-wrap gap-2">
@@ -691,7 +762,7 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
 
           {/* Desktop: Existing hero */}
           <div className="hidden md:block space-y-4">
-            <BuffetHeroHeader buffet={buffet} openStatus={openStatus} />
+            <BuffetHeroHeader buffet={buffet} openStatus={openStatus} cuisineInfo={menuData} hiddenGemTier={hiddenGemTier} neighborhoodBadgeText={neighborhoodBadgeText} />
             <QuickVerdict buffet={buffet} precomputedAdditionalInfo={precomputedAdditionalInfo} />
             {buffet.location?.lat && buffet.location?.lng && (
               <div className="mt-4 rounded-xl overflow-hidden shadow-[var(--shadow-soft)]">
@@ -952,7 +1023,59 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
       </PageSection>
         </StreamableSection>
       </Suspense>
-      
+
+      {signatureDishes.length > 0 && (
+        <Suspense fallback={<SectionFallback />}>
+          <StreamableSection>
+            <PageSection variant="alt">
+              <section id="signature-dishes" className="scroll-mt-24">
+                <SignatureDishesSection dishes={signatureDishes} />
+              </section>
+            </PageSection>
+          </StreamableSection>
+        </Suspense>
+      )}
+
+      <Suspense fallback={<SectionFallback />}>
+        <StreamableSection>
+          <PageSection variant="alt">
+            <section id="quick-bite" className="scroll-mt-24">
+              <QuickBiteSection buffet={buffet} />
+            </section>
+          </PageSection>
+        </StreamableSection>
+      </Suspense>
+
+      <Suspense fallback={<SectionFallback />}>
+        <StreamableSection>
+          <PageSection variant="alt">
+            <section id="authenticity" className="scroll-mt-24">
+              <AuthenticitySection buffet={buffet} />
+            </section>
+          </PageSection>
+        </StreamableSection>
+      </Suspense>
+
+      <Suspense fallback={<SectionFallback />}>
+        <StreamableSection>
+          <PageSection variant="alt">
+            <section id="date-night" className="scroll-mt-24">
+              <DateNightSection buffet={buffet} />
+            </section>
+          </PageSection>
+        </StreamableSection>
+      </Suspense>
+
+      <Suspense fallback={<SectionFallback />}>
+        <StreamableSection>
+          <PageSection variant="alt">
+            <section id="strength-profile" className="scroll-mt-24">
+              <StrengthProfileSection buffet={buffet} />
+            </section>
+          </PageSection>
+        </StreamableSection>
+      </Suspense>
+
       <Suspense fallback={<SectionFallback />}>
         <StreamableSection>
       <PageSection variant="alt">
@@ -1604,6 +1727,11 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
       <Suspense fallback={<SectionFallback />}>
         <StreamableSection>
       <PageSection variant="base">
+      {/* ============================================
+          LOCATION VIBE - Area character classification
+          ============================================ */}
+      <LocationVibeSection buffet={buffet} />
+
       {/* ============================================
           NEARBY PLACES - Rendered by POIBundle (includes section wrapper)
           ============================================ */}
