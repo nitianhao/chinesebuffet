@@ -68,8 +68,10 @@ import LocationVibeSection from '@/components/LocationVibeSection';
 import SignatureDishesSection from '@/components/SignatureDishesSection';
 import AuthenticitySection from '@/components/AuthenticitySection';
 import DateNightSection from '@/components/DateNightSection';
+import FullNightOutSection from '@/components/FullNightOutSection';
 import QuickBiteSection from '@/components/QuickBiteSection';
 import StrengthProfileSection from '@/components/StrengthProfileSection';
+import TrustedRatingSection from '@/components/TrustedRatingSection';
 import { extractSignatureDishes } from '@/lib/signatureDishes';
 import ComparisonBundle from '@/components/bundles/ComparisonBundle';
 import BuffetInternalLinksServer from '@/components/BuffetInternalLinksServer';
@@ -1069,8 +1071,28 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
       <Suspense fallback={<SectionFallback />}>
         <StreamableSection>
           <PageSection variant="alt">
+            <section id="full-night-out" className="scroll-mt-24">
+              <FullNightOutSection buffet={buffet} />
+            </section>
+          </PageSection>
+        </StreamableSection>
+      </Suspense>
+
+      <Suspense fallback={<SectionFallback />}>
+        <StreamableSection>
+          <PageSection variant="alt">
             <section id="strength-profile" className="scroll-mt-24">
               <StrengthProfileSection buffet={buffet} />
+            </section>
+          </PageSection>
+        </StreamableSection>
+      </Suspense>
+
+      <Suspense fallback={<SectionFallback />}>
+        <StreamableSection>
+          <PageSection variant="alt">
+            <section id="trusted-rating" className="scroll-mt-24">
+              <TrustedRatingSection buffet={buffet as any} cityBuffets={(cityInfo?.buffets ?? [buffet]) as any} />
             </section>
           </PageSection>
         </StreamableSection>
