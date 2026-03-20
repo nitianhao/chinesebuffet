@@ -421,7 +421,13 @@ const _fetchAllDataFromDB = async (): Promise<{ cities: any[]; buffets: any[] }>
 
   console.log('[data-instantdb] Fetching cities...');
   const citiesStart = Date.now();
-  const citiesResult = await adminQuery(db, { cities: {} });
+  const citiesResult = await adminQuery(db, {
+    cities: {
+      $: {
+        fields: ['slug', 'city', 'state', 'stateAbbr', 'population', 'rank'],
+      },
+    },
+  });
   const cities = citiesResult.cities || [];
   console.log(`[data-instantdb] Fetched ${cities.length} cities in ${Date.now() - citiesStart}ms`);
 
@@ -431,8 +437,37 @@ const _fetchAllDataFromDB = async (): Promise<{ cities: any[]; buffets: any[] }>
   try {
     const buffetsResult = await adminQuery(db, {
       buffets: {
-        $: { limit: 10000 },
-        city: {},
+        $: {
+          limit: 10000,
+          // Keep this "shared cache" payload intentionally lean for build/runtime stability.
+          // Detail pages fetch rich fields via dedicated per-entity queries.
+          fields: [
+            'id',
+            'name',
+            'slug',
+            'address',
+            'cityName',
+            'state',
+            'stateAbbr',
+            'postalCode',
+            'lat',
+            'lng',
+            'rating',
+            'reviewsCount',
+            'price',
+            'images',
+            'imagesCount',
+            'neighborhood',
+            'placeId',
+            'scrapedAt',
+            'updatedAt',
+          ],
+        },
+        city: {
+          $: {
+            fields: ['slug', 'city', 'state', 'stateAbbr'],
+          },
+        },
       },
     });
     buffets = buffetsResult.buffets || [];
@@ -2272,13 +2307,24 @@ export async function getTopRatedBuffetsForHomepage(limit: number = 12): Promise
           $: {
             limit: 40, // Reduced limit
             order: { rating: 'desc' },
+            fields: [
+              'id',
+              'name',
+              'slug',
+              'cityName',
+              'stateAbbr',
+              'rating',
+              'reviewsCount',
+              'images',
+            ],
           },
         },
       };
 
       console.log("[home] topRated query", JSON.stringify(queryObj).slice(0, 2000));
 
-      const result = await adminQuery(db, queryObj, { cache: 'no-store' });
+      // Use default force-cache semantics so SSG can keep this static-safe.
+      const result = await adminQuery(db, queryObj);
 
       // Map to minimal object first to drop unnecessary fields
       const minimal = (result.buffets || []).map((b: any) => ({
