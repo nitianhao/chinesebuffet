@@ -33,7 +33,7 @@ interface BuffetLocationMapProps {
   showTitle?: boolean;
   /** Formatted street address, e.g. "123 Main St, Los Angeles, CA 90012" */
   address?: string;
-  /** Pre-built Google Maps directions URL */
+  /** Pre-built map URL (OpenStreetMap) */
   directionsUrl?: string | null;
 }
 
@@ -42,7 +42,7 @@ interface BuffetLocationMapProps {
 // ---------------------------------------------------------------------------
 
 function mapsSearchUrl(lat: number, lng: number) {
-  return `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+  return `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=16/${lat}/${lng}`;
 }
 
 function wasLoadedInSession(): boolean {
@@ -138,7 +138,7 @@ function MapPlaceholder({
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
           </svg>
-          Open in Google Maps
+          Open in OpenStreetMap
         </a>
 
         <button

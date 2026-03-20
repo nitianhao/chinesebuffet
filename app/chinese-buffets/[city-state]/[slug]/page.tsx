@@ -286,10 +286,10 @@ function getOpenClosedStatus(regularHours: Array<{ day: string; ranges: string }
 
 function getDirectionsUrl(buffet: any, addressString: string): string | null {
   if (buffet?.location?.lat && buffet?.location?.lng) {
-    return `https://www.google.com/maps/dir/?api=1&destination=${buffet.location.lat},${buffet.location.lng}`;
+    return `https://www.openstreetmap.org/?mlat=${buffet.location.lat}&mlon=${buffet.location.lng}#map=16/${buffet.location.lat}/${buffet.location.lng}`;
   }
   if (addressString) {
-    return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(addressString)}`;
+    return `https://www.openstreetmap.org/search?query=${encodeURIComponent(addressString)}`;
   }
   return null;
 }
@@ -2118,7 +2118,7 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
                 <div className="space-y-1">
                   {buffet.location?.lat && buffet.location?.lng && (
                     <a
-                      href={`https://www.google.com/maps/dir/?api=1&destination=${buffet.location.lat},${buffet.location.lng}`}
+                      href={`https://www.openstreetmap.org/?mlat=${buffet.location.lat}&mlon=${buffet.location.lng}#map=16/${buffet.location.lat}/${buffet.location.lng}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-[var(--accent-solid)] hover:bg-[var(--accent-light)] rounded-[var(--radius-md)] transition-colors"

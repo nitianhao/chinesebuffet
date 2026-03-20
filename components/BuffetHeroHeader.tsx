@@ -120,7 +120,7 @@ export default function BuffetHeroHeader({ buffet, openStatus, cuisineInfo, hidd
         {buffet.location?.lat && buffet.location?.lng && (
           <ActionButton
             variant="primary"
-            href={`https://www.google.com/maps/dir/?api=1&destination=${buffet.location.lat},${buffet.location.lng}`}
+            href={`https://www.openstreetmap.org/?mlat=${buffet.location.lat}&mlon=${buffet.location.lng}#map=16/${buffet.location.lat}/${buffet.location.lng}`}
             external
             icon={
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

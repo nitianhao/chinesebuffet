@@ -79,13 +79,13 @@ export default function QuickActionsBar({ buffet }: QuickActionsBarProps) {
 
   const addressString = getAddressString();
 
-  // Build Google Maps directions URL
+  // Build OpenStreetMap URL
   const getDirectionsUrl = (): string => {
     if (buffet.location?.lat && buffet.location?.lng) {
-      return `https://www.google.com/maps/dir/?api=1&destination=${buffet.location.lat},${buffet.location.lng}`;
+      return `https://www.openstreetmap.org/?mlat=${buffet.location.lat}&mlon=${buffet.location.lng}#map=16/${buffet.location.lat}/${buffet.location.lng}`;
     }
     if (addressString) {
-      return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(addressString)}`;
+      return `https://www.openstreetmap.org/search?query=${encodeURIComponent(addressString)}`;
     }
     return '#';
   };

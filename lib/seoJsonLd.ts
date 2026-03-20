@@ -384,9 +384,9 @@ export function buildRestaurantJsonLd(
     }
   }
 
-  // Add Google Maps URL if we have location
+  // Add OpenStreetMap URL if we have location
   if (lat !== null && lng !== null && lat !== 0 && lng !== 0) {
-    sameAsLinks.push(`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`);
+    sameAsLinks.push(`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=16/${lat}/${lng}`);
   }
 
   if (sameAsLinks.length > 0) {
