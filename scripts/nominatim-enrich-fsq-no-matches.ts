@@ -26,7 +26,11 @@ import { osmHoursToAppFormat } from '../lib/osm-opening-hours';
 dotenv.config({ path: path.join(process.cwd(), '.env.local') });
 dotenv.config();
 
-const db = init({ appId: process.env.INSTANT_APP_ID!, adminToken: process.env.INSTANT_ADMIN_TOKEN!, schema });
+const db = init({
+  appId: process.env.NEXT_PUBLIC_INSTANT_APP_ID || process.env.INSTANT_APP_ID || '709e0e09-3347-419b-8daa-bad6889e480d',
+  adminToken: process.env.INSTANT_ADMIN_TOKEN!,
+  schema: (schema as any).default || schema,
+});
 
 const MATCH_FILE = path.join(process.cwd(), 'data', 'foursquare-osm-match-dry-run.json');
 const OUT_JSON = path.join(process.cwd(), 'data', 'nominatim-enrich-results.json');
@@ -39,6 +43,7 @@ const OVERPASS_ENDPOINTS = [
 ];
 const USER_AGENT = 'chinese-buffet-enrichment/1.0 (open-source directory project)';
 const MAX_DISTANCE_M = 100;
+const COORD_SEARCH_RADIUS_M = 60; // Overpass radius for coordinate-based fallback
 
 function parseArgs(argv: string[]) {
   const opts = { commit: false, limit: 0 };
@@ -107,6 +112,54 @@ async function fetchOsmTags(osmType: string, osmId: number): Promise<Record<stri
   return {};
 }
 
+/** Search for a restaurant/food_court/fast_food node near lat/lng via Overpass */
+async function fetchOsmTagsByCoords(
+  lat: number, lng: number, radiusM: number
+): Promise<{ tags: Record<string, string>; osmType: string; osmId: number; distanceM: number } | null> {
+  const query = `
+    (
+      node["amenity"~"^(restaurant|food_court|fast_food|cafe)$"](around:${radiusM},${lat},${lng});
+      way["amenity"~"^(restaurant|food_court|fast_food|cafe)$"](around:${radiusM},${lat},${lng});
+    );
+    out center tags;
+  `;
+  const body = `[out:json][timeout:15];${query}`;
+  for (const endpoint of OVERPASS_ENDPOINTS) {
+    try {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body,
+      });
+      if (!res.ok) continue;
+      const data = await res.json() as { elements: Array<{ type: string; id: number; lat?: number; lon?: number; center?: { lat: number; lon: number }; tags?: Record<string, string> }> };
+      if (!data.elements.length) return null;
+      // Pick closest element
+      let best = data.elements[0];
+      let bestDist = Infinity;
+      for (const el of data.elements) {
+        const elLat = el.lat ?? el.center?.lat;
+        const elLon = el.lon ?? el.center?.lon;
+        if (elLat == null || elLon == null) continue;
+        const d = haversineM(lat, lng, elLat, elLon);
+        if (d < bestDist) { bestDist = d; best = el; }
+      }
+      const bestLat = best.lat ?? best.center?.lat;
+      const bestLon = best.lon ?? best.center?.lon;
+      if (bestLat == null || bestLon == null) return null;
+      return {
+        tags: best.tags ?? {},
+        osmType: best.type,
+        osmId: best.id,
+        distanceM: haversineM(lat, lng, bestLat, bestLon),
+      };
+    } catch {
+      continue;
+    }
+  }
+  return null;
+}
+
 function extractPatch(tags: Record<string, string>) {
   const bool = (v: string | undefined): boolean | null =>
     v === 'yes' || v === 'true' || v === '1' ? true :
@@ -142,7 +195,7 @@ async function main() {
 
   const matchData = JSON.parse(fs.readFileSync(MATCH_FILE, 'utf8'));
   let noMatchRecords = (matchData.records ?? []).filter((r: { finalClass: string }) => r.finalClass === 'no_match') as Array<{
-    source: { id: string; name?: string; street?: string; cityName?: string; postalCode?: string; stateAbbr?: string; lat?: number; lng?: number };
+    source: { id: string; name?: string; address?: string; street?: string; cityName?: string; postalCode?: string; stateAbbr?: string; lat?: number; lng?: number };
   }>;
 
   if (opts.limit > 0) noMatchRecords = noMatchRecords.slice(0, opts.limit);
@@ -151,62 +204,90 @@ async function main() {
   const results: EnrichResult[] = [];
 
   for (const record of noMatchRecords) {
-    const { id, name, street, cityName, postalCode, lat, lng } = record.source;
-    console.log(`\nProcessing: ${name} — ${street}, ${cityName}`);
+    const { id, name, address, street, cityName, postalCode, lat, lng } = record.source;
+    console.log(`\nProcessing: ${name} — ${address || street || cityName}`);
 
-    if (!street || !cityName || !postalCode) {
-      console.log('  SKIP: missing address fields');
+    // Strategy A: Nominatim by address (when we have street + city + postalCode)
+    // Strategy B: Overpass coordinate search (when we have lat/lng but no street)
+    const hasStreet = !!(street && cityName && postalCode);
+    const hasCoords = lat != null && lng != null;
+
+    if (!hasStreet && !hasCoords) {
+      console.log('  SKIP: no address or coordinates');
       results.push({ sourceId: id, sourceName: name ?? '', status: 'no_nominatim_result' });
       continue;
     }
 
-    await sleep(1100); // Nominatim ToS: 1 req/sec
+    let tags: Record<string, string> = {};
+    let matchedOsmType: string | undefined;
+    let matchedOsmId: number | undefined;
+    let matchDist: number | undefined;
 
-    let nominatimResults: NominatimResult[];
-    try {
-      nominatimResults = await nominatimSearch(street, cityName, postalCode);
-    } catch (err) {
-      console.log(`  ERROR Nominatim: ${err}`);
-      results.push({ sourceId: id, sourceName: name ?? '', status: 'no_nominatim_result' });
-      continue;
+    if (hasStreet) {
+      // Strategy A: Nominatim address geocoding
+      await sleep(1100); // Nominatim ToS: 1 req/sec
+
+      let nominatimResults: NominatimResult[];
+      try {
+        nominatimResults = await nominatimSearch(street!, cityName!, postalCode!);
+      } catch (err) {
+        console.log(`  ERROR Nominatim: ${err}`);
+        results.push({ sourceId: id, sourceName: name ?? '', status: 'no_nominatim_result' });
+        continue;
+      }
+
+      if (!nominatimResults.length) {
+        console.log('  No Nominatim results');
+        results.push({ sourceId: id, sourceName: name ?? '', status: 'no_nominatim_result' });
+        continue;
+      }
+
+      let bestResult: NominatimResult | null = null;
+      let bestDist = Infinity;
+      for (const r of nominatimResults) {
+        if (!hasCoords) continue;
+        const dist = haversineM(lat!, lng!, parseFloat(r.lat), parseFloat(r.lon));
+        if (dist < bestDist) { bestDist = dist; bestResult = r; }
+      }
+
+      if (!bestResult || bestDist > MAX_DISTANCE_M) {
+        console.log(`  Too far: closest=${bestDist === Infinity ? 'N/A' : bestDist.toFixed(0)}m`);
+        results.push({ sourceId: id, sourceName: name ?? '', status: 'too_far', distanceM: bestDist === Infinity ? undefined : bestDist });
+        continue;
+      }
+
+      console.log(`  Nominatim match at ${bestDist.toFixed(0)}m: ${bestResult.display_name.slice(0, 80)}`);
+      matchedOsmType = bestResult.osm_type;
+      matchedOsmId = bestResult.osm_id;
+      matchDist = bestDist;
+
+      await sleep(1000);
+      tags = await fetchOsmTags(bestResult.osm_type, bestResult.osm_id);
+
+    } else if (hasCoords) {
+      // Strategy B: Overpass coordinate search — find amenity=restaurant within radius
+      console.log(`  No street, trying Overpass coordinate search at ${lat!.toFixed(5)},${lng!.toFixed(5)}`);
+      await sleep(1000);
+      const coordResult = await fetchOsmTagsByCoords(lat!, lng!, COORD_SEARCH_RADIUS_M);
+      if (coordResult) {
+        tags = coordResult.tags;
+        matchedOsmType = coordResult.osmType;
+        matchedOsmId = coordResult.osmId;
+        matchDist = coordResult.distanceM;
+        console.log(`  Coord match at ${matchDist.toFixed(0)}m (${matchedOsmType}:${matchedOsmId})`);
+      }
     }
 
-    if (!nominatimResults.length) {
-      console.log('  No Nominatim results');
-      results.push({ sourceId: id, sourceName: name ?? '', status: 'no_nominatim_result' });
-      continue;
-    }
-
-    // Find closest result within MAX_DISTANCE_M
-    let bestResult: NominatimResult | null = null;
-    let bestDist = Infinity;
-    for (const r of nominatimResults) {
-      if (lat == null || lng == null) continue;
-      const dist = haversineM(lat, lng, parseFloat(r.lat), parseFloat(r.lon));
-      if (dist < bestDist) { bestDist = dist; bestResult = r; }
-    }
-
-    if (!bestResult || bestDist > MAX_DISTANCE_M) {
-      console.log(`  Too far: closest=${bestDist === Infinity ? 'N/A' : bestDist.toFixed(0)}m`);
-      results.push({ sourceId: id, sourceName: name ?? '', status: 'too_far', distanceM: bestDist === Infinity ? undefined : bestDist });
-      continue;
-    }
-
-    console.log(`  Match at ${bestDist.toFixed(0)}m: ${bestResult.display_name.slice(0, 80)}`);
-
-    await sleep(1000); // Overpass rate limit
-
-    const tags = await fetchOsmTags(bestResult.osm_type, bestResult.osm_id);
     if (!Object.keys(tags).length) {
       console.log('  No OSM tags found');
-      results.push({ sourceId: id, sourceName: name ?? '', status: 'no_tags', distanceM: bestDist, osmType: bestResult.osm_type, osmId: bestResult.osm_id });
+      results.push({ sourceId: id, sourceName: name ?? '', status: 'no_tags', distanceM: matchDist, osmType: matchedOsmType, osmId: matchedOsmId });
       continue;
     }
 
     const patch = extractPatch(tags);
     console.log(`  hours="${patch.rawOpeningHours ?? 'none'}" cuisine="${patch.cuisineType ?? 'none'}"`);
 
-    results.push({ sourceId: id, sourceName: name ?? '', status: 'matched', distanceM: bestDist, osmType: bestResult.osm_type, osmId: bestResult.osm_id, patch });
+    results.push({ sourceId: id, sourceName: name ?? '', status: 'matched', distanceM: matchDist, osmType: matchedOsmType, osmId: matchedOsmId, patch });
 
     if (opts.commit) {
       const update: Record<string, unknown> = {};
