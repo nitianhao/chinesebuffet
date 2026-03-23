@@ -76,6 +76,7 @@ const _schema = i.schema({
       primaryType: i.string().optional(),
       // Hours stored as JSON string (Instant DB doesn't have native array of objects)
       hours: i.string().optional(), // JSON stringified array
+      rawOpeningHours: i.string().optional(), // OSM opening_hours string e.g. "Mo-Sa 10:00-21:00"
       categories: i.string().optional(), // JSON stringified array
       // Additional fields from Google Places JSON
       description: i.string().optional(),
@@ -178,6 +179,12 @@ const _schema = i.schema({
       scrapedAt: i.string(), // Timestamp
       status: i.string(), // SUCCESS, FAILED, PENDING
       errorMessage: i.string().optional(), // Error details if failed
+      cuisineType: i.string().optional(), // e.g. "American-Chinese", "Cantonese", "Sichuan"
+      prevalentDishType: i.string().optional(), // e.g. "Stir-fries", "Noodle dishes", "Dim sum"
+      isMixedCuisine: i.boolean().optional(), // true if restaurant also serves non-Chinese cuisine (Thai, Japanese, etc.)
+      mixedCuisineTypes: i.string().optional(), // JSON array of other cuisine types if mixed (e.g. ["Thai", "Japanese"])
+      cuisineConfidence: i.string().optional(), // "High", "Medium", or "Low"
+      cuisineAnalyzedAt: i.string().optional(), // Timestamp when cuisine analysis was last run
     }),
     menuItems: i.entity({
       categoryName: i.string().indexed(), // Menu category (e.g., "Appetizers", "Main Courses")
