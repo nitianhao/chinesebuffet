@@ -103,6 +103,8 @@ const _schema = i.schema({
       googleMapsLinks: i.string().optional(), // JSON stringified object
       priceRange: i.string().optional(), // JSON stringified object
       what_customers_are_saying_seo: i.string().optional(),
+      // Service options and amenity flags (JSON stringified object)
+      serviceOptions: i.string().optional(), // JSON stringified object: { takeout, delivery, dineIn, reservable, outdoorSeating, wheelchairAccessible, parking, wifi, kidsFriendly, creditCards, alcohol }
       // Yelp data
       yelpData: i.string().optional(), // JSON stringified object
       // Review summaries from Apify
