@@ -36,6 +36,7 @@ interface ActiveFilters {
   standoutTags: StandoutTagKey[];
   openNow: boolean;
   sort: SortOption;
+  cuisines: string[];
 }
 
 interface CityFilterBarProps {
@@ -131,12 +132,13 @@ function parseActiveFilters(searchParams: URLSearchParams): ActiveFilters {
   const standoutTags = (searchParams.get('tags')?.split(',').filter(Boolean) || []) as StandoutTagKey[];
   const openNowParam = searchParams.get('openNow');
   const openNow = openNowParam === '1' || openNowParam === 'true';
-  
+  const cuisines = searchParams.get('cuisines')?.split(',').filter(Boolean) || [];
+
   // Parse sort option
   const sortParam = searchParams.get('sort') as SortOption | null;
   const sort: SortOption = sortParam && Object.keys(SORT_LABELS).includes(sortParam) ? sortParam : 'relevance';
 
-  return { price, rating, reviews, neighborhoods, amenities, dineOptions, nearby, standoutTags, openNow, sort };
+  return { price, rating, reviews, neighborhoods, amenities, dineOptions, nearby, standoutTags, openNow, sort, cuisines };
 }
 
 // =============================================================================
@@ -290,6 +292,7 @@ interface FilterDrawerProps {
   onToggleNearby: (category: NearbyCategoryKey, bucket: DistanceBucketKey) => void;
   onToggleNeighborhood: (slug: string) => void;
   onToggleStandoutTag: (key: StandoutTagKey) => void;
+  onToggleCuisine: (cuisine: string) => void;
   onToggleOpenNow: () => void;
   onClearAll: () => void;
   onApply: () => void;
@@ -309,6 +312,7 @@ function FilterDrawer({
   onToggleNearby,
   onToggleNeighborhood,
   onToggleStandoutTag,
+  onToggleCuisine,
   onToggleOpenNow,
   onClearAll,
   onApply,
@@ -369,6 +373,13 @@ function FilterDrawer({
     return result;
   }, [aggregated]);
 
+  const cuisineOptions = useMemo(() => {
+    const counts = aggregated.cuisineCounts || {};
+    return Object.entries(counts)
+      .map(([cuisine, count]) => ({ cuisine, count }))
+      .sort((a, b) => b.count - a.count);
+  }, [aggregated]);
+
   if (!isOpen) return null;
 
   return (
@@ -418,6 +429,23 @@ function FilterDrawer({
                 <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition ${activeFilters.openNow ? 'translate-x-5' : 'translate-x-0'}`} />
               </button>
             </div>
+          )}
+
+          {/* Cuisine type */}
+          {cuisineOptions.length >= 2 && (
+            <FilterSection title="Cuisine Type">
+              <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+                {cuisineOptions.map(({ cuisine, count }) => (
+                  <FilterChipButton
+                    key={cuisine}
+                    label={cuisine}
+                    count={count}
+                    active={activeFilters.cuisines.includes(cuisine)}
+                    onClick={() => onToggleCuisine(cuisine)}
+                  />
+                ))}
+              </div>
+            </FilterSection>
           )}
 
           {/* Neighborhoods */}
@@ -669,6 +697,7 @@ export default function CityFilterBar({
       activeFilters.dineOptions.length > 0 ||
       activeFilters.nearby.length > 0 ||
       activeFilters.standoutTags.length > 0 ||
+      activeFilters.cuisines.length > 0 ||
       activeFilters.openNow
     );
   }, [activeFilters]);
@@ -683,6 +712,7 @@ export default function CityFilterBar({
       activeFilters.dineOptions.length +
       activeFilters.nearby.length +
       activeFilters.standoutTags.length +
+      activeFilters.cuisines.length +
       (activeFilters.openNow ? 1 : 0)
     );
   }, [activeFilters]);
@@ -709,6 +739,7 @@ export default function CityFilterBar({
         params.set('nearby', newFilters.nearby.map((n) => nearbyKey(n.category, n.bucket)).join(','));
       }
       if (newFilters.standoutTags.length > 0) params.set('tags', newFilters.standoutTags.join(','));
+      if (newFilters.cuisines.length > 0) params.set('cuisines', newFilters.cuisines.join(','));
       if (newFilters.openNow) params.set('openNow', '1');
       if (newFilters.sort && newFilters.sort !== 'relevance') params.set('sort', newFilters.sort);
       const queryString = params.toString();
@@ -804,6 +835,16 @@ export default function CityFilterBar({
     [activeFilters, updateFilters]
   );
 
+  const toggleCuisine = useCallback(
+    (cuisine: string) => {
+      const newCuisines = activeFilters.cuisines.includes(cuisine)
+        ? activeFilters.cuisines.filter((c) => c !== cuisine)
+        : [...activeFilters.cuisines, cuisine];
+      updateFilters({ ...activeFilters, cuisines: newCuisines });
+    },
+    [activeFilters, updateFilters]
+  );
+
   const toggleOpenNow = useCallback(() => {
     updateFilters({ ...activeFilters, openNow: !activeFilters.openNow });
   }, [activeFilters, updateFilters]);
@@ -825,6 +866,7 @@ export default function CityFilterBar({
       dineOptions: [],
       nearby: [],
       standoutTags: [],
+      cuisines: [],
       openNow: false,
       sort: activeFilters.sort, // Keep sort when clearing
     });
@@ -842,6 +884,14 @@ export default function CityFilterBar({
     return (['rating_45', 'rating_40', 'rating_35'] as RatingBucketKey[])
       .map((key) => ({ value: key, label: RATING_LABELS[key], count: aggregated.ratingCounts?.[key] || 0 }))
       .filter((opt) => opt.count > 0);
+  }, [aggregated]);
+
+  // Cuisine options sorted by count descending
+  const cuisineOptions = useMemo(() => {
+    const counts = aggregated.cuisineCounts || {};
+    return Object.entries(counts)
+      .map(([value, count]) => ({ value, label: value, count }))
+      .sort((a, b) => b.count - a.count);
   }, [aggregated]);
 
   // Sort options
@@ -921,6 +971,17 @@ export default function CityFilterBar({
                   options={neighborhoodOptions}
                   value={activeFilters.neighborhoods}
                   onChange={toggleNeighborhood}
+                  multiple
+                />
+              )}
+
+              {/* Cuisine dropdown */}
+              {cuisineOptions.length >= 2 && (
+                <FilterDropdown
+                  label="Cuisine"
+                  options={cuisineOptions}
+                  value={activeFilters.cuisines}
+                  onChange={toggleCuisine}
                   multiple
                 />
               )}
@@ -1017,6 +1078,9 @@ export default function CityFilterBar({
                 {activeFilters.standoutTags.map((key) => (
                   <ActiveFilterTag key={key} label={STANDOUT_TAG_LABELS[key]} onRemove={() => toggleStandoutTag(key)} />
                 ))}
+                {activeFilters.cuisines.map((cuisine) => (
+                  <ActiveFilterTag key={cuisine} label={cuisine} onRemove={() => toggleCuisine(cuisine)} />
+                ))}
                 {activeFilters.nearby.map(({ category, bucket }) => (
                   <ActiveFilterTag
                     key={`${category}_${bucket}`}
@@ -1050,6 +1114,7 @@ export default function CityFilterBar({
         onToggleNearby={toggleNearby}
         onToggleNeighborhood={toggleNeighborhood}
         onToggleStandoutTag={toggleStandoutTag}
+        onToggleCuisine={toggleCuisine}
         onToggleOpenNow={toggleOpenNow}
         onClearAll={clearFilters}
         onApply={() => setIsDrawerOpen(false)}

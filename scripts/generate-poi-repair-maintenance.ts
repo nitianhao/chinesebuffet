@@ -37,6 +37,7 @@ const CHECKPOINT_FILE = path.join(CHECKPOINT_DIR, 'repair-maintenance.checkpoint
 type BuffetRecord = {
   id: string;
   name?: string | null;
+  placeId?: string | null;
   repairMaintenance?: string | null;
   poiRecords?: PoiRecord[];
 };
@@ -694,6 +695,7 @@ async function main() {
   const force = hasFlag('--force');
   const model = getFlagValue('--model', DEFAULT_MODEL) as string;
   const buffetId = getFlagValue('--buffetId', '') as string;
+  const placeIdPrefix = (getFlagValue('--place-id-prefix', '') as string).trim().toLowerCase();
 
   if (!process.env.INSTANT_ADMIN_TOKEN) {
     console.error('ERROR: INSTANT_ADMIN_TOKEN is not set in .env.local');
@@ -721,6 +723,9 @@ async function main() {
   console.log(`Dry run mode: ${dryRun ? 'ENABLED (no database writes)' : 'DISABLED'}`);
   console.log(`Resume mode: ${resume ? 'ENABLED' : 'DISABLED'}`);
   console.log(`Force mode: ${force ? 'ENABLED (overwrite existing)' : 'DISABLED'}`);
+  if (placeIdPrefix) {
+    console.log(`PlaceId prefix filter: ${placeIdPrefix}`);
+  }
   if (buffetId) {
     console.log(`Single buffet mode: ${buffetId}`);
   }
@@ -761,6 +766,16 @@ async function main() {
       }
       
       const buffet = buffets[0];
+      scanned = 1;
+
+      if (placeIdPrefix) {
+        const pid = typeof buffet.placeId === 'string' ? buffet.placeId.trim().toLowerCase() : '';
+        if (!pid.startsWith(placeIdPrefix)) {
+          console.log(`Skipping single buffet: placeId does not match prefix "${placeIdPrefix}"`);
+          return;
+        }
+      }
+
       try {
         const result = await processBuffet(buffet, checkpoint, db, { dryRun, resume, model, force });
         
@@ -830,6 +845,13 @@ async function main() {
       const skippedInBatch: { existing: number; noPois: number } = { existing: 0, noPois: 0 };
       
       for (const buffet of buffets) {
+      if (placeIdPrefix) {
+        const pid = typeof buffet.placeId === 'string' ? buffet.placeId.trim().toLowerCase() : '';
+        if (!pid.startsWith(placeIdPrefix)) {
+          continue;
+        }
+      }
+
       // Stop scheduling if we've generated enough
       if (limit > 0 && generated >= limit) {
         break;

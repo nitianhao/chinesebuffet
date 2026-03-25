@@ -29,6 +29,7 @@ const CHECKPOINT_FILE = path.join(__dirname, 'checkpoint-travel-tourism-services
 type BuffetRecord = {
   id: string;
   name?: string | null;
+  placeId?: string | null;
   travelTourismServices?: string | null;
   poiRecords?: PoiRecord[];
 };
@@ -562,6 +563,7 @@ async function main() {
   const concurrency = getFlagValue('--concurrency', DEFAULT_CONCURRENCY) as number;
   const dryRun = hasFlag('--dryRun') || hasFlag('--dry-run');
   const resume = hasFlag('--resume');
+  const placeIdPrefix = (getFlagValue('--place-id-prefix', '') as string).trim().toLowerCase();
 
   if (!process.env.INSTANT_ADMIN_TOKEN) {
     console.error('ERROR: INSTANT_ADMIN_TOKEN is not set in .env.local');
@@ -582,6 +584,9 @@ async function main() {
   console.log(`Limit: ${limit === 0 ? 'unlimited' : limit}`);
   console.log(`Dry run mode: ${dryRun ? 'ENABLED (no database writes)' : 'DISABLED (will save to database)'}`);
   console.log(`Resume mode: ${resume ? 'ENABLED' : 'DISABLED'}`);
+  if (placeIdPrefix) {
+    console.log(`PlaceId prefix filter: ${placeIdPrefix}`);
+  }
   console.log('');
   console.log('Starting processing...');
   console.log('');
@@ -639,6 +644,13 @@ async function main() {
     const skippedInBatch: { existing: number; noPois: number } = { existing: 0, noPois: 0 };
     
     for (const buffet of buffets) {
+      if (placeIdPrefix) {
+        const pid = typeof buffet.placeId === 'string' ? buffet.placeId.trim().toLowerCase() : '';
+        if (!pid.startsWith(placeIdPrefix)) {
+          continue;
+        }
+      }
+
       // Stop scheduling if we've reached the limit
       if (limit > 0 && scheduled >= limit) {
         break;

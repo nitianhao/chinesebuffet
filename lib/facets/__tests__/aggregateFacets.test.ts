@@ -96,6 +96,10 @@ const mockFacet1: BuffetFacetData = {
   dineOptions: { dine_in: true, takeout: true, delivery: false },
   standoutTags: ['crab_legs', 'fresh_food'],
   neighborhood: 'downtown',
+  parsedHours: null,
+  timezone: null,
+  hasHours: false,
+  cuisineType: 'American-Chinese',
 };
 
 const mockFacet2: BuffetFacetData = {
@@ -132,6 +136,10 @@ const mockFacet2: BuffetFacetData = {
   dineOptions: { dine_in: true, takeout: true, delivery: true },
   standoutTags: ['sushi', 'good_value'],
   neighborhood: 'downtown', // Same as mockFacet1
+  parsedHours: null,
+  timezone: null,
+  hasHours: false,
+  cuisineType: 'American-Chinese',
 };
 
 const mockFacet3: BuffetFacetData = {
@@ -168,6 +176,10 @@ const mockFacet3: BuffetFacetData = {
   dineOptions: { dine_in: true, takeout: false, delivery: false },
   standoutTags: ['mongolian_grill', 'clean'],
   neighborhood: 'midtown', // Different neighborhood
+  parsedHours: null,
+  timezone: null,
+  hasHours: false,
+  cuisineType: 'Sichuan',
 };
 
 // Additional mock for testing neighborhood edge cases
@@ -205,6 +217,10 @@ const mockFacet4: BuffetFacetData = {
   dineOptions: { dine_in: true, takeout: true, delivery: false },
   standoutTags: [],
   neighborhood: 'east-side', // Singleton neighborhood
+  parsedHours: null,
+  timezone: null,
+  hasHours: false,
+  cuisineType: null,
 };
 
 const mockFacet5: BuffetFacetData = {
@@ -241,6 +257,10 @@ const mockFacet5: BuffetFacetData = {
   dineOptions: { dine_in: true, takeout: true, delivery: true },
   standoutTags: ['seafood', 'family_friendly'],
   neighborhood: 'midtown', // Same as mockFacet3
+  parsedHours: null,
+  timezone: null,
+  hasHours: false,
+  cuisineType: 'Cantonese',
 };
 
 // =============================================================================

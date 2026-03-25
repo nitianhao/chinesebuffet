@@ -56,6 +56,11 @@ export interface AggregatedFacets {
   dineOptionCounts: Record<DineOptionKey, number>;
   /** Count of buffets with each standout tag */
   standoutTagCounts: Record<StandoutTagKey, number>;
+  /**
+   * Count of buffets per cuisine type (e.g., "American-Chinese", "Sichuan").
+   * Only includes cuisines with count >= MIN_CUISINE_COUNT.
+   */
+  cuisineCounts: Record<string, number>;
   /** Total number of buffets aggregated */
   totalBuffets: number;
   /** Count of buffets that have valid hours data (for "Open now" filter) */
@@ -64,6 +69,9 @@ export interface AggregatedFacets {
 
 /** Minimum buffet count for a neighborhood to be included in aggregation */
 export const MIN_NEIGHBORHOOD_COUNT = 2;
+
+/** Minimum buffet count for a cuisine to be included in aggregation */
+export const MIN_CUISINE_COUNT = 2;
 
 // =============================================================================
 // CONSTANTS
@@ -163,6 +171,7 @@ export function createEmptyAggregatedFacets(): AggregatedFacets {
     reviewCountCounts,
     dineOptionCounts,
     standoutTagCounts,
+    cuisineCounts: {},
     totalBuffets: 0,
     buffetsWithHours: 0,
   };
@@ -194,8 +203,9 @@ export function aggregateFacets(
 ): AggregatedFacets {
   const result = createEmptyAggregatedFacets();
   
-  // Temporary map for all neighborhoods (including singletons)
+  // Temporary maps for all neighborhoods and cuisines (including singletons)
   const allNeighborhoodCounts: Record<string, number> = {};
+  const allCuisineCounts: Record<string, number> = {};
 
   for (const facetData of facetIndexes) {
     if (!facetData) continue;
@@ -278,12 +288,25 @@ export function aggregateFacets(
         }
       }
     }
+
+    // Count cuisine types
+    if (facetData.cuisineType) {
+      allCuisineCounts[facetData.cuisineType] =
+        (allCuisineCounts[facetData.cuisineType] || 0) + 1;
+    }
   }
 
   // Filter neighborhoods to only include those with >= MIN_NEIGHBORHOOD_COUNT
   for (const [neighborhood, count] of Object.entries(allNeighborhoodCounts)) {
     if (count >= MIN_NEIGHBORHOOD_COUNT) {
       result.neighborhoodCounts[neighborhood] = count;
+    }
+  }
+
+  // Filter cuisines to only include those with >= MIN_CUISINE_COUNT
+  for (const [cuisine, count] of Object.entries(allCuisineCounts)) {
+    if (count >= MIN_CUISINE_COUNT) {
+      result.cuisineCounts[cuisine] = count;
     }
   }
 

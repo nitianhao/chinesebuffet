@@ -83,6 +83,7 @@ interface POISection {
 interface BuffetRecord {
   id: string;
   name?: string | null;
+  placeId?: string | null;
   facetIndex?: string | null;
   // Core fields for new facets
   rating?: number | null;
@@ -273,6 +274,7 @@ interface ProcessOptions {
   batchSize: number;
   resume: boolean;
   buffetId?: string;
+  placeIdPrefix?: string;
 }
 
 async function processBatch(
@@ -289,6 +291,14 @@ async function processBatch(
 
   for (const buffet of buffets) {
     try {
+      if (options.placeIdPrefix) {
+        const placeId = typeof buffet.placeId === 'string' ? buffet.placeId.trim().toLowerCase() : '';
+        if (!placeId.startsWith(options.placeIdPrefix)) {
+          skipped++;
+          continue;
+        }
+      }
+
       // Skip if already processed (resuming)
       if (checkpoint.processedIds.includes(buffet.id)) {
         skipped++;
@@ -374,6 +384,14 @@ async function processSingleBuffet(
     process.exit(1);
   }
 
+  if (options.placeIdPrefix) {
+    const placeId = typeof buffet.placeId === 'string' ? buffet.placeId.trim().toLowerCase() : '';
+    if (!placeId.startsWith(options.placeIdPrefix)) {
+      console.error(`Buffet ${buffetId} placeId does not match prefix "${options.placeIdPrefix}"`);
+      process.exit(1);
+    }
+  }
+
   const buffetForFacets = transformBuffetForFacets(buffet);
   const facetData = buildFacetIndex(buffetForFacets);
   const facetIndexJson = JSON.stringify(facetData);
@@ -413,7 +431,7 @@ async function processAllBuffets(
   let { total, updated, skipped, errors } = checkpoint.stats;
 
   console.log('\nStarting facetIndex backfill...');
-  console.log(`Options: batchSize=${options.batchSize}, limit=${options.limit || 'unlimited'}, force=${options.force}, dryRun=${options.dryRun}`);
+  console.log(`Options: batchSize=${options.batchSize}, limit=${options.limit || 'unlimited'}, force=${options.force}, dryRun=${options.dryRun}, placeIdPrefix=${options.placeIdPrefix || 'none'}`);
   console.log('');
 
   // eslint-disable-next-line no-constant-condition
@@ -512,6 +530,7 @@ function parseArgs(): ProcessOptions {
     limit: getFlagValue('--limit', DEFAULT_LIMIT),
     batchSize: getFlagValue('--batch-size', DEFAULT_BATCH_SIZE),
     buffetId: getStringValue('--buffet-id'),
+    placeIdPrefix: getStringValue('--place-id-prefix')?.trim().toLowerCase(),
   };
 }
 

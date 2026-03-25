@@ -746,6 +746,20 @@ function getGroupFromCategory(category) {
   return 'Miscellaneous Services';
 }
 
+const args = process.argv.slice(2);
+
+function hasFlag(name) {
+  return args.includes(name);
+}
+
+function getArgValue(name) {
+  const direct = args.find(arg => arg.startsWith(`${name}=`));
+  if (direct) return direct.split('=').slice(1).join('=');
+  const idx = args.indexOf(name);
+  if (idx >= 0 && args[idx + 1]) return args[idx + 1];
+  return null;
+}
+
 async function labelPOIGroups() {
   console.log('📋 Labeling poiRecords with category groups...\n');
 
@@ -770,13 +784,59 @@ async function labelPOIGroups() {
       schema: schema?.default || schema || {},
     });
 
+    const placeIdPrefix = (getArgValue('--place-id-prefix') || '').trim().toLowerCase();
+    const ungroupedOnly = !hasFlag('--include-grouped');
+    const dryRun = !hasFlag('--commit');
+    const maxRecordsArg = getArgValue('--max-records');
+    const maxRecords = maxRecordsArg ? Number.parseInt(maxRecordsArg, 10) : null;
+
+    console.log(`Mode: ${dryRun ? 'DRY RUN' : 'COMMIT'}`);
+    console.log(`Filter placeId prefix: ${placeIdPrefix || 'none'}`);
+    console.log(`Scope: ${ungroupedOnly ? 'ungrouped records only' : 'all matching records'}`);
+    console.log(`Safety cap: ${Number.isFinite(maxRecords) && maxRecords > 0 ? maxRecords : 'none'}\n`);
+
+    let scopedBuffetIds = null;
+    if (placeIdPrefix) {
+      scopedBuffetIds = new Set();
+      let buffetOffset = 0;
+      const buffetBatch = 1000;
+      let buffetMore = true;
+      while (buffetMore) {
+        const buffetResult = await db.query({
+          buffets: {
+            $: { limit: buffetBatch, offset: buffetOffset },
+          },
+        });
+        const buffets = buffetResult.buffets || [];
+        for (const buffet of buffets) {
+          const placeId = typeof buffet.placeId === 'string' ? buffet.placeId.trim().toLowerCase() : '';
+          if (placeId.startsWith(placeIdPrefix)) {
+            scopedBuffetIds.add(buffet.id);
+          }
+        }
+        if (buffets.length < buffetBatch) {
+          buffetMore = false;
+        } else {
+          buffetOffset += buffetBatch;
+        }
+      }
+      console.log(`Scoped buffet ids: ${scopedBuffetIds.size}`);
+    }
+
     console.log('Fetching poiRecords in batches...');
-    
-    // Fetch poiRecords in batches
+
     const batchSize = 1000;
-    let allRecords = [];
     let offset = 0;
     let hasMore = true;
+    let totalFetched = 0;
+    let scanned = 0;
+    const groupCounts = {};
+    let alreadyLabeled = 0;
+    let matchedScope = 0;
+    let prepared = 0;
+    let updated = 0;
+    const updateBatchSize = 200;
+    const txBuffer = [];
 
     while (hasMore) {
       const result = await db.query({
@@ -784,15 +844,57 @@ async function labelPOIGroups() {
           $: {
             limit: batchSize,
             offset: offset,
-          }
+          },
+          buffet: {},
         }
       });
 
       const records = result.poiRecords || [];
-      allRecords = allRecords.concat(records);
-      
-      console.log(`  Fetched ${records.length} records (total: ${allRecords.length})...`);
-      
+      totalFetched += records.length;
+      if (records.length === 0) break;
+
+      for (const record of records) {
+        scanned++;
+        if (Number.isFinite(maxRecords) && maxRecords > 0 && prepared >= maxRecords) {
+          hasMore = false;
+          break;
+        }
+
+        const buffetId = record?.buffet?.id || null;
+        if (scopedBuffetIds && (!buffetId || !scopedBuffetIds.has(buffetId))) {
+          continue;
+        }
+        matchedScope++;
+
+        const currentGroup = typeof record.group === 'string' ? record.group.trim() : '';
+        if (currentGroup) {
+          alreadyLabeled++;
+          if (ungroupedOnly) {
+            continue;
+          }
+        }
+
+        const targetGroup = getGroupFromCategory(record.category);
+        if (currentGroup === targetGroup) {
+          continue;
+        }
+
+        prepared++;
+        groupCounts[targetGroup] = (groupCounts[targetGroup] || 0) + 1;
+
+        if (!dryRun) {
+          txBuffer.push(db.tx.poiRecords[record.id].update({ group: targetGroup }));
+          if (txBuffer.length >= updateBatchSize) {
+            const batch = txBuffer.splice(0, updateBatchSize);
+            await db.transact(batch);
+            updated += batch.length;
+            console.log(`  Updated ${updated} records...`);
+          }
+        }
+      }
+
+      console.log(`  Fetched ${records.length} records (total fetched: ${totalFetched}, prepared: ${prepared})...`);
+
       if (records.length < batchSize) {
         hasMore = false;
       } else {
@@ -801,83 +903,34 @@ async function labelPOIGroups() {
       }
     }
 
-    console.log(`✓ Total poiRecords fetched: ${allRecords.length}\n`);
-
-    // Filter records that need updating (skip already labeled)
-    const recordsToUpdate = [];
-    const groupCounts = {};
-    let alreadyLabeled = 0;
-
-    for (const record of allRecords) {
-      const category = record.category;
-      const currentGroup = record.group;
-      
-      // Skip records that already have a group label
-      if (currentGroup && currentGroup.trim() !== '') {
-        alreadyLabeled++;
-        continue;
-      }
-      
-      const targetGroup = getGroupFromCategory(category);
-      recordsToUpdate.push({ record, targetGroup });
-      
-      if (!groupCounts[targetGroup]) {
-        groupCounts[targetGroup] = 0;
-      }
-      groupCounts[targetGroup]++;
+    if (!dryRun && txBuffer.length > 0) {
+      await db.transact(txBuffer);
+      updated += txBuffer.length;
+      console.log(`  Updated ${updated} records...`);
     }
 
-    console.log(`Records needing group labels: ${recordsToUpdate.length}`);
-    console.log(`Records already labeled: ${alreadyLabeled}\n`);
-
-    if (recordsToUpdate.length === 0) {
-      console.log('✓ All records are already labeled!');
-      return;
-    }
-
-    console.log('Group distribution for new labels:');
+    console.log('\nGroup distribution for target labels:');
     Object.entries(groupCounts)
       .sort((a, b) => b[1] - a[1])
+      .slice(0, 25)
       .forEach(([group, count]) => {
         console.log(`  ${group}: ${count} records`);
       });
-    console.log('');
 
-    // Update records in batches
-    console.log('Updating records...');
-    let updated = 0;
-    const updateBatchSize = 100;
-
-    for (let i = 0; i < recordsToUpdate.length; i += updateBatchSize) {
-      const batch = recordsToUpdate.slice(i, i + updateBatchSize);
-      
-      for (const { record, targetGroup } of batch) {
-        try {
-          await db.transact([
-            db.tx.poiRecords[record.id].update({ group: targetGroup })
-          ]);
-          updated++;
-          
-          if (updated % 100 === 0) {
-            console.log(`  Updated ${updated}/${recordsToUpdate.length} records...`);
-          }
-        } catch (error) {
-          console.error(`Error updating record ${record.id}:`, error.message);
-        }
-      }
-      
-      // Small delay to avoid rate limiting
-      await new Promise(resolve => setTimeout(resolve, 50));
+    if (dryRun) {
+      console.log(`\n✓ Dry run complete. Would update ${prepared} records.`);
+    } else {
+      console.log(`\n✓ Successfully labeled ${updated} records with category groups!`);
     }
-
-    console.log(`\n✓ Successfully labeled ${updated} records with category groups!`);
 
     // Final summary
     console.log('\n=== Final Summary ===');
-    console.log(`Total records processed: ${allRecords.length}`);
-    console.log(`Records updated: ${updated}`);
-    console.log(`Records already labeled: ${alreadyLabeled}`);
-    console.log(`Records remaining unlabeled: ${recordsToUpdate.length - updated}`);
+    console.log(`Total records fetched: ${totalFetched}`);
+    console.log(`Records scanned: ${scanned}`);
+    console.log(`Records matching scope: ${matchedScope}`);
+    console.log(`Records already labeled in scope: ${alreadyLabeled}`);
+    console.log(`Records prepared for labeling: ${prepared}`);
+    console.log(`Records updated: ${dryRun ? 0 : updated}`);
     
   } catch (error) {
     console.error('❌ Error labeling poiRecords:', error);
@@ -889,12 +942,18 @@ async function labelPOIGroups() {
   }
 }
 
-labelPOIGroups()
-  .then(() => {
-    console.log('\n✓ Done!');
-    process.exit(0);
-  })
-  .catch((error) => {
-    console.error('\n✗ Failed:', error.message);
-    process.exit(1);
-  });
+if (require.main === module) {
+  labelPOIGroups()
+    .then(() => {
+      console.log('\n✓ Done!');
+      process.exit(0);
+    })
+    .catch((error) => {
+      console.error('\n✗ Failed:', error.message);
+      process.exit(1);
+    });
+}
+
+module.exports = {
+  getGroupFromCategory,
+};

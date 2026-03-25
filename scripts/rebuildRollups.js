@@ -941,6 +941,18 @@ function aggregateFacetsJS(facetDataList) {
     if (c >= FACET_MIN_NEIGHBORHOOD_COUNT) neighborhoodCounts[n] = c;
   }
 
+  // Count cuisines (free-form strings from menu analysis)
+  const rawCuisineCounts = {};
+  for (const fd of facetDataList) {
+    if (fd && fd.cuisineType) {
+      rawCuisineCounts[fd.cuisineType] = (rawCuisineCounts[fd.cuisineType] || 0) + 1;
+    }
+  }
+  const cuisineCounts = {};
+  for (const [c, count] of Object.entries(rawCuisineCounts)) {
+    if (count >= 2) cuisineCounts[c] = count;
+  }
+
   return {
     amenityCounts,
     nearbyCounts,
@@ -950,6 +962,7 @@ function aggregateFacetsJS(facetDataList) {
     reviewCountCounts,
     dineOptionCounts,
     standoutTagCounts,
+    cuisineCounts,
     totalBuffets,
     buffetsWithHours,
   };

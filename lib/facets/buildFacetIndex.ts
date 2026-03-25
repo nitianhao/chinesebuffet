@@ -75,6 +75,8 @@ export interface BuffetFacetData {
   timezone: string | null;
   /** Whether this buffet has valid hours data (for conditional "Open now" UI) */
   hasHours: boolean;
+  /** Cuisine type from menu analysis (e.g., "Sichuan", "Cantonese", "American-Chinese") */
+  cuisineType: string | null;
 }
 
 /** POI item structure as stored on buffet */
@@ -128,6 +130,8 @@ export interface BuffetForFacets {
   reviewsCount?: number | null;
   price?: string | null;
   neighborhood?: string | null;
+  /** Cuisine type from menu analysis (denormalized from menus table) */
+  cuisineType?: string | null;
   // "What stands out" / customer highlights
   what_customers_are_saying_seo?: string | null;
   reviewSummaryParagraph1?: string | null;
@@ -958,5 +962,7 @@ export function buildFacetIndex(buffet: BuffetForFacets): BuffetFacetData {
     timezone: buffet.timezone || null,
     // Whether this buffet has valid hours data (for conditional "Open now" UI)
     hasHours,
+    // Cuisine type from menu analysis
+    cuisineType: buffet.cuisineType || null,
   };
 }

@@ -457,6 +457,34 @@ export interface Buffet {
   neighborhoodRankText?: string | null;
   /** True when this buffet is the sole occupant of its neighborhood in the city. */
   isOnlyInNeighborhood?: boolean | null;
+  /** Composite full-night-out score (0–100). Null when not yet computed. */
+  fullNightOutScore?: number | null;
+  /** Tier label derived from fullNightOutScore. Null when score is 0–24. */
+  fullNightOutTier?: string | null;
+  /** Display emoji for the fullNightOutTier. Null when score is 0–24. */
+  fullNightOutTierEmoji?: string | null;
+  /** Individual sub-scores that sum to fullNightOutScore. */
+  fullNightOutSubScores?: import('./fullNightOutScore').FullNightOutSubScores | null;
+  /** Human-readable signals that increase the full-night-out score. */
+  fullNightOutPositiveSignals?: string[] | null;
+  /** Human-readable signals that reduce the full-night-out score. */
+  fullNightOutNegativeSignals?: string[] | null;
+  /**
+   * Bayesian-weighted rating that adjusts the raw score based on review volume
+   * relative to the city median. Rounds to 2 decimal places. Null when not yet computed.
+   * See lib/trustedRating.ts for the formula.
+   */
+  trustedRating?: number | null;
+  /** trustedRating formatted to 1 decimal place, e.g. "4.7". Null when not yet computed. */
+  trustedRatingDisplay?: string | null;
+  /** Human-readable confidence label derived from review count vs. city median. */
+  confidenceTier?: string | null;
+  /** Visual indicator emoji for confidenceTier. */
+  confidenceTierEmoji?: string | null;
+  /** The city average rating (C) used in the trusted rating formula. */
+  cityAverageRating?: number | null;
+  /** The city median review count (m, ≥ 50) used in the trusted rating formula. */
+  cityMedianReviews?: number | null;
 }
 
 export interface City {

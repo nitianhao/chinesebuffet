@@ -44,6 +44,7 @@ const CHECKPOINT_FILE = path.join(CHECKPOINT_DIR, 'utilities-infrastructure.chec
 type BuffetRecord = {
   id: string;
   name?: string | null;
+  placeId?: string | null;
   utilitiesInfrastructure?: string | null;
   poiRecords?: PoiRecord[];
 };
@@ -1051,6 +1052,7 @@ async function main() {
   const resume = hasFlag('--resume');
   const force = hasFlag('--force');
   const buffetId = getFlagValue('--buffetId', '') as string;
+  const placeIdPrefix = (getFlagValue('--place-id-prefix', '') as string).trim().toLowerCase();
 
   // Validate environment
   if (!process.env.INSTANT_ADMIN_TOKEN) {
@@ -1076,6 +1078,9 @@ async function main() {
   console.log(`Dry run: ${dryRun ? 'YES (no database writes)' : 'NO (will save to database)'}`);
   console.log(`Resume: ${resume ? 'YES' : 'NO'}`);
   console.log(`Force: ${force ? 'YES (overwrite existing)' : 'NO'}`);
+  if (placeIdPrefix) {
+    console.log(`PlaceId prefix filter: ${placeIdPrefix}`);
+  }
   if (buffetId) {
     console.log(`Single buffet: ${buffetId}`);
   }
@@ -1116,7 +1121,15 @@ async function main() {
       
       const buffet = buffets[0];
       scanned = 1;
-      
+
+      if (placeIdPrefix) {
+        const pid = typeof buffet.placeId === 'string' ? buffet.placeId.trim().toLowerCase() : '';
+        if (!pid.startsWith(placeIdPrefix)) {
+          console.log(`Skipping single buffet: placeId does not match prefix "${placeIdPrefix}"`);
+          return;
+        }
+      }
+
       try {
         const result = await processBuffet(buffet, checkpoint, db, { dryRun, resume, force });
         
@@ -1180,6 +1193,13 @@ async function main() {
       const toProcess: BuffetRecord[] = [];
       
       for (const buffet of buffets) {
+        if (placeIdPrefix) {
+          const pid = typeof buffet.placeId === 'string' ? buffet.placeId.trim().toLowerCase() : '';
+          if (!pid.startsWith(placeIdPrefix)) {
+            continue;
+          }
+        }
+
         // Stop scheduling if we've generated enough
         if (limit > 0 && generated >= limit) {
           break;

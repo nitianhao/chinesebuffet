@@ -720,6 +720,11 @@ export async function getMenuForBuffet(placeId: string): Promise<any | null> {
         contentType: menu.contentType,
         scrapedAt: menu.scrapedAt,
         status: menu.status,
+        cuisineType: menu.cuisineType || null,
+        prevalentDishType: menu.prevalentDishType || null,
+        isMixedCuisine: menu.isMixedCuisine || false,
+        mixedCuisineTypes: menu.mixedCuisineTypes ? (() => { try { return JSON.parse(menu.mixedCuisineTypes); } catch { return []; } })() : [],
+        cuisineConfidence: menu.cuisineConfidence || null,
         // Return structured data built from menuItems
         categories,
         items: menuItems.map((item) => ({
@@ -747,6 +752,11 @@ export async function getMenuForBuffet(placeId: string): Promise<any | null> {
       scrapedAt: menu.scrapedAt,
       status: menu.status,
       errorMessage: menu.errorMessage,
+      cuisineType: menu.cuisineType || null,
+      prevalentDishType: menu.prevalentDishType || null,
+      isMixedCuisine: menu.isMixedCuisine || false,
+      mixedCuisineTypes: menu.mixedCuisineTypes ? (() => { try { return JSON.parse(menu.mixedCuisineTypes); } catch { return []; } })() : [],
+      cuisineConfidence: menu.cuisineConfidence || null,
       _source: 'json', // Flag to indicate data came from JSON fields
     };
   } catch (error) {

@@ -1,5 +1,31 @@
 # Scripts
 
+## Foursquare buffet importer
+
+Environment variables:
+- `FOURSQUARE_SERVICE_KEY` (recommended, new Places API)
+- `FOURSQUARE_API_KEY` (legacy fallback)
+- `INSTANT_ADMIN_TOKEN`
+
+Safe default (dry-run):
+- `npm run import-foursquare-buffets -- --city-limit 5`
+
+Write to DB:
+- `npm run import-foursquare-buffets:commit -- --city-limit 5`
+
+Useful flags:
+- `--state TX`
+- `--city "Houston"`
+- `--reset-checkpoint`
+- `--max-per-query 50`
+- `--max-offsets 3`
+
+Outputs:
+- `data/foursquare-import-checkpoint.json`
+- `data/foursquare-import-report.json`
+- `data/foursquare-candidates.json`
+- `data/foursquare-rejected.json`
+
 ## SEO description generator
 
 Environment variables:

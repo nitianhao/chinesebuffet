@@ -39,11 +39,33 @@ const db = init({
 });
 
 const DEFAULT_OVERPASS_URL = 'https://overpass-api.de/api/interpreter';
+const args = process.argv.slice(2);
+
+function getArgValue(name) {
+  const direct = args.find(arg => arg.startsWith(`${name}=`));
+  if (direct) return direct.split('=').slice(1).join('=');
+  const idx = args.indexOf(name);
+  if (idx >= 0 && args[idx + 1]) return args[idx + 1];
+  return null;
+}
+
+const placeIdPrefixArg = getArgValue('--place-id-prefix');
+const fsqOnly = args.includes('--fsq-only');
+const placeIdPrefix = (placeIdPrefixArg || (fsqOnly ? 'fsq' : '')).trim();
+const maxBuffetsArg = getArgValue('--max-buffets');
+const maxBuffets = maxBuffetsArg ? Number.parseInt(maxBuffetsArg, 10) : null;
+
+const RETRYABLE_OVERPASS_STATUS = new Set([429, 504]);
+
+function isRetryableOverpassStatus(status) {
+  return RETRYABLE_OVERPASS_STATUS.has(status);
+}
 
 /**
  * Query Overpass API with retry logic for rate limits
  */
 async function queryOverpass(query, endpoint = DEFAULT_OVERPASS_URL, timeout = 25, retries = 3) {
+  let lastError = null;
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
       // Node.js 18+ has fetch built-in
@@ -56,32 +78,51 @@ async function queryOverpass(query, endpoint = DEFAULT_OVERPASS_URL, timeout = 2
       });
 
       if (!response.ok) {
-        // If rate limited, wait and retry
-        if (response.status === 429 && attempt < retries) {
+        const status = response.status;
+        const statusText = response.statusText;
+        const retryable = isRetryableOverpassStatus(status);
+        const err = new Error(`Overpass API error: ${status} ${statusText}`);
+        err.status = status;
+        err.retryable = retryable;
+        lastError = err;
+
+        // Retry retryable errors (429/504)
+        if (retryable && attempt < retries) {
           const waitTime = attempt * 5000; // Linear backoff: 5s, 10s
-          console.log(`    Rate limited, waiting ${waitTime/1000}s before retry ${attempt + 1}/${retries}...`);
+          console.log(`    Overpass ${status}, waiting ${waitTime/1000}s before retry ${attempt + 1}/${retries}...`);
           await new Promise(resolve => setTimeout(resolve, waitTime));
           continue;
         }
-        throw new Error(`Overpass API error: ${response.status} ${response.statusText}`);
+        throw err;
       }
 
       const data = await response.json();
 
       if ('error' in data) {
-        throw new Error(`Overpass API error: ${data.error?.code} - ${data.error?.message}`);
+        const err = new Error(`Overpass API error: ${data.error?.code} - ${data.error?.message}`);
+        lastError = err;
+        throw err;
       }
 
       return data;
     } catch (error) {
+      lastError = error;
       if (attempt === retries) {
-        throw new Error(`Failed to query Overpass API after ${retries} attempts: ${String(error)}`);
+        const finalError = new Error(`Failed to query Overpass API after ${retries} attempts: ${String(error)}`);
+        finalError.status = error?.status;
+        finalError.retryable = Boolean(error?.retryable);
+        throw finalError;
       }
-      // Wait before retry
+      // Wait before retry for unknown transient errors
+      const retryable = Boolean(error?.retryable) || error?.status == null;
+      if (!retryable) {
+        throw error;
+      }
       const waitTime = attempt * 5000; // Linear backoff: 5s, 10s
       await new Promise(resolve => setTimeout(resolve, waitTime));
     }
   }
+  throw lastError || new Error('Failed to query Overpass API');
 }
 
 /**
@@ -136,9 +177,8 @@ async function findAllNearbyPOIs(lat, lon, radius = 1000, limit = 200) {
     out center meta;
   `;
 
-  try {
-    const response = await queryOverpass(query);
-    const pois = [];
+  const response = await queryOverpass(query);
+  const pois = [];
 
     for (const element of response.elements) {
       const elementLat = element.lat || (element.geometry?.[0]?.lat);
@@ -176,14 +216,10 @@ async function findAllNearbyPOIs(lat, lon, radius = 1000, limit = 200) {
       });
     }
 
-    // Sort by distance and limit results
-    return pois
-      .sort((a, b) => a.distance - b.distance)
-      .slice(0, limit);
-  } catch (error) {
-    console.error(`Error fetching POIs: ${error.message}`);
-    return [];
-  }
+  // Sort by distance and limit results
+  return pois
+    .sort((a, b) => a.distance - b.distance)
+    .slice(0, limit);
 }
 
 /**
@@ -200,7 +236,7 @@ async function enrichBuffetWithPOIs(buffet) {
     const pois = await findAllNearbyPOIs(buffet.lat, buffet.lng, 1000, 200);
     
     if (pois.length === 0) {
-      return { success: false, reason: 'No POIs found' };
+      return { success: false, reason: 'No POIs found', retryable: false };
     }
 
     // Group POIs by category for easier analysis
@@ -236,8 +272,14 @@ async function enrichBuffetWithPOIs(buffet) {
       poiData: poiData
     };
   } catch (error) {
+    const status = error?.status;
+    if (isRetryableOverpassStatus(status)) {
+      const reason = `Overpass retryable failure (${status})`;
+      console.log(`  ⚠️  ${reason}`);
+      return { success: false, reason, retryable: true, status };
+    }
     console.error(`  Error enriching ${buffet.name}: ${error.message}`);
-    return { success: false, reason: error.message };
+    return { success: false, reason: error.message, retryable: false, status };
   }
 }
 
@@ -246,6 +288,12 @@ async function enrichBuffetWithPOIs(buffet) {
  */
 async function enrichAllBuffetsWithPOIs() {
   console.log('🚀 Starting POI enrichment for all buffets in InstantDB...\n');
+  if (placeIdPrefix) {
+    console.log(`Filter enabled: placeId starts with "${placeIdPrefix}"\n`);
+  }
+  if (Number.isFinite(maxBuffets) && maxBuffets > 0) {
+    console.log(`Safety cap enabled: max ${maxBuffets} buffets this run\n`);
+  }
 
   if (!process.env.INSTANT_ADMIN_TOKEN) {
     console.error('Error: INSTANT_ADMIN_TOKEN environment variable is required');
@@ -307,6 +355,20 @@ async function enrichAllBuffetsWithPOIs() {
     console.log(`Buffets with coordinates: ${buffetsWithCoords.length}`);
     console.log(`Buffets without coordinates: ${allBuffets.length - buffetsWithCoords.length}\n`);
 
+    // Optional placeId prefix filter (e.g. fsq / fsq:)
+    if (placeIdPrefix) {
+      const normalizedPrefix = placeIdPrefix.toLowerCase();
+      const beforePrefixFilter = buffetsWithCoords.length;
+      buffetsWithCoords = buffetsWithCoords.filter(buffet => {
+        const placeId = typeof buffet.placeId === 'string' ? buffet.placeId.trim() : '';
+        return placeId.toLowerCase().startsWith(normalizedPrefix);
+      });
+      console.log(`Step 1.25: placeId prefix filter`);
+      console.log(`PlaceId prefix: ${placeIdPrefix}`);
+      console.log(`Matched buffets: ${buffetsWithCoords.length}`);
+      console.log(`Filtered out: ${beforePrefixFilter - buffetsWithCoords.length}\n`);
+    }
+
     // Filter out already processed buffets
     console.log('Step 1.5: Filtering out already processed buffets...');
     const unprocessedBuffets = buffetsWithCoords.filter(buffet => {
@@ -332,11 +394,21 @@ async function enrichAllBuffetsWithPOIs() {
 
     buffetsWithCoords = unprocessedBuffets; // Use only unprocessed buffets
 
+    if (Number.isFinite(maxBuffets) && maxBuffets > 0 && buffetsWithCoords.length > maxBuffets) {
+      const totalCandidates = buffetsWithCoords.length;
+      buffetsWithCoords = buffetsWithCoords.slice(0, maxBuffets);
+      console.log(`Step 1.75: Applying safety cap`);
+      console.log(`Selected for this run: ${buffetsWithCoords.length}`);
+      console.log(`Deferred for later runs: ${totalCandidates - buffetsWithCoords.length}\n`);
+    }
+
     // Process buffets
     let processed = 0;
     let updated = 0;
     let skipped = 0;
     let errors = 0;
+    let retryableErrors = 0;
+    const retryableFailures = [];
     const BATCH_SIZE = 5; // Process 5 at a time (reduced to avoid rate limits)
     const DELAY_MS = 5000; // 5 second delay between batches to respect rate limits
 
@@ -382,7 +454,18 @@ async function enrichAllBuffetsWithPOIs() {
           console.log(`  ✅ Found ${enrichment.poiData.totalPOIs} POIs`);
         } else {
           errors++;
-          console.log(`  ⚠️  ${enrichment.reason}`);
+          if (enrichment.retryable) {
+            retryableErrors++;
+            retryableFailures.push({
+              id: buffet.id,
+              name: buffet.name,
+              placeId: buffet.placeId || null,
+              status: enrichment.status || null,
+            });
+            console.log(`  ⏭️  Deferred for retry: ${enrichment.reason}`);
+          } else {
+            console.log(`  ⚠️  ${enrichment.reason}`);
+          }
         }
 
         // Increased delay between individual requests to avoid rate limiting
@@ -413,6 +496,13 @@ async function enrichAllBuffetsWithPOIs() {
     console.log(`Successfully updated: ${updated}`);
     console.log(`Skipped (already enriched): ${skipped}`);
     console.log(`Errors: ${errors}`);
+    console.log(`Retryable errors (429/504): ${retryableErrors}`);
+    if (retryableFailures.length > 0) {
+      console.log('\nRetryable failures for next run:');
+      retryableFailures.forEach((r, idx) => {
+        console.log(`${idx + 1}. ${r.name} | placeId=${r.placeId || 'N/A'} | status=${r.status || 'N/A'}`);
+      });
+    }
     console.log('='.repeat(60));
 
   } catch (error) {
@@ -428,4 +518,3 @@ if (require.main === module) {
 }
 
 module.exports = { enrichAllBuffetsWithPOIs, enrichBuffetWithPOIs };
-
