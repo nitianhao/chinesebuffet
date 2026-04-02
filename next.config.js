@@ -7,7 +7,6 @@ const nextConfig = {
   // Note: Trailing slash and query param redirects are handled in middleware.ts
   // for better dynamic control. Static redirects can be added here if needed.
   images: {
-    domains: ['lh3.googleusercontent.com'],
     remotePatterns: [
       {
         protocol: 'https',

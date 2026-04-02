@@ -18,7 +18,7 @@ import { getSiteUrl } from '@/lib/site-url';
 
 const BASE_URL = getSiteUrl();
 const isDev = process.env.NODE_ENV !== 'production';
-const REVALIDATE = isDev ? 3600 : 21600;
+const REVALIDATE = isDev ? 3600 : 43200;
 const MIN_RESULTS = 5;
 
 const getCityBuffetsCached = unstable_cache(

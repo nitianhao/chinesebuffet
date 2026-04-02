@@ -9,7 +9,7 @@ const BASE_URL = getSiteUrl();
 const isDev = process.env.NODE_ENV !== 'production';
 
 // ISR: Revalidate every 6 hours in prod, 1 hour in dev
-export const revalidate = isDev ? 3600 : 21600;
+export const revalidate = isDev ? 3600 : 86400;
 
 export const metadata: Metadata = {
   title: 'Chinese Buffets by State - All 50 States Directory',

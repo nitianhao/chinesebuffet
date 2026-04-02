@@ -19,7 +19,7 @@ const HUB_TIMEOUT_PROD = 10000; // 10s in prod
 
 // Cache revalidation intervals
 const CACHE_REVALIDATE_DEV = 60 * 60; // 1 hour in dev
-const CACHE_REVALIDATE_PROD = 6 * 60 * 60; // 6 hours in prod
+const CACHE_REVALIDATE_PROD = 12 * 60 * 60; // 12 hours in prod
 
 /** State abbreviation to full name mapping */
 const STATE_ABBR_TO_NAME: Record<string, string> = {

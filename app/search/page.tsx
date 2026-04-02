@@ -11,7 +11,7 @@ const isDev = process.env.NODE_ENV !== 'production';
 // does NOT access searchParams (which would force dynamic rendering and
 // send "private, no-cache, no-store" headers).
 // ---------------------------------------------------------------------------
-export const revalidate = isDev ? 3600 : 21600;
+export const revalidate = isDev ? 3600 : 43200;
 export const fetchCache = 'force-cache';
 
 export const metadata: Metadata = {

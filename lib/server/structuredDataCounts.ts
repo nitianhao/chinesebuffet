@@ -1,7 +1,7 @@
 /**
  * Server-only structured data counts for pages and API.
  * Uses process.env only (no request.url). Never throws; returns safe fallbacks on error.
- * Cached with unstable_cache(revalidate: 3600) for ISR.
+ * Cached with unstable_cache(revalidate: 21600) for ISR.
  */
 
 import 'server-only';
@@ -17,7 +17,7 @@ export interface StructuredDataCountResult {
 
 const DEFAULT_TYPE = 'hasTv';
 const CACHE_TAG = 'structured-data-count';
-const REVALIDATE_SEC = 3600;
+const REVALIDATE_SEC = 21600;
 
 async function fetchStructuredDataCountInternal(type: string): Promise<StructuredDataCountResult> {
   const token = process.env.INSTANT_ADMIN_TOKEN;

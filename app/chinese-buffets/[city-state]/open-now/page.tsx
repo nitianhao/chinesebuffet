@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { buildFilterMetadata, CityFilterPageShell } from '@/lib/city-filter-pages';
 
-export const revalidate = 21600;
+export const revalidate = 43200;
 
 interface Props {
   params: { 'city-state': string };

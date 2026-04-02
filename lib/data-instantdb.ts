@@ -482,7 +482,7 @@ const _fetchAllDataFromDB = async (): Promise<{ cities: any[]; buffets: any[] }>
 const fetchAllDataCached = unstable_cache(
   _fetchAllDataFromDB,
   ['instantdb-all-data'],
-  { revalidate: 3600 },
+  { revalidate: 21600 },
 );
 
 async function getCachedData() {

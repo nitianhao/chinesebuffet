@@ -165,9 +165,9 @@ function BuffetResultCard({ result }: { result: SearchResult }) {
               src={result.thumbUrl}
               alt={result.name}
               fill
+              unoptimized
               className="object-cover group-hover:scale-105 transition-transform duration-300"
               sizes="(max-width: 640px) 96px, 128px"
-              quality={60}
             />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center">

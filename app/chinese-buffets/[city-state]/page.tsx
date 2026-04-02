@@ -20,7 +20,7 @@ const isDev = process.env.NODE_ENV !== 'production';
 // IMPORTANT: This page must NOT access `searchParams` in the server component,
 // otherwise Next.js treats it as dynamic and sends Cache-Control: no-store.
 // All filter/sort logic is handled client-side by CityFilterBar + CityBuffetList.
-export const revalidate = isDev ? 3600 : 21600;
+export const revalidate = isDev ? 3600 : 43200;
 // Force all fetch() calls (including InstantDB SDK) to use cache, preventing
 // the SDK's default no-store from making the page dynamic.
 export const fetchCache = 'force-cache';

@@ -22,7 +22,7 @@ import {
 export const dynamic = 'force-dynamic';
 
 /** Revalidation interval for unstable_cache (6 hours). */
-const REVALIDATE_S = 21600;
+const REVALIDATE_S = 43200;
 
 // ---------------------------------------------------------------------------
 // In-process memory cache  (avoids even the unstable_cache lookup)
@@ -211,7 +211,7 @@ function respond(
   // Shorter CDN cache for partial results so the CDN retries sooner.
   const cacheControl = partial
     ? 'public, s-maxage=300, stale-while-revalidate=60' // 5 min
-    : 'public, s-maxage=21600, stale-while-revalidate=3600'; // 6 h
+    : 'public, s-maxage=43200, stale-while-revalidate=3600'; // 12 h
 
   return NextResponse.json(
     { ok: true, facets, partial },

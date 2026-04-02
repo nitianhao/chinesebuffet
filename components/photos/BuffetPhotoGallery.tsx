@@ -70,8 +70,8 @@ export default function BuffetPhotoGallery({ images, categoryLabels = [] }: Buff
                 src={buildPhotoUrl(activeImage.photoReference, 1200)}
                 alt={activeImage.alt}
                 fill
+                unoptimized
                 sizes="100vw"
-                quality={70}
                 className="object-contain"
               />
             </div>
@@ -151,10 +151,10 @@ export default function BuffetPhotoGallery({ images, categoryLabels = [] }: Buff
           src={buildPhotoUrl(activeImage.photoReference, 960)}
           alt={activeImage.alt}
           fill
+          unoptimized
           sizes="(min-width: 1024px) 640px, 100vw"
           placeholder="blur"
           blurDataURL={BLUR_DATA_URL}
-          quality={75}
           className="object-cover"
         />
       </button>
@@ -181,8 +181,8 @@ export default function BuffetPhotoGallery({ images, categoryLabels = [] }: Buff
                 src={buildPhotoUrl(image.photoReference, 240)}
                 alt={image.alt}
                 fill
+                unoptimized
                 sizes="112px"
-                quality={55}
                 className="object-cover"
               />
             </button>
