@@ -160,7 +160,7 @@ assert(bySlug['dallas-tx'].cuisines.length === 2, 'dallas has both cuisines');
 assert(bySlug['dallas-tx'].totalCount === 7, 'dallas totalCount sums both (4+3)');
 assert(bySlug['reno-nv'].cuisines.length === 1 && bySlug['reno-nv'].cuisines[0].key === 'chinese', 'reno chinese-only');
 assert(bySlug['edison-nj'].cuisines[0].key === 'indian', 'edison indian-only');
-assert(merged[0].slug === 'edison-nj', 'sorted by totalCount desc (edison=5 first)');
+assert(merged[0].slug === 'dallas-tx', 'sorted by totalCount desc (dallas=7 first)');
 assert(bySlug['dallas-tx'].city === 'Dallas' && bySlug['dallas-tx'].state === 'TX', 'city/state carried through');
 
 // A cuisine reporting zero for a slug must not create an empty availability entry
