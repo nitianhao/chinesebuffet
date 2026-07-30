@@ -1,0 +1,41 @@
+[
+  {
+    "source": "manual",
+    "sourceId": "fixture:rajas-lunch-buffet",
+    "name": "Raja's Indian Lunch Buffet",
+    "street": "123 Main St",
+    "cityName": "Austin",
+    "state": "Texas",
+    "stateAbbr": "TX",
+    "postalCode": "78701",
+    "address": "123 Main St, Austin, TX 78701",
+    "lat": 30.2672,
+    "lng": -97.7431,
+    "categories": ["restaurant", "indian", "buffet"],
+    "rawTags": {
+      "amenity": "restaurant",
+      "cuisine": "indian",
+      "buffet": "yes"
+    },
+    "discoveredAt": "2026-06-19T00:00:00.000Z"
+  },
+  {
+    "source": "manual",
+    "sourceId": "fixture:masala-cafe",
+    "name": "Masala Cafe",
+    "street": "456 Market St",
+    "cityName": "Austin",
+    "state": "Texas",
+    "stateAbbr": "TX",
+    "postalCode": "78702",
+    "address": "456 Market St, Austin, TX 78702",
+    "lat": 30.264,
+    "lng": -97.731,
+    "categories": ["restaurant", "indian"],
+    "rawTags": {
+      "amenity": "restaurant",
+      "cuisine": "indian"
+    },
+    "discoveredAt": "2026-06-19T00:00:00.000Z"
+  }
+]

@@ -2,6 +2,7 @@
 
 import { useState, useMemo, type ReactNode } from 'react';
 import Link from 'next/link';
+import { getCuisineBasePath } from '@/lib/cuisine';
 
 interface CityItem {
   slug: string;
@@ -13,6 +14,7 @@ interface CityItem {
 interface Props {
   cities: CityItem[];
   children: ReactNode; // server-rendered A-Z list
+  cuisineType?: string | null;
 }
 
 /**
@@ -22,9 +24,10 @@ interface Props {
  * replaced with a filtered list.  When the query is cleared the children
  * reappear (still SEO-visible in the initial HTML).
  */
-export default function CityPageSearch({ cities, children }: Props) {
+export default function CityPageSearch({ cities, children, cuisineType }: Props) {
   const [query, setQuery] = useState('');
   const q = query.trim().toLowerCase();
+  const basePath = getCuisineBasePath(cuisineType);
 
   const results = useMemo(() => {
     if (!q) return null;
@@ -55,7 +58,7 @@ export default function CityPageSearch({ cities, children }: Props) {
             {results.map((c) => (
               <Link
                 key={c.slug}
-                href={`/chinese-buffets/${c.slug}`}
+                href={`${basePath}/${c.slug}`}
                 className="text-sm text-[var(--text)] hover:text-[var(--accent1)] py-0.5"
               >
                 {c.city}, {c.stateAbbr}

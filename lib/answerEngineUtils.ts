@@ -9,6 +9,8 @@
  * - Specific and concrete
  */
 
+import { getCuisineNoun, getCuisineBuffetLabel } from './cuisine';
+
 export interface BuffetData {
   name: string;
   rating?: number;
@@ -18,6 +20,12 @@ export interface BuffetData {
   state?: string;
   address?: string;
   phone?: string;
+  cuisineType?: string | null;
+}
+
+/** Article ("a"/"an") for a cuisine noun, e.g. "an Indian buffet". */
+function cuisineArticle(cuisineType?: string | null): string {
+  return /^[aeiou]/i.test(getCuisineNoun(cuisineType)) ? 'an' : 'a';
 }
 
 /**
@@ -28,7 +36,7 @@ export function generateOneSentenceSummary(buffet: BuffetData): string {
   const parts: string[] = [];
   
   // Start with name and type
-  parts.push(`${buffet.name} is a Chinese buffet`);
+  parts.push(`${buffet.name} is ${cuisineArticle(buffet.cuisineType)} ${getCuisineBuffetLabel(buffet.cuisineType)}`);
   
   // Add location
   if (buffet.cityName && buffet.state) {
@@ -86,7 +94,7 @@ export function generateVerdictStatement(buffet: BuffetData): string {
     return `${name} has limited reviews.`;
   }
   
-  return `${name} is a Chinese buffet restaurant.`;
+  return `${name} is ${cuisineArticle(buffet.cuisineType)} ${getCuisineNoun(buffet.cuisineType)} buffet restaurant.`;
 }
 
 /**
@@ -200,8 +208,8 @@ export function generateStructuredFacts(buffet: BuffetData): Array<{
   // Type fact
   facts.push({
     property: 'Type',
-    value: 'Chinese Buffet',
-    sentence: `${buffet.name} is a Chinese buffet restaurant.`,
+    value: `${getCuisineNoun(buffet.cuisineType)} Buffet`,
+    sentence: `${buffet.name} is ${cuisineArticle(buffet.cuisineType)} ${getCuisineNoun(buffet.cuisineType)} buffet restaurant.`,
   });
   
   // Location fact

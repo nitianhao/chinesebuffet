@@ -153,6 +153,10 @@ async function fetchBuffetsForState(stateAbbr) {
 
       // Extract data immediately to reduce memory
       for (const b of buffets) {
+        if (b.delisted) continue; // soft-deleted: exclude from all rollups
+        // Chinese rollups must exclude Indian buffets. Legacy records have no
+        // cuisineType and are treated as Chinese (matches lib/cuisine.ts default).
+        if ((b.cuisineType || 'chinese') === 'indian') continue;
         const minimalBuffet = {
           id: b.id,
           slug: b.slug || null,

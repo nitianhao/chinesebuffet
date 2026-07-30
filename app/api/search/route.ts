@@ -86,10 +86,14 @@ function buildThumbUrl(images: RawImage[]): string | null {
   const first = images[0];
   if (!first) return null;
   if (typeof first === 'string') {
+    if (first.startsWith('http')) return first;
     if (first.startsWith('places/')) {
       return `/api/photo?photoReference=${encodeURIComponent(first)}&w=400`;
     }
     return null;
+  }
+  if ((first as any).url && typeof (first as any).url === 'string') {
+    return (first as any).url;
   }
   if (first.photoReference && first.photoReference.startsWith('places/')) {
     return `/api/photo?photoReference=${encodeURIComponent(first.photoReference)}&w=400`;
@@ -478,6 +482,7 @@ export async function GET(request: NextRequest) {
                 : null,
           thumbUrl: buildThumbUrl(images),
           citySlug: buffet.city?.slug || null,
+          cuisineType: buffet.cuisineType || null,
         };
       })
       .slice(0, buffetFetchLimit);

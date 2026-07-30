@@ -26,6 +26,14 @@ export default function TrustedRatingSection({ buffet, cityBuffets }: TrustedRat
 
   const summary = `${confidenceTierEmoji} ${trustedRatingDisplay} weighted · ${v.toLocaleString()} reviews`;
 
+  // Yelp rating distribution — relative bar widths per star (NOT counts). Show the shape only.
+  const ratingDist = buffet.yelpData?.ratingDistribution;
+  const distRows = ratingDist
+    ? [5, 4, 3, 2, 1].map((star) => ({ star, value: Number(ratingDist[String(star)] ?? 0) }))
+    : [];
+  const distMax = Math.max(1, ...distRows.map((r) => r.value));
+  const hasDist = distRows.some((r) => r.value > 0);
+
   return (
     <DisclosureCard
       title={
@@ -77,6 +85,29 @@ export default function TrustedRatingSection({ buffet, cityBuffets }: TrustedRat
             <span>{(m * 5).toLocaleString()} (Rock Solid threshold)</span>
           </div>
         </div>
+
+        {/* Yelp rating distribution (relative shape per star) */}
+        {hasDist && (
+          <div className="space-y-1.5 border-t border-[var(--border)] pt-4">
+            <div className="text-xs font-medium text-[var(--text)]">Rating spread on Yelp</div>
+            {distRows.map((row) => (
+              <div key={row.star} className="flex items-center gap-2">
+                <span className="w-8 text-xs text-[var(--muted)] tabular-nums flex-shrink-0">
+                  {row.star}★
+                </span>
+                <div className="h-2 flex-1 rounded-full bg-[var(--border)] overflow-hidden">
+                  <div
+                    className="h-2 rounded-full bg-amber-400 transition-all"
+                    style={{ width: `${Math.round((row.value / distMax) * 100)}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+            <p className="text-[11px] text-[var(--muted)] pt-0.5">
+              Relative share of Yelp ratings by star — bar length shows how ratings skew, not exact counts.
+            </p>
+          </div>
+        )}
 
         {/* Explainer */}
         <p className="text-xs text-[var(--muted)]">

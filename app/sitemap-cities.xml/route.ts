@@ -5,6 +5,7 @@ import { createSitemapEntry, filterIndexableEntries, getLastModified } from '@/l
 import { PageType, IndexTier } from '@/lib/index-tier';
 import { isCityIndexable, getStagedIndexingConfig } from '@/lib/staged-indexing';
 import { getBaseUrlForRobotsAndSitemaps } from '@/lib/site-url';
+import { getCuisineBasePath } from '@/lib/cuisine';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -30,6 +31,14 @@ export async function GET(): Promise<NextResponse> {
     const stagedConfig = getStagedIndexingConfig();
 
     for (const [slug, city] of Object.entries(citiesBySlug)) {
+      // Count Chinese buffets only. getBuffetsByCity() spans every cuisine, so
+      // an Indian-only city would otherwise be emitted as /chinese-buffets/<city>
+      // — a URL whose page reads Chinese rollups and 404s.
+      const chineseBuffets = ((city.buffets as any[]) || []).filter(
+        (buffet) => getCuisineBasePath(buffet.cuisineType) === '/chinese-buffets'
+      );
+      if (chineseBuffets.length === 0) continue;
+
       // Check if city is indexable in current phase
       const cityIndexable = isCityIndexable(
         {
@@ -38,7 +47,7 @@ export async function GET(): Promise<NextResponse> {
           state: city.state,
           rank: city.rank,
           population: city.population,
-          buffetCount: (city.buffets as any[])?.length || 0,
+          buffetCount: chineseBuffets.length,
         },
         stagedConfig
       );
@@ -62,8 +71,10 @@ export async function GET(): Promise<NextResponse> {
       if (entry) {
         entries.push(entry);
 
-        // Also add curated filter pages for indexable cities with enough buffets
-        const buffetCount = (city.buffets as any[])?.length || 0;
+        // Also add curated filter pages for indexable cities with enough buffets.
+        // Threshold uses the Chinese count so filter pages aren't emitted on the
+        // strength of a city's Indian listings, which they never render.
+        const buffetCount = chineseBuffets.length;
         if (buffetCount >= 5) {
           for (const filter of CITY_FILTERS) {
             const filterEntry = createSitemapEntry(

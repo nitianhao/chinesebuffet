@@ -32,6 +32,10 @@ export async function GET(): Promise<NextResponse> {
       lastmod: now.toISOString(),
     },
     {
+      loc: `${baseUrl}/sitemap-indian-buffets.xml`,
+      lastmod: now.toISOString(),
+    },
+    {
       loc: `${baseUrl}/sitemap-neighborhoods.xml`,
       lastmod: now.toISOString(),
     },

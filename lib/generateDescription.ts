@@ -1,10 +1,13 @@
 import { Buffet } from './data';
+import { getCuisineNoun, getCuisineBuffetLabel } from './cuisine';
 
 export function generateExpandedDescription(buffet: Buffet): string {
   const parts: string[] = [];
-  
+  const cuisineNoun = getCuisineNoun((buffet as any).cuisineType);
+  const cuisineLabel = getCuisineBuffetLabel((buffet as any).cuisineType);
+
   // Opening - Location and basic info
-  let opening = `${buffet.name} is a popular Chinese buffet restaurant`;
+  let opening = `${buffet.name} is a popular ${cuisineLabel} restaurant`;
   
   if (buffet.neighborhood) {
     opening += ` located in the ${buffet.neighborhood} neighborhood`;
@@ -30,7 +33,7 @@ export function generateExpandedDescription(buffet: Buffet): string {
       : 'solid';
     
     parts.push(
-      `This ${buffet.address.city} Chinese buffet has earned a ${ratingText} ${buffet.rating.toFixed(1)}-star rating based on ${buffet.reviewsCount.toLocaleString()} customer ${buffet.reviewsCount === 1 ? 'review' : 'reviews'}, making it one of the ${buffet.reviewsCount > 100 ? 'top-rated' : 'well-regarded'} all-you-can-eat restaurants in the area.`
+      `This ${buffet.address.city} ${cuisineLabel} has earned a ${ratingText} ${buffet.rating.toFixed(1)}-star rating based on ${buffet.reviewsCount.toLocaleString()} customer ${buffet.reviewsCount === 1 ? 'review' : 'reviews'}, making it one of the ${buffet.reviewsCount > 100 ? 'top-rated' : 'well-regarded'} all-you-can-eat restaurants in the area.`
     );
   }
   
@@ -63,7 +66,7 @@ export function generateExpandedDescription(buffet: Buffet): string {
       : `${serviceOptions.slice(0, -1).join(', ')}, and ${serviceOptions[serviceOptions.length - 1]}`;
     
     parts.push(
-      `${buffet.name} offers convenient ${serviceText} service options, making it easy to enjoy authentic Chinese cuisine whether you're dining in or ordering to go.`
+      `${buffet.name} offers convenient ${serviceText} service options, making it easy to enjoy authentic ${cuisineNoun} cuisine whether you're dining in or ordering to go.`
     );
   }
   
@@ -80,7 +83,7 @@ export function generateExpandedDescription(buffet: Buffet): string {
   // Price range
   if (buffet.price) {
     parts.push(
-      `With a ${buffet.price} price range, ${buffet.name} offers excellent value for an all-you-can-eat Chinese buffet experience in ${buffet.address.city}.`
+      `With a ${buffet.price} price range, ${buffet.name} offers excellent value for an all-you-can-eat ${cuisineLabel} experience in ${buffet.address.city}.`
     );
   }
   
@@ -156,7 +159,7 @@ export function generateExpandedDescription(buffet: Buffet): string {
     
     if (relevantCategories.length > 0) {
       parts.push(
-        `As a ${relevantCategories.join(', ')} establishment, ${buffet.name} specializes in authentic Chinese cuisine with a focus on traditional flavors and fresh ingredients.`
+        `As a ${relevantCategories.join(', ')} establishment, ${buffet.name} specializes in authentic ${cuisineNoun} cuisine with a focus on traditional flavors and fresh ingredients.`
       );
     }
   }
@@ -218,7 +221,7 @@ export function generateExpandedDescription(buffet: Buffet): string {
   
   // Closing - Location and call to action
   parts.push(
-    `Whether you're a local resident of ${buffet.address.city} or visiting ${buffet.address.state}, ${buffet.name} offers an authentic Chinese buffet experience with a wide selection of dishes, ${buffet.price ? `affordable pricing,` : ''} and excellent service. Visit this ${buffet.address.city} Chinese restaurant for lunch or dinner and discover why it's a favorite among Chinese food enthusiasts in the area.`
+    `Whether you're a local resident of ${buffet.address.city} or visiting ${buffet.address.state}, ${buffet.name} offers an authentic ${cuisineLabel} experience with a wide selection of dishes, ${buffet.price ? `affordable pricing,` : ''} and excellent service. Visit this ${buffet.address.city} ${cuisineNoun} restaurant for lunch or dinner and discover why it's a favorite among ${cuisineNoun} food enthusiasts in the area.`
   );
   
   return parts.join(' ');

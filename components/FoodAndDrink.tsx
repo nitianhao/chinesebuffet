@@ -33,8 +33,8 @@ function flattenEntries(
   return results;
 }
 
-export default function FoodAndDrink({ data }: FoodAndDrinkProps) {
-  if (!data) return null;
+export function buildFoodAndDrinkItems(data: FoodAndDrinkProps['data']): ChipItem[] {
+  if (!data) return [];
 
   const items: ChipItem[] = [];
 
@@ -53,6 +53,11 @@ export default function FoodAndDrink({ data }: FoodAndDrinkProps) {
     });
   }
 
+  return items;
+}
+
+export default function FoodAndDrink({ data }: FoodAndDrinkProps) {
+  const items = buildFoodAndDrinkItems(data);
   if (items.length === 0) return null;
 
   return (

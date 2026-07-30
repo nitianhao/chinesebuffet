@@ -27,8 +27,8 @@ function formatKey(key: string): string {
   return key.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase()).trim();
 }
 
-export default function Accessibility({ data }: AccessibilityProps) {
-  if (!data) return null;
+export function buildAccessibilityItems(data: AccessibilityProps['data']): ChipItem[] {
+  if (!data) return [];
 
   const items: ChipItem[] = [];
 
@@ -55,6 +55,11 @@ export default function Accessibility({ data }: AccessibilityProps) {
     });
   }
 
+  return items;
+}
+
+export default function Accessibility({ data }: AccessibilityProps) {
+  const items = buildAccessibilityItems(data);
   if (items.length === 0) return null;
 
   return (

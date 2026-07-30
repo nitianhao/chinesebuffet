@@ -33,8 +33,8 @@ function flattenEntries(
   return results;
 }
 
-export default function Planning({ data }: PlanningProps) {
-  if (!data) return null;
+export function buildPlanningItems(data: PlanningProps['data']): ChipItem[] {
+  if (!data) return [];
 
   const items: ChipItem[] = [];
 
@@ -55,6 +55,11 @@ export default function Planning({ data }: PlanningProps) {
     });
   }
 
+  return items;
+}
+
+export default function Planning({ data }: PlanningProps) {
+  const items = buildPlanningItems(data);
   if (items.length === 0) return null;
 
   return (

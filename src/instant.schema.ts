@@ -66,6 +66,8 @@ const _schema = i.schema({
       reviewsCount: i.number().optional(),
       lat: i.number(),
       lng: i.number(),
+      // Cuisine type — 'chinese' or 'indian'. Used to filter rollups and route pages.
+      cuisineType: i.string().optional().indexed(),
       neighborhood: i.string().optional(), // Primary neighborhood (backward compatible)
       neighborhoodContext: i.string().optional(), // JSON stringified enriched location context (neighborhoods, districts, county, metro_area)
       permanentlyClosed: i.boolean(),
@@ -107,6 +109,8 @@ const _schema = i.schema({
       serviceOptions: i.string().optional(), // JSON stringified object: { takeout, delivery, dineIn, reservable, outdoorSeating, wheelchairAccessible, parking, wifi, kidsFriendly, creditCards, alcohol }
       // Yelp data
       yelpData: i.string().optional(), // JSON stringified object
+      yelpUrl: i.string().optional().indexed(), // Resolved Yelp business URL (from resolve-urls.ts)
+      yelpUrlConfidence: i.string().optional(), // "high" | "medium" | "low" match confidence
       // Review summaries from Apify
       reviewSummaryParagraph1: i.string().optional(),
       reviewSummaryParagraph2: i.string().optional(),
@@ -169,6 +173,11 @@ const _schema = i.schema({
       author: i.string().optional(),
       time: i.string().optional(),
       relativeTime: i.string().optional(),
+      // Playwright Google-reviews scraper: dedup key + provenance.
+      // (Structured review context reuses the existing `reviewContext` JSON field above.)
+      fingerprint: i.string().optional().indexed(), // SHA-256 dedup fallback when no reviewId
+      scraperVersion: i.string().optional(),
+      scrapedAt: i.string().optional(),
     }),
     menus: i.entity({
       placeId: i.string().indexed(), // Link to buffet via placeId
@@ -234,6 +243,78 @@ const _schema = i.schema({
       stateAbbr: i.string().optional(), // State abbreviation for display
       buffetCount: i.number().optional(), // Number of buffets in neighborhood
       avgRating: i.number().optional(), // Average rating across buffets
+    }),
+    indianBuffetPipelineRuns: i.entity({
+      runId: i.string().unique().indexed(),
+      status: i.string().indexed(),
+      dryRun: i.boolean(),
+      config: i.string(), // JSON stringified safe config snapshot
+      stats: i.string().optional(), // JSON stringified run counters
+      startedAt: i.string().indexed(),
+      finishedAt: i.string().optional(),
+      errorMessage: i.string().optional(),
+    }),
+    indianBuffetCandidates: i.entity({
+      candidateKey: i.string().unique().indexed(),
+      name: i.string().indexed(),
+      normalizedName: i.string().indexed(),
+      source: i.string().indexed(),
+      sourceIds: i.string(), // JSON stringified source IDs
+      status: i.string().indexed(), // needs_review, approved, rejected, duplicate
+      classificationStatus: i.string().indexed(),
+      confidence: i.number(),
+      cityName: i.string().optional().indexed(),
+      state: i.string().optional().indexed(),
+      stateAbbr: i.string().optional().indexed(),
+      street: i.string().optional(),
+      postalCode: i.string().optional(),
+      address: i.string().optional(),
+      normalizedAddress: i.string().optional().indexed(),
+      phone: i.string().optional(),
+      website: i.string().optional(),
+      lat: i.number().optional(),
+      lng: i.number().optional(),
+      categories: i.string().optional(), // JSON stringified array
+      evidence: i.string().optional(), // JSON stringified array
+      rawSources: i.string().optional(), // JSON stringified source records
+      duplicateOfBuffetId: i.string().optional().indexed(),
+      reviewedAt: i.string().optional(),
+      reviewedBy: i.string().optional(),
+      reviewNotes: i.string().optional(),
+      discoveredAt: i.string().indexed(),
+      updatedAt: i.string().indexed(),
+    }),
+    indianBuffetEvidence: i.entity({
+      candidateKey: i.string().indexed(),
+      source: i.string().indexed(),
+      sourceUrl: i.string().optional(),
+      evidenceType: i.string().indexed(),
+      snippet: i.string(),
+      confidence: i.number(),
+      capturedAt: i.string().indexed(),
+    }),
+    // Per-restaurant Google-reviews scrape job: status, counters, lock, resume.
+    reviewScrapeJobs: i.entity({
+      buffetId: i.string().indexed(), // denormalized for quick lookup (also linked below)
+      placeId: i.string().optional().indexed(),
+      status: i.string().indexed(), // pending|running|completed|partial|no_reviews|limited_view|blocked|timeout|failed|...
+      startedAt: i.string().optional(),
+      completedAt: i.string().optional(),
+      lastAttemptAt: i.string().optional().indexed(),
+      nextEligibleAt: i.string().optional().indexed(),
+      reviewCountFound: i.number().optional(),
+      newReviewsStored: i.number().optional(),
+      existingReviewsUpdated: i.number().optional(),
+      existingReviewsSkipped: i.number().optional(),
+      errorCode: i.string().optional(),
+      errorMessage: i.string().optional(),
+      screenshotPath: i.string().optional(),
+      attemptCount: i.number().optional(),
+      scraperVersion: i.string().optional(),
+      // Lock (for future multi-worker safety)
+      workerId: i.string().optional(),
+      lockedAt: i.string().optional(),
+      lockExpiresAt: i.string().optional().indexed(),
     }),
   },
   links: {
@@ -313,6 +394,19 @@ const _schema = i.schema({
         "on": "buffets",
         "has": "many",
         "label": "structuredData"
+      }
+    },
+    "buffetReviewScrapeJobs": {
+      "forward": {
+        "on": "reviewScrapeJobs",
+        "has": "one",
+        "label": "buffet",
+        "onDelete": "cascade"
+      },
+      "reverse": {
+        "on": "buffets",
+        "has": "many",
+        "label": "reviewScrapeJobs"
       }
     }
   },

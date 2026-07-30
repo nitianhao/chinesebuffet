@@ -5,7 +5,8 @@ import { createPortal } from 'react-dom';
 import Image from 'next/image';
 
 type GalleryImage = {
-  photoReference: string;
+  photoReference?: string;
+  url?: string; // direct image URL (scraped hero photo) — preferred when present
   aspectRatio: number;
   alt: string;
 };
@@ -15,8 +16,12 @@ interface BuffetPhotoGalleryProps {
   categoryLabels?: string[];
 }
 
-const buildPhotoUrl = (photoReference: string, width: number) =>
-  `/api/photo?photoReference=${encodeURIComponent(photoReference)}&w=${width}`;
+// Both variants go through /api/photo: direct URLs are proxied (reliable +
+// cached, no browser hotlink throttling), photoReferences hit the Places API.
+const buildPhotoUrl = (image: GalleryImage, width: number) =>
+  image.url
+    ? `/api/photo?url=${encodeURIComponent(image.url)}&w=${width}`
+    : `/api/photo?photoReference=${encodeURIComponent(image.photoReference || '')}&w=${width}`;
 const BLUR_DATA_URL =
   'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
 
@@ -67,7 +72,7 @@ export default function BuffetPhotoGallery({ images, categoryLabels = [] }: Buff
               style={{ aspectRatio: activeImage.aspectRatio }}
             >
               <Image
-                src={buildPhotoUrl(activeImage.photoReference, 1200)}
+                src={buildPhotoUrl(activeImage, 1200)}
                 alt={activeImage.alt}
                 fill
                 unoptimized
@@ -148,7 +153,7 @@ export default function BuffetPhotoGallery({ images, categoryLabels = [] }: Buff
         aria-label="Open photo viewer"
       >
         <Image
-          src={buildPhotoUrl(activeImage.photoReference, 960)}
+          src={buildPhotoUrl(activeImage, 960)}
           alt={activeImage.alt}
           fill
           unoptimized
@@ -165,7 +170,7 @@ export default function BuffetPhotoGallery({ images, categoryLabels = [] }: Buff
         >
           {thumbImages.map((image, index) => (
             <button
-              key={image.photoReference}
+              key={image.url || image.photoReference || index}
               type="button"
               onClick={() => {
                 setActiveIndex(index);
@@ -178,7 +183,7 @@ export default function BuffetPhotoGallery({ images, categoryLabels = [] }: Buff
               aria-label={`Open photo ${index + 1}`}
             >
               <Image
-                src={buildPhotoUrl(image.photoReference, 240)}
+                src={buildPhotoUrl(image, 240)}
                 alt={image.alt}
                 fill
                 unoptimized

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import dynamic from 'next/dynamic'
+import Script from 'next/script'
 import './globals.css'
 import './design-system.css'
 import BottomNav from '@/components/site/BottomNav'
@@ -29,10 +30,13 @@ const siteUrl = getSiteUrl();
 // (Layout-level robots can override or merge with page metadata in some Next.js versions.)
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: 'Chinese Buffets Directory - Find All-You-Can-Eat Chinese Buffets Near You',
-  description: 'Discover Chinese buffets across the USA. Find locations, hours, prices, and ratings for all-you-can-eat Chinese buffets in your city.',
+  title: 'Buffet Directory — Chinese & Indian All-You-Can-Eat Buffets',
+  description: 'Discover Chinese and Indian buffets across the USA. Find locations, hours, prices, and ratings for all-you-can-eat buffets in your city.',
   openGraph: {
     url: siteUrl,
+  },
+  other: {
+    'google-adsense-account': 'ca-pub-9055017404394414',
   },
 }
 
@@ -77,6 +81,13 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body>
+        <Script
+          id="adsbygoogle-init"
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9055017404394414"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
         <GoogleAnalytics />
         {/* LCP audit — activated by ?lcp_debug in the URL (see comment above) */}
         <script dangerouslySetInnerHTML={{ __html: LCP_SCRIPT }} />

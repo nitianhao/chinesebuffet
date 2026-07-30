@@ -1,7 +1,7 @@
 import React, { Suspense, type ReactNode } from 'react';
 import { cache } from 'react';
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import {
   getCachedBuffet,
   getCityBySlug,
@@ -20,6 +20,7 @@ import Menu from '@/components/Menu';
 import { computeBuffetPageQuality } from '@/lib/pageQuality';
 import { enforceBuffetIndexingRules } from '@/lib/buffet-indexing-rules';
 import { formatAddress, getStateName, generateSlug } from '@/lib/utils';
+import { getCuisineBasePath } from '@/lib/cuisine';
 import Accessibility from '@/components/Accessibility';
 import Amenities from '@/components/Amenities';
 import Atmosphere from '@/components/Atmosphere';
@@ -30,6 +31,18 @@ import ServiceOptionsSection from '@/components/ServiceOptionsSection';
 import FoodAndDrink from '@/components/FoodAndDrink';
 import Highlights from '@/components/Highlights';
 import Planning from '@/components/Planning';
+import {
+  buildAccessibilityItems,
+  buildAmenitiesItems,
+  buildAtmosphereItems,
+  buildFoodOptionsItems,
+  buildServiceOptionsItems,
+  buildParkingItems,
+  buildPaymentItems,
+  buildHighlightsItems,
+  buildFoodAndDrinkItems,
+  buildPlanningItems,
+} from '@/components/amenityBuilders';
 import BuffetSummaryPanel from '@/components/BuffetSummaryPanel';
 import SeoJsonLd from '@/components/SeoJsonLd';
 import VerdictModule from '@/components/VerdictModule';
@@ -66,6 +79,8 @@ import ReviewsBundle from '@/components/bundles/ReviewsBundle';
 import POIBundle from '@/components/bundles/POIBundle';
 import LocationVibeSection from '@/components/LocationVibeSection';
 import SignatureDishesSection from '@/components/SignatureDishesSection';
+import YelpPopularDishesSection from '@/components/YelpPopularDishesSection';
+import YelpMenuSection from '@/components/YelpMenuSection';
 import AuthenticitySection from '@/components/AuthenticitySection';
 import DateNightSection from '@/components/DateNightSection';
 import FullNightOutSection from '@/components/FullNightOutSection';
@@ -85,6 +100,10 @@ import SiteShell from '@/components/layout/SiteShell';
 import TableOfContents from '@/components/TableOfContents';
 import SaveButton from '@/components/saved/SaveButton';
 import BuffetPhotoGallery from '@/components/photos/BuffetPhotoGallery';
+import { getLlmSeoSummaryDraft } from '@/lib/llmSeoSummaries';
+import { getLlmGoodToKnowDraft } from '@/lib/llmGoodToKnow';
+import { getLlmCustomerHighlightsDraft } from '@/lib/llmCustomerHighlights';
+import { getLlmMenuHighlightsDraft } from '@/lib/llmMenuHighlights';
 
 import { perfReset, perfStart, perfSummary } from '@/lib/perf-logger';
 import { computeHiddenGemScore } from '@/lib/hiddenGemScore';
@@ -148,6 +167,27 @@ export async function generateMetadata({ params }: BuffetPageProps): Promise<Met
     };
   }
 
+  // Cross-cuisine guard (stopgap): getBuffetNameBySlug() resolves on city+slug
+  // only, so an Indian buffet is reachable at this /chinese-buffets/ URL and
+  // would render as duplicate content titled "Chinese Buffet". The page-level
+  // notFound() guard does not currently take effect on this route, so noindex
+  // here is what actually keeps the duplicate out of the index.
+  // 'follow' is intentional: it lets Google crawl through to the correct
+  // /indian-buffets/ URL via this page's internal links. Deliberately paired
+  // with a SELF canonical — noindex plus a cross-tree canonical is a
+  // contradictory signal Google is documented to distrust.
+  if (getCuisineBasePath(buffet.cuisineType) !== '/chinese-buffets') {
+    const robots = { index: false as const, follow: true as const };
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[seo] buffet robots decided:', robots, `(cuisine mismatch: ${buffet.cuisineType} served under /chinese-buffets)`);
+    }
+    return {
+      title: buffet.name ? String(buffet.name) : 'Buffet Not Found',
+      robots,
+      alternates: { canonical: selfCanonical },
+    };
+  }
+
   // Only noindex when buffet is clearly invalid: missing name AND missing location
   const hasName = Boolean(buffet.name && String(buffet.name).trim());
   const hasAddress = Boolean(
@@ -191,9 +231,10 @@ export async function generateMetadata({ params }: BuffetPageProps): Promise<Met
   }
 
   const pagePath = `/chinese-buffets/${params['city-state']}/${params.slug}`;
+  const llmSummaryDraft = getLlmSeoSummaryDraft(pagePath);
 
   // Generate quotable description for answer engines
-  const description = generateMetaDescription(buffet);
+  const description = llmSummaryDraft?.summary || generateMetaDescription(buffet);
 
   const cityName = buffet.cityName || '';
   const title = cityName
@@ -307,6 +348,29 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
     endPage();
     notFound();
   }
+  // Cuisine guard: getBuffetNameBySlug() looks up on city+slug only, so an
+  // Indian buffet would otherwise render here under a /chinese-buffets/ URL —
+  // duplicate content titled "Chinese Buffet". These cross-cuisine URLs have
+  // never been indexed (the Indian dataset is new), so there is no link equity
+  // to preserve and 404 is the correct, unambiguous signal. Note: redirect()
+  // does NOT survive this route's ISR generation (revalidate=86400 +
+  // fetchCache='force-cache'), so notFound() is used deliberately.
+  // Unknown/legacy cuisineType defaults to Chinese (lib/cuisine).
+  if (getCuisineBasePath(buffet.cuisineType) !== '/chinese-buffets') {
+    notFound();
+  }
+  // Soft-deleted (delisted) buffets 301 to their city page instead of rendering
+  // a thin/defunct listing (e.g. Foursquare-sourced buffets with no resolvable
+  // Google listing). permanentRedirect issues a 308 (permanent — SEO-safe).
+  if (buffet.delisted) {
+    endPage();
+    permanentRedirect(`/chinese-buffets/${params['city-state']}`);
+  }
+  const pagePath = `/chinese-buffets/${params['city-state']}/${params.slug}`;
+  const llmSummaryDraft = getLlmSeoSummaryDraft(pagePath);
+  const llmGoodToKnowDraft = getLlmGoodToKnowDraft(pagePath);
+  const llmCustomerHighlightsDraft = getLlmCustomerHighlightsDraft(pagePath);
+  const llmMenuHighlightsDraft = getLlmMenuHighlightsDraft(pagePath);
 
   // Parallel fetch: menu + city + transforms + SEO schemas (no waterfall)
   const menuPromise = buffet.placeId
@@ -507,10 +571,13 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
   // Define Jump To sections - POIBundle handles actual content check internally
   const hasNearbyPlaces = buffet.transportationAutomotive || buffet.retailShopping || buffet.recreationEntertainment;
   const hasMenu = menuData && ((menuData.categories?.length ?? 0) > 0 || (menuData.items?.length ?? 0) > 0);
+  // "View Menu" hero anchor: DB menu if present, else the Yelp Full Menu, else none.
+  const menuAnchor = hasMenu ? '#menu' : (buffet.yelpData?.menuItems?.length ? '#full-menu' : null);
   const hasMenuPrices =
     !!menuData?.items?.some((item) => item.price) ||
     !!menuData?.categories?.some((category) => category.items?.some((item) => item.price));
   const hasPricing = !!buffet.price || hasMenuPrices;
+  const overviewText = llmSummaryDraft?.summary || buffet.description2 || buffet.description || '';
   const jumpToSections = [
     { id: 'overview', label: 'At a glance' },
     sortedImages && sortedImages.length > 0 ? { id: 'photos', label: 'Photos' } : null,
@@ -529,7 +596,7 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
   );
   const { signatureDishes } = extractSignatureDishes({
     questionsAndAnswers: buffet.questionsAndAnswers,
-    description: buffet.description2 || buffet.description,
+    description: overviewText,
     menuItems: menuItemsForDishes,
   });
 
@@ -590,18 +657,19 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
   const photoCount = sortedImages?.length ?? buffet.imageCount ?? 0;
   const galleryImages = (sortedImages ?? [])
     .map((image: any, index: number) => {
-      if (!image?.photoReference) return null;
+      if (!image?.photoReference && !image?.url) return null;
       const aspectRatio =
         typeof image.widthPx === 'number' && typeof image.heightPx === 'number' && image.heightPx > 0
           ? image.widthPx / image.heightPx
           : 4 / 3;
       return {
         photoReference: image.photoReference,
+        url: image.url,
         aspectRatio,
         alt: `${buffet.name} photo ${index + 1}`,
       };
     })
-    .filter(Boolean) as Array<{ photoReference: string; aspectRatio: number; alt: string }>;
+    .filter(Boolean) as Array<{ photoReference?: string; url?: string; aspectRatio: number; alt: string }>;
   const atAGlanceSummary =
     [locationSnippet || null, buffet.price ? `Price ${buffet.price}` : null, buffet.rating ? `${buffet.rating.toFixed(1)}★` : null]
       .filter(Boolean)
@@ -764,7 +832,7 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
 
           {/* Desktop: Existing hero */}
           <div className="hidden md:block space-y-4">
-            <BuffetHeroHeader buffet={buffet} openStatus={openStatus} cuisineInfo={menuData} hiddenGemTier={hiddenGemTier} neighborhoodBadgeText={neighborhoodBadgeText} />
+            <BuffetHeroHeader buffet={buffet} openStatus={openStatus} cuisineInfo={menuData} hiddenGemTier={hiddenGemTier} neighborhoodBadgeText={neighborhoodBadgeText} menuAnchor={menuAnchor} />
             <QuickVerdict buffet={buffet} precomputedAdditionalInfo={precomputedAdditionalInfo} />
             {buffet.location?.lat && buffet.location?.lng && (
               <div className="mt-4 rounded-xl overflow-hidden shadow-[var(--shadow-soft)]">
@@ -913,15 +981,29 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
           className="page-block-gap"
         >
           {/* Overview text */}
-          {(buffet.description2 || buffet.description) && (
+          {overviewText && (
             <ShowMore 
               initialLines={4}
               className="mb-4"
             >
               <div className="text-sm md:text-base text-[var(--text-secondary)] leading-relaxed w-full">
-                {renderBoldText(buffet.description2 || buffet.description || '')}
+                {renderBoldText(overviewText)}
               </div>
             </ShowMore>
+          )}
+
+          {llmGoodToKnowDraft && (
+            <div className="mb-4 rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface)] p-4">
+              <h3 className="text-sm font-semibold text-[var(--text)] mb-3">Good to know</h3>
+              <ul className="space-y-2">
+                {llmGoodToKnowDraft.items.map((item) => (
+                  <li key={item} className="flex gap-2 text-sm text-[var(--text-secondary)] leading-relaxed">
+                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--accent1)] flex-shrink-0" aria-hidden />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
           
           {/* Natural Modifier Text */}
@@ -1384,41 +1466,20 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
       <PageSection variant="base">
       {/* Accessibility & Amenities Section - Refactored with disclosures */}
       {(() => {
-        // Check structuredData amenities/accessibility
-        const hasStructuredAccessibility = buffet.accessibility && (
-          Array.isArray(buffet.accessibility) 
-            ? buffet.accessibility.length > 0 
-            : Object.keys(buffet.accessibility).length > 0
+        // Show the card only if at least one subsection actually produces chips.
+        // (A present-but-empty data blob would otherwise render an empty card.)
+        return (
+          buildAccessibilityItems(buffet.accessibility || precomputedAdditionalInfo?.['Accessibility'] || {}).length > 0 ||
+          buildAmenitiesItems(buffet.amenities || { amenities: precomputedAdditionalInfo?.['Amenities'] }, buffet.yelpData?.amenities).length > 0 ||
+          buildAtmosphereItems(buffet.amenities?.atmosphere || precomputedAdditionalInfo?.['Atmosphere'] || {}, buffet.yelpData?.ambience).length > 0 ||
+          buildFoodOptionsItems(buffet.amenities?.['food options'] || precomputedAdditionalInfo?.['Dining options'] || {}).length > 0 ||
+          buildServiceOptionsItems(buffet.amenities?.['service options'] || precomputedAdditionalInfo?.['Service options'] || {}, buffet.yelpData?.serviceOptions).length > 0 ||
+          buildParkingItems(buffet.amenities?.parking).length > 0 ||
+          buildPaymentItems(buffet.amenities?.payments || precomputedAdditionalInfo?.['Payments'] || {}).length > 0 ||
+          buildHighlightsItems(buffet.amenities?.highlights || precomputedAdditionalInfo?.['Highlights'] || {}).length > 0 ||
+          buildFoodAndDrinkItems(buffet.amenities?.['food and drink']).length > 0 ||
+          buildPlanningItems(buffet.amenities?.planning || precomputedAdditionalInfo?.['Planning'] || {}).length > 0
         );
-        
-        const hasStructuredAmenities = buffet.amenities && typeof buffet.amenities === 'object' && (
-          buffet.amenities.atmosphere ||
-          buffet.amenities['food options'] ||
-          buffet.amenities.parking ||
-          buffet.amenities.payments ||
-          buffet.amenities['service options'] ||
-          buffet.amenities.highlights ||
-          buffet.amenities.offerings ||
-          buffet.amenities.amenities
-        );
-        
-        // Check additionalInfo (Google Places data) - cast to any to access additionalInfo
-        const additionalInfo = (buffet as any).additionalInfo;
-        const hasAdditionalAccessibility = additionalInfo?.Accessibility && 
-          Array.isArray(additionalInfo.Accessibility) && 
-          additionalInfo.Accessibility.length > 0;
-        const hasAdditionalAmenities = additionalInfo && (
-          (additionalInfo['Service options'] && Array.isArray(additionalInfo['Service options']) && additionalInfo['Service options'].length > 0) ||
-          (additionalInfo.Amenities && Array.isArray(additionalInfo.Amenities) && additionalInfo.Amenities.length > 0) ||
-          (additionalInfo.Atmosphere && Array.isArray(additionalInfo.Atmosphere) && additionalInfo.Atmosphere.length > 0) ||
-          (additionalInfo.Highlights && Array.isArray(additionalInfo.Highlights) && additionalInfo.Highlights.length > 0) ||
-          (additionalInfo.Offerings && Array.isArray(additionalInfo.Offerings) && additionalInfo.Offerings.length > 0) ||
-          (additionalInfo['Dining options'] && Array.isArray(additionalInfo['Dining options']) && additionalInfo['Dining options'].length > 0) ||
-          (additionalInfo.Payments && Array.isArray(additionalInfo.Payments) && additionalInfo.Payments.length > 0) ||
-          (additionalInfo.Planning && Array.isArray(additionalInfo.Planning) && additionalInfo.Planning.length > 0)
-        );
-        
-        return hasStructuredAccessibility || hasStructuredAmenities || hasAdditionalAccessibility || hasAdditionalAmenities;
       })() ? (
         <section id="accessibility-amenities" className="scroll-mt-24">
           <DisclosureCard
@@ -1434,7 +1495,7 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
           >
             <div className="space-y-2">
             {/* Accessibility disclosure */}
-            {(buffet.accessibility || precomputedAdditionalInfo?.['Accessibility']) && (
+            {buildAccessibilityItems(buffet.accessibility || precomputedAdditionalInfo?.['Accessibility'] || {}).length > 0 && (
               <DisclosureCard
                 title="Accessibility"
                 summary="Wheelchair, parking, and more"
@@ -1453,7 +1514,7 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
             )}
 
             {/* Amenities disclosure */}
-            {(buffet.amenities?.amenities || precomputedAdditionalInfo?.['Amenities']) && (
+            {buildAmenitiesItems(buffet.amenities || { amenities: precomputedAdditionalInfo?.['Amenities'] }, buffet.yelpData?.amenities).length > 0 && (
               <DisclosureCard
                 title="Amenities"
                 summary="Available facilities and features"
@@ -1467,12 +1528,12 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
                 minimal={false}
                 className="rounded-xl ring-1 ring-[var(--border)] bg-[var(--surface)]"
               >
-                <Amenities data={buffet.amenities || { amenities: precomputedAdditionalInfo?.['Amenities'] }} />
+                <Amenities data={buffet.amenities || { amenities: precomputedAdditionalInfo?.['Amenities'] }} yelpAmenities={buffet.yelpData?.amenities} />
               </DisclosureCard>
             )}
 
             {/* Atmosphere disclosure */}
-            {(buffet.amenities?.atmosphere || precomputedAdditionalInfo?.['Atmosphere']) && (
+            {buildAtmosphereItems(buffet.amenities?.atmosphere || precomputedAdditionalInfo?.['Atmosphere'] || {}, buffet.yelpData?.ambience).length > 0 && (
               <DisclosureCard
                 title="Atmosphere"
                 summary="Ambiance and setting"
@@ -1486,12 +1547,12 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
                 minimal={false}
                 className="rounded-xl ring-1 ring-[var(--border)] bg-[var(--surface)]"
               >
-                <Atmosphere data={buffet.amenities?.atmosphere || precomputedAdditionalInfo?.['Atmosphere'] || {}} />
+                <Atmosphere data={buffet.amenities?.atmosphere || precomputedAdditionalInfo?.['Atmosphere'] || {}} yelpAmbience={buffet.yelpData?.ambience} />
               </DisclosureCard>
             )}
 
             {/* Food Options disclosure */}
-            {(buffet.amenities?.['food options'] || precomputedAdditionalInfo?.['Dining options']) && (
+            {buildFoodOptionsItems(buffet.amenities?.['food options'] || precomputedAdditionalInfo?.['Dining options'] || {}).length > 0 && (
               <DisclosureCard
                 title="Dining Options"
                 summary="Food and beverage choices"
@@ -1510,7 +1571,7 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
             )}
 
             {/* Service Options disclosure */}
-            {(buffet.amenities?.['service options'] || precomputedAdditionalInfo?.['Service options']) && (
+            {buildServiceOptionsItems(buffet.amenities?.['service options'] || precomputedAdditionalInfo?.['Service options'] || {}, buffet.yelpData?.serviceOptions).length > 0 && (
               <DisclosureCard
                 title="Service Options"
                 summary="Dine-in, takeout, delivery"
@@ -1524,7 +1585,7 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
                 minimal={false}
                 className="rounded-xl ring-1 ring-[var(--border)] bg-[var(--surface)]"
               >
-                <ServiceOptionsSection data={buffet.amenities?.['service options'] || precomputedAdditionalInfo?.['Service options'] || {}} />
+                <ServiceOptionsSection data={buffet.amenities?.['service options'] || precomputedAdditionalInfo?.['Service options'] || {}} yelpServiceOptions={buffet.yelpData?.serviceOptions} />
                 {(() => {
                   const modifierTexts = generateModifierTexts(buffet);
                   const serviceTexts: string[] = [];
@@ -1543,7 +1604,7 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
             )}
 
             {/* Parking disclosure */}
-            {buffet.amenities?.parking && (
+            {buildParkingItems(buffet.amenities?.parking).length > 0 && (
               <DisclosureCard
                 title="Parking"
                 summary="Parking availability"
@@ -1573,7 +1634,7 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
             )}
 
             {/* Payments disclosure */}
-            {(buffet.amenities?.payments || precomputedAdditionalInfo?.['Payments']) && (
+            {buildPaymentItems(buffet.amenities?.payments || precomputedAdditionalInfo?.['Payments'] || {}).length > 0 && (
               <DisclosureCard
                 title="Payment Methods"
                 summary="Accepted payment types"
@@ -1592,7 +1653,7 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
             )}
 
             {/* Highlights disclosure */}
-            {(buffet.amenities?.highlights || precomputedAdditionalInfo?.['Highlights']) && (
+            {buildHighlightsItems(buffet.amenities?.highlights || precomputedAdditionalInfo?.['Highlights'] || {}).length > 0 && (
               <DisclosureCard
                 title="Highlights"
                 summary="Special features"
@@ -1611,7 +1672,7 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
             )}
 
             {/* Food & Drink disclosure */}
-            {buffet.amenities?.['food and drink'] && (
+            {buildFoodAndDrinkItems(buffet.amenities?.['food and drink']).length > 0 && (
               <DisclosureCard
                 title="Food & Drink"
                 summary="Menu offerings"
@@ -1630,7 +1691,7 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
             )}
 
             {/* Planning disclosure */}
-            {(buffet.amenities?.planning || precomputedAdditionalInfo?.['Planning']) && (
+            {buildPlanningItems(buffet.amenities?.planning || precomputedAdditionalInfo?.['Planning'] || {}).length > 0 && (
               <DisclosureCard
                 title="Planning"
                 summary="Reservations and groups"
@@ -1678,10 +1739,31 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
             }
             className="page-block-gap"
           >
+            {llmMenuHighlightsDraft && (
+              <div className="mb-4 rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface)] p-4">
+                <h3 className="text-sm font-semibold text-[var(--text)] mb-3">Menu highlights</h3>
+                <ul className="space-y-2">
+                  {llmMenuHighlightsDraft.items.map((item) => (
+                    <li key={item} className="flex gap-2 text-sm text-[var(--text-secondary)] leading-relaxed">
+                      <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-emerald-600 flex-shrink-0" aria-hidden />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
             <Menu menu={menuData} />
           </DisclosureCard>
         </section>
       )}
+
+      {/* Yelp-sourced popular dishes + full menu (standalone, all available buffets) */}
+      <YelpPopularDishesSection dishes={buffet.yelpData?.popularDishes} />
+      {buffet.yelpData?.menuItems?.length ? (
+        <section id="full-menu" className="scroll-mt-24">
+          <YelpMenuSection items={buffet.yelpData?.menuItems} />
+        </section>
+      ) : null}
       </PageSection>
         </StreamableSection>
       </Suspense>
@@ -1710,6 +1792,19 @@ export default async function BuffetPage({ params }: BuffetPageProps) {
           className="page-block-gap"
           contentClassName="!p-0"
         >
+          {llmCustomerHighlightsDraft && (
+            <div className="border-b border-[var(--border)] bg-[var(--surface)] p-4 sm:p-5">
+              <h3 className="text-sm font-semibold text-[var(--text)] mb-3">Customer highlights</h3>
+              <ul className="space-y-2">
+                {llmCustomerHighlightsDraft.items.map((item) => (
+                  <li key={item} className="flex gap-2 text-sm text-[var(--text-secondary)] leading-relaxed">
+                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-yellow-500 flex-shrink-0" aria-hidden />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           <ReviewsBundle
             reviews={buffet.reviews}
             reviewsCount={buffet.reviewsCount}

@@ -20,6 +20,7 @@
  */
 
 import { getSiteUrl } from '@/lib/site-url';
+import { getCuisineNoun, getCuisineBasePath } from '@/lib/cuisine';
 
 // Base URL configuration — single source of truth via getSiteUrl()
 const DEFAULT_BASE_URL = getSiteUrl();
@@ -259,7 +260,7 @@ export function buildRestaurantJsonLd(
 ): any | null {
   if (!buffet?.name) return null;
 
-  const pageUrl = `${siteBaseUrl}/chinese-buffets/${cityStateSlug}/${buffet.slug}`;
+  const pageUrl = `${siteBaseUrl}${getCuisineBasePath(buffet.cuisineType)}/${cityStateSlug}/${buffet.slug}`;
   const restaurantId = `${pageUrl}#restaurant`;
 
   const schema: any = {
@@ -316,7 +317,10 @@ export function buildRestaurantJsonLd(
 
   if (buffet.images && Array.isArray(buffet.images)) {
     buffet.images.slice(0, 5).forEach((img: any) => {
-      if (img?.photoReference && typeof img.photoReference === 'string') {
+      if (img?.url && typeof img.url === 'string') {
+        // Direct scraped photo URL — already absolute.
+        images.push(img.url);
+      } else if (img?.photoReference && typeof img.photoReference === 'string') {
         const proxyUrl = `/api/photo?photoReference=${encodeURIComponent(img.photoReference)}&w=800`;
         const absoluteUrl = toAbsoluteUrl(proxyUrl, siteBaseUrl);
         if (absoluteUrl) images.push(absoluteUrl);
@@ -330,7 +334,7 @@ export function buildRestaurantJsonLd(
   }
 
   // Cuisine type - required for Restaurant
-  schema.servesCuisine = ['Chinese'];
+  schema.servesCuisine = [getCuisineNoun(buffet.cuisineType)];
 
   // Opening hours - support buffet.hours as array or buffet.hours.hours
   const hoursArray = Array.isArray(buffet.hours)
@@ -554,7 +558,7 @@ export function buildLocalBusinessJsonLd(
 ): any | null {
   if (!buffet?.name) return null;
 
-  const pageUrl = `${siteBaseUrl}/chinese-buffets/${cityStateSlug}/${buffet.slug}`;
+  const pageUrl = `${siteBaseUrl}${getCuisineBasePath(buffet.cuisineType)}/${cityStateSlug}/${buffet.slug}`;
 
   const schema: any = {
     '@context': 'https://schema.org',
@@ -928,7 +932,7 @@ export function validateBuffetPageSchemas(
   overall: boolean;
   results: SchemaValidationResult[];
 } {
-  const pageUrl = `${siteBaseUrl}/chinese-buffets/${cityStateSlug}/${buffet.slug}`;
+  const pageUrl = `${siteBaseUrl}${getCuisineBasePath(buffet.cuisineType)}/${cityStateSlug}/${buffet.slug}`;
   const results: SchemaValidationResult[] = [];
 
   // Validate Restaurant schema

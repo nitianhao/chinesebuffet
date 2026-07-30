@@ -13,8 +13,8 @@ function normalizeList(value: unknown): string[] {
   return (value as string[]).filter((item) => typeof item === 'string' && item.trim()).map((item) => item.trim());
 }
 
-export default function FoodOptions({ data }: FoodOptionsProps) {
-  if (!data) return null;
+export function buildFoodOptionsItems(data: FoodOptionsProps['data']): ChipItem[] {
+  if (!data) return [];
 
   const items: ChipItem[] = [];
   const dataObj = data as Record<string, unknown>;
@@ -42,6 +42,11 @@ export default function FoodOptions({ data }: FoodOptionsProps) {
     normalizeList(data).forEach((item) => items.push({ label: item, available: true }));
   }
 
+  return items;
+}
+
+export default function FoodOptions({ data }: FoodOptionsProps) {
+  const items = buildFoodOptionsItems(data);
   if (items.length === 0) return null;
 
   return (

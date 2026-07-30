@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import SafeImage from './SafeImage';
+import { getCuisineBasePath, getCuisineNoun } from '@/lib/cuisine';
 
 interface BuffetComparisonItem {
   id: string;
@@ -15,6 +16,7 @@ interface BuffetComparisonItem {
 
 interface BuffetComparisonGridProps {
   buffets: BuffetComparisonItem[];
+  cuisineType?: string | null;
 }
 
 /**
@@ -35,10 +37,13 @@ function formatPrice(price: string | null | undefined): string {
   return price;
 }
 
-export default function BuffetComparisonGrid({ buffets }: BuffetComparisonGridProps) {
+export default function BuffetComparisonGrid({ buffets, cuisineType }: BuffetComparisonGridProps) {
   if (!buffets || buffets.length === 0) {
     return null;
   }
+
+  const basePath = getCuisineBasePath(cuisineType);
+  const cuisineNoun = getCuisineNoun(cuisineType);
 
   return (
     <section id="related-buffets" className="mb-8 scroll-mt-24">
@@ -51,7 +56,7 @@ export default function BuffetComparisonGrid({ buffets }: BuffetComparisonGridPr
             <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
-            <h2 className="text-2xl font-bold text-gray-900">Compare with similar Chinese buffets nearby</h2>
+            <h2 className="text-2xl font-bold text-gray-900">Compare with similar {cuisineNoun} buffets nearby</h2>
           </div>
         </div>
       </div>
@@ -60,7 +65,7 @@ export default function BuffetComparisonGrid({ buffets }: BuffetComparisonGridPr
           {buffets.map((buffet) => (
             <Link
               key={buffet.id}
-              href={`/chinese-buffets/${buffet.citySlug}/${buffet.slug}`}
+              href={`${basePath}/${buffet.citySlug}/${buffet.slug}`}
               className="group bg-[var(--surface)] rounded-lg border border-[var(--border)] p-4 hover:border-[#C1121F]/40 hover:shadow-md transition-all"
             >
               <div className="flex flex-col h-full">

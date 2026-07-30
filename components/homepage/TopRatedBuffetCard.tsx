@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import SaveButton from '@/components/saved/SaveButton';
+import { getCuisineBasePath } from '@/lib/cuisine';
 
 interface TopRatedBuffetCardProps {
   buffet: {
@@ -14,6 +15,7 @@ interface TopRatedBuffetCardProps {
   subtitle?: string;
   thumbUrl?: string;
   thumbAlt?: string;
+  cuisineType?: string | null;
 }
 
 export default function TopRatedBuffetCard({
@@ -22,7 +24,9 @@ export default function TopRatedBuffetCard({
   subtitle,
   thumbUrl,
   thumbAlt,
+  cuisineType,
 }: TopRatedBuffetCardProps) {
+  const basePath = getCuisineBasePath(cuisineType);
   const ratingValue = buffet.rating ?? 0;
   const reviewCountValue = buffet.reviewCount ?? 0;
   const subtitleText = subtitle ?? `${buffet.city}, ${buffet.stateAbbr}`;
@@ -42,7 +46,7 @@ export default function TopRatedBuffetCard({
         />
       </div>
       <Link
-        href={`/chinese-buffets/${citySlug}/${buffet.slug}`}
+        href={`${basePath}/${citySlug}/${buffet.slug}`}
         className="block h-full pr-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C1121F] focus-visible:ring-offset-2"
       >
         <div className="flex h-full flex-col justify-between gap-3">

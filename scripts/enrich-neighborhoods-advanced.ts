@@ -60,7 +60,7 @@ dotenv.config();
 // CONFIGURATION
 // ============================================================================
 
-const DEFAULT_MODEL = 'llama-3.1-8b-instant'; // Cost-efficient Groq model
+const DEFAULT_MODEL = 'z-ai/glm-5.2'; // OpenRouter model slug
 const DEFAULT_LIMIT = 0; // 0 = unlimited
 const DEFAULT_CONCURRENCY = 3;
 const REQUEST_TIMEOUT_MS = 30000;
@@ -73,13 +73,14 @@ const CHECKPOINT_FILE = path.join(__dirname, 'neighborhood-enrichment-checkpoint
 
 const NeighborhoodItemSchema = z.object({
   name: z.string().min(1),
-  type: z.enum(['official', 'informal']),
-  confidence: z.enum(['high', 'medium'])
+  // Some models (e.g. GLM) omit these; default rather than discard an otherwise-valid enrichment
+  type: z.enum(['official', 'informal']).default('informal'),
+  confidence: z.enum(['high', 'medium']).default('medium')
 });
 
 const DistrictItemSchema = z.object({
   name: z.string().min(1),
-  confidence: z.enum(['high', 'medium'])
+  confidence: z.enum(['high', 'medium']).default('medium')
 });
 
 const NeighborhoodContextSchema = z.object({
@@ -238,9 +239,9 @@ async function generateWithGroq(
   prompt: string,
   model: string
 ): Promise<{ text: string; tokens?: { promptTokens?: number; completionTokens?: number; totalTokens?: number } }> {
-  const apiKey = process.env.GROQ_API_KEY;
+  const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) {
-    throw new Error('GROQ_API_KEY is not set');
+    throw new Error('OPENROUTER_API_KEY is not set');
   }
 
   for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
@@ -248,7 +249,7 @@ async function generateWithGroq(
     const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
     try {
-      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${apiKey}`,
@@ -282,7 +283,7 @@ async function generateWithGroq(
           await new Promise(resolve => setTimeout(resolve, sleepMs));
           continue;
         }
-        throw new Error('Groq rate limited');
+        throw new Error('OpenRouter rate limited');
       }
 
       if (!response.ok) {
@@ -290,7 +291,7 @@ async function generateWithGroq(
           await new Promise(resolve => setTimeout(resolve, 500 * (attempt + 1)));
           continue;
         }
-        throw new Error(`Groq error: ${response.status}`);
+        throw new Error(`OpenRouter error: ${response.status}`);
       }
 
       const data = await response.json();
@@ -326,7 +327,7 @@ async function generateWithGroq(
     }
   }
 
-  throw new Error('Groq unavailable after retries');
+  throw new Error('OpenRouter unavailable after retries');
 }
 
 /**
@@ -516,7 +517,7 @@ async function main() {
     : DEFAULT_CONCURRENCY;
   const resume = argv.includes('--resume');
   const dryRun = argv.includes('--dry-run');
-  const model = process.env.GROQ_MODEL || DEFAULT_MODEL;
+  const model = process.env.OPENROUTER_MODEL || DEFAULT_MODEL;
 
   // Validate environment
   if (!process.env.INSTANT_ADMIN_TOKEN) {
@@ -524,8 +525,8 @@ async function main() {
     process.exit(1);
   }
 
-  if (!process.env.GROQ_API_KEY) {
-    console.error('ERROR: GROQ_API_KEY is not set');
+  if (!process.env.OPENROUTER_API_KEY) {
+    console.error('ERROR: OPENROUTER_API_KEY is not set');
     process.exit(1);
   }
 

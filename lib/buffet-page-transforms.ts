@@ -13,6 +13,7 @@
 
 import { unstable_cache } from 'next/cache';
 import { getCachedBuffet } from '@/lib/data-instantdb';
+import { getCuisineBuffetLabel } from '@/lib/cuisine';
 
 const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -112,7 +113,7 @@ function generateDecisionSummary(buffet: any): string {
     }
   }
   if (!summary || summary.trim().length === 0) {
-    summary = `${buffet.name} offers authentic Chinese buffet cuisine`;
+    summary = `${buffet.name} offers authentic ${getCuisineBuffetLabel(buffet.cuisineType)} cuisine`;
     if (buffet.address) {
       if (typeof buffet.address === 'object' && buffet.address.city) {
         summary += ` in ${buffet.address.city}`;

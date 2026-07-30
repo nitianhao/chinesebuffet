@@ -174,6 +174,13 @@ export interface Buffet {
     hours?: Record<string, string>;
     photos?: string[];
     attributes?: Record<string, boolean>;
+    // Current Yelp-scraper shape (scripts/yelp/scrape-core.ts)
+    ratingDistribution?: Record<string, number> | null; // relative bar widths per star (1–5), NOT counts
+    serviceOptions?: Record<string, boolean> | null; // e.g. { "Offers delivery": true, "Takes reservations": true }
+    popularDishes?: Array<{ name: string; price?: string | null; count?: number | null }> | null; // "reviews mention" dishes
+    menuItems?: Array<{ name: string; price?: string | null; description?: string | null }> | null; // full Yelp-hosted menu
+    ambience?: string[] | null; // vibe tags, e.g. ["Casual","Good for groups"] (some comma-joined)
+    amenities?: Record<string, boolean> | null; // facility flags — noisy, needs whitelist before display
     reviews?: Array<{
       text?: string;
       rating?: number;

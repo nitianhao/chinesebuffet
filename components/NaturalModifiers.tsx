@@ -11,10 +11,13 @@
  * - "Parking is available..." in amenities
  */
 
+import { getCuisineBuffetLabel } from '@/lib/cuisine';
+
 interface NaturalModifiersProps {
   buffet: {
     name: string;
     price?: string | null;
+    cuisineType?: string | null;
     hours?: {
       hours?: Array<{ day: string; hours: string }>;
     };
@@ -45,10 +48,11 @@ export interface ModifierTexts {
  */
 export function generateModifierTexts(buffet: NaturalModifiersProps['buffet']): ModifierTexts {
   const texts: ModifierTexts = {};
+  const cuisineLabel = getCuisineBuffetLabel(buffet.cuisineType);
 
   // Family-friendly text
   if (isFamilyFriendly(buffet)) {
-    texts.familyFriendly = 'This family-friendly Chinese buffet welcomes diners of all ages.';
+    texts.familyFriendly = `This family-friendly ${cuisineLabel} welcomes diners of all ages.`;
   }
 
   // Budget-friendly text

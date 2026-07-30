@@ -1,5 +1,6 @@
 import React from 'react';
 import { getHeroSummary } from '@/lib/summaryUtils';
+import { getCuisineBuffetLabel } from '@/lib/cuisine';
 import ActionButton from '@/components/ui/ActionButton';
 import SignatureCard from '@/components/ui/SignatureCard';
 
@@ -20,6 +21,7 @@ interface BuffetHeroHeaderProps {
     rating?: number | null;
     reviewsCount?: number | null;
     price?: string | null;
+    cuisineType?: string | null;
     categories?: string[] | null;
     address?: { street?: string; city?: string; state?: string; postalCode?: string } | string | null;
     cityName?: string | null;
@@ -31,9 +33,11 @@ interface BuffetHeroHeaderProps {
     reviewSummaryParagraph1?: string | null;
     description2?: string | null;
     description?: string | null;
+    yelpData?: { priceRange?: string | null } | null;
   };
   openStatus: string | null;
   cuisineInfo?: CuisineInfo | null;
+  menuAnchor?: string | null;
 }
 
 const StarIcon = () => (
@@ -48,13 +52,30 @@ const KeyFactIcon = ({ children, className = '' }: { children: React.ReactNode; 
   </span>
 );
 
-export default function BuffetHeroHeader({ buffet, openStatus, cuisineInfo, hiddenGemTier, neighborhoodBadgeText }: BuffetHeroHeaderProps) {
+// Yelp-style price-tier pictogram: `tier` filled `$` out of 4, remainder faded.
+const PriceTierPictogram = ({ tier }: { tier: number }) => (
+  <span className="flex-shrink-0 font-semibold tracking-tight" aria-label={`Price level ${tier} out of 4`}>
+    {[1, 2, 3, 4].map((n) => (
+      <span key={n} className={n <= tier ? 'text-[var(--text)]' : 'text-[var(--muted)] opacity-40'}>
+        $
+      </span>
+    ))}
+  </span>
+);
+
+export default function BuffetHeroHeader({ buffet, openStatus, cuisineInfo, hiddenGemTier, neighborhoodBadgeText, menuAnchor }: BuffetHeroHeaderProps) {
   const heroSummary = getHeroSummary(buffet);
   const hasPhotos = Array.isArray(buffet.images) && buffet.images.length > 0;
   const cuisineTypes = (buffet.categories || [])
     .filter((c: string) => !/restaurant|buffet/i.test(c))
     .slice(0, 2);
-  const cuisineLabel = cuisineTypes.length > 0 ? cuisineTypes.join(', ') : 'Chinese buffet';
+  const cuisineLabel = cuisineTypes.length > 0 ? cuisineTypes.join(', ') : getCuisineBuffetLabel(buffet.cuisineType);
+  // Yelp price tier ($ / $$ / $$$ / $$$$) → count of filled dollar signs (1–4).
+  const priceTier = (() => {
+    const raw = buffet.yelpData?.priceRange?.trim();
+    if (!raw || !/^\$+$/.test(raw)) return null;
+    return Math.min(raw.length, 4);
+  })();
   const locationCue =
     buffet.neighborhood ||
     (typeof buffet.address === 'object' && buffet.address?.city
@@ -83,11 +104,6 @@ export default function BuffetHeroHeader({ buffet, openStatus, cuisineInfo, hidd
               ? `${(buffet.reviewsCount / 1000).toFixed(1)}k`
               : buffet.reviewsCount.toLocaleString()}{' '}
             reviews)
-            {buffet.id != null && buffet.id !== '' && (
-              <span className="ml-1.5 text-[var(--muted)]/80" title="Buffet ID (for DB lookup)">
-                · ID: {buffet.id}
-              </span>
-            )}
           </span>
         </div>
       )}
@@ -145,18 +161,35 @@ export default function BuffetHeroHeader({ buffet, openStatus, cuisineInfo, hidd
             View Photos
           </ActionButton>
         )}
+        {menuAnchor && (
+          <ActionButton
+            variant="secondary"
+            href={menuAnchor}
+            icon={
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            }
+          >
+            View Menu
+          </ActionButton>
+        )}
       </div>
 
       {/* 6. Key facts row - icons + short text */}
       <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-[var(--text-secondary)] border-t border-[var(--border)] pt-3">
-        {buffet.price && (
+        {(buffet.price || priceTier) && (
           <div className="flex items-center gap-2">
-            <KeyFactIcon>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </KeyFactIcon>
-            <span>{buffet.price}</span>
+            {priceTier ? (
+              <PriceTierPictogram tier={priceTier} />
+            ) : (
+              <KeyFactIcon>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </KeyFactIcon>
+            )}
+            {buffet.price && <span>{buffet.price}</span>}
           </div>
         )}
         <div className="flex items-center gap-2">

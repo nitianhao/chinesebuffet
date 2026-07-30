@@ -12,12 +12,15 @@
  * Uses semantic HTML and structured data for discoverability.
  */
 
+import { getCuisineBuffetLabel } from '@/lib/cuisine';
+
 interface ModifierVariantsProps {
   buffet: {
     name: string;
     rating?: number;
     reviewsCount?: number;
     price?: string | null;
+    cuisineType?: string | null;
     hours?: {
       hours?: Array<{ day: string; hours: string }>;
     };
@@ -84,12 +87,13 @@ export default function ModifierVariants({ buffet }: ModifierVariantsProps) {
 function generateModifiers(buffet: ModifierVariantsProps['buffet']): Modifier[] {
   const modifiers: Modifier[] = [];
   const name = buffet.name;
+  const cuisineLabel = getCuisineBuffetLabel(buffet.cuisineType);
 
   // Family-friendly modifier
   if (isFamilyFriendly(buffet)) {
     modifiers.push({
       type: 'family-friendly',
-      sentence: `${name} is a family-friendly Chinese buffet suitable for dining with children.`,
+      sentence: `${name} is a family-friendly ${cuisineLabel} suitable for dining with children.`,
       schemaValue: 'Family-friendly',
     });
   }
@@ -98,7 +102,7 @@ function generateModifiers(buffet: ModifierVariantsProps['buffet']): Modifier[] 
   if (isBudgetFriendly(buffet)) {
     modifiers.push({
       type: 'budget',
-      sentence: `${name} is a budget-friendly Chinese buffet with affordable prices.`,
+      sentence: `${name} is a budget-friendly ${cuisineLabel} with affordable prices.`,
       schemaValue: 'Budget-friendly',
     });
   }

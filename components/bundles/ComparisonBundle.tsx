@@ -42,6 +42,7 @@ interface ComparisonBundleProps {
   stateAbbr?: string;
   citySlug?: string;
   buffetCount?: number;
+  cuisineType?: string | null;
 }
 
 /**
@@ -64,13 +65,14 @@ export default function ComparisonBundle({
   stateAbbr,
   citySlug,
   buffetCount,
+  cuisineType,
 }: ComparisonBundleProps) {
   return (
     <>
       {/* Buffet Comparison Grid - Compare with similar buffets nearby */}
       {nearbyBuffetsForComparison.length > 0 && (
         <div className="mb-8 md:mb-10">
-          <BuffetComparisonGrid buffets={nearbyBuffetsForComparison} />
+          <BuffetComparisonGrid buffets={nearbyBuffetsForComparison} cuisineType={cuisineType} />
         </div>
       )}
 
@@ -84,6 +86,7 @@ export default function ComparisonBundle({
         stateAbbr={stateAbbr}
         citySlug={citySlug}
         buffetCount={buffetCount}
+        cuisineType={cuisineType}
       />
     </>
   );

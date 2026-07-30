@@ -33,8 +33,8 @@ function flattenEntries(
   return results;
 }
 
-export default function Highlights({ data }: HighlightsProps) {
-  if (!data) return null;
+export function buildHighlightsItems(data: HighlightsProps['data']): ChipItem[] {
+  if (!data) return [];
 
   const items: ChipItem[] = [];
 
@@ -52,6 +52,11 @@ export default function Highlights({ data }: HighlightsProps) {
     });
   }
 
+  return items;
+}
+
+export default function Highlights({ data }: HighlightsProps) {
+  const items = buildHighlightsItems(data);
   if (items.length === 0) return null;
 
   return (

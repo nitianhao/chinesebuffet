@@ -9,6 +9,7 @@ export type SearchResult = {
   reviewCount?: number | null;
   thumbUrl?: string | null;
   citySlug?: string | null;
+  cuisineType?: string | null;
 };
 
 export type SearchCityResult = {

@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import Link from 'next/link';
+import { getCuisineBasePath } from '@/lib/cuisine';
 
 // Minimal buffet shape — only the fields the card renders.
 // The server strips lat/lng/phone/website/imagesCount to keep the payload small.
@@ -22,16 +23,17 @@ interface CityBuffetListProps {
   citySlug: string;
   totalCount: number;
   initialCount: number;
+  cuisineType?: string | null;
 }
 
 /** How many extra cards to reveal per "Load more" click */
 const PAGE_SIZE = 12;
 
-function BuffetCardClient({ buffet, citySlug }: { buffet: SlimBuffet; citySlug: string }) {
+function BuffetCardClient({ buffet, citySlug, basePath }: { buffet: SlimBuffet; citySlug: string; basePath: string }) {
   return (
     <div className="bg-[var(--surface)] border border-[var(--border)] rounded-lg p-4 hover:shadow-md hover:border-[var(--accent1)] transition-all group">
       <Link
-        href={`/chinese-buffets/${citySlug}/${buffet.slug}`}
+        href={`${basePath}/${citySlug}/${buffet.slug}`}
         className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C1121F] focus-visible:ring-offset-2 rounded-sm"
       >
         <div className="flex justify-between items-start mb-1">
@@ -68,7 +70,9 @@ export default function CityBuffetList({
   citySlug,
   totalCount,
   initialCount,
+  cuisineType,
 }: CityBuffetListProps) {
+  const basePath = getCuisineBasePath(cuisineType);
   const [visibleCount, setVisibleCount] = useState(0);
 
   const loadMore = useCallback(() => {
@@ -84,7 +88,7 @@ export default function CityBuffetList({
       {visible.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
           {visible.map((buffet) => (
-            <BuffetCardClient key={buffet.id} buffet={buffet} citySlug={citySlug} />
+            <BuffetCardClient key={buffet.id} buffet={buffet} citySlug={citySlug} basePath={basePath} />
           ))}
         </div>
       )}

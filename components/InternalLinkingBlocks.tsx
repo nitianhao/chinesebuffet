@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { getCuisineBasePath, getCuisineNoun } from '@/lib/cuisine';
 
 interface BuffetLink {
   id: string;
@@ -19,6 +20,7 @@ interface InternalLinkingBlocksProps {
   stateAbbr?: string;
   citySlug?: string;
   buffetCount?: number;
+  cuisineType?: string | null;
 }
 
 /**
@@ -76,14 +78,17 @@ export default function InternalLinkingBlocks({
   stateAbbr,
   citySlug,
   buffetCount,
+  cuisineType,
 }: InternalLinkingBlocksProps) {
   // Only render if we have at least one block with links or hub links
   const hasBuffetLinks = sameCityBuffets.length > 0 || sameRoadBuffets.length > 0 || nearbyBuffets.length > 0;
   const hasHubLinks = cityName && stateName && stateAbbr && citySlug;
-  
+
   if (!hasBuffetLinks && !hasHubLinks) return null;
 
   const stateSlug = stateAbbr?.toLowerCase();
+  const basePath = getCuisineBasePath(cuisineType);
+  const cuisineNoun = getCuisineNoun(cuisineType);
   
   return (
     <section className="mb-8 md:mb-10 bg-[#C1121F]/5 rounded-lg border border-[#C1121F]/15 p-6">
@@ -91,7 +96,7 @@ export default function InternalLinkingBlocks({
         <svg className="w-5 h-5 text-[#C1121F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
         </svg>
-        <h3 className="text-lg font-semibold text-[var(--text)]">Nearby Chinese Buffets</h3>
+        <h3 className="text-lg font-semibold text-[var(--text)]">Nearby {cuisineNoun} Buffets</h3>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -110,7 +115,7 @@ export default function InternalLinkingBlocks({
               {sameCityBuffets.slice(0, 5).map((buffet) => (
                 <li key={buffet.id}>
                   <Link
-                    href={`/chinese-buffets/${buffet.citySlug}/${buffet.slug}`}
+                    href={`${basePath}/${buffet.citySlug}/${buffet.slug}`}
                     className="text-sm text-[#C1121F] hover:text-[#7F0A12] hover:underline transition-colors flex items-center gap-1.5 group"
                   >
                     <svg className="w-3 h-3 text-[var(--muted-light)] group-hover:text-[#C1121F] transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -132,7 +137,7 @@ export default function InternalLinkingBlocks({
         {/* City Hub Link */}
         {hasHubLinks && (
           <Link
-            href={`/chinese-buffets/${citySlug}`}
+            href={`${basePath}/${citySlug}`}
             className="bg-[var(--surface)] rounded-lg border border-[var(--border)] p-4 hover:shadow-md hover:border-[#C1121F]/30 transition-all group flex flex-col"
           >
             <div className="flex items-center gap-2 mb-2">
@@ -165,7 +170,7 @@ export default function InternalLinkingBlocks({
         {/* State Hub Link */}
         {hasHubLinks && (
           <Link
-            href={`/chinese-buffets/states/${stateSlug}`}
+            href={`${basePath}/states/${stateSlug}`}
             className="bg-[var(--surface)] rounded-lg border border-[var(--border)] p-4 hover:shadow-md hover:border-[#C1121F]/30 transition-all group flex flex-col"
           >
             <div className="flex items-center gap-2 mb-2">

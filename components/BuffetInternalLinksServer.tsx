@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { getCuisineBasePath, getCuisineNoun } from '@/lib/cuisine';
 
 /**
  * Server-rendered internal links for the buffet detail page.
@@ -41,6 +42,8 @@ export interface BuffetInternalLinksServerProps {
   neighborhoodName?: string;
   /** Neighborhood slug (kebab-case) */
   neighborhoodSlug?: string;
+  /** Cuisine of the current buffet, controls link base path + copy */
+  cuisineType?: string | null;
 }
 
 export default function BuffetInternalLinksServer({
@@ -52,8 +55,11 @@ export default function BuffetInternalLinksServer({
   sameCityBuffets,
   neighborhoodName,
   neighborhoodSlug,
+  cuisineType,
 }: BuffetInternalLinksServerProps) {
   const stateSlug = stateAbbr.toLowerCase();
+  const basePath = getCuisineBasePath(cuisineType);
+  const cuisineNoun = getCuisineNoun(cuisineType);
   const hasCityBuffets = sameCityBuffets.length > 0;
   const hasNeighborhood = !!(neighborhoodName && neighborhoodSlug);
   const hasAnything = hasCityBuffets || hasNeighborhood || stateName;
@@ -66,7 +72,7 @@ export default function BuffetInternalLinksServer({
       className="rounded-[var(--section-radius)] border border-[var(--border)] bg-[var(--surface)] p-[var(--section-pad)]"
     >
       <h2 className="text-lg font-semibold text-[var(--text)] mb-4">
-        Explore more Chinese buffets
+        Explore more {cuisineNoun} buffets
       </h2>
 
       <div className="space-y-6">
@@ -78,7 +84,7 @@ export default function BuffetInternalLinksServer({
                 More in {cityName}
               </h3>
               <Link
-                href={`/chinese-buffets/${citySlug}`}
+                href={`${basePath}/${citySlug}`}
                 className="text-xs font-medium text-[var(--accent1)] hover:underline"
               >
                 All{buffetCount ? ` ${buffetCount}` : ''} buffets →
@@ -88,7 +94,7 @@ export default function BuffetInternalLinksServer({
               {sameCityBuffets.slice(0, 10).map((b) => (
                 <li key={b.id} className="min-w-0">
                   <Link
-                    href={`/chinese-buffets/${b.citySlug}/${b.slug}`}
+                    href={`${basePath}/${b.citySlug}/${b.slug}`}
                     className="group flex items-baseline gap-1.5 py-1 text-sm text-[var(--text)] hover:text-[var(--accent1)]"
                   >
                     <span className="truncate">{b.name}</span>
@@ -109,14 +115,14 @@ export default function BuffetInternalLinksServer({
           <div>
             <h3 className="text-sm font-semibold text-[var(--text)] mb-2">
               <Link
-                href={`/chinese-buffets/${citySlug}/neighborhoods/${neighborhoodSlug}`}
+                href={`${basePath}/${citySlug}/neighborhoods/${neighborhoodSlug}`}
                 className="hover:text-[var(--accent1)] hover:underline"
               >
                 {neighborhoodName} neighborhood →
               </Link>
             </h3>
             <p className="text-xs text-[var(--muted)]">
-              Browse all Chinese buffets in {neighborhoodName}, {cityName}.
+              Browse all {cuisineNoun} buffets in {neighborhoodName}, {cityName}.
             </p>
           </div>
         )}
@@ -125,14 +131,14 @@ export default function BuffetInternalLinksServer({
         <div className="flex flex-wrap gap-3">
           {stateName && (
             <Link
-              href={`/chinese-buffets/states/${stateSlug}`}
+              href={`${basePath}/states/${stateSlug}`}
               className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--surface2)] px-3 py-1.5 text-xs font-medium text-[var(--text)] hover:border-[var(--accent1)] hover:text-[var(--accent1)] transition-colors"
             >
               Buffets in {stateName} →
             </Link>
           )}
           <Link
-            href={`/chinese-buffets/${citySlug}/neighborhoods`}
+            href={`${basePath}/${citySlug}/neighborhoods`}
             className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--surface2)] px-3 py-1.5 text-xs font-medium text-[var(--text)] hover:border-[var(--accent1)] hover:text-[var(--accent1)] transition-colors"
           >
             {cityName} neighborhoods →

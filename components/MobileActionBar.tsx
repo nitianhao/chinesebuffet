@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { getCuisineBuffetLabel } from '@/lib/cuisine';
 
 interface MobileActionBarProps {
   buffet: {
@@ -10,6 +11,7 @@ interface MobileActionBarProps {
     contactInfo?: { phone?: string };
     phone?: string;
     phoneUnformatted?: string;
+    cuisineType?: string | null;
   };
 }
 
@@ -70,7 +72,8 @@ export default function MobileActionBar({ buffet }: MobileActionBarProps) {
 
   const handleShare = async () => {
     const url = typeof window !== 'undefined' ? window.location.href : '';
-    const title = buffet.name ? `${buffet.name} - Chinese Buffet` : 'Chinese Buffet';
+    const cuisineLabelTitleCase = getCuisineBuffetLabel(buffet.cuisineType).replace('buffet', 'Buffet');
+    const title = buffet.name ? `${buffet.name} - ${cuisineLabelTitleCase}` : cuisineLabelTitleCase;
     const text = buffet.name ? `Check out ${buffet.name}` : '';
 
     if (typeof navigator !== 'undefined' && navigator.share) {

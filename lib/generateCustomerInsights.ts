@@ -1,4 +1,5 @@
 import { Buffet, Review } from './data';
+import { getCuisineNoun } from './cuisine';
 
 export function generateCustomerInsights(buffet: Buffet): string | null {
   if (!buffet.reviews || buffet.reviews.length === 0) {
@@ -146,7 +147,7 @@ export function generateCustomerInsights(buffet: Buffet): string | null {
         : `${uniqueDishes.slice(0, -1).join(', ')}, and ${uniqueDishes[uniqueDishes.length - 1]}`;
       
       parts.push(
-        `Popular items that customers frequently mention include ${dishText}, showcasing the variety available at this ${buffet.address.city} Chinese buffet.`
+        `Popular items that customers frequently mention include ${dishText}, showcasing the variety available at this ${buffet.address.city} ${getCuisineNoun((buffet as any).cuisineType)} buffet.`
       );
     }
   }

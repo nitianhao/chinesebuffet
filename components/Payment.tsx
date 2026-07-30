@@ -33,8 +33,8 @@ function flattenBooleans(
   return results;
 }
 
-export default function Payment({ data }: PaymentProps) {
-  if (!data) return null;
+export function buildPaymentItems(data: PaymentProps['data']): ChipItem[] {
+  if (!data) return [];
 
   const items: ChipItem[] = [];
 
@@ -55,6 +55,11 @@ export default function Payment({ data }: PaymentProps) {
     });
   }
 
+  return items;
+}
+
+export default function Payment({ data }: PaymentProps) {
+  const items = buildPaymentItems(data);
   if (items.length === 0) return null;
 
   return (

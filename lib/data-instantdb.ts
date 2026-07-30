@@ -7,6 +7,7 @@ import { init } from '@instantdb/admin';
 import MiniSearch from 'minisearch';
 import schema from '@/src/instant.schema';
 import rules from '@/src/instant.perms';
+import { POI_SECTION_KEYS, coercePoiSection } from '@/lib/nearbyPoisFromRaw';
 
 // Re-export types for convenience
 export type { Review, Buffet, City, BuffetsByCity, BuffetsById, Summary } from '@/lib/data';
@@ -236,6 +237,7 @@ function transformBuffet(buffet: any, citySlug?: string, reviewsFromLink?: any[]
     id: buffet.id,
     name: buffet.name || '',
     slug: buffet.slug || '',
+    cuisineType: buffet.cuisineType || null,
     address: {
       street: buffet.street || addressParts[0] || '',
       city: buffet.cityName || addressParts[1] || '',
@@ -459,6 +461,12 @@ const _fetchAllDataFromDB = async (): Promise<{ cities: any[]; buffets: any[] }>
             'imagesCount',
             'neighborhood',
             'placeId',
+            'delisted',
+            // Required: consumers partition this shared payload by cuisine
+            // (sitemaps, city listings, cross-cuisine link building). Without it
+            // transformBuffet() nulls cuisineType and every buffet falls back to
+            // the "Chinese" default in lib/cuisine.ts.
+            'cuisineType',
             'scrapedAt',
             'updatedAt',
           ],
@@ -543,6 +551,7 @@ export async function getBuffetsByCity(): Promise<Record<string, any>> {
   // Add buffets to cities
   const transformStart = Date.now();
   buffets.forEach((buffet: any) => {
+    if (buffet.delisted) return; // soft-deleted: exclude from sitemap & city listings
     const citySlug = buffet.city?.slug;
     if (citySlug && buffetsByCity[citySlug]) {
       buffetsByCity[citySlug].buffets.push(transformBuffet(buffet, citySlug));
@@ -771,6 +780,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
   id?: string;
   slug?: string;
   placeId?: string; // Google Places ID for menu lookup
+  delisted?: boolean; // soft-delete: when true the page 301s to its city page
   categories: string[];
   address: string;
   cityName?: string;
@@ -779,7 +789,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
   location?: { lat: number; lng: number };
   description?: string;
   description2?: string;
-  images: Array<{ photoReference: string; widthPx?: number; heightPx?: number }>;
+  images: Array<{ photoReference?: string; url?: string; widthPx?: number; heightPx?: number }>;
   imageCount: number;
   imageCategories: string[];
   hours?: any;
@@ -1101,7 +1111,10 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
       return result;
     }
 
-    // Fetch reviews - try linked reviewRecords first, then fall back to JSON field
+    // Fetch reviews - try linked reviewRecords first, then fall back to JSON field.
+    // Cap high enough to show the full scrape (~50/buffet); the reviews UI
+    // (modal + deferred list) paginates client-side, so more is safe.
+    const MAX_REVIEWS = 50;
     let reviews: any[] = [];
 
     console.log('[getBuffetNameBySlug] Checking for reviews:', {
@@ -1117,14 +1130,19 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
       const reviewsResult = await adminQuery(db, {
         buffets: {
           $: { where: { id: buffet.id } },
-          reviewRecords: {
-            $: { order: [{ field: 'publishAt', direction: 'desc' }], limit: 10 },
-          },
+          reviewRecords: {},
         },
       });
       const buffetWithReviews = reviewsResult.buffets?.[0];
       if (buffetWithReviews && buffetWithReviews.reviewRecords && buffetWithReviews.reviewRecords.length > 0) {
-        reviews = buffetWithReviews.reviewRecords.map(transformReview);
+        reviews = buffetWithReviews.reviewRecords
+          .sort((a: any, b: any) => {
+            const aTime = a.publishAt ? new Date(a.publishAt).getTime() : 0;
+            const bTime = b.publishAt ? new Date(b.publishAt).getTime() : 0;
+            return bTime - aTime;
+          })
+          .slice(0, MAX_REVIEWS)
+          .map(transformReview);
         console.log('[getBuffetNameBySlug] Got reviews from linked reviewRecords:', reviews.length);
       }
     } catch (reviewError) {
@@ -1142,7 +1160,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
         }
 
         if (Array.isArray(parsedReviews) && parsedReviews.length > 0) {
-          reviews = parsedReviews.slice(0, 10).map(transformReview);
+          reviews = parsedReviews.slice(0, MAX_REVIEWS).map(transformReview);
           console.log('[getBuffetNameBySlug] Got reviews from JSON field:', reviews.length);
         }
       } catch (parseError) {
@@ -1188,7 +1206,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
     };
 
     // Parse images field (JSON stringified array)
-    const photoObjects: Array<{ photoReference: string; widthPx?: number; heightPx?: number }> = [];
+    const photoObjects: Array<{ photoReference?: string; url?: string; widthPx?: number; heightPx?: number }> = [];
 
     if (buffet.images) {
       let parsedImages: any[] = [];
@@ -1208,6 +1226,11 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
             photoObjects.push({ photoReference: img });
             return;
           }
+          // Direct hero-photo URL scraped by backfill-photos.ts (rendered as-is).
+          if (/^https?:\/\//.test(img)) {
+            photoObjects.push({ url: img });
+            return;
+          }
           const placesMatch = img.match(/places\/([^\/]+)\/photos\/([^\/\?]+)/);
           if (placesMatch) {
             const placeId = placesMatch[1];
@@ -1216,8 +1239,17 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
           }
           return;
         }
-        if (img && typeof img === 'object' && typeof img.photoReference === 'string') {
-          if (img.photoReference.startsWith('places/')) {
+        if (img && typeof img === 'object') {
+          // Scraped hero photo: { url, widthPx, heightPx } — render the URL directly.
+          if (typeof img.url === 'string' && /^https?:\/\//.test(img.url)) {
+            photoObjects.push({
+              url: img.url,
+              widthPx: img.widthPx,
+              heightPx: img.heightPx,
+            });
+            return;
+          }
+          if (typeof img.photoReference === 'string' && img.photoReference.startsWith('places/')) {
             photoObjects.push({
               photoReference: img.photoReference,
               widthPx: img.widthPx,
@@ -1228,7 +1260,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
       });
     }
 
-    const allImages: Array<{ photoReference: string; widthPx?: number; heightPx?: number }> = [
+    const allImages: Array<{ photoReference?: string; url?: string; widthPx?: number; heightPx?: number }> = [
       ...photoObjects,
     ];
 
@@ -1388,6 +1420,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
       id: string;
       slug: string;
       placeId?: string;
+      cuisineType?: string | null;
       categories: string[];
       address: string;
       cityName?: string;
@@ -1396,7 +1429,7 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
       location?: { lat: number; lng: number };
       description?: string;
       description2?: string;
-      images: Array<{ photoReference: string; widthPx?: number; heightPx?: number }>;
+      images: Array<{ photoReference?: string; url?: string; widthPx?: number; heightPx?: number }>;
       imageCount: number;
       imageCategories: string[];
       hours?: any;
@@ -1438,11 +1471,15 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
       accomodationLodging?: { summary: string; highlights: Array<{ label: string; items: Array<{ name: string; distanceText: string; category: string; addressText: string | null; hoursText: string | null; phone: string | null; website: string | null }> }>; poiCount: number; generatedAt: string; model: string };
       artsCulture?: { summary: string; highlights: Array<{ label: string; items: Array<{ name: string; distanceText: string; category: string; addressText: string | null; hoursText: string | null; phone: string | null; website: string | null }> }>; poiCount: number; generatedAt: string; model: string };
       communicationsTechnology?: { summary: string; highlights: Array<{ label: string; items: Array<{ name: string; distanceText: string; category: string; addressText: string | null; hoursText: string | null; phone: string | null; website: string | null }> }>; poiCount: number; generatedAt: string; model: string };
+      delisted?: boolean;
+      yelpData?: any; // Parsed Yelp scrape blob (priceRange, hours, amenities, ambience, menuItems, popularDishes, serviceOptions, ratingDistribution)
     } = {
       name: buffet.name || '',
       id: buffet.id || '',
       slug: buffet.slug || '',
       placeId: buffet.placeId || undefined,
+      delisted: (buffet as any).delisted ?? false,
+      cuisineType: buffet.cuisineType || null,
       categories: categories || [],
       address: address || '',
       cityName: buffet.cityName || '',
@@ -1467,6 +1504,12 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
     // Include price if it exists
     if (buffet.price) {
       buffetData.price = buffet.price;
+    }
+
+    // Include parsed Yelp scrape data if present (priceRange, hours, amenities, etc.)
+    const yelpData = parseJsonField(buffet.yelpData);
+    if (yelpData && typeof yelpData === 'object' && Object.keys(yelpData).length > 0) {
+      buffetData.yelpData = yelpData;
     }
 
     // Include rating if it exists and is a valid number
@@ -1511,6 +1554,22 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
     }
     if (accessibility) {
       buffetData.accessibility = accessibility;
+    }
+    // Fallback: surface the buffet's own serviceOptions field into amenities when
+    // structuredData didn't provide service options. Indian buffets have a
+    // serviceOptions field (e.g. { dine_in, delivery, curbside_pickup }) but no
+    // structuredData records, so without this their "Before you go" / service
+    // options sections stay empty. Mirrors the transform in getBuffetBySlug.
+    if (!amenities['service options']) {
+      const serviceOptions = parseJsonField(buffet.serviceOptions);
+      if (
+        serviceOptions &&
+        typeof serviceOptions === 'object' &&
+        !Array.isArray(serviceOptions) &&
+        Object.keys(serviceOptions).length > 0
+      ) {
+        amenities['service options'] = serviceOptions;
+      }
     }
     // Check if amenities has any content (not just empty object)
     if (amenities && Object.keys(amenities).length > 0) {
@@ -1746,6 +1805,20 @@ export async function getBuffetNameBySlug(citySlug: string, buffetSlug: string):
       if (accomodationLodgingData) {
         buffetData.accomodationLodging = accomodationLodgingData;
         console.log('[getBuffetNameBySlug] ✅ Found accomodationLodging');
+      }
+    }
+
+    // Normalize nearby-POI sections into the enriched { highlights } shape the UI
+    // renders. Chinese buffets store these as enriched objects; Indian buffets store
+    // raw Overpass POI arrays. Note the blocks above use safeParseJsonObject, which
+    // returns arrays as-is — so Indian fields were set to raw arrays (no `highlights`)
+    // and POIBundle skipped them. coercePoiSection passes enriched objects through
+    // unchanged and converts raw arrays into the { highlights } shape, so we recompute
+    // from the source field and overwrite. Chinese output is unchanged.
+    for (const key of POI_SECTION_KEYS) {
+      const section = coercePoiSection((buffet as any)[key]);
+      if (section) {
+        (buffetData as any)[key] = section;
       }
     }
 

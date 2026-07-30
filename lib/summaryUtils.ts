@@ -2,6 +2,8 @@
  * Utility functions for generating and extracting summaries
  */
 
+import { getCuisineBuffetLabel } from '@/lib/cuisine';
+
 /**
  * Generate a 1–2 line human-friendly hero summary (NOT SEO fluff).
  * Used above the fold for quick decision support.
@@ -13,6 +15,7 @@ export function getHeroSummary(buffet: {
   categories?: string[] | null;
   price?: string | null;
   cityName?: string | null;
+  cuisineType?: string | null;
   address?: { city?: string } | string | null;
 }): string {
   // Prefer review-derived summary (real customer voice)
@@ -35,7 +38,7 @@ export function getHeroSummary(buffet: {
   const cuisineTypes = buffet.categories
     ?.filter((c: string) => !/restaurant|buffet/i.test(c))
     .slice(0, 2) || [];
-  const cuisine = cuisineTypes.length > 0 ? cuisineTypes.join(', ') : 'Chinese buffet';
+  const cuisine = cuisineTypes.length > 0 ? cuisineTypes.join(', ') : getCuisineBuffetLabel(buffet.cuisineType);
   const city = typeof buffet.address === 'object' && buffet.address?.city
     ? buffet.address.city
     : buffet.cityName || '';

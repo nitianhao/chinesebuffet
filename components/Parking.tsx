@@ -34,8 +34,8 @@ function flattenBooleans(
   return results;
 }
 
-export default function Parking({ data }: ParkingProps) {
-  if (!data) return null;
+export function buildParkingItems(data: ParkingProps['data']): ChipItem[] {
+  if (!data) return [];
 
   const items: ChipItem[] = [];
 
@@ -56,6 +56,11 @@ export default function Parking({ data }: ParkingProps) {
     });
   }
 
+  return items;
+}
+
+export default function Parking({ data }: ParkingProps) {
+  const items = buildParkingItems(data);
   if (items.length === 0) return null;
 
   return (

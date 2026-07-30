@@ -11,6 +11,7 @@ import type {
   SearchResult,
   SearchSuggestionsResponse,
 } from '@/lib/searchTypes';
+import { getCuisineBasePath } from '@/lib/cuisine';
 
 type MobileSearchDrawerProps = {
   triggerChildren: React.ReactNode;
@@ -351,7 +352,7 @@ export default function MobileSearchDrawer({
               {results.map((result) => (
                 <Link
                   key={result.id}
-                  href={`/chinese-buffets/${result.citySlug || ''}/${result.slug}`}
+                  href={`${getCuisineBasePath(result.cuisineType)}/${result.citySlug || ''}/${result.slug}`}
                   onClick={() => {
                     addRecent(query);
                     handleNavigate();

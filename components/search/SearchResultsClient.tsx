@@ -8,6 +8,7 @@ import { CityIcon } from './CityIcon';
 import { NeighborhoodIcon } from './NeighborhoodIcon';
 import { BuffetIcon } from './BuffetIcon';
 import SaveButton from '@/components/saved/SaveButton';
+import { getCuisineBasePath } from '@/lib/cuisine';
 
 // =============================================================================
 // TYPES
@@ -130,8 +131,8 @@ function ActiveFilterPill({ label, onRemove }: { label: string; onRemove: () => 
 // =============================================================================
 
 function BuffetResultCard({ result }: { result: SearchResult }) {
-  const href = result.citySlug && result.slug 
-    ? `/chinese-buffets/${result.citySlug}/${result.slug}` 
+  const href = result.citySlug && result.slug
+    ? `${getCuisineBasePath(result.cuisineType)}/${result.citySlug}/${result.slug}`
     : '#';
   
   const locationParts = [

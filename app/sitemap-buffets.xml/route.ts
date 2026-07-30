@@ -5,6 +5,7 @@ import { createSitemapEntry, filterIndexableEntries, getLastModified } from '@/l
 import { PageType, IndexTier } from '@/lib/index-tier';
 import { isCityIndexable, getStagedIndexingConfig } from '@/lib/staged-indexing';
 import { getBaseUrlForRobotsAndSitemaps } from '@/lib/site-url';
+import { getCuisineBasePath } from '@/lib/cuisine';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -45,6 +46,12 @@ export async function GET(): Promise<NextResponse> {
       if (!cityIndexable) continue;
 
       for (const buffet of (city.buffets as any[])) {
+        // Cuisine guard: getBuffetsByCity() returns every cuisine. Without this,
+        // Indian buffets were emitted under /chinese-buffets/ URLs — submitting
+        // duplicate, mislabelled pages to Google. The detail route 404s those,
+        // so they must not appear here. Indian buffets live in
+        // sitemap-indian-buffets.xml.
+        if (getCuisineBasePath(buffet.cuisineType) !== '/chinese-buffets') continue;
         const pagePath = `/chinese-buffets/${slug}/${buffet.slug}`;
         // Get last modified from buffet data (updatedAt, lastModified, or current date)
         const lastModified = getLastModified(buffet);

@@ -35,6 +35,7 @@ import type { ChangeEvent, KeyboardEvent } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { generateSlug } from '@/lib/utils';
+import { getCuisineBasePath } from '@/lib/cuisine';
 import type { SearchResponse, SearchResult, SearchCityResult, SearchNeighborhoodResult, SearchSuggestionsResponse } from '@/lib/searchTypes';
 import { CityIcon } from '@/components/search/CityIcon';
 import { NeighborhoodIcon } from '@/components/search/NeighborhoodIcon';
@@ -111,7 +112,7 @@ function getResultHref(result: SearchResult): string {
   if (!citySlug || !result.slug) {
     return '#';
   }
-  return `/chinese-buffets/${citySlug}/${result.slug}`;
+  return `${getCuisineBasePath(result.cuisineType)}/${citySlug}/${result.slug}`;
 }
 
 function getCityHref(city: SearchCityResult): string {

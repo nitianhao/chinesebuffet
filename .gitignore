@@ -49,6 +49,12 @@ env.local.txt
 # script outputs
 scripts/output/
 
+# google-reviews scraper runtime artifacts (browser profile, screenshots, logs, checkpoints)
+.runtime/
+
+# playwright-mcp page snapshots (tooling artifacts)
+.playwright-mcp/
+
 # mac & editors
 .idea/
 .vscode/

@@ -4,6 +4,15 @@ const path = require('path')
 const nextConfig = {
   reactStrictMode: true,
   typescript: { ignoreBuildErrors: true },
+  experimental: {
+    // The buffet detail routes read per-state LLM-content shards from disk at
+    // runtime (lib/loadStateShard.ts). These files aren't part of the bundle
+    // graph, so trace them explicitly into the relevant serverless functions.
+    outputFileTracingIncludes: {
+      '/chinese-buffets/[city-state]/[slug]': ['./lib/generated/by-state/**/*.json'],
+      '/indian-buffets/[city-state]/[slug]': ['./lib/generated/by-state/**/*.json'],
+    },
+  },
   // Note: Trailing slash and query param redirects are handled in middleware.ts
   // for better dynamic control. Static redirects can be added here if needed.
   images: {

@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { getCuisineBasePath } from '@/lib/cuisine';
 
 type NeighborhoodRow = {
   slug: string;
@@ -13,12 +14,15 @@ type NeighborhoodRow = {
 type NeighborhoodsHubClientProps = {
   neighborhoods: NeighborhoodRow[];
   citySlug: string;
+  cuisineType?: string | null;
 };
 
 export default function NeighborhoodsHubClient({
   neighborhoods,
   citySlug,
+  cuisineType,
 }: NeighborhoodsHubClientProps) {
+  const basePath = getCuisineBasePath(cuisineType);
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -105,7 +109,7 @@ export default function NeighborhoodsHubClient({
         {filtered.map((neighborhood) => (
           <Link
             key={neighborhood.slug}
-            href={`/chinese-buffets/${citySlug}/neighborhoods/${neighborhood.slug}`}
+            href={`${basePath}/${citySlug}/neighborhoods/${neighborhood.slug}`}
             className="group flex min-h-[72px] items-center gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 transition-all hover:border-[var(--accent1)] hover:shadow-md"
           >
             <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-[var(--surface2)]">

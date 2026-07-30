@@ -5,6 +5,7 @@ import { createSitemapEntry, filterIndexableEntries, getLastModified } from '@/l
 import { PageType, IndexTier } from '@/lib/index-tier';
 import { isCityIndexable, getStagedIndexingConfig } from '@/lib/staged-indexing';
 import { getBaseUrlForRobotsAndSitemaps } from '@/lib/site-url';
+import { getCuisineBasePath } from '@/lib/cuisine';
 
 export const dynamic = 'force-dynamic';
 // Note: Removed revalidate export - now using force-dynamic with edge caching via Cache-Control
@@ -27,6 +28,13 @@ export async function GET(): Promise<NextResponse> {
 
     for (const [slug, city] of Object.entries(citiesBySlug)) {
       try {
+        // Chinese-only count: these are /chinese-buffets/ neighborhood URLs, so a
+        // city that qualifies solely on Indian listings must not be emitted here.
+        const chineseBuffetCount = ((city.buffets as any[]) || []).filter(
+          (buffet) => getCuisineBasePath(buffet.cuisineType) === '/chinese-buffets'
+        ).length;
+        if (chineseBuffetCount === 0) continue;
+
         const cityIndexable = isCityIndexable(
           {
             slug: city.slug,
@@ -34,7 +42,7 @@ export async function GET(): Promise<NextResponse> {
             state: city.state,
             rank: city.rank,
             population: city.population,
-            buffetCount: (city.buffets as any[])?.length || 0,
+            buffetCount: chineseBuffetCount,
           },
           stagedConfig
         );

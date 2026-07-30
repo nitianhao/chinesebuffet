@@ -13,6 +13,7 @@ import { unstable_cache } from 'next/cache';
 import { getCachedBuffet } from '@/lib/data-instantdb';
 import { getCachedPageTransforms } from '@/lib/buffet-page-transforms';
 import { getSiteUrl } from '@/lib/site-url';
+import { getCuisineBasePath } from '@/lib/cuisine';
 import {
   buildRestaurantJsonLd,
   buildReviewsJsonLd,
@@ -36,7 +37,7 @@ export interface CachedSeoSchemas {
 
 function buildSchemas(buffet: any, cityStateSlug: string, nearbyPOIs: Array<{ name: string; category?: string; lat?: number; lng?: number; address?: string; distance?: string }>): CachedSeoSchemas {
   const siteBaseUrl = getSiteUrl();
-  const pageUrl = `${siteBaseUrl}/chinese-buffets/${cityStateSlug}/${buffet.slug}`;
+  const pageUrl = `${siteBaseUrl}${getCuisineBasePath(buffet.cuisineType)}/${cityStateSlug}/${buffet.slug}`;
 
   const restaurantSchema = buildRestaurantJsonLd(buffet, siteBaseUrl, cityStateSlug);
   if (restaurantSchema && buffet.reviews && Array.isArray(buffet.reviews)) {
@@ -75,10 +76,13 @@ function buildSchemas(buffet: any, cityStateSlug: string, nearbyPOIs: Array<{ na
   const cityName = cityPart.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
   const addressObj = typeof buffet.address === 'object' ? buffet.address : null;
   const stateName = addressObj?.state || statePart || '';
+  // Breadcrumb URLs must stay inside the buffet's own cuisine tree, or the
+  // structured data contradicts the page's canonical and points at 404s.
+  const cuisineBasePath = getCuisineBasePath(buffet.cuisineType);
   const breadcrumbItems = [
     { name: 'Home', url: '/' },
-    ...(statePart ? [{ name: stateName || statePart, url: `/chinese-buffets/states/${statePart.toLowerCase()}` }] : []),
-    ...(cityName ? [{ name: cityName, url: `/chinese-buffets/${cityStateSlug}` }] : []),
+    ...(statePart ? [{ name: stateName || statePart, url: `${cuisineBasePath}/states/${statePart.toLowerCase()}` }] : []),
+    ...(cityName ? [{ name: cityName, url: `${cuisineBasePath}/${cityStateSlug}` }] : []),
     { name: buffet.name, url: pageUrl },
   ];
   breadcrumbSchema = buildBreadcrumbJsonLd(breadcrumbItems, siteBaseUrl);
