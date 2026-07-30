@@ -6,6 +6,8 @@ import SiteShell from '@/components/layout/SiteShell';
 import SearchBar from '@/components/SearchBar';
 import MobileSearchDrawer from '@/components/search/MobileSearchDrawer';
 import { getHomePageData } from '@/lib/homepage-data';
+import { getNeutralCitiesRollup } from '@/lib/hub-data';
+import { CUISINES, cuisineByKey } from '@/lib/cuisines';
 import { h2, muted } from '@/lib/layout-utils';
 import { STATE_ABBR_TO_NAME } from '@/lib/rollups';
 import { REGION_LABELS, VALID_REGIONS } from '@/lib/regions';
@@ -18,14 +20,15 @@ export const revalidate = 43200;
 export const fetchCache = "force-no-store";
 
 export const metadata: Metadata = {
-  title: 'Chinese Buffets Directory - Find All-You-Can-Eat Chinese Buffets Near You',
-  description: 'Discover Chinese buffets across the USA. Find locations, hours, prices, and ratings for all-you-can-eat Chinese buffets in your city.',
+  title: 'Buffet Directory — Chinese & Indian All-You-Can-Eat Buffets Near You',
+  description: 'Discover Chinese and Indian buffets across the USA. Find locations, hours, prices, and ratings for all-you-can-eat buffets in your city.',
   alternates: { canonical: getCanonicalUrl('/') },
   robots: { index: true, follow: true },
 };
 
 export default async function HomePage() {
   const data = await getHomePageData();
+  const neutralCities = (await getNeutralCitiesRollup()).slice(0, 12);
   const ratedBuffets = data.topRatedBuffets.filter((buffet) => buffet.rating > 0);
   const siteUrl = getSiteUrl();
   const websiteSchema = {
@@ -62,10 +65,10 @@ export default async function HomePage() {
       >
         <div className="max-w-2xl text-center md:text-left">
           <h1 id="hero-heading" className="text-3xl sm:text-4xl md:text-5xl font-bold text-[var(--text)]">
-            Chinese Buffet Directory
+            Buffet Directory
           </h1>
           <p className={`${muted} mt-4`}>
-            Find Chinese buffets by city, neighborhood, rating, price, and dine-in/takeout options.
+            Find Chinese and Indian buffets by city, neighborhood, rating, price, and dine-in/takeout options.
           </p>
           <div className="mt-6 w-full max-w-xl md:max-w-2xl">
             <div className="md:hidden">
@@ -90,6 +93,48 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Cuisine selector */}
+      <section
+        className="rounded-[var(--section-radius)] border border-[var(--border)] bg-[var(--surface)] p-[var(--section-pad)]"
+        aria-label="Choose a cuisine"
+      >
+        <h2 className={h2}>Choose a cuisine</h2>
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Link
+            href="/chinese-buffets/states"
+            className="group rounded-xl border border-[var(--border)] bg-[var(--surface2)] p-6 transition-all hover:border-[var(--accent1)] hover:shadow-md"
+          >
+            <div className="flex items-center gap-3">
+              <span className="inline-flex h-12 w-12 items-center justify-center rounded-lg bg-black text-2xl font-bold text-[#FF0000]" aria-hidden="true">
+                中
+              </span>
+              <div>
+                <h3 className="text-lg font-semibold text-[var(--text)] group-hover:text-[var(--accent1)]">
+                  Chinese Buffets
+                </h3>
+                <p className={`${muted} text-sm`}>All-you-can-eat Chinese restaurants across the US</p>
+              </div>
+            </div>
+          </Link>
+          <Link
+            href="/indian-buffets/states"
+            className="group rounded-xl border border-[var(--border)] bg-[var(--surface2)] p-6 transition-all hover:border-[var(--accent1)] hover:shadow-md"
+          >
+            <div className="flex items-center gap-3">
+              <span className="inline-flex h-12 w-12 items-center justify-center rounded-lg bg-[#FF6B35] text-2xl font-bold text-white" aria-hidden="true">
+                भ
+              </span>
+              <div>
+                <h3 className="text-lg font-semibold text-[var(--text)] group-hover:text-[var(--accent1)]">
+                  Indian Buffets
+                </h3>
+                <p className={`${muted} text-sm`}>All-you-can-eat Indian restaurants across the US</p>
+              </div>
+            </div>
+          </Link>
+        </div>
+      </section>
+
       <section
         className="rounded-[var(--section-radius)] border border-[var(--border)] bg-[var(--surface)] p-[var(--section-pad)]"
         aria-labelledby="intro-heading"
@@ -100,7 +145,7 @@ export default async function HomePage() {
         <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface2)] p-4 sm:p-6">
           <div className="md:grid md:grid-cols-2 md:gap-6">
             <p className={`${muted} max-w-3xl`}>
-              Explore Chinese buffet options across cities and neighborhoods with trustworthy ratings and
+              Explore buffet options across cities and neighborhoods with trustworthy ratings and
               reviews. Whether you want a quick dine-in stop or a takeout-friendly spot, this directory
               helps you compare places and decide where to eat.
             </p>
@@ -132,28 +177,37 @@ export default async function HomePage() {
         </p>
       </section>
 
-      {data.popularCities.length > 0 && (
+      {neutralCities.length > 0 && (
         <section
           className="rounded-[var(--section-radius)] border border-[var(--border)] bg-[var(--surface)] p-[var(--section-pad)]"
           aria-label="Browse by city"
         >
           <SectionHeader
             title="Browse by city"
-            actionHref="/chinese-buffets/cities"
+            actionHref="/cities"
             actionLabel="View all cities"
           />
           <ul className="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-x-6 gap-y-4">
-            {data.popularCities.slice(0, 30).map((city) => (
-              <li key={city.slug} className="min-w-0">
-                <a
-                  href={`/chinese-buffets/${city.slug}`}
-                  className="block min-h-[44px] py-2 text-[var(--text)] hover:text-[var(--accent1)] hover:underline"
-                >
-                  <span className="block min-w-0 font-medium leading-tight line-clamp-2">
-                    {city.city}, {city.stateAbbr}
+            {neutralCities.map((c) => (
+              <li key={c.slug} className="min-w-0">
+                <div className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-4 py-3">
+                  <span className="block truncate font-semibold text-[var(--text)]">{c.city}</span>
+                  <span className="block text-[var(--muted)] text-xs mt-0.5">{c.state}</span>
+                  <span className="mt-1 flex flex-wrap gap-x-2 text-sm">
+                    {c.cuisines.map((cu, i) => {
+                      const def = cuisineByKey(cu.key);
+                      if (!def) return null;
+                      return (
+                        <span key={cu.key} className="whitespace-nowrap">
+                          {i > 0 && <span className="text-[var(--muted)]">· </span>}
+                          <Link href={`${def.routePrefix}/${c.slug}`} className="font-medium text-[var(--accent1)] hover:underline">
+                            {cu.label}
+                          </Link>
+                        </span>
+                      );
+                    })}
                   </span>
-                  <span className={`${muted} block text-sm`}>{city.count} buffets</span>
-                </a>
+                </div>
               </li>
             ))}
           </ul>
@@ -173,15 +227,22 @@ export default async function HomePage() {
           <ul className="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-x-6 gap-y-4">
             {data.popularStates.slice(0, 20).map((state) => (
               <li key={state.stateAbbr} className="min-w-0">
-                <a
-                  href={`/chinese-buffets/states/${state.stateAbbr.toLowerCase()}`}
-                  className="block min-h-[44px] py-2 text-[var(--text)] hover:text-[var(--accent1)] hover:underline"
-                >
-                  <span className="block min-w-0 font-medium leading-tight line-clamp-2">
-                    {STATE_ABBR_TO_NAME[state.stateAbbr] || state.stateAbbr}
-                  </span>
-                  <span className={`${muted} block text-sm`}>{state.count} buffets</span>
-                </a>
+                <span className="block min-w-0 font-medium leading-tight line-clamp-2 text-[var(--text)]">
+                  {STATE_ABBR_TO_NAME[state.stateAbbr] || state.stateAbbr}
+                </span>
+                <span className="mt-1 flex flex-wrap gap-x-2 text-sm">
+                  {CUISINES.map((cu, i) => (
+                    <span key={cu.key} className="whitespace-nowrap">
+                      {i > 0 && <span className="text-[var(--muted)]">· </span>}
+                      <Link
+                        href={`${cu.routePrefix}/states/${state.stateAbbr.toLowerCase()}`}
+                        className="font-medium text-[var(--accent1)] hover:underline"
+                      >
+                        {cu.label}
+                      </Link>
+                    </span>
+                  ))}
+                </span>
               </li>
             ))}
           </ul>
@@ -196,13 +257,18 @@ export default async function HomePage() {
         <SectionHeader title="Browse by region" />
         <ul className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
           {VALID_REGIONS.map((region) => (
-            <li key={region}>
-              <Link
-                href={`/chinese-buffets/regions/${region}`}
-                className="block rounded-lg border border-[var(--border)] bg-[var(--surface2)] px-4 py-3 text-sm font-medium text-[var(--text)] hover:border-[var(--accent1)] hover:text-[var(--accent1)] transition-colors text-center"
-              >
-                {REGION_LABELS[region]}
-              </Link>
+            <li key={region} className="rounded-lg border border-[var(--border)] bg-[var(--surface2)] px-4 py-3 text-center">
+              <span className="block text-sm font-medium text-[var(--text)]">{REGION_LABELS[region]}</span>
+              <span className="mt-1 flex flex-wrap justify-center gap-x-2 text-sm">
+                {CUISINES.map((cu, i) => (
+                  <span key={cu.key} className="whitespace-nowrap">
+                    {i > 0 && <span className="text-[var(--muted)]">· </span>}
+                    <Link href={`${cu.routePrefix}/regions/${region}`} className="font-medium text-[var(--accent1)] hover:underline">
+                      {cu.label}
+                    </Link>
+                  </span>
+                ))}
+              </span>
             </li>
           ))}
         </ul>
@@ -210,9 +276,9 @@ export default async function HomePage() {
 
       <section
         className="rounded-[var(--section-radius)] border border-[var(--border)] bg-[var(--surface)] p-[var(--section-pad)]"
-        aria-label="Top rated Chinese buffets"
+        aria-label="Top rated buffets"
       >
-        <SectionHeader title="Top rated Chinese buffets" />
+        <SectionHeader title="Top rated buffets" />
         {ratedBuffets.length > 0 ? (
           <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {ratedBuffets.map((buffet) => {
