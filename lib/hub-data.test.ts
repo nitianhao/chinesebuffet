@@ -1,6 +1,6 @@
 // lib/hub-data.test.ts
 // Run with: npx tsx lib/hub-data.test.ts
-import { mergeCityRollups } from './hub-data';
+import { mergeCityRollups, mergeStateCuisines } from './hub-data';
 
 let pass = 0, fail = 0;
 function assert(cond: boolean, msg: string) {
@@ -35,6 +35,35 @@ const zero = mergeCityRollups([
   { key: 'indian', label: 'Indian', rows: [{ slug: 'x-tx', city: 'X', state: 'TX', buffetCount: 2 }] },
 ]);
 assert(zero[0].cuisines.length === 1 && zero[0].cuisines[0].key === 'indian', 'zero-count cuisine excluded');
+
+// --- mergeStateCuisines: per-state and per-region availability ----------------
+const regionStates = {
+  south: ['TX', 'FL'],   // TX has both, FL chinese-only
+  northeast: ['NJ'],     // NJ indian-only
+  west: ['CA'],          // CA has no buffets at all
+};
+const avail = mergeStateCuisines(
+  [
+    { key: 'chinese', rows: [
+      { stateAbbr: 'TX', buffetCount: 4 },
+      { stateAbbr: 'FL', buffetCount: 2 },
+      { stateAbbr: 'NJ', buffetCount: 0 }, // zero => not present
+    ]},
+    { key: 'indian', rows: [
+      { stateAbbr: 'tx', buffetCount: 3 }, // lowercase => normalized to TX
+      { stateAbbr: 'NJ', buffetCount: 5 },
+    ]},
+  ],
+  regionStates,
+);
+
+assert(JSON.stringify(avail.byState['TX']) === JSON.stringify(['chinese', 'indian']), 'TX has both, in CUISINES order');
+assert(JSON.stringify(avail.byState['FL']) === JSON.stringify(['chinese']), 'FL chinese-only');
+assert(JSON.stringify(avail.byState['NJ']) === JSON.stringify(['indian']), 'NJ indian-only (zero chinese excluded)');
+assert(avail.byState['CA'] === undefined, 'state with no buffets absent from byState');
+assert(JSON.stringify(avail.byRegion['south']) === JSON.stringify(['chinese', 'indian']), 'south aggregates TX+FL to both cuisines');
+assert(JSON.stringify(avail.byRegion['northeast']) === JSON.stringify(['indian']), 'northeast (NJ) indian-only');
+assert(JSON.stringify(avail.byRegion['west']) === JSON.stringify([]), 'west (CA) empty when no buffets');
 
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail === 0 ? 0 : 1);

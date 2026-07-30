@@ -84,3 +84,84 @@ export async function getNeutralCitiesRollup(): Promise<NeutralCityRow[]> {
     CUISINES.map((c) => ({ key: c.key, label: c.label, rows: byKey[c.key] ?? [] })),
   );
 }
+
+export interface RawStateRow {
+  stateAbbr?: string;
+  buffetCount?: number;
+}
+
+export interface StateCuisineAvailability {
+  /** UPPERCASE stateAbbr -> cuisine keys present there (in CUISINES order). */
+  byState: Record<string, CuisineKey[]>;
+  /** region key -> cuisine keys present anywhere in the region (CUISINES order). */
+  byRegion: Record<string, CuisineKey[]>;
+}
+
+/**
+ * Pure: from per-cuisine state rows and a region->states map, compute which
+ * cuisines have at least one buffet in each state and, aggregated, in each
+ * region. A cuisine is "present" in a state only when its count there is > 0;
+ * it is present in a region when it is present in any of the region's states.
+ * Returned cuisine-key lists follow CUISINES order.
+ */
+export function mergeStateCuisines(
+  perCuisine: { key: CuisineKey; rows: RawStateRow[] }[],
+  regionStates: Record<string, string[]>,
+): StateCuisineAvailability {
+  const stateSet = new Map<string, Set<CuisineKey>>();
+  for (const { key, rows } of perCuisine) {
+    for (const row of rows) {
+      if (!row.stateAbbr) continue;
+      if ((row.buffetCount ?? 0) <= 0) continue;
+      const abbr = row.stateAbbr.toUpperCase();
+      let set = stateSet.get(abbr);
+      if (!set) {
+        set = new Set();
+        stateSet.set(abbr, set);
+      }
+      set.add(key);
+    }
+  }
+
+  const order = CUISINES.map((c) => c.key);
+  const ordered = (set: Set<CuisineKey>) => order.filter((k) => set.has(k));
+
+  const byState: Record<string, CuisineKey[]> = {};
+  Array.from(stateSet.entries()).forEach(([abbr, set]) => {
+    byState[abbr] = ordered(set);
+  });
+
+  const byRegion: Record<string, CuisineKey[]> = {};
+  for (const [region, states] of Object.entries(regionStates)) {
+    const set = new Set<CuisineKey>();
+    for (const st of states) {
+      const s = stateSet.get(st.toUpperCase());
+      if (s) s.forEach((k) => set.add(k));
+    }
+    byRegion[region] = ordered(set);
+  }
+
+  return { byState, byRegion };
+}
+
+/**
+ * Async fetcher: pull each cuisine's states rollup and compute per-state and
+ * per-region cuisine availability. Dynamic imports for the same RSC-runtime
+ * reason as getNeutralCitiesRollup above.
+ */
+export async function getStateCuisineAvailability(): Promise<StateCuisineAvailability> {
+  const [
+    { getStatesRollup: getChineseStates },
+    { getStatesRollup: getIndianStates },
+    { REGION_STATES },
+  ] = await Promise.all([import('./rollups'), import('./indian-rollups'), import('./regions')]);
+  const [chinese, indian] = await Promise.all([getChineseStates(), getIndianStates()]);
+  const byKey: Record<CuisineKey, RawStateRow[]> = {
+    chinese: (chinese.states as RawStateRow[]) ?? [],
+    indian: (indian.states as RawStateRow[]) ?? [],
+  };
+  return mergeStateCuisines(
+    CUISINES.map((c) => ({ key: c.key, rows: byKey[c.key] ?? [] })),
+    REGION_STATES,
+  );
+}
