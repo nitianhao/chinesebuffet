@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import MobileSearchDrawer from '@/components/search/MobileSearchDrawer';
+import { CUISINES } from '@/lib/cuisines';
 
 type NavItem = {
   label: string;
@@ -29,8 +30,10 @@ const navItems: NavItem[] = [
   },
   {
     label: 'Browse',
-    href: '/chinese-buffets/states',
-    isActive: (pathname) => pathname.startsWith('/chinese-buffets'),
+    href: '/cities',
+    isActive: (pathname) =>
+      pathname.startsWith('/cities') ||
+      CUISINES.some((cu) => pathname.startsWith(cu.routePrefix)),
     icon: (
       <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
         <path
@@ -77,7 +80,7 @@ const navItems: NavItem[] = [
 export default function BottomNav() {
   const pathname = usePathname() || '/';
   const isBuffetDetail =
-    pathname.startsWith('/chinese-buffets/') &&
+    (pathname.startsWith('/chinese-buffets/') || pathname.startsWith('/indian-buffets/')) &&
     pathname.split('/').length === 4 &&
     !pathname.endsWith('/neighborhoods');
 

@@ -7,11 +7,11 @@ import ModalDrawer from '@/components/ui/ModalDrawer';
 import SearchBar from '@/components/SearchBar';
 import MobileSearchDrawer from '@/components/search/MobileSearchDrawer';
 import AddBuffetModal from '@/components/AddBuffetModal';
+import { CUISINES } from '@/lib/cuisines';
 
 const navLinks = [
-  { label: 'Cities', href: '/chinese-buffets/cities' },
-  { label: 'States', href: '/chinese-buffets/states' },
-  { label: 'Neighborhoods', href: '/chinese-buffets/neighborhoods' },
+  ...CUISINES.map((cu) => ({ label: cu.label, href: `${cu.routePrefix}/states` })),
+  { label: 'Cities', href: '/cities' },
   { label: 'Saved', href: '/saved' },
 ];
 
@@ -112,26 +112,50 @@ export default function Header() {
     if (path === '/chinese-buffets/states' || path === '/chinese-buffets/cities') {
       return '/';
     }
+    if (path === '/indian-buffets/states' || path === '/indian-buffets/cities') {
+      return '/';
+    }
     if (path === '/chinese-buffets/neighborhoods') {
       return '/chinese-buffets/cities';
     }
+    if (path === '/indian-buffets/neighborhoods') {
+      return '/indian-buffets/cities';
+    }
     if (path.startsWith('/chinese-buffets/states/')) {
       return '/chinese-buffets/states';
+    }
+    if (path.startsWith('/indian-buffets/states/')) {
+      return '/indian-buffets/states';
     }
     if (path.startsWith('/chinese-buffets/') && path.includes('/neighborhoods/')) {
       const parts = path.split('/');
       const citySlug = parts[2];
       return citySlug ? `/chinese-buffets/${citySlug}/neighborhoods` : '/chinese-buffets/neighborhoods';
     }
+    if (path.startsWith('/indian-buffets/') && path.includes('/neighborhoods/')) {
+      const parts = path.split('/');
+      const citySlug = parts[2];
+      return citySlug ? `/indian-buffets/${citySlug}/neighborhoods` : '/indian-buffets/neighborhoods';
+    }
     if (path.startsWith('/chinese-buffets/') && path.endsWith('/neighborhoods')) {
       const parts = path.split('/');
       const citySlug = parts[2];
       return citySlug ? `/chinese-buffets/${citySlug}` : '/chinese-buffets/cities';
     }
+    if (path.startsWith('/indian-buffets/') && path.endsWith('/neighborhoods')) {
+      const parts = path.split('/');
+      const citySlug = parts[2];
+      return citySlug ? `/indian-buffets/${citySlug}` : '/indian-buffets/cities';
+    }
     if (path.startsWith('/chinese-buffets/')) {
       const parts = path.split('/');
       const citySlug = parts[2];
       return citySlug ? `/chinese-buffets/${citySlug}` : '/chinese-buffets/cities';
+    }
+    if (path.startsWith('/indian-buffets/')) {
+      const parts = path.split('/');
+      const citySlug = parts[2];
+      return citySlug ? `/indian-buffets/${citySlug}` : '/indian-buffets/cities';
     }
     return '/';
   };
@@ -173,7 +197,7 @@ export default function Header() {
               >
                 <BrandMark className="h-7 w-7 text-sm sm:h-8 sm:w-8 sm:text-base" />
                 <span className="hidden text-sm font-semibold text-white sm:inline sm:text-base">
-                  Chinese Buffet Directory
+                  Buffet Directory
                 </span>
               </Link>
 
