@@ -219,11 +219,7 @@ export default async function HomePage() {
           className="rounded-[var(--section-radius)] border border-[var(--border)] bg-[var(--surface)] p-[var(--section-pad)]"
           aria-label="Browse by state"
         >
-          <SectionHeader
-            title="Browse by state"
-            actionHref="/chinese-buffets/states"
-            actionLabel="View all states"
-          />
+          <SectionHeader title="Browse by state" />
           <ul className="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-x-6 gap-y-4">
             {data.popularStates.slice(0, 20).map((state) => (
               <li key={state.stateAbbr} className="min-w-0">
