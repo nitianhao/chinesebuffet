@@ -1,16 +1,30 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import crossCuisineRedirects from './lib/generated/cross-cuisine-redirects.json';
 
 /**
  * Middleware for handling duplicate URL variants and query param normalization
- * 
+ *
  * Handles:
- * 1. Trailing slash removal (redirect /path/ to /path)
- * 2. Tracking query param removal (utm_*, gclid, fbclid, ref, etc.)
- * 3. PERF_LOG=1 timing instrumentation (Server-Timing + x-perf-* headers)
- * 
+ * 1. Cross-cuisine redirects (SEO Bet 1): legacy /chinese-buffets/<indian> URLs
+ *    308 to their /indian-buffets/ equivalents
+ * 2. Trailing slash removal (redirect /path/ to /path)
+ * 3. Tracking query param removal (utm_*, gclid, fbclid, ref, etc.)
+ * 4. PERF_LOG=1 timing instrumentation (Server-Timing + x-perf-* headers)
+ *
  * Note: This runs on every request, so keep it lightweight.
  */
+
+/**
+ * Generated map of legacy Chinese-route URLs for Indian-cuisine buffets to
+ * their correct /indian-buffets/ paths. These URLs were indexed and earning
+ * traffic; the route-level cuisine guard now notFound()s them, and a page-level
+ * permanentRedirect() is swallowed by the route's ISR cache (revalidate=86400,
+ * fetchCache='force-cache') — verified in prod. Middleware runs before the
+ * cache on every request, so the 308 must live here.
+ * Regenerate with: npx tsx scripts/generate-cross-cuisine-redirects.ts
+ */
+const CROSS_CUISINE_REDIRECTS = crossCuisineRedirects as Record<string, string>;
 
 // Perf instrumentation is ~0 cost (two performance.now() calls + header set)
 // so we always compute it, but only attach headers when PERF_LOG=1.
@@ -40,6 +54,21 @@ export function middleware(request: NextRequest) {
 
   const url = request.nextUrl.clone();
   let hasChanges = false;
+
+  // 0. Cross-cuisine redirects (SEO Bet 1)
+  // Normalise a trailing slash for the lookup so /path and /path/ both match,
+  // then 308 straight to the correct-cuisine path (already clean). Runs before
+  // the ISR cache, unlike the swallowed page-level redirect.
+  const rawPath = url.pathname;
+  const lookupPath =
+    rawPath.length > 1 && rawPath.endsWith('/') ? rawPath.slice(0, -1) : rawPath;
+  const crossCuisineTarget = CROSS_CUISINE_REDIRECTS[lookupPath];
+  if (crossCuisineTarget) {
+    url.pathname = crossCuisineTarget;
+    const res = NextResponse.redirect(url, 308);
+    if (PERF) addPerfHeaders(res, mwStart);
+    return res;
+  }
 
   // 1. Handle trailing slash removal
   // Only for content pages (not API routes, _next, static files, or root)
