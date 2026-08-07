@@ -8,6 +8,7 @@ import MiniSearch from 'minisearch';
 import schema from '@/src/instant.schema';
 import rules from '@/src/instant.perms';
 import { POI_SECTION_KEYS, coercePoiSection } from '@/lib/nearbyPoisFromRaw';
+import { getCuisineNoun } from '@/lib/cuisine';
 
 // Re-export types for convenience
 export type { Review, Buffet, City, BuffetsByCity, BuffetsById, Summary } from '@/lib/data';
@@ -487,10 +488,15 @@ const _fetchAllDataFromDB = async (): Promise<{ cities: any[]; buffets: any[] }>
   return { cities, buffets };
 };
 
+// Underlying buffet data only changes via manual import scripts (no cron/webhook
+// triggers it), so a short revalidate here just forces a repeated 10k-row
+// InstantDB refetch on a clock. Revalidate weekly; re-import scripts should call
+// POST /api/revalidate (or bump this cache tag) after a data refresh if fresher
+// data is needed sooner.
 const fetchAllDataCached = unstable_cache(
   _fetchAllDataFromDB,
   ['instantdb-all-data'],
-  { revalidate: 21600 },
+  { revalidate: 604800 },
 );
 
 async function getCachedData() {
@@ -2331,6 +2337,71 @@ export async function getTopRatedBuffets(limit: number = 10): Promise<Array<{
     return buffets;
   } catch (e) {
     console.error('[data-instantdb] getTopRatedBuffets error:', e);
+    return [];
+  }
+}
+
+/**
+ * Top-rated buffets for a single cuisine tree (rating >= 4.3, min 50 reviews),
+ * as { citySlug, slug } pairs. Used by generateStaticParams so the highest-value
+ * detail pages ship pre-rendered at build time instead of costing an on-demand
+ * ISR render + write on first visit.
+ */
+export async function getTopRatedBuffetSlugsForCuisine(
+  cuisine: 'Chinese' | 'Indian',
+  limit: number = 150,
+): Promise<Array<{ citySlug: string; slug: string }>> {
+  const db = getAdminDb();
+  try {
+    const result = await adminQuery(db, {
+      buffets: {
+        $: {
+          limit: 1000,
+          where: { rating: { $gte: 4.3 } },
+          order: { rating: 'desc' },
+        },
+        city: {},
+      },
+    });
+    return (result.buffets || [])
+      .filter(
+        (b: any) =>
+          (b.reviewsCount ?? 0) >= 50 &&
+          b.city?.slug &&
+          b.slug &&
+          getCuisineNoun(b.cuisineType) === cuisine,
+      )
+      .slice(0, limit)
+      .map((b: any) => ({ citySlug: b.city.slug, slug: b.slug }));
+  } catch (e) {
+    console.error('[data-instantdb] getTopRatedBuffetSlugsForCuisine error:', e);
+    return [];
+  }
+}
+
+/**
+ * Top cities (by buffet count) for a single cuisine tree. Reuses the shared
+ * cached dataset (no extra DB round trip). Used by generateStaticParams for
+ * city-index pages and their cheap/best/top-rated/open-now variants.
+ */
+export async function getTopCitySlugsForCuisine(
+  cuisine: 'Chinese' | 'Indian',
+  limit: number = 150,
+): Promise<string[]> {
+  try {
+    const { buffets } = await getCachedData();
+    const counts: Record<string, number> = {};
+    for (const b of buffets as any[]) {
+      const citySlug = b.city?.slug;
+      if (!citySlug || getCuisineNoun(b.cuisineType) !== cuisine) continue;
+      counts[citySlug] = (counts[citySlug] || 0) + 1;
+    }
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, limit)
+      .map(([slug]) => slug);
+  } catch (e) {
+    console.error('[data-instantdb] getTopCitySlugsForCuisine error:', e);
     return [];
   }
 }

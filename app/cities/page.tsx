@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { getNeutralCitiesRollup } from '@/lib/hub-data';
 import { cuisineByKey } from '@/lib/cuisines';
 
-export const revalidate = 86400;
+export const revalidate = 2592000; // 30 days (data only changes via manual import scripts)
 
 export const metadata: Metadata = {
   title: 'All Cities — Chinese & Indian Buffets Directory',

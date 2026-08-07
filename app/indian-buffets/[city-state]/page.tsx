@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { unstable_cache } from 'next/cache';
 import { getCityBuffetsRollup, getStateCitiesRollup, CityBuffetRow, StateCityRow, POI_LABELS, CityPoiSummary } from '@/lib/indian-rollups';
+import { getTopCitySlugsForCuisine } from '@/lib/data-instantdb';
 import CityFacetsLoader from '@/components/city/CityFacetsLoader';
 import SiteShell from '@/components/layout/SiteShell';
 import { withTimeout } from '@/lib/async-utils';
@@ -16,21 +17,26 @@ import { computeAllNeighborhoodChampions } from '@/lib/neighborhoodChampion';
 const BASE_URL = getSiteUrl();
 const isDev = process.env.NODE_ENV !== 'production';
 
-// ISR: Revalidate every 6 hours in prod, 1 hour in dev.
+// ISR: Revalidate weekly in prod, 1 hour in dev. Underlying buffet data only
+// changes via manual import scripts, so a long window avoids paying for
+// re-renders/ISR writes that a traffic-driven clock doesn't actually need.
 // IMPORTANT: This page must NOT access `searchParams` in the server component,
 // otherwise Next.js treats it as dynamic and sends Cache-Control: no-store.
 // All filter/sort logic is handled client-side by CityFilterBar + CityBuffetList.
-export const revalidate = isDev ? 3600 : 43200;
+export const revalidate = isDev ? 3600 : 604800;
 // Force all fetch() calls (including InstantDB SDK) to use cache, preventing
 // the SDK's default no-store from making the page dynamic.
 export const fetchCache = 'force-cache';
 
 const ROLLUP_TIMEOUT_MS = isDev ? 12000 : 8000;
 
-// generateStaticParams enables ISR for dynamic [city-state] segments.
-// Return empty array: pages are generated on-demand and cached via ISR.
+// Pre-render the highest-traffic cities at build time so they ship static
+// instead of costing an on-demand render + ISR write on first visit.
+// Everything else still falls through to on-demand ISR (dynamicParams defaults
+// to true).
 export async function generateStaticParams() {
-  return [];
+  const slugs = await getTopCitySlugsForCuisine('Indian', 150);
+  return slugs.map((citySlug) => ({ 'city-state': citySlug }));
 }
 
 /** How many cards to include in the initial server HTML */

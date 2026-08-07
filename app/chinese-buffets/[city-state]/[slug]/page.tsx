@@ -6,6 +6,7 @@ import {
   getCachedBuffet,
   getCityBySlug,
   getMenuForBuffet,
+  getTopRatedBuffetSlugsForCuisine,
 } from '@/lib/data-instantdb';
 import { getCachedPageTransforms, computeTransforms } from '@/lib/buffet-page-transforms';
 import { getSiteUrl } from '@/lib/site-url';
@@ -113,16 +114,24 @@ import { computeNeighborhoodChampion } from '@/lib/neighborhoodChampion';
 const PAGE_TYPE = 'buffet' as const;
 const INDEX_TIER = 'tier-2' as const;
 
-/** ISR: cache page output, revalidate every 24h. On-demand: first request generates & caches. */
-export const revalidate = 86400; // 24 hours
+/**
+ * ISR: cache page output, revalidate every 30 days. On-demand: first request
+ * generates & caches. Buffet details (name/address/hours) only change via
+ * manual re-scrapes, so a long window avoids paying for re-renders a
+ * traffic-driven clock doesn't actually need.
+ */
+export const revalidate = 2592000; // 30 days
 // Force all fetch() calls (including InstantDB SDK) to use cache, preventing
 // the SDK's default no-store from making the page dynamic.
 export const fetchCache = 'force-cache';
 
-// generateStaticParams enables ISR for dynamic [slug] segments.
-// Return empty array: pages are generated on-demand and cached via ISR.
+// Pre-render the highest-traffic buffet pages at build time so they ship
+// static instead of costing an on-demand render + ISR write on first visit.
+// Everything else still falls through to on-demand ISR (dynamicParams defaults
+// to true).
 export async function generateStaticParams() {
-  return [];
+  const pairs = await getTopRatedBuffetSlugsForCuisine('Chinese', 150);
+  return pairs.map(({ citySlug, slug }) => ({ 'city-state': citySlug, slug }));
 }
 
 interface BuffetPageProps {

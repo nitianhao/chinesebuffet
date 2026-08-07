@@ -16,7 +16,7 @@ import JsonLd from '@/components/seo/JsonLd';
 
 const BASE_URL = getSiteUrl();
 // ISR: Revalidate every 12 hours
-export const revalidate = 43200;
+export const revalidate = 2592000; // 30 days (data only changes via manual import scripts)
 // Force all fetch() calls (including InstantDB SDK) to use cache, preventing
 // the SDK's default no-store from making the page dynamic.
 export const fetchCache = 'force-cache';

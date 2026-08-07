@@ -13,7 +13,7 @@ const isDev = process.env.NODE_ENV !== 'production';
 // Pagination is path-based: /chinese-buffets/cities (page 1),
 //                            /chinese-buffets/cities/2 (page 2), etc.
 // ---------------------------------------------------------------------------
-export const revalidate = isDev ? 3600 : 86400;
+export const revalidate = isDev ? 3600 : 2592000; // 30 days in prod
 export const fetchCache = 'force-cache';
 
 // On-demand ISR: pages are generated on first request and cached.

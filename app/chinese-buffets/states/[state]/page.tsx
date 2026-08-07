@@ -12,7 +12,7 @@ const BASE_URL = getSiteUrl();
 const isDev = process.env.NODE_ENV !== 'production';
 
 // ISR: Revalidate every 12 hours in prod, 1 hour in dev
-export const revalidate = isDev ? 3600 : 86400;
+export const revalidate = isDev ? 3600 : 2592000; // 30 days in prod
 // Force all fetch() calls (including InstantDB SDK) to use cache, preventing
 // the SDK's default no-store from making the page dynamic.
 export const fetchCache = 'force-cache';

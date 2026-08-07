@@ -16,7 +16,7 @@ import { getSiteUrl, getCanonicalUrl } from '@/lib/site-url';
 import { JsonLdServer } from '@/components/seo/JsonLdServer';
 
 
-export const revalidate = 43200;
+export const revalidate = 604800; // 7 days (data only changes via manual import scripts)
 export const fetchCache = "force-no-store";
 
 export const metadata: Metadata = {
