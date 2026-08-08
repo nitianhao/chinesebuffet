@@ -374,6 +374,11 @@ function transformBuffet(buffet: any, citySlug?: string, reviewsFromLink?: any[]
     businessAcceptsApplePay: buffet.businessAcceptsApplePay ?? null,
     acceptsGooglePay: buffet.acceptsGooglePay ?? null,
     openToAll: buffet.openToAll ?? null,
+    // Required by getLastModified() in lib/sitemap-utils.ts. Dropping this field
+    // left every sitemap entry with no date to fall back on, so all ~12.7k URLs
+    // got stamped with the generation timestamp on each rebuild — a lastmod that
+    // churns constantly and tells Google nothing about real content changes.
+    updatedAt: buffet.updatedAt || null,
   };
 }
 

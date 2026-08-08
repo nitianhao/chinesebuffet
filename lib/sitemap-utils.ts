@@ -10,7 +10,8 @@ import { IndexTierConfig, createIndexTierConfig, PageType, IndexTier } from './i
 
 export interface SitemapEntry {
   url: string;
-  lastModified: Date;
+  /** null when the source data carries no real date — callers omit <lastmod>. */
+  lastModified: Date | null;
   changeFrequency: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never';
   priority: number;
   pageType: PageType;
@@ -107,8 +108,13 @@ function hasPOIChange(data: any): boolean {
  * - POI changes (when POI data exists and buffet was updated)
  * 
  * Does NOT update for cosmetic changes (description, images, etc.)
+ *
+ * Returns null when the data carries no usable date. Callers must omit <lastmod>
+ * in that case rather than substituting the current time: a lastmod that changes
+ * on every rebuild is one Google learns to distrust and ignore, which costs us
+ * the recrawl signal on the pages that genuinely did change.
  */
-export function getLastModified(data: any): Date {
+export function getLastModified(data: any): Date | null {
   const meaningfulDates: Date[] = [];
   
   // 1. Check for most recent review
@@ -158,33 +164,21 @@ export function getLastModified(data: any): Date {
   }
   
   // Fallback: Only use updatedAt/lastModified if no meaningful changes found
-  // This prevents cosmetic changes from updating lastmod
-  if (data?.updatedAt) {
-    const date = new Date(data.updatedAt);
+  // This prevents cosmetic changes from updating lastmod.
+  //
+  // No recency gate here. Discarding a real date for being "stale" was backwards:
+  // a page that genuinely has not changed in months should report that old date,
+  // which is exactly the signal telling Google it need not recrawl.
+  for (const candidate of [data?.updatedAt, data?.lastModified]) {
+    if (!candidate) continue;
+    const date = new Date(candidate);
     if (!isNaN(date.getTime())) {
-      // Only use if it's recent (within last 30 days) to avoid stale dates
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      if (date >= thirtyDaysAgo) {
-        return date;
-      }
+      return date;
     }
   }
-  
-  if (data?.lastModified) {
-    const date = new Date(data.lastModified);
-    if (!isNaN(date.getTime())) {
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      if (date >= thirtyDaysAgo) {
-        return date;
-      }
-    }
-  }
-  
-  // Default to current date if no meaningful changes found
-  // This ensures new pages get current timestamp
-  return new Date();
+
+  // No usable date. Omit lastmod rather than inventing one — see the note above.
+  return null;
 }
 
 /**
@@ -194,7 +188,7 @@ export function createSitemapEntry(
   url: string,
   pageType: PageType,
   tier: IndexTier,
-  lastModified: Date,
+  lastModified: Date | null,
   changeFrequency: SitemapEntry['changeFrequency'],
   priority: number,
   customIndexable?: boolean
@@ -215,12 +209,24 @@ export function createSitemapEntry(
 }
 
 /**
+ * Render a route's lastModified as an XML <lastmod> value, or null to omit the
+ * tag entirely. Shared by every sitemap route so the "no date" case is handled
+ * identically: we never substitute the current time for a date we do not have.
+ */
+export function toLastmod(value: Date | string | undefined | null): string | null {
+  if (!value) return null;
+  const date = value instanceof Date ? value : new Date(value);
+  return isNaN(date.getTime()) ? null : date.toISOString();
+}
+
+/**
  * Convert sitemap entry to Next.js format
  */
 export function toSitemapRoute(entry: SitemapEntry): MetadataRoute.Sitemap[0] {
   return {
     url: entry.url,
-    lastModified: entry.lastModified,
+    // undefined (not null) so the field is simply absent for the XML generators.
+    lastModified: entry.lastModified ?? undefined,
     changeFrequency: entry.changeFrequency,
     priority: entry.priority,
   };

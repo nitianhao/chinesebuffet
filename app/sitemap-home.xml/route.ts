@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { MetadataRoute } from 'next';
-import { createSitemapEntry, filterIndexableEntries } from '@/lib/sitemap-utils';
+import { createSitemapEntry, filterIndexableEntries, toLastmod } from '@/lib/sitemap-utils';
 import { PageType, IndexTier } from '@/lib/index-tier';
 import { getBaseUrlForRobotsAndSitemaps } from '@/lib/site-url';
 
@@ -41,10 +41,10 @@ export async function GET(): Promise<NextResponse> {
 
 function generateSitemapXML(routes: MetadataRoute.Sitemap): string {
   const urls = routes.map(route => {
-    const lastmod = route.lastModified ? route.lastModified.toISOString() : new Date().toISOString();
+    const lastmod = toLastmod(route.lastModified);
     return `  <url>
     <loc>${escapeXML(route.url)}</loc>
-    <lastmod>${lastmod}</lastmod>
+    ${lastmod ? `<lastmod>${lastmod}</lastmod>` : ''}
     ${route.changeFrequency ? `<changefreq>${route.changeFrequency}</changefreq>` : ''}
     ${route.priority !== undefined ? `<priority>${route.priority}</priority>` : ''}
   </url>`;
