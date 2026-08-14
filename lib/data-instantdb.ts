@@ -374,11 +374,12 @@ function transformBuffet(buffet: any, citySlug?: string, reviewsFromLink?: any[]
     businessAcceptsApplePay: buffet.businessAcceptsApplePay ?? null,
     acceptsGooglePay: buffet.acceptsGooglePay ?? null,
     openToAll: buffet.openToAll ?? null,
-    // Required by getLastModified() in lib/sitemap-utils.ts. Dropping this field
-    // left every sitemap entry with no date to fall back on, so all ~12.7k URLs
-    // got stamped with the generation timestamp on each rebuild — a lastmod that
-    // churns constantly and tells Google nothing about real content changes.
-    updatedAt: buffet.updatedAt || null,
+    // Required by getLastModified() in lib/sitemap-utils.ts. This used to read
+    // buffet.updatedAt, but the buffets entity has no such field (see
+    // src/instant.schema.ts) — it was always undefined, so getLastModified()
+    // returned null and every sitemap URL silently shipped without a <lastmod>.
+    // scrapedAt is the only real date the bulk query carries.
+    scrapedAt: buffet.scrapedAt || null,
   };
 }
 
@@ -473,8 +474,10 @@ const _fetchAllDataFromDB = async (): Promise<{ cities: any[]; buffets: any[] }>
             // transformBuffet() nulls cuisineType and every buffet falls back to
             // the "Chinese" default in lib/cuisine.ts.
             'cuisineType',
+            // Feeds getLastModified() -> sitemap <lastmod>. 'updatedAt' used to be
+            // requested alongside it; the entity has no such field, so it always
+            // came back undefined.
             'scrapedAt',
-            'updatedAt',
           ],
         },
         city: {

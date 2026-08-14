@@ -169,7 +169,11 @@ export function getLastModified(data: any): Date | null {
   // No recency gate here. Discarding a real date for being "stale" was backwards:
   // a page that genuinely has not changed in months should report that old date,
   // which is exactly the signal telling Google it need not recrawl.
-  for (const candidate of [data?.updatedAt, data?.lastModified]) {
+  // scrapedAt is last: it is the bulk-import timestamp, identical across every
+  // buffet in an import batch, so it is the weakest of these signals. It is also
+  // the only one the bulk sitemap query actually carries — reviews are not
+  // fetched on that path — so without it every buffet URL ships bare.
+  for (const candidate of [data?.updatedAt, data?.lastModified, data?.scrapedAt]) {
     if (!candidate) continue;
     const date = new Date(candidate);
     if (!isNaN(date.getTime())) {
