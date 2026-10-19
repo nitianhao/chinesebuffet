@@ -17,13 +17,13 @@ import { computeAllNeighborhoodChampions } from '@/lib/neighborhoodChampion';
 const BASE_URL = getSiteUrl();
 const isDev = process.env.NODE_ENV !== 'production';
 
-// ISR: Revalidate weekly in prod, 1 hour in dev. Underlying buffet data only
-// changes via manual import scripts, so a long window avoids paying for
+// ISR: Revalidate every 30 days in prod, 1 hour in dev. Underlying buffet data
+// only changes via manual import scripts, so a long window avoids paying for
 // re-renders/ISR writes that a traffic-driven clock doesn't actually need.
 // IMPORTANT: This page must NOT access `searchParams` in the server component,
 // otherwise Next.js treats it as dynamic and sends Cache-Control: no-store.
 // All filter/sort logic is handled client-side by CityFilterBar + CityBuffetList.
-export const revalidate = isDev ? 3600 : 604800;
+export const revalidate = isDev ? 3600 : 2592000; // 30 days in prod
 // Force all fetch() calls (including InstantDB SDK) to use cache, preventing
 // the SDK's default no-store from making the page dynamic.
 export const fetchCache = 'force-cache';

@@ -16,8 +16,11 @@ import { getSiteUrl, getCanonicalUrl } from '@/lib/site-url';
 import { JsonLdServer } from '@/components/seo/JsonLdServer';
 
 
-export const revalidate = 604800; // 7 days (data only changes via manual import scripts)
-export const fetchCache = "force-no-store";
+// ISR: Revalidate every 30 days. Data only changes via manual import scripts,
+// so a long window avoids paying for re-renders/ISR writes.
+export const revalidate = 2592000; // 30 days
+// Force all fetch() calls to use cache, preventing dynamic rendering.
+export const fetchCache = "force-cache";
 
 export const metadata: Metadata = {
   title: 'Buffet Directory — Chinese & Indian All-You-Can-Eat Buffets Near You',

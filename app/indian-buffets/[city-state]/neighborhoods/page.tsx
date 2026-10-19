@@ -8,8 +8,8 @@ import { getSiteUrl } from '@/lib/site-url';
 const BASE_URL = getSiteUrl();
 const isDev = process.env.NODE_ENV !== 'production';
 
-// ISR: Revalidate every 6 hours in prod, 1 hour in dev
-export const revalidate = isDev ? 3600 : 604800; // 7 days in prod
+// ISR: Revalidate every 30 days in prod, 1 hour in dev
+export const revalidate = isDev ? 3600 : 2592000; // 30 days in prod
 export const fetchCache = 'force-cache';
 
 // generateStaticParams enables ISR for dynamic [city-state] segments.

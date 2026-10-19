@@ -11,9 +11,6 @@ export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 // Note: Removed revalidate export - now using force-dynamic with edge caching via Cache-Control
 
-// Inline to avoid loading city-filter-pages (which calls getSiteUrl() at module load and breaks build when env is unset)
-const CITY_FILTERS = ['best', 'cheap', 'open-now', 'top-rated'] as const;
-
 const XML_HEADERS = { 'Content-Type': 'application/xml; charset=utf-8' } as const;
 
 /**
@@ -70,27 +67,9 @@ export async function GET(): Promise<NextResponse> {
       // Only add if entry is indexable (createSitemapEntry returns null for noindex)
       if (entry) {
         entries.push(entry);
-
-        // Also add curated filter pages for indexable cities with enough buffets.
-        // Threshold uses the Chinese count so filter pages aren't emitted on the
-        // strength of a city's Indian listings, which they never render.
-        const buffetCount = chineseBuffets.length;
-        if (buffetCount >= 5) {
-          for (const filter of CITY_FILTERS) {
-            const filterEntry = createSitemapEntry(
-              `${baseUrl}/chinese-buffets/${slug}/${filter}`,
-              'city' as PageType,
-              'tier-2' as IndexTier,
-              lastModified,
-              'weekly',
-              0.6,
-              true
-            );
-            if (filterEntry) {
-              entries.push(filterEntry);
-            }
-          }
-        }
+        // NOTE: Filter pages (best, cheap, top-rated, open-now) are intentionally
+        // excluded from the sitemap. They are faceted views of the main city page
+        // and are disallowed in robots.txt to reduce crawler load and ISR writes.
       }
     }
 

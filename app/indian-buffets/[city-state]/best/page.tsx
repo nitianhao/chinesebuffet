@@ -5,7 +5,7 @@ import { getTopCitySlugsForCuisine } from '@/lib/data-instantdb';
 // Underlying buffet data only changes via manual import scripts, so a long
 // window avoids paying for re-renders/ISR writes a traffic-driven clock
 // doesn't actually need.
-export const revalidate = 604800; // 7 days
+export const revalidate = 2592000; // 30 days
 
 // Pre-render the highest-traffic cities at build time; everything else
 // still falls through to on-demand ISR (dynamicParams defaults to true).
