@@ -8,8 +8,11 @@ import { getSiteUrl, getCanonicalUrl } from '@/lib/site-url';
 const BASE_URL = getSiteUrl();
 const isDev = process.env.NODE_ENV !== 'production';
 
-// ISR: Revalidate every 6 hours in prod, 1 hour in dev
+// ISR: Revalidate every 30 days in prod, 1 hour in dev
 export const revalidate = isDev ? 3600 : 2592000; // 30 days in prod
+// Force all fetch() calls (including InstantDB SDK) to use cache, preventing
+// the SDK's default no-store from making the page dynamic.
+export const fetchCache = 'force-cache';
 
 export const metadata: Metadata = {
   title: 'Indian Buffets by State - All 50 States Directory',

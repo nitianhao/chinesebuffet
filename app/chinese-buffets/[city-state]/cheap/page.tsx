@@ -6,6 +6,9 @@ import { getTopCitySlugsForCuisine } from '@/lib/data-instantdb';
 // window avoids paying for re-renders/ISR writes a traffic-driven clock
 // doesn't actually need.
 export const revalidate = 2592000; // 30 days
+// Force all fetch() calls (including InstantDB SDK) to use cache, preventing
+// the SDK's default no-store from making the page dynamic.
+export const fetchCache = 'force-cache';
 
 // Pre-render the highest-traffic cities at build time; everything else
 // still falls through to on-demand ISR (dynamicParams defaults to true).

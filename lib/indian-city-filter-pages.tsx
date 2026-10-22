@@ -18,7 +18,9 @@ import { getSiteUrl } from '@/lib/site-url';
 
 const BASE_URL = getSiteUrl();
 const isDev = process.env.NODE_ENV !== 'production';
-const REVALIDATE = isDev ? 3600 : 43200;
+// Match the page-level revalidate (30 days) to avoid data cache expiring
+// while page cache is still valid.
+const REVALIDATE = isDev ? 3600 : 2592000; // 30 days in prod
 const MIN_RESULTS = 5;
 
 const getCityBuffetsCached = unstable_cache(

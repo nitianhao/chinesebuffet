@@ -4,6 +4,9 @@ import { getNeutralCitiesRollup } from '@/lib/hub-data';
 import { cuisineByKey } from '@/lib/cuisines';
 
 export const revalidate = 2592000; // 30 days (data only changes via manual import scripts)
+// Force all fetch() calls (including InstantDB SDK) to use cache, preventing
+// the SDK's default no-store from making the page dynamic.
+export const fetchCache = 'force-cache';
 
 export const metadata: Metadata = {
   title: 'All Cities — Chinese & Indian Buffets Directory',
